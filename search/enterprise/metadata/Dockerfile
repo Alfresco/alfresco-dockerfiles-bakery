@@ -5,4 +5,6 @@ EXPOSE 8080
 
 ADD *-app.jar /opt/app.jar
 
+RUN chmod 755 /opt/app.jar
+
 CMD ["java", "-jar", "/opt/app.jar"]
