@@ -5,5 +5,4 @@ EXPOSE 8080
 
 ADD *-app.jar /opt/app.jar
 
-WORKDIR /opt
-ENTRYPOINT exec java $JAVA_OPTS -jar app.jar
+CMD ["java", "$JAVA_OPTS", "-jar", "/opt/app.jar"]
