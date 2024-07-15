@@ -49,10 +49,11 @@ jobs:
             load: true
       
       - name: Run Docker image
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ matrix.images.name }}:test
-    
+        run: docker run -d -p 8080:8080 ${{ matrix.images.name }}:test
+        working-directory: ${{ github.workspace }}
+
+      - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v5.33.0
+
       - name: Check the status of container
         run: docker ps -a
 
