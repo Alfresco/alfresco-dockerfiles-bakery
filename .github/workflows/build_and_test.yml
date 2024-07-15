@@ -12,7 +12,7 @@ jobs:
             version: 4.0.1
             name: alfresco-enterprise-search-metadata
             path: search/enterprise/metadata
-            extension: jar
+            extension: -app.jar
 
     steps:
       - uses: actions/checkout@v4

@@ -8,7 +8,7 @@ ARTIFACT_VERSION=$2
 DEFAULT_ARTIFACT_VERSION=23.2.1
 
 EXTENSION=$3
-DEFAULT_EXTENSION=zip
+DEFAULT_EXTENSION=.zip
 
 GROUP_ID=$4
 DEFAULT_GROUP_ID=org.alfresco
@@ -33,4 +33,4 @@ GROUP_ID_AS_PATH=$(echo "$GROUP_ID" | tr . /)
 
 
 echo "Downloading $GROUP_ID:$ARTIFACT_NAME $ARTIFACT_VERSION from Nexus"
-wget "https://nexus.alfresco.com/nexus/service/local/repositories/enterprise-releases/content/$GROUP_ID_AS_PATH/$ARTIFACT_NAME/${ARTIFACT_VERSION}/$ARTIFACT_NAME-${ARTIFACT_VERSION}.${EXTENSION}" \
+wget "https://nexus.alfresco.com/nexus/service/local/repositories/enterprise-releases/content/$GROUP_ID_AS_PATH/$ARTIFACT_NAME/${ARTIFACT_VERSION}/$ARTIFACT_NAME-${ARTIFACT_VERSION}${EXTENSION}" \
