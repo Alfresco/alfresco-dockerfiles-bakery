@@ -1,0 +1,17 @@
+---
+repos:
+  # General hooks section
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-merge-conflict
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: end-of-file-fixer
+  - repo: https://github.com/sirosen/check-jsonschema
+    rev: 0.14.3
+    hooks:
+      - id: check-github-workflows
