@@ -5,8 +5,7 @@ EXPOSE 8080
 
 RUN yum install -y unzip
 
-ADD *.jar /tmp/
-RUN unzip /tmp/*-app.jar -d /opt/app.jar
+ADD *-app.jar /opt/app.jar
 
 WORKDIR /opt
 ENTRYPOINT exec java $JAVA_OPTS -jar app.jar
