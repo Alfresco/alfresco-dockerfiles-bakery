@@ -5,4 +5,4 @@ EXPOSE 8080
 
 ADD *-app.jar /opt/app.jar
 
-CMD ["java", "$JAVA_OPTS", "-jar", "/opt/app.jar"]
+CMD ["java", "-jar", "/opt/app.jar"]
