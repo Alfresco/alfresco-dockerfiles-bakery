@@ -38,7 +38,7 @@ jobs:
           echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ~/.netrc
 
       - name: Fetch artifacts from nexus 
-        run: bash ./scripts/fetch-artifact.sh ${{ matrix.images.artifact }} ${{ matrix.images.version }} ${{ matrix.images.extension }} ${{ matrix.images.group }} ${{ github.workspace }}/${{ matrix.images.path }}"
+        run: bash ./scripts/fetch-artifact.sh ${{ matrix.images.artifact }} ${{ matrix.images.version }} ${{ matrix.images.extension }} ${{ matrix.images.group }} ${{ github.workspace }}/${{ matrix.images.path }}
         working-directory: ${{ github.workspace }}
       
       - name: Build Docker image
