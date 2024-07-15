@@ -38,8 +38,7 @@ jobs:
           echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ~/.netrc
 
       - name: Fetch artifacts from nexus 
-        run: bash ./scripts/fetch-artifact.sh ${{ matrix.images.artifact }} ${{ matrix.images.version }} ${{ matrix.images.extension }} ${{ matrix.images.group }} ${{ github.workspace }}/${{ matrix.images.path }}
-        working-directory: ${{ github.workspace }}
+        run: bash ${{ github.workspace }}/scripts/fetch-artifact.sh ${{ matrix.images.artifact }} ${{ matrix.images.version }} ${{ matrix.images.extension }} ${{ matrix.images.group }} ${{ github.workspace }}/${{ matrix.images.path }}
       
       - name: Build Docker image
         uses: docker/build-push-action@v6
