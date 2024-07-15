@@ -46,6 +46,7 @@ jobs:
             context: "{{defaultContext}}:${{ matrix.images.path }}"
             tags: ${{ matrix.images.name }}:test
             push: false
+            load: true
       
       - name: Run Docker image
         uses: addnab/docker-run-action@v3
