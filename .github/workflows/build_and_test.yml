@@ -41,6 +41,8 @@ jobs:
         run: bash ${{ github.workspace }}/scripts/fetch-artifact.sh ${{ matrix.images.artifact }} ${{ matrix.images.version }} ${{ matrix.images.extension }} ${{ matrix.images.group }} ${{ matrix.images.path }}
         working-directory: ${{ github.workspace }}
       
+      - uses: actions/checkout@v4
+
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
