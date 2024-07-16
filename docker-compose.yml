@@ -1,0 +1,32 @@
+version: "2"
+services:
+  activemq:
+    image: alfresco/alfresco-activemq:5.18-jre17-rockylinux8
+    mem_limit: 1g
+    ports:
+      - "8161:8161" # Web Console
+      - "5672:5672" # AMQP
+      - "61616:61616" # OpenWire
+      - "61613:61613" # STOMP
+  elasticsearch:
+    image: elasticsearch:7.10.1
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - 9200:9200
+      - 9300:9300
+  live-indexing-metadata:
+      image: alfresco-elasticsearch-live-indexing-metadata:test
+      environment:
+          SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
+          SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
