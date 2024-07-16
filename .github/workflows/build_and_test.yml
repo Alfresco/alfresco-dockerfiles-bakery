@@ -49,6 +49,7 @@ jobs:
             push: false
             load: true
             file: ${{ github.workspace }}/${{ matrix.images.path }}/Dockerfile
+            outputs: type=docker, dest=/tmp/${{ matrix.images.name }}.tar
       
       - name: Run Docker image
         run: docker run -d -p 8080:8080 ${{ matrix.images.name }}:test
@@ -58,11 +59,29 @@ jobs:
 
       - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v5.33.0
 
+      - name: Upload image as a tar for next job
+        uses: actions/upload-artifact@v4
+        with:
+          name: images
+          path: /tmp/${{ matrix.images.name }}.tar
+
   compose:
     name: docker-compose
     needs: build-run-test
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: images
+          path: /tmp
+      
+      - name: Load Docker images
+        run: ls -1 /tmp/*.tar | xargs --no-run-if-empty -L 1 docker load -i
+
       - name: Verify docker-compose
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v5.27.0
         timeout-minutes: 10
