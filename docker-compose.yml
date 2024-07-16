@@ -26,7 +26,7 @@ services:
       - 9200:9200
       - 9300:9300
   live-indexing-metadata:
-      image: alfresco-elasticsearch-live-indexing-metadata:test
+      image: alfresco-enterprise-search-metadata:test
       environment:
           SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
           SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
