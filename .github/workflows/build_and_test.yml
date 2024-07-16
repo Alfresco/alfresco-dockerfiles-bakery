@@ -46,6 +46,7 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
+            context: .
             tags: ${{ matrix.images.name }}:test
             push: false
             load: true
