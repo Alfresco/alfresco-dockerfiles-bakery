@@ -90,7 +90,6 @@ jobs:
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@OPSEXP-2732-compose
         timeout-minutes: 10
         with:
-          compose_pull: false
           compose_file_path: docker-compose.yml
           quay_username: ${{ secrets.QUAY_USERNAME }}
           quay_password: ${{ secrets.QUAY_PASSWORD }}
