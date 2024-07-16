@@ -49,7 +49,6 @@ jobs:
             push: false
             load: true
             file: ${{ github.workspace }}/${{ matrix.images.path }}/Dockerfile
-            outputs: type=docker, dest=/tmp/${{ matrix.images.name }}.tar
       
       - name: Run Docker image
         run: docker run -d -p 8080:8080 ${{ matrix.images.name }}:test
@@ -58,6 +57,9 @@ jobs:
         run: sleep 30s
 
       - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v5.33.0
+
+      - name: Save Docker image
+        run: docker save ${{ matrix.images.name }}:test -o /tmp/${{ matrix.images.name }}.tar
 
       - name: Upload image as a tar for next job
         uses: actions/upload-artifact@v4
