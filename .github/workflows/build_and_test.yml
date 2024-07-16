@@ -82,7 +82,9 @@ jobs:
           path: /tmp
       
       - name: Load Docker images
-        run: ls -1 /tmp/*.tar | xargs --no-run-if-empty -L 1 docker load -i
+        run: |
+          ls -1 /tmp/*.tar | xargs --no-run-if-empty -L 1 docker load -i
+          docker image ls -a
 
       - name: Verify docker-compose
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v5.27.0
