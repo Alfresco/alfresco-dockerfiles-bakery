@@ -52,11 +52,10 @@ jobs:
       
       - name: Run Docker image
         run: docker run -d -p 8080:8080 ${{ matrix.images.name }}:test
-        working-directory: ${{ github.workspace }}
+
+      - name: Wait for container
+        run: sleep 30s
 
       - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v5.33.0
-
-      - name: Check the status of container
-        run: docker ps -a
 
         
