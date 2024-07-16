@@ -56,7 +56,7 @@ jobs:
       - name: Wait for container
         run: sleep 30s
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v5.33.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v5.34.0
 
       - name: Save Docker image
         run: docker save ${{ matrix.images.name }}:test -o /tmp/${{ matrix.images.name }}.tar
@@ -87,7 +87,7 @@ jobs:
           docker image ls -a
 
       - name: Verify docker-compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@OPSEXP-2732-compose
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v5.34.0
         timeout-minutes: 10
         with:
           compose_pull: false
@@ -95,4 +95,4 @@ jobs:
           quay_username: ${{ secrets.QUAY_USERNAME }}
           quay_password: ${{ secrets.QUAY_PASSWORD }}
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v5.33.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v5.34.0
