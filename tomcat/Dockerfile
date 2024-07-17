@@ -108,26 +108,7 @@ FROM apr_pkg-${DISTRIB_NAME}
 ARG DISTRIB_MAJOR
 ARG CREATED
 ARG REVISION
-ARG LABEL_NAME="Alfresco Base Tomcat Image"
-ARG LABEL_DESC="Apache Tomcat Image tailored for Alfresco products"
-ARG LABEL_VENDOR="Hyland"
-ARG LABEL_SOURCE="https://github.com/Alfresco/alfresco-docker-base-tomcat"
-LABEL org.label-schema.schema-version="1.0" \
-  org.label-schema.name="$LABEL_NAME" \
-  org.label-schema.description="$LABEL_DESC" \
-  org.label-schema.vendor="$LABEL_VENDOR" \
-  org.label-schema.build-date="$CREATED" \
-  org.label-schema.url="$LABEL_SOURCE" \
-  org.label-schema.vcs-url="$LABEL_SOURCE" \
-  org.label-schema.vcs-ref="$LABEL_SOURCE" \
-  org.opencontainers.image.title="$LABEL_NAME" \
-  org.opencontainers.image.description="$LABEL_DESC" \
-  org.opencontainers.image.vendor="$LABEL_VENDOR" \
-  org.opencontainers.image.authors="Alfresco OPS-Readiness" \
-  org.opencontainers.image.revision="$REVISION" \
-  org.opencontainers.image.url="$LABEL_SOURCE" \
-  org.opencontainers.image.source="$LABEL_SOURCE" \
-  org.opencontainers.image.created="$CREATED"
+
 ENV CATALINA_HOME=/usr/local/tomcat
 # let "Tomcat Native" live somewhere isolated
 ENV TOMCAT_NATIVE_LIBDIR=$CATALINA_HOME/native-jni-lib

@@ -6,6 +6,18 @@ variable "LABEL_VENDOR" {
   default = "Hyland Software, Inc."
 }
 
+variable "LABEL_AUTHOR" {
+  default = "Alfresco OPS-Readiness"
+}
+
+variable "LABEL_SOURCE" {
+  default = "https://github.com/Alfresco/alfresco-dockerfiles"
+}
+
+variable "CODE_REF" {
+  default = "local"
+}
+
 variable "PRODUCT_LINE" {
   default = "Alfresco"
 }
@@ -51,26 +63,37 @@ target "java_base" {
     CREATED = "${CREATED}"
     REVISION = "${REVISION}"
   }
-  annotations = {
+  labels = {
+    "org.label-schema.schema-version" = "1.0"
+    "org.label-schema.name" = "${PRODUCT_LINE} Java"
+    "org.label-schema.vendor" = "${LABEL_VENDOR}"
+    "org.label-schema.build-date" = "${CREATED}"
+    "org.label-schema.url" = "$LABEL_SOURCE"
+    "org.label-schema.vcs-url" = "$LABEL_SOURCE"
+    "org.label-schema.vcs-ref" = "$CODE_REF"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Java"
+    "org.opencontainers.image.description" = "A base image shipping OpenJDK JRE ${JAVA_MAJOR} for Alfresco Products"
     "org.opencontainers.image.vendor" = "${LABEL_VENDOR}"
     "org.opencontainers.image.created" = "${CREATED}"
     "org.opencontainers.image.revision" = "${REVISION}"
+    "org.opencontainers.image.url" = "$LABEL_SOURCE"
+    "org.opencontainers.image.source" = "$LABEL_SOURCE"
+    "org.opencontainers.image.authors" = "${LABEL_AUTHOR}"
   }
   tags = ["alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
   output = ["type=docker"]
 }
 
 variable "TOMCAT_MAJOR" {
-  default = "9"
+  default = "10"
 }
 
 variable "TOMCAT_VERSION" {
-  default = "9.0.89"
+  default = "10.1.26"
 }
 
 variable "TOMCAT_SHA512" {
-  default = "aaa2851bdc7a2476b6793e95174965c1c861531f161d8a138e87f8532b1af4d4b3d92dd1ae890614a692e5f13fb2e6946a1ada888f21e9d7db1964616b4181f0"
+  default = "0a62e55c1ff9f8f04d7aff938764eac46c289eda888abf43de74a82ceb7d879e94a36ea3e5e46186bc231f07871fcc4c58f11e026f51d4487a473badb21e9355"
 }
 
 variable "TCNATIVE_VERSION" {
@@ -95,8 +118,9 @@ target "tomcat_base" {
     TCNATIVE_SHA512 = "${TCNATIVE_SHA512}"
     LABEL_NAME = "${PRODUCT_LINE} Tomcat"
   }
-  annotations = {
+  labels = {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Tomcat"
+    "org.opencontainers.image.description" = "A base image shipping Tomcat for Alfresco Products"
   }
   tags = ["alfresco-base-tomcat:tomcat${TOMCAT_MAJOR}-${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
   output = ["type=docker"]

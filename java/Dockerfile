@@ -25,16 +25,5 @@ FROM ${DISTRIB_NAME}${DISTRIB_MAJOR}
 ARG DISTRIB_NAME
 ARG DISTRIB_MAJOR
 ARG JAVA_MAJOR
-ARG CREATED
-ARG REVISION
-LABEL org.label-schema.schema-version="1.0" \
-    org.label-schema.name="Alfresco Base Java Image" \
-    org.label-schema.vendor="Alfresco" \
-    org.label-schema.build-date="$CREATED" \
-    org.opencontainers.image.title="Alfresco Base Java Image" \
-    org.opencontainers.image.vendor="Alfresco" \
-    org.opencontainers.image.created="$CREATED" \
-    org.opencontainers.image.revision="$REVISION" \
-    org.opencontainers.image.source="https://github.com/Alfresco/alfresco-docker-base-java"
 
 RUN $JAVA_HOME/bin/java -version
