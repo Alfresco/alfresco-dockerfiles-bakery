@@ -183,16 +183,9 @@ services:
       - "9090:9090"
   live-indexing-metadata:
     image: alfresco-enterprise-search-metadata:test
-    healthcheck:
-      test:
-        - CMD
-        - curl
-        - -f
-        - http://live-indexing-metadata:8080/actuator/health
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 1m
+    environment:
+        SPRING_ELASTICSEARCH_REST_URIS: http://elastic:9200
+        SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
 volumes:
   shared-file-store-volume:
     driver_opts:
