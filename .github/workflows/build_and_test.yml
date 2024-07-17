@@ -70,7 +70,7 @@ jobs:
       - name: Upload image as a tar for next job
         uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # 4.3.4
         with:
-          name: images
+          name: ${{ matrix.images.name }}-${{ github.run_number }}
           path: /tmp/${{ matrix.images.name }}.tar
 
   compose:
@@ -84,7 +84,6 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # 4.1.8
         with:
-          name: images
           path: /tmp
       
       - name: Load Docker images
