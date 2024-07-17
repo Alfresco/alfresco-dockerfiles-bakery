@@ -3,10 +3,10 @@ FROM quay.io/alfresco/alfresco-base-java:jre17-rockylinux9
 ENV PORT=8080
 EXPOSE 8080
 
-ADD search/enterprise/metadata/*-app.jar /opt/app.jar
+ADD search/enterprise/common/*-app.jar /opt/app.jar
 
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 --start-period=1m \
   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
-COPY search/enterprise/metadata/entrypoint.sh /entrypoint.sh
+COPY search/enterprise/common/entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]

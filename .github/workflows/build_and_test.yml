@@ -11,7 +11,13 @@ jobs:
           - artifact: alfresco-elasticsearch-live-indexing-metadata
             version: 4.0.1
             name: alfresco-enterprise-search-metadata
-            path: search/enterprise/metadata
+            path: search/enterprise/common
+            classifier: -app.jar
+            group: org.alfresco
+          - artifact: alfresco-elasticsearch-live-indexing-path
+            version: 4.0.1
+            name: alfresco-enterprise-search-path
+            path: search/enterprise/common
             classifier: -app.jar
             group: org.alfresco
 
