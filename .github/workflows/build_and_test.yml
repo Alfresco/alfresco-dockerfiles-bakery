@@ -89,7 +89,7 @@ jobs:
       
       - name: Load Docker images
         run: |
-          ls -1 /tmp/*.tar | xargs --no-run-if-empty -L 1 docker load -i
+          ls -1 /tmp/*${{ github.run_number }} | xargs --no-run-if-empty -L 1 docker load -i
           docker image ls -a
 
       - name: Verify docker-compose
