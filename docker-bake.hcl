@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["java_base"]
+  targets = ["java_base", "tomcat_base"]
 }
 
 variable "LABEL_VENDOR" {
@@ -112,7 +112,7 @@ target "tomcat_base" {
   }
   args = {
     TOMCAT_MAJOR = "${TOMCAT_MAJOR}"
-    TOMCAT_VERSION = "9.0.89"
+    TOMCAT_VERSION = "${TOMCAT_VERSION}"
     TOMCAT_SHA512 = "${TOMCAT_SHA512}"
     TCNATIVE_VERSION = "${TCNATIVE_VERSION}"
     TCNATIVE_SHA512 = "${TCNATIVE_SHA512}"
