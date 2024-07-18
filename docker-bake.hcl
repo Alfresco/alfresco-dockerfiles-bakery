@@ -1,5 +1,9 @@
 group "default" {
-  targets = ["java_base", "tomcat_base", "search_metadata"]
+  targets = ["content_service", "enterprise-search"]
+}
+
+group "content_service" {
+  targets = ["repository"]
 }
 
 group "enterprise-search" {
@@ -127,6 +131,20 @@ target "tomcat_base" {
     "org.opencontainers.image.description" = "A base image shipping Tomcat for Alfresco Products"
   }
   tags = ["alfresco-base-tomcat:tomcat${TOMCAT_MAJOR}-${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
+  output = ["type=docker"]
+}
+
+target "repository" {
+  dockerfile = "./repository/Dockerfile"
+  inherits = ["tomcat_base"]
+  contexts = {
+    tomcat_base = "target:tomcat_base"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Content Repository"
+    "org.opencontainers.image.description" = "Alfresco Content Services Repository"
+  }
+  tags = ["alfresco-content-repository:latest"]
   output = ["type=docker"]
 }
 

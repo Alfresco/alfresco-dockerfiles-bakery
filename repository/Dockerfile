@@ -1,4 +1,4 @@
-FROM quay.io/alfresco/alfresco-base-tomcat:tomcat10-jre17-rockylinux9 as BUILD
+FROM tomcat_base AS repo_build
 
 RUN yum install -y unzip
 
@@ -17,13 +17,13 @@ RUN cp -ra /tmp/distribution/keystore/metadata-keystore/keystore* /usr/local/tom
 RUN sed -i 's|shared.loader=|shared.loader=${catalina.base}/shared/classes,${catalina.base}/shared/lib/*.jar|' /usr/local/tomcat/conf/catalina.properties
 RUN sed -i 's|../modules/platform|modules/platform|' /usr/local/tomcat/conf/Catalina/localhost/alfresco.xml
 
-FROM quay.io/alfresco/alfresco-base-tomcat:tomcat10-jre17-rockylinux9
+FROM tomcat_base
 
 RUN mkdir -p /usr/local/tomcat/modules/platform /usr/local/tomcat/modules/share
 
-COPY --from=BUILD /usr/local/tomcat/conf /usr/local/tomcat/conf
-COPY --from=BUILD /usr/local/tomcat/lib /usr/local/tomcat/lib
-COPY --from=BUILD /usr/local/tomcat/shared /usr/local/tomcat/shared
-COPY --from=BUILD /usr/local/tomcat/webapps /usr/local/tomcat/webapps
+COPY --from=repo_build /usr/local/tomcat/conf /usr/local/tomcat/conf
+COPY --from=repo_build /usr/local/tomcat/lib /usr/local/tomcat/lib
+COPY --from=repo_build /usr/local/tomcat/shared /usr/local/tomcat/shared
+COPY --from=repo_build /usr/local/tomcat/webapps /usr/local/tomcat/webapps
 
 CMD ["catalina.sh", "run"]
