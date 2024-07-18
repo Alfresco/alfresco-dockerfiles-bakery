@@ -26,9 +26,14 @@ jobs:
             path: repository
             classifier: .zip
             group: org.alfresco
-
+    outputs:
+      artifact: ${{ github.run_number }}
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # 4.1.7
+
+      - name: Hash matrix to use as a cache key
+        id: hash-matrix
+        run: echo "| shasum -a 256 | cut -c1-64)"
 
       - name: Setup .netrc
         run: |
@@ -37,14 +42,32 @@ jobs:
           echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ~/.netrc
 
       - name: Fetch artifacts from nexus
-        run: ${{ github.workspace }}/scripts/fetch-artifact.sh ${{ matrix.images.artifact }} ${{ matrix.images.version }} ${{ matrix.images.classifier }} ${{ matrix.images.group }} ${{ matrix.images.path }}
+        run: >-
+          ${{ github.workspace }}/scripts/fetch-artifact.sh
+          ${{ matrix.images.artifact }}
+          ${{ matrix.images.version }}
+          ${{ matrix.images.classifier }}
+          ${{ matrix.images.group }}
+          ${{ matrix.images.path }}
         working-directory: ${{ github.workspace }}
+
+
+      - name: Upload Artifacts for next job
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # 4.3.4
+        with:
+          name: ${{ github.run_number }}
+          path: ${{ matrix.images.path }}/${{ matrix.images.name }}-${{ matrix.images.version }}${{ matrix.images.classifier }}
 
   build-run-test:
     runs-on: ubuntu-latest
     needs: prepare_artifacts
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # 4.1.7
+
+      - name: Download artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # 4.1.8
+        with:
+          name: ${{ github.run_number }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@5927c834f5b4fdf503fca6f4c7eccda82949e1ee # 3.1.0
