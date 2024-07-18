@@ -20,6 +20,12 @@ jobs:
             path: search/enterprise/common
             classifier: -app.jar
             group: org.alfresco
+          - artifact: alfresco-elasticsearch-live-indexing-content
+            version: 4.0.1
+            name: alfresco-enterprise-search-content
+            path: search/enterprise/common
+            classifier: -app.jar
+            group: org.alfresco
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # 4.1.7

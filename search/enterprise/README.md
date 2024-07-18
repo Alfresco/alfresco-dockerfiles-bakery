@@ -31,3 +31,20 @@ live-indexing-path:
 
 - `SPRING_ELASTICSEARCH_REST_URIS` - Elasticsearch server, by default `http://elasticsearch:9200`
 - `SPRING_ACTIVEMQ_BROKERURL` - Alfresco ActiveMQ, by default `nio://activemq:61616`
+
+## path
+
+```yaml
+
+live-indexing-content:
+    image: alfresco-enterprise-search-content:YOUR-TAG
+    environment:
+        SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
+        SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
+        ALFRESCO_SHAREDFILESTORE_BASEURL: http://shared-file-store:8099/alfresco/api/-default-/private/sfs/versions/1/file
+
+```
+
+- `SPRING_ELASTICSEARCH_REST_URIS` - Elasticsearch server, by default `http://elasticsearch:9200`
+- `SPRING_ACTIVEMQ_BROKERURL` - Alfresco ActiveMQ, by default `nio://activemq:61616`
+- `ALFRESCO_SHAREDFILESTORE_BASEURL` - Alfresco Shared FileStore endpoint, by default `http://shared-file-store:8099/alfresco/api/-default-/private/sfs/versions/1/file/`
