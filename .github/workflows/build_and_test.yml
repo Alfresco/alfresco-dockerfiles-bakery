@@ -20,6 +20,12 @@ jobs:
             path: search/enterprise/common
             classifier: -app.jar
             group: org.alfresco
+          - artifact: alfresco-content-services-distribution
+            version: 23.2.2
+            name: alfresco-content-services-distribution
+            path: repository
+            classifier: .zip
+            group: org.alfresco
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # 4.1.7
