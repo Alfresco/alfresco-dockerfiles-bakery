@@ -3,9 +3,9 @@ FROM tomcat_base AS repo_build
 USER root
 RUN yum install -y unzip
 
-ADD alfresco-content-services-distribution-23.2.1.zip /tmp/
+ADD alfresco-content-services-distribution-*.zip /tmp/
 
-RUN unzip /tmp/alfresco-content-services-distribution-23.2.1.zip -d /tmp/distribution
+RUN unzip /tmp/alfresco-content-services-distribution-*.zip -d /tmp/distribution
 
 RUN mkdir -p /usr/local/tomcat/shared/classes/alfresco/extension/keystore/
 
