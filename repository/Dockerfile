@@ -1,5 +1,6 @@
 FROM tomcat_base AS repo_build
 
+USER root
 RUN yum install -y unzip
 
 ADD alfresco-content-services-distribution-23.2.1.zip /tmp/
@@ -8,7 +9,7 @@ RUN unzip /tmp/alfresco-content-services-distribution-23.2.1.zip -d /tmp/distrib
 
 RUN mkdir -p /usr/local/tomcat/shared/classes/alfresco/extension/keystore/
 
-RUN cp /tmp/distribution/web-server/webapps/alfresco.war /usr/local/tomcat/webapps/
+RUN unzip /tmp/distribution/web-server/webapps/alfresco.war -d /usr/local/tomcat/webapps/alfresco/
 RUN cp -ra /tmp/distribution/web-server/conf/* /usr/local/tomcat/conf/ && rm -f /usr/local/tomcat/conf/Catalina/localhost/share.xml
 RUN cp -ra /tmp/distribution/web-server/lib/* /usr/local/tomcat/lib/
 RUN cp -ra /tmp/distribution/web-server/shared/* /usr/local/tomcat/shared/
@@ -25,5 +26,7 @@ COPY --from=repo_build /usr/local/tomcat/conf /usr/local/tomcat/conf
 COPY --from=repo_build /usr/local/tomcat/lib /usr/local/tomcat/lib
 COPY --from=repo_build /usr/local/tomcat/shared /usr/local/tomcat/shared
 COPY --from=repo_build /usr/local/tomcat/webapps /usr/local/tomcat/webapps
+
+USER tomcat
 
 CMD ["catalina.sh", "run"]

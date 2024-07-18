@@ -135,7 +135,8 @@ target "tomcat_base" {
 }
 
 target "repository" {
-  dockerfile = "./repository/Dockerfile"
+  context = "./repository"
+  dockerfile = "Dockerfile"
   inherits = ["tomcat_base"]
   contexts = {
     tomcat_base = "target:tomcat_base"
