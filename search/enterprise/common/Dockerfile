@@ -1,4 +1,4 @@
-FROM quay.io/alfresco/alfresco-base-java:jre17-rockylinux9
+FROM java_base
 
 ENV PORT=8080
 EXPOSE 8080

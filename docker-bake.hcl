@@ -1,5 +1,9 @@
 group "default" {
-  targets = ["java_base", "tomcat_base"]
+  targets = ["java_base", "tomcat_base", "search_metadata"]
+}
+
+group "enterprise-search" {
+  targets = ["search_metadata"]
 }
 
 variable "LABEL_VENDOR" {
@@ -123,5 +127,19 @@ target "tomcat_base" {
     "org.opencontainers.image.description" = "A base image shipping Tomcat for Alfresco Products"
   }
   tags = ["alfresco-base-tomcat:tomcat${TOMCAT_MAJOR}-${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
+  output = ["type=docker"]
+}
+
+target "search_metadata" {
+  dockerfile = "./search/enterprise/metadata/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - Metadata"
+    "org.opencontainers.image.description" = "Alfresco Enterprise Search Metadata live indexer"
+  }
+  tags = ["alfresco-elasticsearch-live-indexing-metadata:latest"]
   output = ["type=docker"]
 }
