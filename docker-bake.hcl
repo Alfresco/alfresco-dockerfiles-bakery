@@ -7,7 +7,7 @@ group "content_service" {
 }
 
 group "enterprise-search" {
-  targets = ["search_metadata"]
+  targets = ["search_liveindexing"]
 }
 
 variable "LABEL_VENDOR" {
@@ -56,6 +56,10 @@ variable "IMAGE_BASE_LOCATION" {
 
 variable "JAVA_MAJOR" {
   default = "17"
+}
+
+variable "LIVEINDEXING" {
+  default = "metadata"
 }
 
 target "java_base" {
@@ -149,16 +153,23 @@ target "repository" {
   output = ["type=docker"]
 }
 
-target "search_metadata" {
-  dockerfile = "./search/enterprise/metadata/Dockerfile"
+target "search_liveindexing" {
+  matrix = {
+    liveindexing = ["metadata", "path"]
+  }
+  name = "search_liveindexing-${liveindexing}"
+  args = {
+    LIVEINDEXING = "${liveindexing}"
+  }
+  dockerfile = "./search/enterprise/common/Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
   }
   labels = {
-    "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - Metadata"
-    "org.opencontainers.image.description" = "Alfresco Enterprise Search Metadata live indexer"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing}"
+    "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing} live indexing"
   }
-  tags = ["alfresco-elasticsearch-live-indexing-metadata:latest"]
+  tags = ["alfresco-elasticsearch-live-indexing-${LIVEINDEXING}:latest"]
   output = ["type=docker"]
 }
