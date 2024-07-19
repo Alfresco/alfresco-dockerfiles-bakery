@@ -34,6 +34,9 @@ jobs:
       - name: Bake Docker images
         uses: docker/bake-action@eac74531aa56a9266bfedfe5edb6b851ce2cca2b  # v5.4.0
 
+      - name: Show all images
+        run: docker images
+
       - name: Verify docker-compose
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v5.34.0
         timeout-minutes: 10
