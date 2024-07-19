@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-elasticsearch-live-indexing-metadata",
+        "version": "4.0.1",
+        "path": "search/enterprise/common",
+        "classifier": "-app.jar",
+        "group": "org.alfresco"
+      },
+      {
+        "name": "alfresco-elasticsearch-live-indexing-path",
+        "version": "4.0.1",
+        "path": "search/enterprise/common",
+        "classifier": "-app.jar",
+        "group": "org.alfresco"
+      }
+    ]
+  }
+}

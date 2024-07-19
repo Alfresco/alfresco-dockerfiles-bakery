@@ -1,7 +1,7 @@
 version: "2"
 services:
   alfresco:
-    image: quay.io/alfresco/alfresco-content-repository:23.2.1
+    image: quay.io/alfresco/alfresco-content-repository:23.2.2
     mem_limit: 1900m
     environment:
       JAVA_TOOL_OPTIONS: >-
@@ -182,12 +182,12 @@ services:
     ports:
       - "9090:9090"
   live-indexing-metadata:
-    image: alfresco-enterprise-search-metadata:test
+    image: alfresco-elasticsearch-live-indexing-metadata:latest
     environment:
         SPRING_ELASTICSEARCH_REST_URIS: http://elastic:9200
         SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
   live-indexing-path:
-      image: alfresco-enterprise-search-path:test
+      image: alfresco-elasticsearch-live-indexing-path:latest
       environment:
           SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
           SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
