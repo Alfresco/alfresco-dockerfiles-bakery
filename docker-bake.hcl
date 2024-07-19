@@ -93,7 +93,7 @@ target "java_base" {
     "org.opencontainers.image.authors" = "${LABEL_AUTHOR}"
   }
   tags = ["alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
-  output = ["type=docker"]
+  output = ["type=cacheonly"]
 }
 
 variable "TOMCAT_MAJOR" {
@@ -135,7 +135,7 @@ target "tomcat_base" {
     "org.opencontainers.image.description" = "A base image shipping Tomcat for Alfresco Products"
   }
   tags = ["alfresco-base-tomcat:tomcat${TOMCAT_MAJOR}-${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
-  output = ["type=docker"]
+  output = ["type=cacheonly"]
 }
 
 target "repository" {
@@ -170,6 +170,6 @@ target "search_liveindexing" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing}"
     "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing} live indexing"
   }
-  tags = ["alfresco-elasticsearch-live-indexing-${LIVEINDEXING}:latest"]
+  tags = ["alfresco-elasticsearch-live-indexing-${liveindexing}:latest"]
   output = ["type=docker"]
 }
