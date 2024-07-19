@@ -7,7 +7,7 @@ Sets of variables configurable with your docker image
 ```yaml
 
 live-indexing-metadata:
-    image: alfresco-enterprise-search-metadata:YOUR-TAG
+    image: alfresco-elasticsearch-live-indexing-metadata:YOUR-TAG
     environment:
         SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
         SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
@@ -22,7 +22,7 @@ live-indexing-metadata:
 ```yaml
 
 live-indexing-path:
-    image: alfresco-enterprise-search-path:YOUR-TAG
+    image: alfresco-elasticsearch-live-indexing-path:YOUR-TAG
     environment:
         SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
         SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
@@ -37,7 +37,7 @@ live-indexing-path:
 ```yaml
 
 live-indexing-content:
-    image: alfresco-enterprise-search-content:YOUR-TAG
+    image: alfresco-elasticsearch-live-indexing:YOUR-TAG
     environment:
         SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
         SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
