@@ -19,7 +19,7 @@
         "name": "alfresco-elasticsearch-live-indexing",
         "version": "4.0.1",
         "path": "search/enterprise/common",
-        "classifier": "-aio-app.jar",
+        "classifier": "-app.jar",
         "group": "org.alfresco"
       }
     ]

@@ -155,7 +155,7 @@ target "repository" {
 
 target "search_liveindexing" {
   matrix = {
-    liveindexing = ["metadata", "path", "aio"]
+    liveindexing = ["metadata", "path", ""]
   }
   name = "search_liveindexing-${liveindexing}"
   args = {
