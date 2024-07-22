@@ -155,7 +155,7 @@ target "repository" {
 
 target "search_liveindexing" {
   matrix = {
-    liveindexing = ["metadata", "path"]
+    liveindexing = ["metadata", "path", "aio"]
   }
   name = "search_liveindexing-${liveindexing}"
   args = {
@@ -171,22 +171,5 @@ target "search_liveindexing" {
     "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing} live indexing"
   }
   tags = ["alfresco-elasticsearch-live-indexing-${liveindexing}:latest"]
-  output = ["type=docker"]
-}
-
-target "search_liveindexing-aio" {
-  args = {
-    LIVEINDEXING = "alfresco-elasticsearch-live-indexing"
-  }
-  dockerfile = "./search/enterprise/common/Dockerfile"
-  inherits = ["java_base"]
-  contexts = {
-    java_base = "target:java_base"
-  }
-  labels = {
-    "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - All in one"
-    "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search -  All in one live indexing"
-  }
-  tags = ["alfresco-elasticsearch-live-indexing:latest"]
   output = ["type=docker"]
 }

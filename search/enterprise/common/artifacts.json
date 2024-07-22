@@ -20,7 +20,8 @@
         "version": "4.0.1",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
-        "group": "org.alfresco"
+        "group": "org.alfresco",
+        "name_addon": "-aio"
       }
     ]
   }
