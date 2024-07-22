@@ -62,6 +62,22 @@ variable "LIVEINDEXING" {
   default = "metadata"
 }
 
+variable "ALFRESCO_REPO_GROUP_ID" {
+  default = "1000"
+}
+
+variable "ALFRESCO_REPO_GROUP_NAME" {
+  default = "alfresco"
+}
+
+variable "ALFRESCO_REPO_USER_ID" {
+  default = "33000"
+}
+
+variable "ALFRESCO_REPO_USER_NAME" {
+  default = "alfresco"
+}
+
 target "java_base" {
   dockerfile = "./java/Dockerfile"
   args = {
@@ -144,6 +160,12 @@ target "repository" {
   inherits = ["tomcat_base"]
   contexts = {
     tomcat_base = "target:tomcat_base"
+  }
+  args = {
+    ALFRESCO_REPO_GROUP_ID = "${ALFRESCO_REPO_GROUP_ID}"
+    ALFRESCO_REPO_GROUP_NAME = "${ALFRESCO_REPO_GROUP_NAME}"
+    ALFRESCO_REPO_USER_ID = "${ALFRESCO_REPO_USER_ID}"
+    ALFRESCO_REPO_USER_NAME = "${ALFRESCO_REPO_USER_NAME}"
   }
   labels = {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Content Repository"
