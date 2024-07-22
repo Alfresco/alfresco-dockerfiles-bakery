@@ -32,12 +32,12 @@ live-indexing-path:
 - `SPRING_ELASTICSEARCH_REST_URIS` - Elasticsearch server, by default `http://elasticsearch:9200`
 - `SPRING_ACTIVEMQ_BROKERURL` - Alfresco ActiveMQ, by default `nio://activemq:61616`
 
-## path
+## content
 
 ```yaml
 
 live-indexing-content:
-    image: alfresco-elasticsearch-live-indexing:YOUR-TAG
+    image: alfresco-elasticsearch-live-indexing-content:YOUR-TAG
     environment:
         SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
         SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
