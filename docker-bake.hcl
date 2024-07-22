@@ -155,9 +155,9 @@ target "repository" {
 
 target "search_liveindexing" {
   matrix = {
-    liveindexing = ["metadata", "path", "aio"]
+    liveindexing = ["alfresco-elasticsearch-live-indexing-metadata", "alfresco-elasticsearch-live-indexing-path", "alfresco-elasticsearch-live-indexing"]
   }
-  name = "search_liveindexing-${liveindexing}"
+  name = "${liveindexing}"
   args = {
     LIVEINDEXING = "${liveindexing}"
   }
@@ -170,6 +170,6 @@ target "search_liveindexing" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing}"
     "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing} live indexing"
   }
-  tags = ["alfresco-elasticsearch-live-indexing-${liveindexing}:latest"]
+  tags = ["${liveindexing}:latest"]
   output = ["type=docker"]
 }

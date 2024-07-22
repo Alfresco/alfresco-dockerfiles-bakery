@@ -6,8 +6,7 @@
         "version": "23.2.2",
         "path": "repository",
         "classifier": ".zip",
-        "group": "org.alfresco",
-        "name_addon": ""
+        "group": "org.alfresco"
       }
     ]
   }
