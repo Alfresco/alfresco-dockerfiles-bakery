@@ -17,6 +17,9 @@ RUN cp -a /tmp/distribution/licenses ${CATALINA_HOME}/
 RUN cp -a /tmp/distribution/keystore/metadata-keystore/keystore* ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/
 RUN sed -i 's|shared.loader=|shared.loader=${catalina.base}/shared/classes,${catalina.base}/shared/lib/*.jar|' ${CATALINA_HOME}/conf/catalina.properties
 RUN sed -i 's|../modules/platform|modules/platform|' ${CATALINA_HOME}/conf/Catalina/localhost/alfresco.xml
+RUN sed -i -e "s|appender.rolling.fileName\=alfresco.log|appender.rolling.fileName\=${CATALINA_HOME}/logs\/alfresco.log|" \
+    -e "s|appender.rolling.filePattern=alfresco.log.%d{yyyy-MM-dd}|appender.rolling.filePattern\=${CATALINA_HOME}/logs\/alfresco.log.%d{yyyy-MM-dd}|" \
+    ${CATALINA_HOME}/webapps/alfresco/WEB-INF/classes/log4j2.properties
 
 FROM tomcat_base AS repo-rhlike
 
