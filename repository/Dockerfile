@@ -39,7 +39,7 @@ RUN groupadd -g ${ALFRESCO_REPO_GROUP_ID} ${ALFRESCO_REPO_GROUP_NAME} && \
   useradd -u ${ALFRESCO_REPO_USER_ID} -g ${ALFRESCO_REPO_GROUP_NAME} ${ALFRESCO_REPO_USER_NAME} -G tomcat && \
   mkdir -m 750 -p ${CATALINA_HOME}/modules/platform && \
   chgrp -R ${ALFRESCO_REPO_GROUP_ID} ${CATALINA_HOME}/modules && \
-  yum install -y fontconfig dejavu-fonts-common fontpackages-filesystem freetype libpng dejavu-sans-fonts && \
+  yum install -y fontconfig && \
   yum clean all && rm -rf /var/cache/yum
 
 FROM repo-rhlike AS repo-rockylinux9
