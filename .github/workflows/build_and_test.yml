@@ -39,7 +39,7 @@ jobs:
 
       - name: Docker save the images produced by the bake action with the name consisting alfresco
         run: |
-          docker save -o alfresco-docker-images.tar $(docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco)
+          docker save -o /tmp/alfresco-docker-images.tar $(docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco)
 
       - name: Upload image as a tar for next job
         uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # 4.3.4
