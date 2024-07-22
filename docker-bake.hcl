@@ -155,7 +155,7 @@ target "repository" {
 
 target "search_liveindexing" {
   matrix = {
-    liveindexing = ["alfresco-elasticsearch-live-indexing-metadata", "alfresco-elasticsearch-live-indexing-path", "alfresco-elasticsearch-live-indexing"]
+    liveindexing = ["alfresco-elasticsearch-live-indexing-metadata", "alfresco-elasticsearch-live-indexing-path", "alfresco-elasticsearch-live-indexing-content", "alfresco-elasticsearch-live-indexing"]
   }
   name = "${liveindexing}"
   args = {
