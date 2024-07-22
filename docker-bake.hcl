@@ -175,7 +175,6 @@ target "search_liveindexing" {
 }
 
 target "search_liveindexing-aio" {
-  name = "search_liveindexing-aio"
   args = {
     LIVEINDEXING = "alfresco-elasticsearch-live-indexing"
   }
