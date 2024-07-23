@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["content_service", "enterprise-search"]
+  targets = ["content_service", "enterprise-search", "ats"]
 }
 
 group "content_service" {
@@ -8,6 +8,10 @@ group "content_service" {
 
 group "enterprise-search" {
   targets = ["search_liveindexing"]
+}
+
+group "ats" {
+  targets = ["ats_trouter"]
 }
 
 variable "LABEL_VENDOR" {
