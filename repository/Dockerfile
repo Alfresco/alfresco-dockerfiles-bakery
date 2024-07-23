@@ -9,10 +9,12 @@ USER root
 RUN yum install -y unzip
 
 ADD alfresco-content-services-distribution-*.zip /tmp/
+ADD amps /tmp/amps
 
 RUN unzip /tmp/alfresco-content-services-distribution-*.zip -d /tmp/distribution
 RUN mkdir -m 750 -p ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/ ${CATALINA_HOME}/alf_data
 RUN unzip /tmp/distribution/web-server/webapps/alfresco.war -d ${CATALINA_HOME}/webapps/alfresco/
+RUN java -jar /tmp/distribution/bin/alfresco-mmt.jar install /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory
 RUN cp -a /tmp/distribution/web-server/conf/* ${CATALINA_HOME}/conf/ && rm -f ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
 RUN cp -a /tmp/distribution/web-server/lib/* ${CATALINA_HOME}/lib/
 RUN cp -a /tmp/distribution/licenses ${CATALINA_HOME}/

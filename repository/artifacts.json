@@ -2,6 +2,13 @@
   "artifacts": {
     "acs23": [
       {
+        "name": "alfresco-googledrive-repo-enterprise",
+        "version": "4.1.0",
+        "path": "repository/amps",
+        "classifier": ".amp",
+        "group": "org.alfresco.integrations"
+      },
+      {
         "name": "alfresco-content-services-distribution",
         "version": "23.2.2",
         "path": "repository",
