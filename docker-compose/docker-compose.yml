@@ -49,7 +49,7 @@ services:
       start_period: 1m
   transform-router:
     mem_limit: 512m
-    image: alfresco-transform-router:latest
+    image: localhost/alfresco-transform-router:latest
     environment:
       JAVA_OPTS: >-
         -XX:MinRAMPercentage=50
@@ -182,7 +182,7 @@ services:
     ports:
       - "9090:9090"
   live-indexing:
-      image:  alfresco-elasticsearch-live-indexing:latest
+      image: localhost/alfresco-elasticsearch-live-indexing:latest
       environment:
           SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
           SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616

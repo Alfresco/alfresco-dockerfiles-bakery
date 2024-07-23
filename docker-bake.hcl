@@ -96,7 +96,7 @@ target "java_base" {
     "org.opencontainers.image.source" = "$LABEL_SOURCE"
     "org.opencontainers.image.authors" = "${LABEL_AUTHOR}"
   }
-  tags = ["alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
+  tags = ["localhost/alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
   output = ["type=cacheonly"]
 }
 
@@ -138,7 +138,7 @@ target "tomcat_base" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Tomcat"
     "org.opencontainers.image.description" = "A base image shipping Tomcat for Alfresco Products"
   }
-  tags = ["alfresco-base-tomcat:tomcat${TOMCAT_MAJOR}-${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
+  tags = ["localhost/alfresco-base-tomcat:tomcat${TOMCAT_MAJOR}-${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
   output = ["type=cacheonly"]
 }
 
@@ -153,7 +153,7 @@ target "repository" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Content Repository"
     "org.opencontainers.image.description" = "Alfresco Content Services Repository"
   }
-  tags = ["alfresco-content-repository:latest"]
+  tags = ["localhost/alfresco-content-repository:latest"]
   output = ["type=docker"]
 }
 
@@ -191,7 +191,7 @@ target "search_liveindexing" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name}"
     "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name} live indexing"
   }
-  tags = ["${liveindexing.artifact}:latest"]
+  tags = ["localhost/${liveindexing.artifact}:latest"]
   output = ["type=docker"]
 }
 
@@ -227,6 +227,6 @@ target "ats_trouter" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} ATS Trouter"
     "org.opencontainers.image.description" = "Alfresco Transform Service Trouter"
   }
-  tags = ["alfresco-transform-router:latest"]
+  tags = ["localhost/alfresco-transform-router:latest"]
   output = ["type=docker"]
 }
