@@ -49,7 +49,7 @@ services:
       start_period: 1m
   transform-router:
     mem_limit: 512m
-    image: quay.io/alfresco/alfresco-transform-router:4.1.2
+    image: alfresco-transform-router:latest
     environment:
       JAVA_OPTS: >-
         -XX:MinRAMPercentage=50

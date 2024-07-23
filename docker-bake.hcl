@@ -190,3 +190,39 @@ target "search_liveindexing" {
   tags = ["${liveindexing.artifact}:latest"]
   output = ["type=docker"]
 }
+
+variable "TROUTER_GROUPNAME" {
+  default = "Alfresco"
+}
+
+variable "TROUTER_GROUPID" {
+  default = "1000"
+}
+
+variable "TROUTER_ROUTERUSERNAME" {
+  default = "trouter"
+}
+
+variable "TROUTER_USERID" {
+  default = "33016"
+}
+
+target "ats_trouter" {
+  dockerfile = "./ats/trouter/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    GROUPNAME = "${TROUTER_GROUPNAME}"
+    GROUPID = "${TROUTER_GROUPID}"
+    ROUTERUSERNAME = "${TROUTER_ROUTERUSERNAME}"
+    USERID = "${TROUTER_USERID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} ATS Trouter"
+    "org.opencontainers.image.description" = "Alfresco Transform Service Trouter"
+  }
+  tags = ["alfresco-transform-router:latest"]
+  output = ["type=docker"]
+}

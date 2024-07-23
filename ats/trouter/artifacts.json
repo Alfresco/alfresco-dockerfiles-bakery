@@ -1,0 +1,13 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-transform-router",
+        "version": "4.1.3",
+        "path": "ats/trouter",
+        "classifier": "-app.jar",
+        "group": "org.alfresco"
+      }
+    ]
+  }
+}
