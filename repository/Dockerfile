@@ -9,17 +9,16 @@ USER root
 RUN yum install -y unzip
 
 ADD alfresco-content-services-distribution-*.zip /tmp/
-ADD amps /tmp/amps
 
 RUN unzip /tmp/alfresco-content-services-distribution-*.zip -d /tmp/distribution
-RUN mkdir -m 750 -p ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/ ${CATALINA_HOME}/alf_data
+RUN mkdir -m 750 -p ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/
+RUN mkdir -m 770 ${CATALINA_HOME}/alf_data/
 RUN unzip /tmp/distribution/web-server/webapps/alfresco.war -d ${CATALINA_HOME}/webapps/alfresco/
-RUN java -jar /tmp/distribution/bin/alfresco-mmt.jar install /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory
 RUN cp -a /tmp/distribution/web-server/conf/* ${CATALINA_HOME}/conf/ && rm -f ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
 RUN cp -a /tmp/distribution/web-server/lib/* ${CATALINA_HOME}/lib/
 RUN cp -a /tmp/distribution/licenses ${CATALINA_HOME}/
 RUN cp -a /tmp/distribution/keystore/metadata-keystore/keystore* ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/
-RUN chmod -R o= ${CATALINA_HOME}/
+RUN chmod -R o-rwx ${CATALINA_HOME}/
 RUN sed -i 's|shared.loader=|shared.loader=${catalina.base}/shared/classes,${catalina.base}/shared/lib/*.jar|' \
   ${CATALINA_HOME}/conf/catalina.properties
 RUN sed -i 's|../modules/platform|modules/platform|' ${CATALINA_HOME}/conf/Catalina/localhost/alfresco.xml
@@ -27,6 +26,9 @@ RUN sed -i \
   -re "s|(appender.rolling.fileName\=)(alfresco.log)|\1${CATALINA_HOME}/logs\/\2|" \
   -re "s|(appender.rolling.filePattern=)(alfresco.log.%d\{yyyy-MM-dd\})|\1${CATALINA_HOME}/logs\/\2|" \
   ${CATALINA_HOME}/webapps/alfresco/WEB-INF/classes/log4j2.properties
+
+ADD amps /tmp/amps
+RUN java -jar /tmp/distribution/bin/alfresco-mmt.jar install /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory
 
 FROM tomcat_base AS repo-rhlike
 ARG ALFRESCO_REPO_USER_ID
