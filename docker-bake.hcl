@@ -155,11 +155,28 @@ target "repository" {
 
 target "search_liveindexing" {
   matrix = {
-    liveindexing = ["alfresco-elasticsearch-live-indexing-metadata", "alfresco-elasticsearch-live-indexing-path", "alfresco-elasticsearch-live-indexing-content", "alfresco-elasticsearch-live-indexing"]
+    liveindexing = [
+      {
+        artifact = "alfresco-elasticsearch-live-indexing-metadata",
+        name = "metadata"
+      },
+      {
+        artifact = "alfresco-elasticsearch-live-indexing-path",
+        name = "path"
+      },
+      {
+        artifact = "alfresco-elasticsearch-live-indexing-content",
+        name = "content"
+      },
+      {
+        artifact = "alfresco-elasticsearch-live-indexing",
+        name = "all-in-one"
+      }
+    ]
   }
-  name = "${liveindexing}"
+  name = "${liveindexing.artifact}"
   args = {
-    LIVEINDEXING = "${liveindexing}"
+    LIVEINDEXING = "${liveindexing.artifact}"
   }
   dockerfile = "./search/enterprise/common/Dockerfile"
   inherits = ["java_base"]
@@ -167,9 +184,9 @@ target "search_liveindexing" {
     java_base = "target:java_base"
   }
   labels = {
-    "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing}"
-    "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing} live indexing"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name}"
+    "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name} live indexing"
   }
-  tags = ["${liveindexing}:latest"]
+  tags = ["${liveindexing.artifact}:latest"]
   output = ["type=docker"]
 }
