@@ -7,7 +7,7 @@ This Docker file is used to build an Alfresco Content Repository image.
 ## Building the image
 
 Make sure all required artifacts are present in the build context `repository/`.
-iTYou can put them manually in the `repository/` folder (for example if that's a
+You can put them manually in the `repository/` folder (for example if that's a
 custom module of yours), or use the script `./scripts/fetch-artifacts.sh` to
 download them from Alfresco's Nexus.
 
@@ -23,7 +23,7 @@ docker buildx bake repository
 ### Alfresco repository configuration
 
 All preperties you would normally add in the alfresco-global.properties file can
-be added n the `JAVA_OPTS` environment variable to the container.
+be added in the `JAVA_OPTS` environment variable to the container.
 
 For example, to set the database URL, you can use the following environment
 variable:
