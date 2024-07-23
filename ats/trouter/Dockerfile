@@ -7,7 +7,7 @@ ARG GROUPID
 ARG ROUTERUSERNAME
 ARG USERID
 
-ADD ats/trouter/alfresco-transform-router*-app.jar /opt/app.jar
+ADD ats/trouter/alfresco-transform-router*.jar /opt/app.jar
 
 RUN groupadd -g ${GROUPID} ${GROUPNAME} && \
     useradd -u ${USERID} -G ${GROUPNAME} ${ROUTERUSERNAME} && \
