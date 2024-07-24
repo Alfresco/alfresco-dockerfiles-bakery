@@ -217,19 +217,19 @@ target "search_liveindexing" {
   output = ["type=docker"]
 }
 
-variable "ALFRESCO_TROUTER_GROUPNAME" {
+variable "ALFRESCO_TROUTER_GROUP_NAME" {
   default = "Alfresco"
 }
 
-variable "ALFRESCO_TROUTER_GROUPID" {
+variable "ALFRESCO_TROUTER_GROUP_ID" {
   default = "1000"
 }
 
-variable "ALFRESCO_TROUTER_USERNAME" {
+variable "ALFRESCO_TROUTER_USER_NAME" {
   default = "trouter"
 }
 
-variable "ALFRESCO_TROUTER_USERID" {
+variable "ALFRESCO_TROUTER_USER_ID" {
   default = "33016"
 }
 
