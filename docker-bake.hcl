@@ -66,6 +66,18 @@ variable "LIVEINDEXING" {
   default = "metadata"
 }
 
+variable "USERID" {
+  default = "33016"
+}
+
+variable "GROUPNAME" {
+  default = "Alfresco"
+}
+
+variable "GROUPID" {
+  default = "1000"
+}
+
 target "java_base" {
   dockerfile = "./java/Dockerfile"
   args = {
@@ -195,20 +207,8 @@ target "search_liveindexing" {
   output = ["type=docker"]
 }
 
-variable "TROUTER_GROUPNAME" {
-  default = "Alfresco"
-}
-
-variable "TROUTER_GROUPID" {
-  default = "1000"
-}
-
 variable "TROUTER_ROUTERUSERNAME" {
   default = "trouter"
-}
-
-variable "TROUTER_USERID" {
-  default = "33016"
 }
 
 target "ats_trouter" {
@@ -218,10 +218,10 @@ target "ats_trouter" {
     java_base = "target:java_base"
   }
   args = {
-    GROUPNAME = "${TROUTER_GROUPNAME}"
-    GROUPID = "${TROUTER_GROUPID}"
+    GROUPNAME = "${GROUPNAME}"
+    GROUPID = "${GROUPID}"
     ROUTERUSERNAME = "${TROUTER_ROUTERUSERNAME}"
-    USERID = "${TROUTER_USERID}"
+    USERID = "${USERID}"
   }
   labels = {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} ATS Trouter"
