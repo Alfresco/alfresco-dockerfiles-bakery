@@ -11,6 +11,7 @@ RUN yum install -y unzip
 ADD alfresco-content-services-distribution-*.zip /tmp/
 
 RUN unzip /tmp/alfresco-content-services-distribution-*.zip -d /tmp/distribution
+RUN java -jar /tmp/distribution/bin/alfresco-mmt.jar list /tmp/distribution/web-server/webapps/alfresco.war
 RUN mkdir -m 750 -p ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/
 RUN mkdir -m 770 ${CATALINA_HOME}/alf_data/
 RUN unzip /tmp/distribution/web-server/webapps/alfresco.war -d ${CATALINA_HOME}/webapps/alfresco/
@@ -29,6 +30,7 @@ RUN sed -i \
 
 ADD amps /tmp/amps
 RUN java -jar /tmp/distribution/bin/alfresco-mmt.jar install /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory
+RUN java -jar /tmp/distribution/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/alfresco
 
 FROM tomcat_base AS repo-rhlike
 ARG ALFRESCO_REPO_USER_ID
