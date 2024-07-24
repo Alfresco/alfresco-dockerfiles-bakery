@@ -66,16 +66,20 @@ variable "LIVEINDEXING" {
   default = "metadata"
 }
 
-variable "USERID" {
-  default = "33016"
-}
-
-variable "GROUPNAME" {
-  default = "Alfresco"
-}
-
-variable "GROUPID" {
+variable "ALFRESCO_REPO_GROUP_ID" {
   default = "1000"
+}
+
+variable "ALFRESCO_REPO_GROUP_NAME" {
+  default = "alfresco"
+}
+
+variable "ALFRESCO_REPO_USER_ID" {
+  default = "33000"
+}
+
+variable "ALFRESCO_REPO_USER_NAME" {
+  default = "alfresco"
 }
 
 target "java_base" {
@@ -161,6 +165,12 @@ target "repository" {
   contexts = {
     tomcat_base = "target:tomcat_base"
   }
+  args = {
+    ALFRESCO_REPO_GROUP_ID = "${ALFRESCO_REPO_GROUP_ID}"
+    ALFRESCO_REPO_GROUP_NAME = "${ALFRESCO_REPO_GROUP_NAME}"
+    ALFRESCO_REPO_USER_ID = "${ALFRESCO_REPO_USER_ID}"
+    ALFRESCO_REPO_USER_NAME = "${ALFRESCO_REPO_USER_NAME}"
+  }
   labels = {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Content Repository"
     "org.opencontainers.image.description" = "Alfresco Content Services Repository"
@@ -207,8 +217,20 @@ target "search_liveindexing" {
   output = ["type=docker"]
 }
 
-variable "TROUTER_ROUTERUSERNAME" {
+variable "ALFRESCO_TROUTER_GROUPNAME" {
+  default = "Alfresco"
+}
+
+variable "ALFRESCO_TROUTER_GROUPID" {
+  default = "1000"
+}
+
+variable "ALFRESCO_TROUTER_USERNAME" {
   default = "trouter"
+}
+
+variable "ALFRESCO_TROUTER_USERID" {
+  default = "33016"
 }
 
 target "ats_trouter" {
@@ -218,10 +240,10 @@ target "ats_trouter" {
     java_base = "target:java_base"
   }
   args = {
-    GROUPNAME = "${GROUPNAME}"
-    GROUPID = "${GROUPID}"
-    ROUTERUSERNAME = "${TROUTER_ROUTERUSERNAME}"
-    USERID = "${USERID}"
+    ALFRESCO_TROUTER_GROUP_NAME = "${ALFRESCO_TROUTER_GROUP_NAME}"
+    ALFRESCO_TROUTER_GROUP_ID = "${ALFRESCO_TROUTER_GROUP_ID}"
+    ALFRESCO_TROUTER_USER_NAME = "${ALFRESCO_TROUTER_USER_NAME}"
+    ALFRESCO_TROUTER_USER_ID = "${ALFRESCO_TROUTER_USER_ID}"
   }
   labels = {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} ATS Trouter"

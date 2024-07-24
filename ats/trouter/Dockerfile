@@ -2,18 +2,18 @@ FROM java_base
 
 EXPOSE 8095 8443
 
-ARG GROUPNAME
-ARG GROUPID
-ARG ROUTERUSERNAME
-ARG USERID
+ARG ALFRESCO_TROUTER_GROUP_NAME
+ARG ALFRESCO_TROUTER_GROUP_ID
+ARG ALFRESCO_TROUTER_USER_NAME
+ARG ALFRESCO_TROUTER_USER_ID
 
 ADD ats/trouter/alfresco-transform-router*.jar /opt/app.jar
 
-RUN groupadd -g ${GROUPID} ${GROUPNAME} && \
-    useradd -u ${USERID} -G ${GROUPNAME} ${ROUTERUSERNAME} && \
-    chgrp -R ${GROUPNAME} /opt/app.jar
+RUN groupadd -g ${ALFRESCO_TROUTER_GROUP_ID} ${ALFRESCO_TROUTER_GROUP_NAME} && \
+    useradd -u ${ALFRESCO_TROUTER_USER_ID} -g ${ALFRESCO_TROUTER_GROUP_NAME} ${ALFRESCO_TROUTER_USER_NAME} && \
+    chgrp -R ${ALFRESCO_TROUTER_GROUP_NAME} /opt/app.jar
 
-USER ${ROUTERUSERNAME}
+USER ${ALFRESCO_TROUTER_USER_NAME}
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=1m \
   CMD curl -f http://localhost:8095/actuator/health || exit 1

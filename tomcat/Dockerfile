@@ -124,7 +124,6 @@ COPY --chown=:tomcat --chmod=640 --from=tcnative_build /usr/local/tcnative $TOMC
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 RUN mkdir -m 770 logs temp work && chgrp tomcat . logs temp work; \
   chmod og+x bin/*.sh; \
-  find . -type d -exec chmod 770 {} +; \
   # verify Tomcat Native is working properly
   nativeLines="$(catalina.sh configtest 2>&1 | grep -c 'Loaded Apache Tomcat Native library')" && \
   test $nativeLines -ge 1 || exit 1
