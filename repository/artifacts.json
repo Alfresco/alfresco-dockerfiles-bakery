@@ -10,6 +10,14 @@
         "repository": "releases"
       },
       {
+        "name": "alfresco-device-sync-repo",
+        "version": "5.0.0",
+        "path": "repository/amps",
+        "classifier": ".amp",
+        "group": "org.alfresco.services.sync",
+        "repository": "enterprise-releases"
+      },
+      {
         "name": "alfresco-googledrive-repo-enterprise",
         "version": "4.1.0",
         "path": "repository/amps",
