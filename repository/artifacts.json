@@ -6,14 +6,16 @@
         "version": "4.1.0",
         "path": "repository/amps",
         "classifier": ".amp",
-        "group": "org.alfresco.integrations"
+        "group": "org.alfresco.integrations",
+        "repository": "enterprise-releases"
       },
       {
         "name": "alfresco-content-services-distribution",
         "version": "23.2.2",
         "path": "repository",
         "classifier": ".zip",
-        "group": "org.alfresco"
+        "group": "org.alfresco",
+        "repository": "enterprise-releases"
       }
     ]
   }

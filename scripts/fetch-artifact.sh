@@ -10,12 +10,13 @@ cd ${REPO_ROOT}/..
 
 for i in $(find . -name artifacts.json -mindepth 2); do
   for j in $(jq -r ".artifacts.acs${INDEX_KEY} | keys | .[]" $i); do
-    ARTIFACT_BASEURL="https://nexus.alfresco.com/nexus/service/local/repositories/enterprise-releases"
+    ARTIFACT_REPO=$(jq -r ".artifacts.acs${INDEX_KEY}[$j].repository" $i)
     ARTIFACT_NAME=$(jq -r ".artifacts.acs${INDEX_KEY}[$j].name" $i)
     ARTIFACT_VERSION=$(jq -r ".artifacts.acs${INDEX_KEY}[$j].version" $i)
     ARTIFACT_EXT=$(jq -r ".artifacts.acs${INDEX_KEY}[$j].classifier" $i)
     ARTIFACT_GROUP=$(jq -r ".artifacts.acs${INDEX_KEY}[$j].group" $i)
     ARTIFACT_PATH=$(jq -r ".artifacts.acs${INDEX_KEY}[$j].path" $i)
+    ARTIFACT_BASEURL="https://nexus.alfresco.com/nexus/service/local/repositories/${ARTIFACT_REPO}/content"
     echo "Downloading $ARTIFACT_GROUP:$ARTIFACT_NAME $ARTIFACT_VERSION from $ARTIFACT_BASEURL"
     wget "${ARTIFACT_BASEURL}/${ARTIFACT_GROUP//\./\/}/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}" \
       -O ${ARTIFACT_PATH}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}
