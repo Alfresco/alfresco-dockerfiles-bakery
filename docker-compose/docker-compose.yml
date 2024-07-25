@@ -51,9 +51,6 @@ services:
     mem_limit: 512m
     image: localhost/alfresco-transform-router:latest
     environment:
-      JAVA_OPTS_CONTAINER_FLAGS: >-
-        -XX:MinRAMPercentage=50
-        -XX:MaxRAMPercentage=80
       ACTIVEMQ_URL: nio://activemq:61616
       CORE_AIO_URL: http://transform-core-aio:8090
       FILE_STORE_URL: >-
