@@ -11,7 +11,7 @@ ADD ats/trouter/alfresco-transform-router*.jar /opt/app.jar
 
 RUN groupadd -g ${ALFRESCO_TROUTER_GROUP_ID} ${ALFRESCO_TROUTER_GROUP_NAME} && \
     useradd -u ${ALFRESCO_TROUTER_USER_ID} -g ${ALFRESCO_TROUTER_GROUP_NAME} ${ALFRESCO_TROUTER_USER_NAME} && \
-    chgrp -R ${ALFRESCO_TROUTER_GROUP_NAME} /opt/app.jar
+    chgrp ${ALFRESCO_TROUTER_GROUP_NAME} /opt/app.jar
 
 USER ${ALFRESCO_TROUTER_USER_NAME}
 
