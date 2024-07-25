@@ -10,6 +10,14 @@
         "repository": "releases"
       },
       {
+        "name": "alfresco-aos-module",
+        "version": "3.0.0",
+        "path": "repository/amps",
+        "classifier": ".amp",
+        "group": "org.alfresco.aos-module",
+        "repository": "releases"
+      },
+      {
         "name": "alfresco-device-sync-repo",
         "version": "5.0.0",
         "path": "repository/amps",

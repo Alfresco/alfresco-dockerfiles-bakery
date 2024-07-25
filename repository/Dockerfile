@@ -8,17 +8,18 @@ FROM tomcat_base AS repo_build
 USER root
 RUN yum install -y unzip
 
-ADD alfresco-content-services-distribution-*.zip /tmp/
+ADD distribution /tmp/
+ENV DISTDIR="/tmp/distribution"
 
-RUN unzip /tmp/alfresco-content-services-distribution-*.zip -d /tmp/distribution
-RUN java -jar /tmp/distribution/bin/alfresco-mmt.jar list /tmp/distribution/web-server/webapps/alfresco.war
+RUN unzip /tmp/*.zip -d ${DISTDIR}
+RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar list ${DISTDIR}/web-server/webapps/alfresco.war
 RUN mkdir -m 750 -p ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/
 RUN mkdir -m 770 ${CATALINA_HOME}/alf_data/
-RUN unzip /tmp/distribution/web-server/webapps/alfresco.war -d ${CATALINA_HOME}/webapps/alfresco/
-RUN cp -a /tmp/distribution/web-server/conf/* ${CATALINA_HOME}/conf/ && rm -f ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
-RUN cp -a /tmp/distribution/web-server/lib/* ${CATALINA_HOME}/lib/
-RUN cp -a /tmp/distribution/licenses ${CATALINA_HOME}/
-RUN cp -a /tmp/distribution/keystore/metadata-keystore/keystore* ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/
+RUN unzip ${DISTDIR}/web-server/webapps/alfresco.war -d ${CATALINA_HOME}/webapps/alfresco/
+RUN cp -a ${DISTDIR}/web-server/conf/* ${CATALINA_HOME}/conf/ && rm -f ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
+RUN cp -a ${DISTDIR}/web-server/lib/* ${CATALINA_HOME}/lib/
+RUN cp -a ${DISTDIR}/licenses ${CATALINA_HOME}/
+RUN cp -a ${DISTDIR}/keystore/metadata-keystore/keystore* ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/
 RUN chmod -R o-rwx ${CATALINA_HOME}/
 RUN sed -i 's|shared.loader=|shared.loader=${catalina.base}/shared/classes,${catalina.base}/shared/lib/*.jar|' \
   ${CATALINA_HOME}/conf/catalina.properties
@@ -29,8 +30,13 @@ RUN sed -i \
   ${CATALINA_HOME}/webapps/alfresco/WEB-INF/classes/log4j2.properties
 
 ADD amps /tmp/amps
-RUN java -jar /tmp/distribution/bin/alfresco-mmt.jar install /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory
-RUN java -jar /tmp/distribution/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/alfresco
+RUN if [ -f /tmp/amps/alfresco-aos-module-*.amp ]; then umask 0027; \
+     unzip ${DISTDIR}/web-server/webapps/ROOT.war -d ${CATALINA_HOME}/webapps/ROOT/; \
+     unzip ${DISTDIR}/web-server/webapps/_vti_bin.war -d ${CATALINA_HOME}/webapps/_vti_bin/; \
+   else echo "No AOS module found"; \
+   fi
+RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar install /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory
+RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/alfresco
 
 FROM tomcat_base AS repo-rhlike
 ARG ALFRESCO_REPO_USER_ID
