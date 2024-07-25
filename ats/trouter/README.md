@@ -9,7 +9,8 @@ Sets of variables configurable with your docker image
 transform-router:
     image: alfresco-transform-router:YOUR-TAG
     environment:
-      JAVA_OPTS: >-
+      JAVA_OPTS: 
+      JAVA_OPTS_CONTAINER_FLAGS: >-
         -XX:MinRAMPercentage=50
         -XX:MaxRAMPercentage=80
       ACTIVEMQ_URL: nio://activemq:61616
@@ -30,6 +31,7 @@ transform-router:
 ```
 
 - `JAVA_OPTS` - Additional java options
+- `JAVA_OPTS_CONTAINER_FLAGS` - Container specific JVM options
 - `ACTIVEMQ_URL` - The URL for Alfresco ActiveMQ.
 - `ACTIVEMQ_USER` - The username for ActiveMQ.
 - `ACTIVEMQ_PASSWORD` - The password for ActiveMQ.
