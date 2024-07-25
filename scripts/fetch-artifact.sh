@@ -10,7 +10,7 @@ cd ${REPO_ROOT}/..
 
 for i in $(find . -name artifacts.json -mindepth 2); do
   for j in $(jq -r ".artifacts.acs${INDEX_KEY} | keys | .[]" $i); do
-    ARTIFACT_BASEURL="https://nexus.alfresco.com/nexus/service/local/repositories/enterprise-releases/content"
+    ARTIFACT_BASEURL="https://nexus.alfresco.com/nexus/service/local/repositories/enterprise-releases"
     ARTIFACT_NAME=$(jq -r ".artifacts.acs${INDEX_KEY}[$j].name" $i)
     ARTIFACT_VERSION=$(jq -r ".artifacts.acs${INDEX_KEY}[$j].version" $i)
     ARTIFACT_EXT=$(jq -r ".artifacts.acs${INDEX_KEY}[$j].classifier" $i)
