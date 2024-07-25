@@ -11,7 +11,7 @@ group "enterprise-search" {
 }
 
 group "ats" {
-  targets = ["ats_trouter"]
+  targets = ["ats_trouter", "ats_sfs"]
 }
 
 variable "LABEL_VENDOR" {
@@ -66,11 +66,11 @@ variable "LIVEINDEXING" {
   default = "metadata"
 }
 
-variable "ALFRESCO_REPO_GROUP_ID" {
+variable "ALFRESCO_GROUP_ID" {
   default = "1000"
 }
 
-variable "ALFRESCO_REPO_GROUP_NAME" {
+variable "ALFRESCO_GROUP_NAME" {
   default = "alfresco"
 }
 
@@ -166,8 +166,8 @@ target "repository" {
     tomcat_base = "target:tomcat_base"
   }
   args = {
-    ALFRESCO_REPO_GROUP_ID = "${ALFRESCO_REPO_GROUP_ID}"
-    ALFRESCO_REPO_GROUP_NAME = "${ALFRESCO_REPO_GROUP_NAME}"
+    ALFRESCO_REPO_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_REPO_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
     ALFRESCO_REPO_USER_ID = "${ALFRESCO_REPO_USER_ID}"
     ALFRESCO_REPO_USER_NAME = "${ALFRESCO_REPO_USER_NAME}"
   }
@@ -217,14 +217,6 @@ target "search_liveindexing" {
   output = ["type=docker"]
 }
 
-variable "ALFRESCO_TROUTER_GROUP_NAME" {
-  default = "Alfresco"
-}
-
-variable "ALFRESCO_TROUTER_GROUP_ID" {
-  default = "1000"
-}
-
 variable "ALFRESCO_TROUTER_USER_NAME" {
   default = "trouter"
 }
@@ -240,8 +232,8 @@ target "ats_trouter" {
     java_base = "target:java_base"
   }
   args = {
-    ALFRESCO_TROUTER_GROUP_NAME = "${ALFRESCO_TROUTER_GROUP_NAME}"
-    ALFRESCO_TROUTER_GROUP_ID = "${ALFRESCO_TROUTER_GROUP_ID}"
+    ALFRESCO_TROUTER_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_TROUTER_GROUP_ID = "${ALFRESCO_GROUP_ID}"
     ALFRESCO_TROUTER_USER_NAME = "${ALFRESCO_TROUTER_USER_NAME}"
     ALFRESCO_TROUTER_USER_ID = "${ALFRESCO_TROUTER_USER_ID}"
   }
@@ -250,5 +242,33 @@ target "ats_trouter" {
     "org.opencontainers.image.description" = "Alfresco Transform Service Trouter"
   }
   tags = ["localhost/alfresco-transform-router:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_SFS_USER_NAME" {
+  default = "sfs"
+}
+
+variable "ALFRESCO_SFS_USER_ID" {
+  default = "33030"
+}
+
+target "ats_sfs" {
+  dockerfile = "./ats/sfs/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_SFS_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_SFS_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_SFS_USER_NAME = "${ALFRESCO_SFS_USER_NAME}"
+    ALFRESCO_SFS_USER_ID = "${ALFRESCO_SFS_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} ATS Shared File Store"
+    "org.opencontainers.image.description" = "Alfresco Transform Service ATS Shared File Store"
+  }
+  tags = ["localhost/alfresco-shared-file-store:latest"]
   output = ["type=docker"]
 }
