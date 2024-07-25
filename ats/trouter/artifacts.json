@@ -6,6 +6,7 @@
         "version": "4.1.3",
         "path": "ats/trouter",
         "classifier": ".jar",
+        "repository": "enterprise-releases",
         "group": "org.alfresco"
       }
     ]
