@@ -32,6 +32,7 @@ RUN sed -i \
 ADD amps /tmp/amps
 RUN if [ -f /tmp/amps/alfresco-aos-module-*.amp ]; then umask 0027; \
      unzip ${DISTDIR}/web-server/webapps/ROOT.war -d ${CATALINA_HOME}/webapps/ROOT/; \
+     cp ${CATALINA_HOME}/webapps/ROOT/META-INF/context.xml ${CATALINA_HOME}/conf/Catalina/localhost/ROOT.xml; \
      unzip ${DISTDIR}/web-server/webapps/_vti_bin.war -d ${CATALINA_HOME}/webapps/_vti_bin/; \
    else echo "No AOS module found"; \
    fi
