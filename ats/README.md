@@ -39,3 +39,34 @@ transform-router:
 - `LIBREOFFICE_URL` - The URL for the LibreOffice service
 - `TIKA_URL` - The URL for the Tika service
 - `MISC_URL` - The URL for Mics service
+
+## sfs
+
+```yaml
+
+  shared-file-store:
+    image: localhost/alfresco-shared-file-store:YOUR-TAG
+    mem_limit: 512m
+    environment:
+      JAVA_OPTS: 
+        scheduler.content.age.millis: 86400000
+        scheduler.cleanup.interval: 86400000
+        scheduler.contract.path: /tmp/scheduler.json
+        fileStorePath: /tmp/Alfresco
+    ports:
+      - "8099:8099"
+    volumes:
+      - shared-file-store-volume:/tmp/Alfresco/sfs
+volumes:
+  shared-file-store-volume:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+
+```
+
+- `JAVA_OPTS` - Additional java options
+- `scheduler.content.age.millis` - Content retention period. The default value is `86400000`
+- `scheduler.cleanup.interval` - Cleanup Scheduler interval. The default value is `86400000`
+- `scheduler.contract.path` - Cleanup Scheduler contract path. The default value is `/tmp/scheduler.json`
+- `fileStorePath` - Shared File Store content storing path. The default value is `/tmp/Alfresco`

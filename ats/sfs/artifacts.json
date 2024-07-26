@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-shared-file-store-controller",
+        "version": "4.1.3",
+        "path": "ats/sfs",
+        "classifier": ".jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      }
+    ]
+  }
+}

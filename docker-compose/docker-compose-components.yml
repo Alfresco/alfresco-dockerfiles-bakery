@@ -74,12 +74,9 @@ services:
     depends_on:
       - activemq
   shared-file-store:
-    image: quay.io/alfresco/alfresco-shared-file-store:4.1.2
+    image: localhost/alfresco-shared-file-store:latest
     mem_limit: 512m
     environment:
-      JAVA_OPTS: >-
-        -XX:MinRAMPercentage=50
-        -XX:MaxRAMPercentage=80
       scheduler.content.age.millis: 86400000
       scheduler.cleanup.interval: 86400000
     ports:
