@@ -6,6 +6,7 @@
         "version": "4.0.1",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
+        "repository": "enterprise-releases",
         "group": "org.alfresco"
       },
       {
@@ -13,6 +14,7 @@
         "version": "4.0.1",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
+        "repository": "enterprise-releases",
         "group": "org.alfresco"
       },
       {
@@ -20,6 +22,7 @@
         "version": "4.0.1",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
+        "repository": "enterprise-releases",
         "group": "org.alfresco"
       },
       {
@@ -27,6 +30,7 @@
         "version": "4.0.1",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
+        "repository": "enterprise-releases",
         "group": "org.alfresco"
       }
     ]

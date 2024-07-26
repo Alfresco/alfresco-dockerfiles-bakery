@@ -2,11 +2,44 @@
   "artifacts": {
     "acs23": [
       {
+        "name": "alfresco-share-services",
+        "version": "23.2.2.3",
+        "path": "repository/amps",
+        "classifier": ".amp",
+        "group": "org.alfresco",
+        "repository": "releases"
+      },
+      {
+        "name": "alfresco-aos-module",
+        "version": "3.0.0",
+        "path": "repository/amps",
+        "classifier": ".amp",
+        "group": "org.alfresco.aos-module",
+        "repository": "releases"
+      },
+      {
+        "name": "alfresco-device-sync-repo",
+        "version": "5.0.0",
+        "path": "repository/amps",
+        "classifier": ".amp",
+        "group": "org.alfresco.services.sync",
+        "repository": "enterprise-releases"
+      },
+      {
+        "name": "alfresco-googledrive-repo-enterprise",
+        "version": "4.1.0",
+        "path": "repository/amps",
+        "classifier": ".amp",
+        "group": "org.alfresco.integrations",
+        "repository": "enterprise-releases"
+      },
+      {
         "name": "alfresco-content-services-distribution",
         "version": "23.2.2",
-        "path": "repository",
+        "path": "repository/distribution",
         "classifier": ".zip",
-        "group": "org.alfresco"
+        "group": "org.alfresco",
+        "repository": "enterprise-releases"
       }
     ]
   }
