@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["content_service", "enterprise-search", "ats"]
+  targets = ["content_service", "enterprise-search", "ats", "tengine"]
 }
 
 group "content_service" {
@@ -12,6 +12,10 @@ group "enterprise-search" {
 
 group "ats" {
   targets = ["ats_trouter"]
+}
+
+group "tengine" {
+  targets = ["tengine_imagemagick"]
 }
 
 variable "LABEL_VENDOR" {
@@ -250,5 +254,41 @@ target "ats_trouter" {
     "org.opencontainers.image.description" = "Alfresco Transform Service Trouter"
   }
   tags = ["localhost/alfresco-transform-router:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_IMAGEMAGICK_GROUP_NAME" {
+  default = "Alfresco"
+}
+
+variable "ALFRESCO_IMAGEMAGICK_GROUP_ID" {
+  default = "1000"
+}
+
+variable "ALFRESCO_IMAGEMAGICK_USER_NAME" {
+  default = "imagemagick"
+}
+
+variable "ALFRESCO_IMAGEMAGICK_USER_ID" {
+  default = "33002"
+}
+
+target "tengine_imagemagick" {
+  dockerfile = "./tengine/imagemagick/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_TROUTER_GROUP_NAME = "${ALFRESCO_TROUTER_GROUP_NAME}"
+    ALFRESCO_TROUTER_GROUP_ID = "${ALFRESCO_TROUTER_GROUP_ID}"
+    ALFRESCO_TROUTER_USER_NAME = "${ALFRESCO_TROUTER_USER_NAME}"
+    ALFRESCO_TROUTER_USER_ID = "${ALFRESCO_TROUTER_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Imagemagick"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine Imagemagick"
+  }
+  tags = ["localhost/alfresco-imagemagick:latest"]
   output = ["type=docker"]
 }
