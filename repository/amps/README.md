@@ -3,7 +3,7 @@
 Place here your Alfresco module Packages (AMPs) to be installed in the Alfresco
 repository.
 
-AMP packages should have the `.amp` extension and stick to he Alfresco module
+AMP packages should have the `.amp` extension and stick to the Alfresco module
 packaging format as described in the [Alfresco
 documentation](https://docs.alfresco.com/content-services/latest/develop/extension-packaging/#alfresco-module-package-amp).
 
