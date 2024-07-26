@@ -295,3 +295,5 @@ target "tengine_imagemagick" {
 https://nexus.alfresco.com/nexus/repository/thirdparty/org/imagemagick/imagemagick-distribution/7.1.0-16-ci-10/imagemagick-distribution-7.1.0-16-ci-10-el8.rpm
 https://nexus.alfresco.com/nexus/repository/thirdparty/org/imagemagick/imagemagick-distribution/7.1.0-16-ci-10/imagemagick-distribution-7.1.0-16-ci-10-el8.rpm
 https://nexus.alfresco.com/nexus/service/local/repository/enterprise-releases/org/alfresco/alfresco-elasticsearch-live-indexing/4.0.1/alfresco-elasticsearch-live-indexing-4.0.1-app.jar
+https://nexus.alfresco.com/nexus/service/local/repository/thirdparty/org/imagemagick/imagemagick-distribution/7.1.0-16-ci-10/imagemagick-distribution-7.1.0-16-ci-10-el8-libs.rpm
+https://nexus.alfresco.com/nexus/service/local/repository/thirdparty/org/imagemagick/imagemagick-distribution/7.1.0-16-ci-10/imagemagick-distribution-7.1.0-16-ci-10-el8.rpm
