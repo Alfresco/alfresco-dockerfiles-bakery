@@ -22,8 +22,7 @@ jobs:
           echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ~/.netrc
 
       - name: Fetch artifacts from nexus
-        run: ${{ github.workspace }}/scripts/fetch-artifact.sh
-        working-directory: ${{ github.workspace }}
+        run: ./scripts/fetch-artifact.sh
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@5927c834f5b4fdf503fca6f4c7eccda82949e1ee # v3.1.0
