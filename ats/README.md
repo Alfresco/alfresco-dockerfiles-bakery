@@ -49,10 +49,10 @@ transform-router:
     mem_limit: 512m
     environment:
       JAVA_OPTS: 
-      scheduler.content.age.millis: 86400000
-      scheduler.cleanup.interval: 86400000
-      scheduler.contract.path: /tmp/scheduler.json
-      fileStorePath: /tmp/Alfresco
+        scheduler.content.age.millis: 86400000
+        scheduler.cleanup.interval: 86400000
+        scheduler.contract.path: /tmp/scheduler.json
+        fileStorePath: /tmp/Alfresco
     ports:
       - "8099:8099"
     volumes:
