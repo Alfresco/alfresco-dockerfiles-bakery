@@ -53,6 +53,8 @@ jobs:
         with:
           name: docker-images
           path: /tmp/alfresco-docker-images.tar
+          retention-days: 1
+          compression-level: 0
 
   compose-test:
     name: compose-test ${{ matrix.docker-compose-file }}
