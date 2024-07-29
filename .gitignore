@@ -1,5 +1,7 @@
 *.zip
 *.amp
+*.rpm
+*.deb
 dist
 *.jar
 *.rpm
