@@ -31,6 +31,8 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
 
+      - uses: crazy-max/ghaction-github-runtime@v1
+
       - name: Bake Docker images
         uses: docker/bake-action@eac74531aa56a9266bfedfe5edb6b851ce2cca2b  # v5.4.0
         with:
