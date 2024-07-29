@@ -3,7 +3,7 @@ FROM java_base
 EXPOSE 8090
 
 ENV JAVA_OPTS_CONTAINER_FLAGS=-XX:MaxRAMPercentage=80
-ENV IMAGEMAGICK_DEP_RPM_URL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+ENV IMAGEMAGICK_DEP_RPM_URL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
 ENV IMAGEMAGICK_COMMON_PATH=tengine/imagemagick
 
 ARG ALFRESCO_IMAGEMAGICK_GROUP_NAME
@@ -12,11 +12,11 @@ ARG ALFRESCO_IMAGEMAGICK_USER_NAME
 ARG ALFRESCO_IMAGEMAGICK_USER_ID
 
 ADD ${IMAGEMAGICK_COMMON_PATH}/alfresco-transform-imagemagick*.jar /usr/bin/app.jar
-ADD ${IMAGEMAGICK_COMMON_PATH}/imagemagick-distribution*-el8.rpm /tmp/imagemagick-distribution-el8.rpm
-ADD ${IMAGEMAGICK_COMMON_PATH}/imagemagick-distribution*-el8-libs.rpm /tmp/imagemagick-distribution-el8-libs.rpm
+ADD ${IMAGEMAGICK_COMMON_PATH}/imagemagick-distribution*-el9.rpm /tmp/imagemagick-distribution-el9.rpm
+ADD ${IMAGEMAGICK_COMMON_PATH}/imagemagick-distribution*-libs-el9.rpm /tmp/imagemagick-distribution-libs-el9.rpm
 
 RUN yum install -y $IMAGEMAGICK_DEP_RPM_URL && \
-    yum install -y /tmp/imagemagick-distribution-el8.rpm /tmp/imagemagick-distribution-el8-libs.rpm; \
+    yum install -y /tmp/imagemagick-distribution-el9.rpm /tmp/imagemagick-distribution-libs-el9.rpm; \
     yum clean all
 
 RUN groupadd -g ${ALFRESCO_IMAGEMAGICK_GROUP_ID} ${ALFRESCO_IMAGEMAGICK_GROUP_NAME} && \
