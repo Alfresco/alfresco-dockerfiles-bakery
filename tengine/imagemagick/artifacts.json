@@ -5,7 +5,7 @@
         "name": "imagemagick-distribution",
         "version": "7.1.0-16-ci-3",
         "path": "tengine/imagemagick",
-        "classifier": "-libs-el8.rpm",
+        "classifier": "-el8-libs.rpm",
         "repository": "thirdparty",
         "group": "org.imagemagick"
       },
