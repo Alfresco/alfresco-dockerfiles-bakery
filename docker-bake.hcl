@@ -296,6 +296,7 @@ target "tengine_imagemagick" {
     ALFRESCO_IMAGEMAGICK_GROUP_ID = "${ALFRESCO_GROUP_ID}"
     ALFRESCO_IMAGEMAGICK_USER_NAME = "${ALFRESCO_IMAGEMAGICK_USER_NAME}"
     ALFRESCO_IMAGEMAGICK_USER_ID = "${ALFRESCO_IMAGEMAGICK_USER_ID}"
+    VERSION = "7.1.0-16-ci-10"
   }
   labels = {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Imagemagick"

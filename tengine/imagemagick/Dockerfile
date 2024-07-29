@@ -10,10 +10,11 @@ ARG ALFRESCO_IMAGEMAGICK_GROUP_NAME
 ARG ALFRESCO_IMAGEMAGICK_GROUP_ID
 ARG ALFRESCO_IMAGEMAGICK_USER_NAME
 ARG ALFRESCO_IMAGEMAGICK_USER_ID
+ARG VERSION
 
 ADD ${IMAGEMAGICK_COMMON_PATH}/alfresco-transform-imagemagick*.jar /usr/bin/app.jar
-ADD ${IMAGEMAGICK_COMMON_PATH}/imagemagick-distribution*-el9.rpm /tmp/imagemagick-distribution-el9.rpm
-ADD ${IMAGEMAGICK_COMMON_PATH}/imagemagick-distribution*-libs-el9.rpm /tmp/imagemagick-distribution-libs-el9.rpm
+ADD ${IMAGEMAGICK_COMMON_PATH}/imagemagick-distribution-${VERSION}-el9.rpm /tmp/imagemagick-distribution-el9.rpm
+ADD ${IMAGEMAGICK_COMMON_PATH}/imagemagick-distribution-${VERSION}-libs-el9.rpm /tmp/imagemagick-distribution-libs-el9.rpm
 
 RUN yum install -y $IMAGEMAGICK_DEP_RPM_URL && \
     yum install -y /tmp/imagemagick-distribution-el9.rpm /tmp/imagemagick-distribution-libs-el9.rpm; \
