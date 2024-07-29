@@ -33,6 +33,10 @@ jobs:
 
       - name: Bake Docker images
         uses: docker/bake-action@eac74531aa56a9266bfedfe5edb6b851ce2cca2b  # v5.4.0
+        with:
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
 
       - name: Show all images
         run: docker images
