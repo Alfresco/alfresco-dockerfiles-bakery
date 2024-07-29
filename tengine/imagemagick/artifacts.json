@@ -3,7 +3,7 @@
     "acs23": [
       {
         "name": "imagemagick-distribution",
-        "version": "7.1.0-16-ci-10",
+        "version": "7.1.0-16-ci-3",
         "path": "tengine/imagemagick",
         "classifier": "-libs-el8.rpm",
         "repository": "thirdparty",
@@ -11,7 +11,7 @@
       },
       {
         "name": "imagemagick-distribution",
-        "version": "7.1.0-16-ci-7",
+        "version": "7.1.0-16-ci-3",
         "path": "tengine/imagemagick",
         "classifier": "-el8.rpm",
         "repository": "thirdparty",
