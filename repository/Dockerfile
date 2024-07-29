@@ -17,7 +17,6 @@ RUN mkdir -m 750 -p ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/
 RUN mkdir -m 770 ${CATALINA_HOME}/alf_data/
 RUN unzip ${DISTDIR}/web-server/webapps/alfresco.war -d ${CATALINA_HOME}/webapps/alfresco/
 RUN cp -a ${DISTDIR}/web-server/conf/* ${CATALINA_HOME}/conf/ && rm -f ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
-RUN cp -a ${DISTDIR}/web-server/lib/* ${CATALINA_HOME}/lib/
 RUN cp -a ${DISTDIR}/licenses ${CATALINA_HOME}/
 RUN cp -a ${DISTDIR}/keystore/metadata-keystore/keystore* ${CATALINA_HOME}/shared/classes/alfresco/extension/keystore/
 RUN chmod -R o-rwx ${CATALINA_HOME}/
@@ -30,14 +29,15 @@ RUN sed -i \
   ${CATALINA_HOME}/webapps/alfresco/WEB-INF/classes/log4j2.properties
 
 ADD amps /tmp/amps
+ADD libs ${CATALINA_HOME}/lib/
 RUN if [ -f /tmp/amps/alfresco-aos-module-*.amp ]; then umask 0027; \
      unzip ${DISTDIR}/web-server/webapps/ROOT.war -d ${CATALINA_HOME}/webapps/ROOT/; \
      cp ${CATALINA_HOME}/webapps/ROOT/META-INF/context.xml ${CATALINA_HOME}/conf/Catalina/localhost/ROOT.xml; \
      unzip ${DISTDIR}/web-server/webapps/_vti_bin.war -d ${CATALINA_HOME}/webapps/_vti_bin/; \
    else echo "No AOS module found"; \
    fi
-RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar install /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory
-RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/alfresco
+RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar install /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory && \
+    java -jar ${DISTDIR}/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/alfresco
 
 FROM tomcat_base AS repo-rhlike
 ARG ALFRESCO_REPO_USER_ID
