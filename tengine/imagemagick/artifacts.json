@@ -1,0 +1,30 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "imagemagick-distribution",
+        "version": "7.1.0-16-ci-10",
+        "path": "tengine/imagemagick/libs",
+        "classifier": "-libs-el9.rpm",
+        "repository": "thirdparty",
+        "group": "org.imagemagick"
+      },
+      {
+        "name": "imagemagick-distribution",
+        "version": "7.1.0-16-ci-10",
+        "path": "tengine/imagemagick",
+        "classifier": "-el9.rpm",
+        "repository": "thirdparty",
+        "group": "org.imagemagick"
+      },
+      {
+        "name": "alfresco-transform-imagemagick",
+        "version": "5.1.3",
+        "path": "tengine/imagemagick",
+        "classifier": ".jar",
+        "repository": "releases",
+        "group": "org.alfresco"
+      }      
+    ]
+  }
+}
