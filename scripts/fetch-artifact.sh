@@ -20,5 +20,6 @@ for i in $(find . -name artifacts.json -mindepth 2); do
     echo "Downloading $ARTIFACT_GROUP:$ARTIFACT_NAME $ARTIFACT_VERSION from $ARTIFACT_BASEURL"
     wget "${ARTIFACT_BASEURL}/${ARTIFACT_GROUP//\./\/}/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}" \
       -O ${ARTIFACT_PATH}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}
+    ls -la ${ARTIFACT_PATH}/
   done
 done
