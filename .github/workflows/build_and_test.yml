@@ -62,6 +62,10 @@ jobs:
 
       - name: Bake Docker images
         uses: docker/bake-action@a4d7f0b5b91c14a296d792d4ec53a9db17f02e67  # v5.5.0
+        with:
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
 
       - name: Show all built images
         run: docker images
@@ -110,3 +114,83 @@ jobs:
           quay_password: ${{ secrets.QUAY_PASSWORD }}
 
       - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v6.0.0
+
+  helm-test:
+    name: helm test
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          path: /tmp
+          name: docker-images
+
+      - name: Setup cluster
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v5.35.0
+        with:
+          ingress-nginx-ref: controller-v1.8.2
+          metrics: "true"
+
+      - name: Load Docker images
+        run: |
+          kind get clusters
+          ls -1 /tmp/*.tar | xargs --no-run-if-empty -L 1 kind load image-archive -n chart-testing
+
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814
+        with:
+          version: "3.14.3"
+
+      - name: Login to Quay.io
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20  # v3.1.0
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Create registries auth secret
+        run: >-
+          kubectl create secret generic regcred
+          --from-file=.dockerconfigjson=$HOME/.docker/config.json
+          --type=kubernetes.io/dockerconfigjson
+
+      - name: Fetch upstream values for tests
+        run: >-
+          curl -L
+          https://raw.githubusercontent.com/Alfresco/acs-deployment/c1096488a9dd2bef4fe20f9677a14afba4fc8932/test/enterprise-integration-test-values.yaml
+          -o test/helm/enterprise-integration-test-values.yaml &&
+          ls -l test/helm/enterprise-integration-test-values.yaml
+
+      - name: Helm install
+        run: |
+          helm repo add alfresco https://kubernetes-charts.alfresco.com/stable
+          helm repo update
+          helm install acs alfresco/alfresco-content-services \
+            --set global.search.sharedSecret="$(openssl rand -hex 24)" \
+            --set global.known_urls=http://localhost \
+            --set global.alfrescoRegistryPullSecrets=regcred \
+            --values test/helm/enterprise-integration-test-values.yaml \
+            --values test/helm/test-overrides.yaml
+
+      - name: Watch Helm deployment
+        run: |
+          kubectl get pods --watch &
+          KWPID=$!
+          kubectl wait --timeout=7m --all=true --for=condition=Available deploy && kill $KWPID
+          echo -n "Waiting for ESC Reindexing job to complete... "
+          kubectl wait --timeout=5m --for=condition=complete job/acs-alfresco-search-enterprise-reindexing
+          echo "Completed."
+
+      - name: Spit cluster status after install
+        if: always()
+        run: |
+          helm ls --all-namespaces --all
+          helm status acs --show-resources
+          kubectl describe pod
+
+      - name: Run helm test
+        id: helm_test
+        run: helm test acs

@@ -1,0 +1,22 @@
+---
+alfresco-repository:
+  image:
+    repository: localhost/alfresco-content-repository
+    tag: latest
+#share:
+#alfresco-search-enterprise:
+alfresco-transform-service:
+  #pdfrenderer:
+  #imagemagick:
+  #libreoffice:
+  #tika:
+  #transformmisc:
+  transformrouter:
+    image:
+      repository: localhost/alfresco-transform-router
+      tag: latest
+  filestore:
+    image:
+      repository: localhost/alfresco-shared-file-store
+      tag: latest
+#alfresco-sync-service:
