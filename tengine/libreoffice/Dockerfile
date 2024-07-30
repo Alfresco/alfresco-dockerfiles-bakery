@@ -14,9 +14,9 @@ ADD ${LIBREOFFICE_COMMON_PATH}/alfresco-transform-libreoffice*.jar /usr/bin/app.
 ADD ${LIBREOFFICE_COMMON_PATH}/libreoffice-dist*.gz libreoffice-dist.gz
 
 RUN yum install -y cairo cups-libs libSM libGLU && \
-    tar xzf libreoffice-dist-linux.gz && \
+    tar xzf libreoffice-dist.gz && \
     yum localinstall -y LibreOffice*/RPMS/*.rpm && \
-    rm -rf libreoffice-dist-linux.gz LibreOffice_*_Linux_x86-64_rpm; \
+    rm -rf libreoffice-dist.gz LibreOffice_*_Linux_x86-64_rpm; \
     yum clean all
 
 RUN groupadd -g ${ALFRESCO_LIBREOFFICE_GROUP_ID} ${ALFRESCO_LIBREOFFICE_GROUP_NAME} && \
