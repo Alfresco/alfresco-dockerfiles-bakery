@@ -7,8 +7,7 @@ RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/tmp \
     tar xzf /tmp/libreoffice-dist-linux.gz && \
     yum localinstall -y LibreOffice*/RPMS/*.rpm && \
     rm -rf /tmp/libreoffice-dist-linux.gz LibreOffice_*_Linux_x86-64_rpm && \
-    yum clean all && \
-    ln -s /tmp/alfresco-transform-libreoffice*.jar /usr/bin/app.jar
+    yum clean all
 
 FROM libreoffice_base
 
@@ -20,6 +19,8 @@ ARG ALFRESCO_LIBREOFFICE_GROUP_NAME
 ARG ALFRESCO_LIBREOFFICE_GROUP_ID
 ARG ALFRESCO_LIBREOFFICE_USER_NAME
 ARG ALFRESCO_LIBREOFFICE_USER_ID
+
+ADD ${LIBREOFFICE_COMMON_PATH}/alfresco-transform-libreoffice*.jar /usr/bin/app.jar
 
 RUN groupadd -g ${ALFRESCO_LIBREOFFICE_GROUP_ID} ${ALFRESCO_LIBREOFFICE_GROUP_NAME} && \
     useradd -u ${ALFRESCO_LIBREOFFICE_USER_ID} -g ${ALFRESCO_LIBREOFFICE_GROUP_NAME} ${ALFRESCO_LIBREOFFICE_USER_NAME} && \
