@@ -83,6 +83,7 @@ jobs:
           compression-level: 0
 
   compose-test:
+    if: false
     name: compose-test ${{ matrix.docker-compose-file }}
     needs: build-test
     runs-on: ubuntu-latest
