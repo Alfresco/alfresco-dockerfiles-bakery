@@ -8,7 +8,7 @@ RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/tmp \
     yum localinstall -y LibreOffice*/RPMS/*.rpm && \
     rm -rf /tmp/libreoffice-dist-linux.gz LibreOffice_*_Linux_x86-64_rpm && \
     yum clean all && \
-    ln tmp/alfresco-transform-libreoffice*.jar /usr/bin/app.jar
+    ln -s /tmp/alfresco-transform-libreoffice*.jar /usr/bin/app.jar
 
 FROM libreoffice_base
 
