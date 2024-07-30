@@ -1,24 +1,22 @@
-FROM java_base as libreoffice_base
+FROM java_base
 
 ENV LIBREOFFICE_COMMON_PATH=tengine/libreoffice
-
-RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/dist \
-    tar xzf /dist/*.gz && \
-    yum localinstall -y LibreOffice*/RPMS/*.rpm && \
-    yum install -y cairo cups-libs libSM libGLU && \
-    rm -rf LibreOffice_*_Linux_x86-64_rpm && \
-    yum clean all
-
-FROM libreoffice_base
+ENV JAVA_OPTS_CONTAINER_FLAGS=-XX:MaxRAMPercentage=80
 
 EXPOSE 8090
-
-ENV JAVA_OPTS_CONTAINER_FLAGS=-XX:MaxRAMPercentage=80
 
 ARG ALFRESCO_LIBREOFFICE_GROUP_NAME
 ARG ALFRESCO_LIBREOFFICE_GROUP_ID
 ARG ALFRESCO_LIBREOFFICE_USER_NAME
 ARG ALFRESCO_LIBREOFFICE_USER_ID
+
+RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/dist \
+    mkdir /tmp/dist && \
+    tar xzf /dist/*.gz -C /tmp/dist && \
+    yum localinstall -y /tmp/dist/LibreOffice*/RPMS/*.rpm && \
+    yum install -y cairo cups-libs libSM libGLU && \
+    rm -rf /tmp/dist && \
+    yum clean all
 
 ADD ${LIBREOFFICE_COMMON_PATH}/alfresco-transform-libreoffice*.jar /usr/bin/app.jar
 
