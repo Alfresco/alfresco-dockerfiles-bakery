@@ -5,7 +5,7 @@ ENV LIBREOFFICE_COMMON_PATH=tengine/libreoffice
 RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/dist \
     tar xzf /dist/*.gz && \
     yum localinstall -y LibreOffice*/RPMS/*.rpm && \
-    rm -rf /dist/*.gz LibreOffice_*_Linux_x86-64_rpm && \
+    yum install -y cairo cups-libs libSM libGLU && \
     yum clean all
 
 FROM libreoffice_base
