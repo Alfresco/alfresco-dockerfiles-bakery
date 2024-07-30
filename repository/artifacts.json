@@ -2,6 +2,14 @@
   "artifacts": {
     "acs23": [
       {
+        "name": "postgresql",
+        "version": "42.6.0",
+        "classifier": ".jar",
+        "group": "org.postgresql",
+        "repository": "central",
+        "path": "repository/libs"
+      },
+      {
         "name": "alfresco-share-services",
         "version": "23.2.2.3",
         "path": "repository/amps",

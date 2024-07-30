@@ -19,6 +19,7 @@ for i in $(find . -name artifacts.json -mindepth 2); do
     ARTIFACT_BASEURL="https://nexus.alfresco.com/nexus/repository/${ARTIFACT_REPO}"
     echo "Downloading $ARTIFACT_GROUP:$ARTIFACT_NAME $ARTIFACT_VERSION from $ARTIFACT_BASEURL"
     wget "${ARTIFACT_BASEURL}/${ARTIFACT_GROUP//\./\/}/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}" \
-      -O ${ARTIFACT_PATH}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}
+      -O ${ARTIFACT_PATH}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT} \
+      --no-verbose
   done
 done
