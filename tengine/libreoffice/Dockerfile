@@ -6,6 +6,7 @@ RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/dist \
     tar xzf /dist/*.gz && \
     yum localinstall -y LibreOffice*/RPMS/*.rpm && \
     yum install -y cairo cups-libs libSM libGLU && \
+    rm -rf LibreOffice_*_Linux_x86-64_rpm && \
     yum clean all
 
 FROM libreoffice_base
