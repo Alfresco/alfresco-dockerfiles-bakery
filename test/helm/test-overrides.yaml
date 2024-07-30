@@ -20,3 +20,7 @@ alfresco-transform-service:
       repository: localhost/alfresco-shared-file-store
       tag: latest
 #alfresco-sync-service:
+dtas:
+  config:
+    config:
+      search_timeout_seconds: 360
