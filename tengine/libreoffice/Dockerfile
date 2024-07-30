@@ -2,12 +2,13 @@ FROM java_base as libreoffice_base
 
 ENV LIBREOFFICE_COMMON_PATH=tengine/libreoffice
 
-RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH}/libreoffice-dist*.gz,target=/tmp/libreoffice-dist.gz \
+RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/tmp \
     yum install -y cairo cups-libs libSM libGLU && \
     tar xzf /tmp/libreoffice-dist-linux.gz && \
     yum localinstall -y LibreOffice*/RPMS/*.rpm && \
-    rm -rf /tmp/libreoffice-dist-linux.gz LibreOffice_*_Linux_x86-64_rpm;\
-    yum clean all
+    rm -rf /tmp/libreoffice-dist-linux.gz LibreOffice_*_Linux_x86-64_rpm; &&\
+    yum clean all && \
+    ln tmp/alfresco-transform-libreoffice*.jar /usr/bin/app.jar
 
 FROM libreoffice_base
 
@@ -19,8 +20,6 @@ ARG ALFRESCO_LIBREOFFICE_GROUP_NAME
 ARG ALFRESCO_LIBREOFFICE_GROUP_ID
 ARG ALFRESCO_LIBREOFFICE_USER_NAME
 ARG ALFRESCO_LIBREOFFICE_USER_ID
-
-ADD ${LIBREOFFICE_COMMON_PATH}/alfresco-transform-libreoffice*.jar /usr/bin/app.jar
 
 RUN groupadd -g ${ALFRESCO_LIBREOFFICE_GROUP_ID} ${ALFRESCO_LIBREOFFICE_GROUP_NAME} && \
     useradd -u ${ALFRESCO_LIBREOFFICE_USER_ID} -g ${ALFRESCO_LIBREOFFICE_GROUP_NAME} ${ALFRESCO_LIBREOFFICE_USER_NAME} && \
