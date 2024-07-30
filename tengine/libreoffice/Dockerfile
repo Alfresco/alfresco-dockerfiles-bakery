@@ -4,20 +4,10 @@ ENV LIBREOFFICE_COMMON_PATH=tengine/libreoffice
 
 RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/tmp \
     yum install -y cairo cups-libs libSM libGLU && \
-    if [ -f /tmp/libreoffice-dist-linux.gz ]; then \
-        tar xzf /tmp/libreoffice-dist-linux.gz -C /tmp; \
-    else \
-        echo "File /tmp/libreoffice-dist-linux.gz not found"; \
-        exit 1; \
-    fi && \
-    if ls /tmp/LibreOffice*/RPMS/*.rpm 1> /dev/null 2>&1; then \
-        yum localinstall -y /tmp/LibreOffice*/RPMS/*.rpm; \
-    else \
-        echo "LibreOffice RPM files not found"; \
-        exit 1; \
-    fi && \
-    rm -rf /tmp/libreoffice-dist-linux.gz /tmp/LibreOffice_*_Linux_x86-64_rpm && \
-    yum clean all
+    tar xzf /tmp/libreoffice-dist-linux.gz
+    # yum localinstall -y LibreOffice*/RPMS/*.rpm && \
+    # rm -rf /tmp/libreoffice-dist-linux.gz LibreOffice_*_Linux_x86-64_rpm && \
+    # yum clean all
 
 FROM libreoffice_base
 
