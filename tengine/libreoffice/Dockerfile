@@ -14,7 +14,7 @@ ADD ${LIBREOFFICE_COMMON_PATH}/alfresco-transform-libreoffice*.jar /usr/bin/app.
 ADD ${LIBREOFFICE_COMMON_PATH}/libreoffice-dist*.gz /tmp/libreoffice-dist
 
 RUN yum install -y cairo cups-libs libSM libGLU && \
-    yum localinstall -y /tmp/libreoffice-dist/RPMS/*.rpm && \
+    yum localinstall -y /tmp/libreoffice-dist/*/RPMS/*.rpm && \
     rm -rf /tmp/libreoffice-dist \
     yum clean all
 
