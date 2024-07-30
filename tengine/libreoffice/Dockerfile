@@ -2,12 +2,12 @@ FROM java_base as libreoffice_base
 
 ENV LIBREOFFICE_COMMON_PATH=tengine/libreoffice
 
-RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/tmp \
+RUN --mount=type=bind,source=./${LIBREOFFICE_COMMON_PATH},target=/tmp \
     yum install -y cairo cups-libs libSM libGLU && \
-    tar xzf /tmp/libreoffice-dist-linux.gz
-    # yum localinstall -y LibreOffice*/RPMS/*.rpm && \
-    # rm -rf /tmp/libreoffice-dist-linux.gz LibreOffice_*_Linux_x86-64_rpm && \
-    # yum clean all
+    tar xzf /tmp/libreoffice-dist-linux.gz && \
+    yum localinstall -y LibreOffice*/RPMS/*.rpm && \
+    rm -rf /tmp/libreoffice-dist-linux.gz LibreOffice_*_Linux_x86-64_rpm && \
+    yum clean all
 
 FROM libreoffice_base
 
