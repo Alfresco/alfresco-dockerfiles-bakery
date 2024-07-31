@@ -14,7 +14,7 @@ RUN --mount=type=bind,source=${PDFRENDERER_COMMON_PATH},target=/dist \
     tar xzf /dist/*.tgz -C /usr/bin && \
     yum clean all
 
-ADD ${PDFRENDERER_COMMON_PATH}/alfresco-transform-libreoffice*.jar /opt/app.jar
+ADD ${PDFRENDERER_COMMON_PATH}/alfresco-transform-pdf-renderer*.jar /opt/app.jar
 
 RUN groupadd -g ${ALFRESCO_PDFRENDERER_GROUP_ID} ${ALFRESCO_PDFRENDERER_GROUP_NAME} && \
     useradd ${ALFRESCO_PDFRENDERER_USER_ID} -g ${ALFRESCO_PDFRENDERER_GROUP_NAME} ${ALFRESCO_PDFRENDERER_USER_NAME} && \
