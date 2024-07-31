@@ -15,7 +15,7 @@ group "ats" {
 }
 
 group "tengines" {
-  targets = ["tengine_libreoffice", "tengine_imagemagick"]
+  targets = ["tengine_libreoffice", "tengine_imagemagick", "tengine_tika"]
 }
 
 variable "LABEL_VENDOR" {
@@ -310,7 +310,7 @@ variable "ALFRESCO_LIBREOFFICE_USER_NAME" {
 }
 
 variable "ALFRESCO_LIBREOFFICE_USER_ID" {
-  default = "33002"
+  default = "33003"
 }
 
 target "tengine_libreoffice" {
@@ -330,5 +330,33 @@ target "tengine_libreoffice" {
     "org.opencontainers.image.description" = "Alfresco Transform Engine LibreOffice"
   }
   tags = ["localhost/alfresco-libreoffice:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_TIKA_USER_NAME" {
+  default = "tika"
+}
+
+variable "ALFRESCO_TIKA_USER_ID" {
+  default = "33004"
+}
+
+target "tengine_tika" {
+  dockerfile = "./tengine/tika/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_TIKA_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_TIKA_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_TIKA_USER_NAME = "${ALFRESCO_TIKA_USER_NAME}"
+    ALFRESCO_TIKA_USER_ID = "${ALFRESCO_TIKA_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Tika"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine Tika"
+  }
+  tags = ["localhost/alfresco-tika:latest"]
   output = ["type=docker"]
 }
