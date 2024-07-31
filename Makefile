@@ -1,6 +1,6 @@
 clean:
 	@echo "Cleaning up Artifacts"
-	@find . \( -name "*.jar" -o -name "*.zip" -o -name  "*.rpm" -o -name "*.deb" \) -type f -delete
+	@find . \( -name "*.jar" -o -name "*.zip" -o -name "*.gz" -o -name "*.tgz" -o -name  "*.rpm" -o -name "*.deb" \) -type f -delete
 
 prepare_repo: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for repository target"
