@@ -357,6 +357,6 @@ target "tengine_pdfrenderer" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine PDF Renderer"
     "org.opencontainers.image.description" = "Alfresco Transform Engine PDF Renderer"
   }
-  tags = ["localhost/alfresco-libreoffice:latest"]
+  tags = ["localhost/alfresco-pdf-renderer:latest"]
   output = ["type=docker"]
 }
