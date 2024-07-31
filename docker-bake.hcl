@@ -334,7 +334,7 @@ target "tengine_libreoffice" {
 }
 
 variable "ALFRESCO_PDFRENDERER_USER_NAME" {
-  default = "pdfrenderer"
+  default = "pdf"
 }
 
 variable "ALFRESCO_PDFRENDERER_USER_ID" {
