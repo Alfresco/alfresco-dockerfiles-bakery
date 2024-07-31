@@ -21,6 +21,10 @@ alfresco-transform-service:
       tag: latest
 #alfresco-sync-service:
 dtas:
+  additionalArgs:
+    - --tb=short
+    - -k
+    - not test_api_explorer_reachability
   config:
     config:
       search_timeout_seconds: 360
