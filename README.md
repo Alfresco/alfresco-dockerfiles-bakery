@@ -6,8 +6,8 @@ Docker images.
 ## Getting started quickly
 
 If you do not plan on applying specific customizations but just want to get
-They latest Alfresco images updated (e.g. with the latest OS security patches),
-you can simply run the command below from the root of this project:
+Alfresco images updated (e.g. with the latest OS security patches), you can
+simply run the command below from the root of this project:
 
 ```bash
 make all
