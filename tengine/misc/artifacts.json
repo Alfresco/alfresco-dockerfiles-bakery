@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-transform-libreoffice",
+        "version": "5.1.3",
+        "path": "tengine/misc",
+        "classifier": ".jar",
+        "repository": "releases",
+        "group": "org.alfresco"
+      }
+    ]
+  }
+}

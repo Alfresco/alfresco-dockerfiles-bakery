@@ -332,3 +332,31 @@ target "tengine_libreoffice" {
   tags = ["localhost/alfresco-libreoffice:latest"]
   output = ["type=docker"]
 }
+
+variable "ALFRESCO_MISC_USER_NAME" {
+  default = "transform-misc"
+}
+
+variable "ALFRESCO_MISC_USER_ID" {
+  default = "33006"
+}
+
+target "tengine_misc" {
+  dockerfile = "./tengine/misc/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_MISC_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_MISC_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_MISC_USER_NAME = "${ALFRESCO_MISC_USER_NAME}"
+    ALFRESCO_MISC_USER_ID = "${ALFRESCO_MISC_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Misc"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine Misc"
+  }
+  tags = ["localhost/alfresco-misc:latest"]
+  output = ["type=docker"]
+}
