@@ -33,11 +33,11 @@ COPY --from=exiftool_builder ${MAKE_PREFIX_PATH} /usr/bin/exiftool
 RUN yum -y install perl && \
     yum clean all
 
-ADD ${TIKA_COMMON_PATH}/alfresco-transform-tika*.jar /usr/bin/app.jar
+ADD ${TIKA_COMMON_PATH}/alfresco-transform-tika*.jar /opt/app.jar
 
 RUN groupadd -g ${ALFRESCO_TIKA_GROUP_ID} ${ALFRESCO_TIKA_GROUP_NAME} && \
     useradd -u ${ALFRESCO_TIKA_USER_ID} -g ${ALFRESCO_TIKA_GROUP_NAME} ${ALFRESCO_TIKA_USER_NAME} && \
-    chgrp ${ALFRESCO_TIKA_GROUP_NAME} /usr/bin/app.jar
+    chgrp ${ALFRESCO_TIKA_GROUP_NAME} /opt/app.jar
 
 USER ${ALFRESCO_TIKA_USER_NAME}
 
