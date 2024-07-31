@@ -15,7 +15,7 @@ group "ats" {
 }
 
 group "tengines" {
-  targets = ["tengine_libreoffice", "tengine_imagemagick"]
+  targets = ["tengine_libreoffice", "tengine_imagemagick", "tengine_misc"]
 }
 
 variable "LABEL_VENDOR" {
