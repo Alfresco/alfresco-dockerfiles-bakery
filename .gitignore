@@ -2,7 +2,6 @@
 *.amp
 *.rpm
 *.deb
-dist
 *.jar
 *.tgz
 *.gz
