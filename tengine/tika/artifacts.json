@@ -2,14 +2,6 @@
   "artifacts": {
     "acs23": [
       {
-        "name": "image-exiftool",
-        "version": "12.25",
-        "path": "tengine/tika",
-        "classifier": ".tgz",
-        "repository": "thirdparty",
-        "group": "org.exiftool"
-      },
-      {
         "name": "alfresco-transform-tika",
         "version": "5.1.3",
         "path": "tengine/tika",

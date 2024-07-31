@@ -1,21 +1,3 @@
-FROM java_base as exiftool_builder
-
-ENV TIKA_COMMON_PATH=tengine/tika
-ENV MAKE_PREFIX_PATH=/exiftool
-
-RUN --mount=type=bind,source=${TIKA_COMMON_PATH},target=/dist \
-    mkdir /tmp/dist && \
-    tar xzf /dist/*.tgz -C /tmp/dist && \
-    yum -y install perl perl-ExtUtils-MakeMaker make && \
-    (cd /tmp/dist/Image-ExifTool-* && \
-    perl Makefile.PL && \
-    make && \
-    make test && \
-    make install PREFIX=${MAKE_PREFIX_PATH}) && \
-    yum -y autoremove make && \    
-    rm -rf /tmp/dist && \
-    yum clean all
-
 FROM java_base
 
 ENV JAVA_OPTS_CONTAINER_FLAGS=-XX:MaxRAMPercentage=80
@@ -30,10 +12,8 @@ ARG ALFRESCO_TIKA_USER_ID
 
 COPY --from=exiftool_builder ${MAKE_PREFIX_PATH} /usr/bin/exiftool
 
-RUN yum -y install perl && \
+RUN yum -y install perl-Image-ExifTool && \
     yum clean all
-
-ADD ${TIKA_COMMON_PATH}/alfresco-transform-tika*.jar /opt/app.jar
 
 RUN groupadd -g ${ALFRESCO_TIKA_GROUP_ID} ${ALFRESCO_TIKA_GROUP_NAME} && \
     useradd -u ${ALFRESCO_TIKA_USER_ID} -g ${ALFRESCO_TIKA_GROUP_NAME} ${ALFRESCO_TIKA_USER_NAME} && \
