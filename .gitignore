@@ -4,5 +4,4 @@
 *.deb
 dist
 *.jar
-*.rpm
 *.gz
