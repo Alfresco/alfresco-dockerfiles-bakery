@@ -34,5 +34,5 @@ USER ${ALFRESCO_TIKA_USER_NAME}
 HEALTHCHECK --interval=20s --timeout=10s --retries=3 --start-period=30s \
   CMD curl -f http://localhost:8090/live || exit 1
 
-COPY ${LIBREOFFICE_COMMON_PATH}/entrypoint.sh /entrypoint.sh
+COPY ${TIKA_COMMON_PATH}/entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]
