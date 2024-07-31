@@ -10,8 +10,6 @@ ARG ALFRESCO_TIKA_GROUP_ID
 ARG ALFRESCO_TIKA_USER_NAME
 ARG ALFRESCO_TIKA_USER_ID
 
-COPY --from=exiftool_builder ${MAKE_PREFIX_PATH} /usr/bin/exiftool
-
 RUN yum -y install perl-Image-ExifTool && \
     yum clean all
 
