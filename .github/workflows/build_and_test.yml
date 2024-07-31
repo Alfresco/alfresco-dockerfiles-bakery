@@ -19,6 +19,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v5.34.0
+
       - name: Setup nexus authentication
         run: |
           echo "machine nexus.alfresco.com" >> ~/.netrc

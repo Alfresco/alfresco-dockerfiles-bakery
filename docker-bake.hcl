@@ -15,7 +15,7 @@ group "ats" {
 }
 
 group "tengines" {
-  targets = ["tengine_libreoffice", "tengine_imagemagick"]
+  targets = ["tengine_libreoffice", "tengine_imagemagick", "tengine_pdfrenderer"]
 }
 
 variable "LABEL_VENDOR" {
@@ -328,6 +328,34 @@ target "tengine_libreoffice" {
   labels = {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine LibreOffice"
     "org.opencontainers.image.description" = "Alfresco Transform Engine LibreOffice"
+  }
+  tags = ["localhost/alfresco-libreoffice:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_PDFRENDERER_USER_NAME" {
+  default = "libreoffice"
+}
+
+variable "ALFRESCO_PDFRENDERER_USER_ID" {
+  default = "33001"
+}
+
+target "tengine_pdfrenderer" {
+  dockerfile = "./tengine/libreoffice/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_PDFRENDERER_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_PDFRENDERER_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_PDFRENDERER_USER_NAME = "${ALFRESCO_PDFRENDERER_USER_NAME}"
+    ALFRESCO_PDFRENDERER_USER_ID = "${ALFRESCO_PDFRENDERER_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine PDF Renderer"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine PDF Renderer"
   }
   tags = ["localhost/alfresco-libreoffice:latest"]
   output = ["type=docker"]
