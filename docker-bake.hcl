@@ -334,7 +334,7 @@ target "tengine_libreoffice" {
 }
 
 variable "ALFRESCO_PDFRENDERER_USER_NAME" {
-  default = "libreoffice"
+  default = "pdfrenderer"
 }
 
 variable "ALFRESCO_PDFRENDERER_USER_ID" {
@@ -342,7 +342,7 @@ variable "ALFRESCO_PDFRENDERER_USER_ID" {
 }
 
 target "tengine_pdfrenderer" {
-  dockerfile = "./tengine/libreoffice/Dockerfile"
+  dockerfile = "./tengine/pdfrenderer/Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"

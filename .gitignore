@@ -4,3 +4,4 @@ dist
 *.jar
 *.rpm
 *.gz
+*.tgz
