@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+env:
+  ACS_CHART_VERSION: 8.3.0
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name || github.run_id }}
   cancel-in-progress: true
@@ -135,8 +138,7 @@ jobs:
 
       - name: Load Docker images
         run: |
-          kind get clusters
-          ls -1 /tmp/*.tar | xargs --no-run-if-empty -L 1 kind load image-archive -n chart-testing
+          kind load image-archive -n chart-testing /tmp/alfresco-docker-images.tar
 
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -161,15 +163,18 @@ jobs:
       - name: Fetch upstream values for tests
         run: >-
           curl -L
-          https://raw.githubusercontent.com/Alfresco/acs-deployment/c1096488a9dd2bef4fe20f9677a14afba4fc8932/test/enterprise-integration-test-values.yaml
+          https://raw.githubusercontent.com/Alfresco/acs-deployment/${{ env.ACS_CHART_VERSION }}/test/enterprise-integration-test-values.yaml
           -o test/helm/enterprise-integration-test-values.yaml &&
           ls -l test/helm/enterprise-integration-test-values.yaml
+          cat test/helm/enterprise-integration-test-values.yaml
 
       - name: Helm install
+        id: helm_install
         run: |
           helm repo add alfresco https://kubernetes-charts.alfresco.com/stable
           helm repo update
           helm install acs alfresco/alfresco-content-services \
+            --version ${{ env.ACS_CHART_VERSION }} \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
             --set global.known_urls=http://localhost \
             --set global.alfrescoRegistryPullSecrets=regcred \
@@ -177,29 +182,29 @@ jobs:
             --values test/helm/test-overrides.yaml
 
       - name: Watch Helm deployment
+        env:
+          HELM_INSTALL_TIMEOUT: 7m
         run: |
           kubectl get pods --watch &
           KWPID=$!
-          kubectl wait --timeout=7m --all=true --for=condition=Available deploy && kill $KWPID
-          echo -n "Waiting for ESC Reindexing job to complete... "
+          kubectl wait --timeout=${{ env.HELM_INSTALL_TIMEOUT }} --all=true --for=condition=Available deploy && kill $KWPID
+          echo "Waiting for ESC Reindexing job to complete... "
           kubectl wait --timeout=5m --for=condition=complete job/acs-alfresco-search-enterprise-reindexing
-          echo "Completed."
 
-      - name: Spit cluster status after install
-        if: always()
+      - name: Debug cluster status after install
+        if: always() && steps.helm_install.outcome != 'skipped'
         run: |
           helm ls --all-namespaces --all
-          helm status acs --show-resources
+          kubectl get all --all-namespaces
           kubectl describe pod
 
       - name: Run helm test
         id: helm_test
         run: helm test acs
 
-      - name: Spit cluster status after helm test
+      - name: Debug cluster status after helm test
         if: always() && steps.helm_test.outcome != 'skipped'
         run: |
           kubectl logs -l app.kubernetes.io/component=dtas --tail=-1
           kubectl get all --all-namespaces
           kubectl describe pod
-          kubectl logs -l app.kubernetes.io/name=mediation --tail=-1
