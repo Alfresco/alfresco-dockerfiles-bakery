@@ -11,6 +11,8 @@ transform-core-imagemagick:
     environment:
       JAVA_OPTS: 
       ACTIVEMQ_URL: nio://activemq:61616
+      ACTIVEMQ_USER: admin  
+      ACTIVEMQ_PASSWORD: admin
       FILE_STORE_URL: http://shared-file-store:8099/alfresco/api/-default-/private/sfs/versions/1/file
 
 ```
