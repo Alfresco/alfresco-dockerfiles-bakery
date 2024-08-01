@@ -10,6 +10,7 @@ on:
 
 env:
   ACS_CHART_VERSION: 8.3.0
+  ARTIFACT_NAME: alfresco-docker-images
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name || github.run_id }}
@@ -71,13 +72,13 @@ jobs:
 
       - name: Docker save all baked images whose name include `alfresco`
         run: |
-          docker save -o /tmp/alfresco-docker-images.tar $(docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco)
+          docker save -o /tmp/${{ env.ARTIFACT_NAME }}.tar $(docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco)
 
       - name: Upload images as artifact
         uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         with:
-          name: docker-images
-          path: /tmp/alfresco-docker-images.tar
+          name: ${{ env.ARTIFACT_NAME }}
+          path: /tmp/${{ env.ARTIFACT_NAME }}.tar
           retention-days: 1
           compression-level: 0
 
@@ -96,11 +97,11 @@ jobs:
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           path: /tmp
-          name: docker-images
+          name: ${{ env.ARTIFACT_NAME }}
 
       - name: Load Docker images
         run: |
-          ls -1 /tmp/*.tar | xargs --no-run-if-empty -L 1 docker load -i
+          docker load -i /tmp/${{ env.ARTIFACT_NAME }}.tar
           docker image ls -a
 
       - name: Verify docker-compose
@@ -123,7 +124,7 @@ jobs:
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           path: /tmp
-          name: docker-images
+          name: ${{ env.ARTIFACT_NAME }}
 
       - name: Setup cluster
         uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v5.35.0
@@ -133,7 +134,7 @@ jobs:
 
       - name: Load Docker images
         run: |
-          kind load image-archive -n chart-testing /tmp/alfresco-docker-images.tar
+          kind load image-archive -n chart-testing /tmp/${{ env.ARTIFACT_NAME }}.tar
 
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
