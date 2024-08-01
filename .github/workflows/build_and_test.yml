@@ -165,7 +165,7 @@ jobs:
           curl -L
           https://raw.githubusercontent.com/Alfresco/acs-deployment/${{ env.ACS_CHART_VERSION }}/test/enterprise-integration-test-values.yaml
           -o test/helm/enterprise-integration-test-values.yaml &&
-          ls -l test/helm/enterprise-integration-test-values.yaml
+          ls -l test/helm/enterprise-integration-test-values.yaml &&
           cat test/helm/enterprise-integration-test-values.yaml
 
       - name: Helm install
