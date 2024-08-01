@@ -4,11 +4,30 @@ alfresco-repository:
     repository: localhost/alfresco-content-repository
     tag: latest
 #share:
-#alfresco-search-enterprise:
+alfresco-search-enterprise:
+  liveIndexing:
+    content:
+      image:
+        repository: localhost/alfresco-elasticsearch-live-indexing-content
+        tag: latest
+    metadata:
+      image:
+        repository: localhost/alfresco-elasticsearch-live-indexing-metadata
+        tag: latest
+    path:
+      image:
+        repository: localhost/alfresco-elasticsearch-live-indexing-path
+        tag: latest
 alfresco-transform-service:
   #pdfrenderer:
-  #imagemagick:
-  #libreoffice:
+  imagemagick:
+    image:
+      repository: localhost/alfresco-imagemagick
+      tag: latest
+  libreoffice:
+    image:
+      repository: localhost/alfresco-libreoffice
+      tag: latest
   #tika:
   #transformmisc:
   transformrouter:
