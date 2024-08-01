@@ -13,6 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
+  contents: read
   # Required for telemetry action
   pull-requests: write
 
