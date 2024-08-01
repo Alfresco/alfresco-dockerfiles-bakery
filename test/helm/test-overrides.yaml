@@ -24,10 +24,10 @@ alfresco-transform-service:
     image:
       repository: localhost/alfresco-imagemagick
       tag: latest
-  libreoffice:
-    image:
-      repository: localhost/alfresco-libreoffice
-      tag: latest
+  #libreoffice:
+    #image:
+    #  repository: localhost/alfresco-libreoffice
+    #  tag: latest
   #tika:
   #transformmisc:
   transformrouter:
