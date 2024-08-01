@@ -95,7 +95,10 @@ jobs:
 
   compose-test:
     name: compose-test ${{ matrix.docker-compose-file }}
-    needs: build-test
+    needs:
+      - build-cache-check
+      - build-test
+    if: always() && (needs.build-test.result == 'success' || needs.build-test.result == 'skipped')
     runs-on: ubuntu-latest
     strategy:
       matrix:
