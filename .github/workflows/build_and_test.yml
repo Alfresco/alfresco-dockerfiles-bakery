@@ -12,6 +12,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  # Required for telemetry action
+  pull-requests: write
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -40,6 +44,9 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Collect Workflow Telemetry
+        uses: catchpoint/workflow-telemetry-action@v2
 
       - name: Bake Docker images
         uses: docker/bake-action@a4d7f0b5b91c14a296d792d4ec53a9db17f02e67  # v5.5.0
