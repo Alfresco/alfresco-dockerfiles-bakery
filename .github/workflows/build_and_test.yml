@@ -83,12 +83,9 @@ jobs:
           compression-level: 0
 
   compose-test:
-    name: compose-test ${{ matrix.docker-compose-file }}
+    name: compose-test
     needs: build-test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        docker-compose-file: [docker-compose.yml, docker-compose-components.yml]
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db  # v3.6.1
@@ -109,7 +106,7 @@ jobs:
         timeout-minutes: 10
         with:
           compose_pull: false
-          compose_file_path: docker-compose/${{ matrix.docker-compose-file }}
+          compose_file_path: test/compose/docker-compose.yml
           quay_username: ${{ secrets.QUAY_USERNAME }}
           quay_password: ${{ secrets.QUAY_PASSWORD }}
 
