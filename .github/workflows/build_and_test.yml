@@ -180,7 +180,7 @@ jobs:
         run: |
           kubectl get pods --watch &
           KWPID=$!
-          kubectl wait --timeout=${{ env.HELM_INSTALL_TIMEOUT }} --all=true --for=condition=Available pods
+          kubectl wait --timeout=${{ env.HELM_INSTALL_TIMEOUT }} --all=true --for=condition=Ready pods
           kill $KWPID
           echo "Waiting for ESC Reindexing job to complete... "
           kubectl wait --timeout=5m --for=condition=complete job/acs-alfresco-search-enterprise-reindexing
