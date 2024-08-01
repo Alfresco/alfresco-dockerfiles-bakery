@@ -15,8 +15,6 @@ concurrency:
 permissions:
   contents: read
   actions: read
-  # Required for telemetry action
-  pull-requests: write
 
 jobs:
   build-test:
@@ -49,6 +47,8 @@ jobs:
 
       - name: Collect Workflow Telemetry
         uses: catchpoint/workflow-telemetry-action@v2
+        with:
+          comment_on_pr: false
 
       - name: Bake Docker images
         uses: docker/bake-action@a4d7f0b5b91c14a296d792d4ec53a9db17f02e67  # v5.5.0
