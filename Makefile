@@ -41,3 +41,6 @@ search_enterprise: prepare_search_enterprise
 all: docker-bake.hcl prepare_all
 	@echo "Building all images"
 	@docker buildx bake --no-cache --progress=plain
+
+all_ci: repo tengines ats search_enterprise clean
+	@echo "Building all images using individual targets for Continuous Integration"
