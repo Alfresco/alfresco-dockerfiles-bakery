@@ -29,7 +29,10 @@ alfresco-transform-service:
     #  repository: localhost/alfresco-libreoffice
     #  tag: latest
   #tika:
-  #transformmisc:
+  transformmisc:
+    image:
+      repository: localhost/alfresco-misc
+      tag: latest
   transformrouter:
     image:
       repository: localhost/alfresco-transform-router
