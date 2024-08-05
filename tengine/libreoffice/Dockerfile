@@ -11,10 +11,10 @@ ARG ALFRESCO_LIBREOFFICE_USER_NAME
 ARG ALFRESCO_LIBREOFFICE_USER_ID
 
 RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/dist \
-    yum install -y cairo cups-libs libSM libGLU && \
     mkdir /tmp/dist && \
     tar xzf /dist/*.gz -C /tmp/dist && \
     yum localinstall -y /tmp/dist/LibreOffice*/RPMS/*.rpm && \
+    yum install -y cairo cups-libs libSM libGLU && \
     rm -rf /tmp/dist && \
     yum clean all
 
@@ -25,6 +25,9 @@ RUN groupadd -g ${ALFRESCO_LIBREOFFICE_GROUP_ID} ${ALFRESCO_LIBREOFFICE_GROUP_NA
     chgrp ${ALFRESCO_LIBREOFFICE_GROUP_NAME} /opt/app.jar
 
 USER ${ALFRESCO_LIBREOFFICE_USER_NAME}
+
+HEALTHCHECK --interval=20s --timeout=10s --retries=3 --start-period=30s \
+  CMD curl -f http://localhost:8090/live || exit 1
 
 COPY ${LIBREOFFICE_COMMON_PATH}/entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]
