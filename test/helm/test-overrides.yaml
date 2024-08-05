@@ -29,7 +29,7 @@ alfresco-transform-service:
       tag: latest
   libreoffice:
     image:
-      repository: alfresco-libreoffice
+      repository: localhost/alfresco-libreoffice
       tag: latest
   transformmisc:
     image:
