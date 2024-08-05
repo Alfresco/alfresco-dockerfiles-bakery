@@ -2,12 +2,12 @@
 
 Sets of variables configurable with your docker image
 
-## imagemagick
+## misc
 
 ```yaml
 
-transform-core-imagemagick:
-    image: localhost/alfresco-imagemagick:YOUR-TAG
+transform-core-misc:
+    image: localhost/alfresco-misc:YOUR-TAG
     environment:
       JAVA_OPTS: 
       ACTIVEMQ_URL: nio://activemq:61616
