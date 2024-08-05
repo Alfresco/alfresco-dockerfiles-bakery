@@ -19,7 +19,10 @@ alfresco-search-enterprise:
         repository: localhost/alfresco-elasticsearch-live-indexing-path
         tag: latest
 alfresco-transform-service:
-  #pdfrenderer:
+  pdfrenderer:
+    image:
+      repository: localhost/alfresco-pdf-renderer
+      tag: latest
   imagemagick:
     image:
       repository: localhost/alfresco-imagemagick
@@ -28,10 +31,13 @@ alfresco-transform-service:
     #image:
     #  repository: localhost/alfresco-libreoffice
     #  tag: latest
-  #tika:
   transformmisc:
     image:
       repository: localhost/alfresco-misc
+      tag: latest
+  tika:
+    image:
+      repository: localhost/alfresco-tika
       tag: latest
   transformrouter:
     image:
