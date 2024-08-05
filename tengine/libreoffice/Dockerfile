@@ -11,10 +11,10 @@ ARG ALFRESCO_LIBREOFFICE_USER_NAME
 ARG ALFRESCO_LIBREOFFICE_USER_ID
 
 RUN --mount=type=bind,source=${LIBREOFFICE_COMMON_PATH},target=/dist \
+    yum install -y cairo cups-libs libSM libGLU && \
     mkdir /tmp/dist && \
     tar xzf /dist/*.gz -C /tmp/dist && \
     yum localinstall -y /tmp/dist/LibreOffice*/RPMS/*.rpm && \
-    yum install -y cairo cups-libs libSM libGLU && \
     rm -rf /tmp/dist && \
     yum clean all
 
