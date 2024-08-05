@@ -198,6 +198,12 @@ jobs:
           kubectl get all --all-namespaces
           kubectl describe pod
 
+      - name: Upload pods logs after install
+        if: always() && steps.helm_install.outcome != 'skipped'
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@v6.0.1
+        with:
+          log_retention: 1
+
       - name: Run helm test
         id: helm_test
         run: helm test acs
