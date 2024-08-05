@@ -4,3 +4,5 @@ dist
 *.jar
 *.rpm
 *.gz
+
+test/helm/enterprise-integration-test-values.yaml

@@ -1,0 +1,49 @@
+---
+alfresco-repository:
+  image:
+    repository: localhost/alfresco-content-repository
+    tag: latest
+#share:
+alfresco-search-enterprise:
+  liveIndexing:
+    content:
+      image:
+        repository: localhost/alfresco-elasticsearch-live-indexing-content
+        tag: latest
+    metadata:
+      image:
+        repository: localhost/alfresco-elasticsearch-live-indexing-metadata
+        tag: latest
+    path:
+      image:
+        repository: localhost/alfresco-elasticsearch-live-indexing-path
+        tag: latest
+alfresco-transform-service:
+  #pdfrenderer:
+  imagemagick:
+    image:
+      repository: localhost/alfresco-imagemagick
+      tag: latest
+  #libreoffice:
+    #image:
+    #  repository: localhost/alfresco-libreoffice
+    #  tag: latest
+  #tika:
+  #transformmisc:
+  transformrouter:
+    image:
+      repository: localhost/alfresco-transform-router
+      tag: latest
+  filestore:
+    image:
+      repository: localhost/alfresco-shared-file-store
+      tag: latest
+#alfresco-sync-service:
+dtas:
+  additionalArgs:
+    - --tb=short
+    - -k
+    - not test_api_explorer_reachability
+  config:
+    config:
+      search_timeout_seconds: 360
