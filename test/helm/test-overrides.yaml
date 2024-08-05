@@ -19,7 +19,10 @@ alfresco-search-enterprise:
         repository: localhost/alfresco-elasticsearch-live-indexing-path
         tag: latest
 alfresco-transform-service:
-  #pdfrenderer:
+  pdfrenderer:
+    image:
+      repository: localhost/alfresco-pdf-renderer
+      tag: latest
   imagemagick:
     image:
       repository: localhost/alfresco-imagemagick

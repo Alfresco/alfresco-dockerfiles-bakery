@@ -5,4 +5,5 @@ dist
 *.rpm
 *.gz
 *.tgz
+
 test/helm/enterprise-integration-test-values.yaml

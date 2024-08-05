@@ -15,7 +15,7 @@ group "ats" {
 }
 
 group "tengines" {
-  targets = ["tengine_libreoffice", "tengine_imagemagick", "tengine_tika"]
+  targets = ["tengine_libreoffice", "tengine_imagemagick", "tengine_tika", "tengine_pdfrenderer"]
 }
 
 variable "LABEL_VENDOR" {
@@ -358,5 +358,33 @@ target "tengine_tika" {
     "org.opencontainers.image.description" = "Alfresco Transform Engine Tika"
   }
   tags = ["localhost/alfresco-tika:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_PDFRENDERER_USER_NAME" {
+  default = "pdf"
+}
+
+variable "ALFRESCO_PDFRENDERER_USER_ID" {
+  default = "33001"
+}
+
+target "tengine_pdfrenderer" {
+  dockerfile = "./tengine/pdfrenderer/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_PDFRENDERER_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_PDFRENDERER_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_PDFRENDERER_USER_NAME = "${ALFRESCO_PDFRENDERER_USER_NAME}"
+    ALFRESCO_PDFRENDERER_USER_ID = "${ALFRESCO_PDFRENDERER_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine PDF Renderer"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine PDF Renderer"
+  }
+  tags = ["localhost/alfresco-pdf-renderer:latest"]
   output = ["type=docker"]
 }
