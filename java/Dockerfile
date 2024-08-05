@@ -15,7 +15,7 @@ ENV LC_ALL C.UTF-8
 RUN \
   yum update --security -y && \
   yum install -y langpacks-en java-${JAVA_MAJOR}-openjdk-headless && \
-  dnf install which && \
+  dnf install -y which && \
   yum clean all && rm -rf /var/cache/yum
 
 FROM rhlike AS rockylinux8
