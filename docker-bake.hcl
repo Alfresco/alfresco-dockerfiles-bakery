@@ -416,3 +416,31 @@ target "tengine_pdfrenderer" {
   tags = ["localhost/alfresco-pdf-renderer:latest"]
   output = ["type=docker"]
 }
+
+variable "ALFRESCO_AIO_USER_NAME" {
+  default = "transform-all-in-one"
+}
+
+variable "ALFRESCO_AIO_USER_ID" {
+  default = "33017"
+}
+
+target "tengine_aio" {
+  dockerfile = "./tengine/aio/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_AIO_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_AIO_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_AIO_USER_NAME = "${ALFRESCO_AIO_USER_NAME}"
+    ALFRESCO_AIO_USER_ID = "${ALFRESCO_AIO_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine All In One"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine All In One"
+  }
+  tags = ["localhost/alfresco-transform-core-aio:latest"]
+  output = ["type=docker"]
+}
