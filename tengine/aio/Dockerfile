@@ -3,7 +3,6 @@ FROM java_base
 ENV JAVA_OPTS_CONTAINER_FLAGS=-XX:MaxRAMPercentage=80
 
 ENV COMMON_PATH=tengine
-ENV AIO_COMMON_PATH=tengine/aio
 ENV EPEL_DEP_RPM_URL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
 
 EXPOSE 8090
@@ -13,7 +12,7 @@ ARG ALFRESCO_AIO_GROUP_ID
 ARG ALFRESCO_AIO_USER_NAME
 ARG ALFRESCO_AIO_USER_ID
 
-RUN --mount=type=bind,source=${COMMON_PATH},target=/dist \
+RUN --mount=type=bind,source=/,target=/dist \
     mkdir /tmp/dist && \
     tar xzf /dist/libreoffice/*.gz -C /tmp/dist && \
     yum localinstall -y /tmp/dist/LibreOffice*/RPMS/*.rpm && \
@@ -25,7 +24,7 @@ RUN --mount=type=bind,source=${COMMON_PATH},target=/dist \
     rm -rf /tmp/dist && \
     yum clean all
 
-ADD ${AIO_COMMON_PATH}/alfresco-transform-core-aio*.jar /opt/app.jar
+ADD aio/alfresco-transform-core-aio*.jar /opt/app.jar
 
 RUN groupadd -g ${ALFRESCO_AIO_GROUP_ID} ${ALFRESCO_AIO_GROUP_NAME} && \
     useradd -u ${ALFRESCO_AIO_USER_ID} -g ${ALFRESCO_AIO_GROUP_NAME} ${ALFRESCO_AIO_USER_NAME} && \
@@ -36,5 +35,5 @@ USER ${ALFRESCO_AIO_USER_NAME}
 HEALTHCHECK --interval=20s --timeout=10s --retries=3 --start-period=30s \
   CMD curl -f http://localhost:8090/live || exit 1
 
-COPY ${AIO_COMMON_PATH}/entrypoint.sh /entrypoint.sh
+COPY aio/entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]

@@ -436,8 +436,8 @@ variable "ALFRESCO_AIO_USER_ID" {
 }
 
 target "tengine_aio" {
-  context = "./tengine/aio"
-  dockerfile = "Dockerfile"
+  context = "./tengine"
+  dockerfile = "aio/Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"

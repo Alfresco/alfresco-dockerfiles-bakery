@@ -8,7 +8,7 @@ ARG ALFRESCO_SFS_GROUP_ID
 ARG ALFRESCO_SFS_USER_NAME
 ARG ALFRESCO_SFS_USER_ID
 
-ADD ats/sfs/alfresco-shared-file-store-controller*.jar /opt/app.jar
+ADD alfresco-shared-file-store-controller*.jar /opt/app.jar
 
 # Set default environment args
 ARG FILE_STORE_DIR=/tmp/Alfresco
