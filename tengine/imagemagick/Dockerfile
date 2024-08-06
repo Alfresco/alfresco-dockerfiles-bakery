@@ -3,7 +3,7 @@ FROM java_base
 EXPOSE 8090
 
 ENV JAVA_OPTS_CONTAINER_FLAGS=-XX:MaxRAMPercentage=80
-ENV IMAGEMAGICK_DEP_RPM_URL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+ENV IMAGEMAGICK_DEP_RPM_URL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
 
 ARG ALFRESCO_IMAGEMAGICK_GROUP_NAME
 ARG ALFRESCO_IMAGEMAGICK_GROUP_ID
