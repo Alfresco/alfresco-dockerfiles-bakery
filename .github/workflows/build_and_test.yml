@@ -198,11 +198,14 @@ jobs:
           kubectl get all --all-namespaces
           kubectl describe pod
 
-      - name: Upload pods logs after install
-        if: always() && steps.helm_install.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@v6.0.1
+      - name: Dump Kubernetes Logs
+        uses: dashanji/kubernetes-log-export-action@v6
         with:
-          log_retention: 1
+          output_dir: ./output
+
+      - name: Run Stoat Action
+        uses: stoat-dev/stoat-action@v0
+        if: always()
 
       - name: Run helm test
         id: helm_test
