@@ -202,9 +202,8 @@ jobs:
         if: always() && steps.helm_install.outcome != 'skipped'
         run: |
           mkdir -p logs
-          for pod in $(kubectl get pods --all-namespaces -o jsonpath='{.items[*].metadata.name}'); do
-            namespace=$(kubectl get pod $pod --all-namespaces -o jsonpath='{.items[*].metadata.namespace}')
-            kubectl logs $pod -n $namespace > logs/${namespace}_${pod}.log
+          for pod in $(kubectl get pods -n default -o jsonpath='{.items[*].metadata.name}'); do
+            kubectl logs $pod -n default > logs/${pod}.log
           done
 
       - name: Upload logs as artifact
