@@ -25,5 +25,5 @@ USER ${ALFRESCO_SFS_USER_NAME}
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=1m \
   CMD curl -f http://localhost:8099/actuator/health || exit 1
 
-COPY ats/sfs/entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]
