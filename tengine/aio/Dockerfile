@@ -4,8 +4,7 @@ ENV JAVA_OPTS_CONTAINER_FLAGS=-XX:MaxRAMPercentage=80
 
 ENV COMMON_PATH=tengine
 ENV AIO_COMMON_PATH=tengine/aio
-ENV IMAGEMAGICK_DEP_RPM_URL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-ENV TIKA_DEP_RPM_URL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+ENV EPEL_DEP_RPM_URL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
 
 EXPOSE 8090
 
@@ -19,10 +18,9 @@ RUN --mount=type=bind,source=${COMMON_PATH},target=/dist \
     tar xzf /dist/libreoffice/*.gz -C /tmp/dist && \
     yum localinstall -y /tmp/dist/LibreOffice*/RPMS/*.rpm && \
     yum install -y cairo cups-libs libSM libGLU && \
-    yum install -y $IMAGEMAGICK_DEP_RPM_URL && \
     yum install -y /dist/imagemagick/imagemagick-distribution*-el9.rpm /dist/imagemagick/libs/imagemagick-distribution*-libs-el9.rpm && \
     tar xzf /dist/pdfrenderer/*.tgz -C /usr/bin && \
-    yum install -y ${TIKA_DEP_RPM_URL} && \
+    yum install -y ${EPEL_DEP_RPM_URL} && \
     yum -y install perl-Image-ExifTool && \
     rm -rf /tmp/dist && \
     yum clean all
