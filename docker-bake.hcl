@@ -87,7 +87,8 @@ variable "ALFRESCO_REPO_USER_NAME" {
 }
 
 target "java_base" {
-  dockerfile = "./java/Dockerfile"
+  context = "./java"
+  dockerfile = "Dockerfile"
   args = {
     DISTRIB_NAME = "${DISTRIB_NAME}"
     DISTRIB_MAJOR = "${DISTRIB_MAJOR}"
@@ -141,7 +142,8 @@ variable "TCNATIVE_SHA512" {
 }
 
 target "tomcat_base" {
-  dockerfile = "./tomcat/Dockerfile"
+  context = "./tomcat"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -208,7 +210,8 @@ target "search_liveindexing" {
   args = {
     LIVEINDEXING = "${liveindexing.artifact}"
   }
-  dockerfile = "./search/enterprise/common/Dockerfile"
+  context = "./search/enterprise/common"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -230,7 +233,8 @@ variable "ALFRESCO_TROUTER_USER_ID" {
 }
 
 target "ats_trouter" {
-  dockerfile = "./ats/trouter/Dockerfile"
+  context = "./ats/trouter"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -258,7 +262,8 @@ variable "ALFRESCO_SFS_USER_ID" {
 }
 
 target "ats_sfs" {
-  dockerfile = "./ats/sfs/Dockerfile"
+  context = "./ats/sfs"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -286,7 +291,8 @@ variable "ALFRESCO_IMAGEMAGICK_USER_ID" {
 }
 
 target "tengine_imagemagick" {
-  dockerfile = "./tengine/imagemagick/Dockerfile"
+  context = "./tengine/imagemagick"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -314,7 +320,8 @@ variable "ALFRESCO_LIBREOFFICE_USER_ID" {
 }
 
 target "tengine_libreoffice" {
-  dockerfile = "./tengine/libreoffice/Dockerfile"
+  context = "./tengine/libreoffice"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -342,7 +349,8 @@ variable "ALFRESCO_MISC_USER_ID" {
 }
 
 target "tengine_misc" {
-  dockerfile = "./tengine/misc/Dockerfile"
+  context = "./tengine/misc"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -370,7 +378,8 @@ variable "ALFRESCO_TIKA_USER_ID" {
 }
 
 target "tengine_tika" {
-  dockerfile = "./tengine/tika/Dockerfile"
+  context = "./tengine/tika"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -398,7 +407,8 @@ variable "ALFRESCO_PDFRENDERER_USER_ID" {
 }
 
 target "tengine_pdfrenderer" {
-  dockerfile = "./tengine/pdfrenderer/Dockerfile"
+  context = "./tengine/pdfrenderer"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -426,7 +436,8 @@ variable "ALFRESCO_AIO_USER_ID" {
 }
 
 target "tengine_aio" {
-  dockerfile = "./tengine/aio/Dockerfile"
+  context = "./tengine/aio"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
