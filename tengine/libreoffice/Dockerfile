@@ -17,11 +17,11 @@ RUN --mount=type=bind,source=/,target=/dist \
     rm -rf /tmp/dist && \
     yum clean all
 
-ADD alfresco-transform-libreoffice*.jar /usr/bin/app.jar
+ADD alfresco-transform-libreoffice*.jar /opt/app.jar
 
 RUN groupadd -g ${ALFRESCO_LIBREOFFICE_GROUP_ID} ${ALFRESCO_LIBREOFFICE_GROUP_NAME} && \
     useradd -u ${ALFRESCO_LIBREOFFICE_USER_ID} -g ${ALFRESCO_LIBREOFFICE_GROUP_NAME} ${ALFRESCO_LIBREOFFICE_USER_NAME} && \
-    chgrp ${ALFRESCO_LIBREOFFICE_GROUP_NAME} /usr/bin/app.jar
+    chgrp ${ALFRESCO_LIBREOFFICE_GROUP_NAME} /opt/app.jar
 
 USER ${ALFRESCO_LIBREOFFICE_USER_NAME}
 
