@@ -24,7 +24,7 @@ RUN groupadd -g ${ALFRESCO_IMAGEMAGICK_GROUP_ID} ${ALFRESCO_IMAGEMAGICK_GROUP_NA
 
 USER ${ALFRESCO_IMAGEMAGICK_USER_NAME}
 
-HEALTHCHECK --interval=20s --timeout=10s --retries=3 --start-period=60s \
+HEALTHCHECK --interval=20s --timeout=10s --retries=3 --start-period=30s \
   CMD curl -f http://localhost:8090/live || exit 1
 
 COPY entrypoint.sh /entrypoint.sh
