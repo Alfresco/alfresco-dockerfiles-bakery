@@ -23,24 +23,18 @@ alfresco-transform-service:
     image:
       repository: localhost/alfresco-pdf-renderer
       tag: latest
-    readinessProbe:
-      initialDelaySeconds: 100
     livenessProbe:
       initialDelaySeconds: 100
   imagemagick:
     image:
       repository: localhost/alfresco-imagemagick
       tag: latest
-    readinessProbe:
-      initialDelaySeconds: 100
     livenessProbe:
       initialDelaySeconds: 100
   libreoffice:
     image:
       repository: localhost/alfresco-libreoffice
       tag: latest
-    readinessProbe:
-      initialDelaySeconds: 100
     livenessProbe:
       initialDelaySeconds: 100
   transformmisc:
