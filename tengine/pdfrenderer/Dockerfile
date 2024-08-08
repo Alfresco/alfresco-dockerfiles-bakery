@@ -21,7 +21,7 @@ RUN groupadd -g ${ALFRESCO_PDFRENDERER_GROUP_ID} ${ALFRESCO_PDFRENDERER_GROUP_NA
 
 USER ${ALFRESCO_PDFRENDERER_USER_NAME}
 
-HEALTHCHECK --interval=20s --timeout=10s --retries=3 --start-period=30s \
+HEALTHCHECK --interval=20s --timeout=10s --retries=3 --start-period=60s \
   CMD curl -f http://localhost:8090/live || exit 1
 
 COPY entrypoint.sh /entrypoint.sh
