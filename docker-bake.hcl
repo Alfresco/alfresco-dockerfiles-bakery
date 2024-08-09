@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["content_service", "enterprise-search", "ats", "tengines"]
+  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors"]
 }
 
 group "content_service" {
@@ -16,6 +16,10 @@ group "ats" {
 
 group "tengines" {
   targets = ["tengine_libreoffice", "tengine_imagemagick", "tengine_tika", "tengine_pdfrenderer", "tengine_misc", "tengine_aio"]
+}
+
+group "connectors" {
+  targets = ["connector_ms365"]
 }
 
 variable "LABEL_VENDOR" {
@@ -453,5 +457,34 @@ target "tengine_aio" {
     "org.opencontainers.image.description" = "Alfresco Transform Engine All In One"
   }
   tags = ["localhost/alfresco-transform-core-aio:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_MS365_USER_NAME" {
+  default = "ooi-user"
+}
+
+variable "ALFRESCO_MS365_USER_ID" {
+  default = "33006"
+}
+
+target "connector_ms365" {
+  context = "./connector/ms365"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_MS365_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_MS365_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_MS365_USER_NAME = "${ALFRESCO_MS365_USER_NAME}"
+    ALFRESCO_MS365_USER_ID = "${ALFRESCO_MS365_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Microsoft 365 Connector"
+    "org.opencontainers.image.description" = "Alfresco Microsoft 365 Connector"
+  }
+  tags = ["localhost/alfresco-ooi-service:latest"]
   output = ["type=docker"]
 }
