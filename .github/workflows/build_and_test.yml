@@ -162,7 +162,7 @@ jobs:
       - name: Fetch upstream values for tests
         run: >-
           curl -ssfL
-          https://raw.githubusercontent.com/Alfresco/acs-deployment/v${{ env.ACS_CHART_VERSION }}/test/enterprise-integration-test-values.yaml
+          https://raw.githubusercontent.com/Alfresco/acs-deployment/OPSEXP-2766/test/enterprise-integration-test-values.yaml
           -o test/helm/enterprise-integration-test-values.yaml &&
           ls -l test/helm/enterprise-integration-test-values.yaml &&
           cat test/helm/enterprise-integration-test-values.yaml
