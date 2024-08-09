@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-ms-teams-springboot",
+        "version": "2.0.2",
+        "path": "connector/msteams",
+        "classifier": ".jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      }
+    ]
+  }
+}
