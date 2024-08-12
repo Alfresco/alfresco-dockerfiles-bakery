@@ -56,6 +56,7 @@ alfresco-connector-ms365:
   environment:
     ALFRESCO_ADMIN_PASSWORD: admin
     ALFRESCO_ADMIN_USERNAME: admin
+  livenessProbe: null
 dtas:
   additionalArgs:
     - --tb=short
