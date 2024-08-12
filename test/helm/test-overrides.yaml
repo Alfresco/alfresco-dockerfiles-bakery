@@ -53,6 +53,9 @@ alfresco-connector-ms365:
   image:
     repository: localhost/alfresco-ooi-service
     tag: latest
+  environment:
+    ALFRESCO_ADMIN_PASSWORD: admin
+    ALFRESCO_ADMIN_USERNAME: admin
 dtas:
   additionalArgs:
     - --tb=short
