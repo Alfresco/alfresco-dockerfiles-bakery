@@ -160,9 +160,9 @@ jobs:
           --type=kubernetes.io/dockerconfigjson
 
       - name: Fetch upstream values for tests
-        run: >-
+        run: >- # pinned to a specific commit till release of the acs-deployment
           curl -ssfL
-          https://raw.githubusercontent.com/Alfresco/acs-deployment/v${{ env.ACS_CHART_VERSION }}/test/enterprise-integration-test-values.yaml
+          https://raw.githubusercontent.com/Alfresco/acs-deployment/cfb0d426eff14a8b581c31e61db5e670da09ba3b/test/enterprise-integration-test-values.yaml
           -o test/helm/enterprise-integration-test-values.yaml &&
           ls -l test/helm/enterprise-integration-test-values.yaml &&
           cat test/helm/enterprise-integration-test-values.yaml
