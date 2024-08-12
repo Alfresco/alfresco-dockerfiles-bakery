@@ -198,20 +198,6 @@ jobs:
           kubectl get all --all-namespaces
           kubectl describe pod
 
-      - name: Collect logs from all containers
-        if: always() && steps.helm_install.outcome != 'skipped'
-        run: |
-          mkdir -p logs
-          for pod in $(kubectl get pods -n default -o jsonpath='{.items[*].metadata.name}'); do
-            kubectl logs $pod -n default > logs/${pod}.log
-          done
-      - name: Upload logs as artifact
-        if: always() && steps.helm_install.outcome != 'skipped'
-        uses: actions/upload-artifact@v3
-        with:
-          name: k8s-logs
-          path: logs
-
       - name: Run helm test
         id: helm_test
         run: helm test acs
