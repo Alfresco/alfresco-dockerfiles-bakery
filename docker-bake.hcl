@@ -493,7 +493,7 @@ target "connector_msteams" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Connector Microsoft Teams"
     "org.opencontainers.image.description" = "Alfresco Connector Microsoft Teams"
   }
-  tags = ["localhost/alfresco-ms-teams-service:latest"]
+  tags = ["${REGISTRY}/alfresco-ms-teams-service:${TAG}"]
   output = ["type=docker"]
 }
 
@@ -522,6 +522,6 @@ target "connector_ms365" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Microsoft 365 Connector"
     "org.opencontainers.image.description" = "Alfresco Microsoft 365 Connector"
   }
-  tags = ["localhost/alfresco-ooi-service:latest"]
+  tags = ["${REGISTRY}/alfresco-ooi-service:${TAG}"]
   output = ["type=docker"]
 }
