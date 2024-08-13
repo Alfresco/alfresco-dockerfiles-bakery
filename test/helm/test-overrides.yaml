@@ -57,6 +57,16 @@ alfresco-connector-ms365:
     ALFRESCO_ADMIN_PASSWORD: admin
     ALFRESCO_ADMIN_USERNAME: admin
   livenessProbe: null
+alfresco-connector-msteams:
+  enabled: true
+  image:
+    repository: localhost/alfresco-ms-teams-service
+    tag: latest
+  livenessProbe: null
+  microsoft:
+    app:
+      id: admin
+      password: admin
 dtas:
   additionalArgs:
     - --tb=short
