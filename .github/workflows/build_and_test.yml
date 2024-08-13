@@ -67,6 +67,10 @@ jobs:
           path: |
             **/*.jar
             **/*.zip
+            **/*.amp
+            **/*.tgz
+            **/*.gz
+            **/*.rpm
 
       - name: Fetch artifacts from nexus
         run: ./scripts/fetch-artifacts.sh
@@ -75,10 +79,14 @@ jobs:
         id: cache-primes-save
         uses: actions/cache/save@v4
         with:
+          key: ${{ steps.artifacts-cache.outputs.cache-primary-key }}
           path: |
             **/*.jar
             **/*.zip
-          key: ${{ steps.artifacts-cache.outputs.cache-primary-key }}
+            **/*.amp
+            **/*.tgz
+            **/*.gz
+            **/*.rpm
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3.2.0
