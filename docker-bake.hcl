@@ -27,7 +27,7 @@ variable "REGISTRY" {
 }
 
 variable "REGISTRY_NAMESPACE" {
-  default = "Alfresco"
+  default = "alfresco"
 }
 
 variable "TAG" {
