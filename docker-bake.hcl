@@ -19,7 +19,7 @@ group "tengines" {
 }
 
 group "connectors" {
-  targets = ["connector_msteams"]
+  targets = ["connector_msteams", "connector_ms365"]
 }
 
 variable "LABEL_VENDOR" {
@@ -486,5 +486,34 @@ target "connector_msteams" {
     "org.opencontainers.image.description" = "Alfresco Connector Microsoft Teams"
   }
   tags = ["localhost/alfresco-ms-teams-service:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_MS365_USER_NAME" {
+  default = "ooi-user"
+}
+
+variable "ALFRESCO_MS365_USER_ID" {
+  default = "33006"
+}
+
+target "connector_ms365" {
+  context = "./connector/ms365"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_MS365_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_MS365_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_MS365_USER_NAME = "${ALFRESCO_MS365_USER_NAME}"
+    ALFRESCO_MS365_USER_ID = "${ALFRESCO_MS365_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Microsoft 365 Connector"
+    "org.opencontainers.image.description" = "Alfresco Microsoft 365 Connector"
+  }
+  tags = ["localhost/alfresco-ooi-service:latest"]
   output = ["type=docker"]
 }

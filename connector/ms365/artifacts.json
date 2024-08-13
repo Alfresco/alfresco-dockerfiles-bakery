@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "onedrive-springboot",
+        "version": "2.0.2",
+        "path": "connector/ms365",
+        "classifier": ".jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      }
+    ]
+  }
+}
