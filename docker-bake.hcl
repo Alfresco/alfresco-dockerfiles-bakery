@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["content_service", "enterprise-search", "ats", "tengines"]
+  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors"]
 }
 
 group "content_service" {
@@ -15,7 +15,11 @@ group "ats" {
 }
 
 group "tengines" {
-  targets = ["tengine_libreoffice", "tengine_imagemagick"]
+  targets = ["tengine_libreoffice", "tengine_imagemagick", "tengine_tika", "tengine_pdfrenderer", "tengine_misc", "tengine_aio"]
+}
+
+group "connectors" {
+  targets = ["connector_ms365"]
 }
 
 variable "LABEL_VENDOR" {
@@ -87,7 +91,8 @@ variable "ALFRESCO_REPO_USER_NAME" {
 }
 
 target "java_base" {
-  dockerfile = "./java/Dockerfile"
+  context = "./java"
+  dockerfile = "Dockerfile"
   args = {
     DISTRIB_NAME = "${DISTRIB_NAME}"
     DISTRIB_MAJOR = "${DISTRIB_MAJOR}"
@@ -141,7 +146,8 @@ variable "TCNATIVE_SHA512" {
 }
 
 target "tomcat_base" {
-  dockerfile = "./tomcat/Dockerfile"
+  context = "./tomcat"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -208,7 +214,8 @@ target "search_liveindexing" {
   args = {
     LIVEINDEXING = "${liveindexing.artifact}"
   }
-  dockerfile = "./search/enterprise/common/Dockerfile"
+  context = "./search/enterprise/common"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -230,7 +237,8 @@ variable "ALFRESCO_TROUTER_USER_ID" {
 }
 
 target "ats_trouter" {
-  dockerfile = "./ats/trouter/Dockerfile"
+  context = "./ats/trouter"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -258,7 +266,8 @@ variable "ALFRESCO_SFS_USER_ID" {
 }
 
 target "ats_sfs" {
-  dockerfile = "./ats/sfs/Dockerfile"
+  context = "./ats/sfs"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -286,7 +295,8 @@ variable "ALFRESCO_IMAGEMAGICK_USER_ID" {
 }
 
 target "tengine_imagemagick" {
-  dockerfile = "./tengine/imagemagick/Dockerfile"
+  context = "./tengine/imagemagick"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -310,11 +320,12 @@ variable "ALFRESCO_LIBREOFFICE_USER_NAME" {
 }
 
 variable "ALFRESCO_LIBREOFFICE_USER_ID" {
-  default = "33002"
+  default = "33003"
 }
 
 target "tengine_libreoffice" {
-  dockerfile = "./tengine/libreoffice/Dockerfile"
+  context = "./tengine/libreoffice"
+  dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
@@ -330,5 +341,150 @@ target "tengine_libreoffice" {
     "org.opencontainers.image.description" = "Alfresco Transform Engine LibreOffice"
   }
   tags = ["localhost/alfresco-libreoffice:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_MISC_USER_NAME" {
+  default = "transform-misc"
+}
+
+variable "ALFRESCO_MISC_USER_ID" {
+  default = "33006"
+}
+
+target "tengine_misc" {
+  context = "./tengine/misc"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_MISC_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_MISC_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_MISC_USER_NAME = "${ALFRESCO_MISC_USER_NAME}"
+    ALFRESCO_MISC_USER_ID = "${ALFRESCO_MISC_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Misc"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine Misc"
+  }
+  tags = ["localhost/alfresco-misc:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_TIKA_USER_NAME" {
+  default = "tika"
+}
+
+variable "ALFRESCO_TIKA_USER_ID" {
+  default = "33004"
+}
+
+target "tengine_tika" {
+  context = "./tengine/tika"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_TIKA_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_TIKA_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_TIKA_USER_NAME = "${ALFRESCO_TIKA_USER_NAME}"
+    ALFRESCO_TIKA_USER_ID = "${ALFRESCO_TIKA_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Tika"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine Tika"
+  }
+  tags = ["localhost/alfresco-tika:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_PDFRENDERER_USER_NAME" {
+  default = "pdf"
+}
+
+variable "ALFRESCO_PDFRENDERER_USER_ID" {
+  default = "33001"
+}
+
+target "tengine_pdfrenderer" {
+  context = "./tengine/pdfrenderer"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_PDFRENDERER_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_PDFRENDERER_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_PDFRENDERER_USER_NAME = "${ALFRESCO_PDFRENDERER_USER_NAME}"
+    ALFRESCO_PDFRENDERER_USER_ID = "${ALFRESCO_PDFRENDERER_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine PDF Renderer"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine PDF Renderer"
+  }
+  tags = ["localhost/alfresco-pdf-renderer:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_AIO_USER_NAME" {
+  default = "transform-all-in-one"
+}
+
+variable "ALFRESCO_AIO_USER_ID" {
+  default = "33017"
+}
+
+target "tengine_aio" {
+  context = "./tengine"
+  dockerfile = "aio/Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_AIO_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_AIO_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_AIO_USER_NAME = "${ALFRESCO_AIO_USER_NAME}"
+    ALFRESCO_AIO_USER_ID = "${ALFRESCO_AIO_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine All In One"
+    "org.opencontainers.image.description" = "Alfresco Transform Engine All In One"
+  }
+  tags = ["localhost/alfresco-transform-core-aio:latest"]
+  output = ["type=docker"]
+}
+
+variable "ALFRESCO_MS365_USER_NAME" {
+  default = "ooi-user"
+}
+
+variable "ALFRESCO_MS365_USER_ID" {
+  default = "33006"
+}
+
+target "connector_ms365" {
+  context = "./connector/ms365"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_MS365_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_MS365_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_MS365_USER_NAME = "${ALFRESCO_MS365_USER_NAME}"
+    ALFRESCO_MS365_USER_ID = "${ALFRESCO_MS365_USER_ID}"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Microsoft 365 Connector"
+    "org.opencontainers.image.description" = "Alfresco Microsoft 365 Connector"
+  }
+  tags = ["localhost/alfresco-ooi-service:latest"]
   output = ["type=docker"]
 }
