@@ -4,9 +4,15 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'Makefile'
+      - '.github/workflows/test-make.yml'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'Makefile'
+      - '.github/workflows/test-make.yml'
 
 env:
   ACS_CHART_VERSION: 8.3.0
@@ -45,6 +51,9 @@ jobs:
           echo "machine nexus.alfresco.com" >> ~/.netrc
           echo "login ${{ secrets.NEXUS_USERNAME }}" >> ~/.netrc
           echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ~/.netrc
+
+      - name: Fetch artifacts from nexus
+        run: ./scripts/fetch-artifact.sh
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3.2.0
@@ -89,32 +98,11 @@ jobs:
   compose-test:
     name: compose-test
     needs: build-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db  # v3.6.1
-
-      - name: Download artifacts
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
-        with:
-          path: /tmp
-          name: ${{ env.ARTIFACT_NAME }}
-
-      - name: Load Docker images
-        run: |
-          docker load -i /tmp/${{ env.ARTIFACT_NAME }}.tar
-          docker image ls -a
-
-      - name: Verify docker-compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v6.0.1
-        timeout-minutes: 10
-        with:
-          compose_pull: false
-          compose_file_path: test/docker-compose.yml
-          quay_username: ${{ secrets.QUAY_USERNAME }}
-          quay_password: ${{ secrets.QUAY_PASSWORD }}
-
-      - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v6.0.0
+    uses: ./.github/workflows/compose-test.yml
+    with:
+      artifact_name: ${{ env.ARTIFACT_NAME }}
+      quay_username: ${{ secrets.QUAY_USERNAME }}
+      quay_password: ${{ secrets.QUAY_PASSWORD }}
 
   helm-test:
     name: helm test
