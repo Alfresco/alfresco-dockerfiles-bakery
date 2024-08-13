@@ -14,6 +14,8 @@ jobs:
   make-test:
     runs-on: ubuntu-latest
     steps:
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v5.34.0
+
       - name: Setup nexus authentication
         run: |
           echo "machine nexus.alfresco.com" >> ~/.netrc
