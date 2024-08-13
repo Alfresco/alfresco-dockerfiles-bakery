@@ -38,9 +38,13 @@ search_enterprise: prepare_search_enterprise
 	@echo "Building Search Enterprise images"
 	@docker buildx bake --no-cache --progress=plain enterprise-search
 
+connectors: prepare_connectors
+	@echo "Building Connectors images"
+	@docker buildx bake --no-cache --progress=plain connectors
+
 all: docker-bake.hcl prepare_all
 	@echo "Building all images"
 	@docker buildx bake --no-cache --progress=plain
 
-all_ci: repo tengines ats search_enterprise clean
+all_ci: repo tengines ats search_enterprise clean connectors
 	@echo "Building all images using individual targets for Continuous Integration"
