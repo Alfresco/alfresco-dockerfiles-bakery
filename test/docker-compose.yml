@@ -2,7 +2,7 @@
 version: "2"
 services:
   alfresco:
-    image: ${REGISTRY}/alfresco-content-repository:${TAG}
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository:${TAG}
     mem_limit: 1900m
     environment:
       JAVA_TOOL_OPTIONS: >-
@@ -50,7 +50,7 @@ services:
       start_period: 1m
   transform-router:
     mem_limit: 512m
-    image: ${REGISTRY}/alfresco-transform-router:${TAG}
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-router:${TAG}
     environment:
       ACTIVEMQ_URL: nio://activemq:61616
       CORE_AIO_URL: http://transform-core-aio:8090
@@ -61,7 +61,7 @@ services:
     depends_on:
       - activemq
   transform-core-aio:
-    image: ${REGISTRY}/alfresco-transform-core-aio:${TAG}
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-core-aio:${TAG}
     mem_limit: 1536m
     environment:
       JAVA_OPTS: >-
@@ -75,7 +75,7 @@ services:
     depends_on:
       - activemq
   shared-file-store:
-    image: ${REGISTRY}/alfresco-shared-file-store:${TAG}
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-shared-file-store:${TAG}
     mem_limit: 512m
     environment:
       scheduler.content.age.millis: 86400000
@@ -177,7 +177,7 @@ services:
     ports:
       - "9090:9090"
   live-indexing:
-      image: ${REGISTRY}/alfresco-elasticsearch-live-indexing:${TAG}
+      image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-live-indexing:${TAG}
       environment:
           SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
           SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
