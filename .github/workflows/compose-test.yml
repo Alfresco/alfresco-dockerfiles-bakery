@@ -3,15 +3,14 @@ name: Compose Test
 on:
   workflow_call:
     inputs:
-      artifact_name:
+      ARTIFACT_NAME:
         required: true
         type: string
-      quay_username:
+    secrets:
+      QUAY_PASSWORD:
         required: true
-        type: string
-      quay_password:
+      QUAY_USERNAME:
         required: true
-        type: string
 
 jobs:
   compose-test:
@@ -25,11 +24,11 @@ jobs:
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           path: /tmp
-          name: ${{ inputs.artifact_name }}
+          name: ${{ inputs.ARTIFACT_NAME }}
 
       - name: Load Docker images
         run: |
-          docker load -i /tmp/${{ inputs.artifact_name }}.tar
+          docker load -i /tmp/${{ inputs.ARTIFACT_NAME }}.tar
           docker image ls -a
 
       - name: Verify docker-compose
@@ -38,7 +37,7 @@ jobs:
         with:
           compose_pull: false
           compose_file_path: test/docker-compose.yml
-          quay_username: ${{ inputs.quay_username }}
-          quay_password: ${{ inputs.quay_password }}
+          quay_username: ${{ secrets.QUAY_USERNAME }}
+          quay_password: ${{ secrets.QUAY_PASSWORD }}
 
       - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v6.0.0

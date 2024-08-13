@@ -10,8 +10,17 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
+env:
+  ACS_CHART_VERSION: 8.3.0
+  ACS_VALUES_VERSION: cfb0d426eff14a8b581c31e61db5e670da09ba3b
+  ARTIFACT_NAME: alfresco-docker-images
+
 jobs:
   make-test:
+    outputs:
+      ARTIFACT_NAME: ${{ env.ARTIFACT_NAME }}
+      ACS_VALUES_VERSION: ${{ env.ACS_VALUES_VERSION }}
+      ACS_CHART_VERSION: ${{ env.ACS_CHART_VERSION }}
     runs-on: ubuntu-latest
     steps:
       - name: Setup nexus authentication
@@ -32,15 +41,39 @@ jobs:
       - name: Make Docker images
         id: make
         run: |
-          make all_ci
-          echo "du=$(du -s | cut -f1)" >> $GITHUB_OUTPUT
+          make all
 
-      - name: Check Images are loaded and artifacts are cleanup
+      - name: Show all built images
+        run: docker images
+
+      - name: Docker save all baked images whose name include `alfresco`
         run: |
-          echo -n "Checking images are loaded in local Docker Engine..."
-          docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco || echo "No Alfresco image found" && exit 1
-          echo "Checking artifacts clean up worked"
-          if [ ${{ steps.make.outputs.DU }} -lt $(du -s | cut -f1) ]; then
-            echo "Artifacts were not cleaned up"
-            exit 1
-          fi
+          docker save -o /tmp/${{ env.ARTIFACT_NAME }}.tar $(docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco)
+
+      - name: Check disk space
+        run: df -h
+        if: always()
+
+      - name: Upload images as artifact and set outputs with envs
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: /tmp/${{ env.ARTIFACT_NAME }}.tar
+          retention-days: 1
+          compression-level: 0
+
+  compose-test:
+    uses: ./.github/workflows/compose-test.yml
+    needs: make-test
+    with:
+      artifact_name: ${{ needs.make-test.outputs.ARTIFACT_NAME }}
+    secrets: inherit
+
+  helm-test:
+    uses: ./.github/workflows/helm-test.yml
+    needs: make-test
+    with:
+      artifact_name: ${{ needs.make-test.outputs.ARTIFACT_NAME }}
+      ACS_VALUES_VERSION: ${{ needs.make-test.outputs.ACS_VALUES_VERSION }}
+      ACS_CHART_VERSION:  ${{ needs.make-test.outputs.ACS_CHART_VERSION }}
+    secrets: inherit  
