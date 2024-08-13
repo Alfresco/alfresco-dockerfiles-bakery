@@ -26,7 +26,12 @@ concurrency:
 
 permissions:
   contents: read
+  # telemetry
   actions: read
+  # ghcr push
+  packages: write
+  attestations: write
+  id-token: write
 
 jobs:
   pre-commit:
@@ -83,6 +88,8 @@ jobs:
 
       - name: Bake Docker images
         uses: docker/bake-action@a4d7f0b5b91c14a296d792d4ec53a9db17f02e67  # v5.5.0
+        with:
+          push: true
 
       - name: Show all built images
         run: docker images
