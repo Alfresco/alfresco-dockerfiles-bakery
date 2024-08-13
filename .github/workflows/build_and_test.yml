@@ -205,7 +205,7 @@ jobs:
         env:
           OVERRIDES_VALUES_FILE: test/helm/test-overrides.yaml
         run: |
-          sed -i "s|localhost/|${REGISTRY}/|g" ${{ env.OVERRIDES_VALUES_FILE }}
+          sed -i "s|localhost/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" ${{ env.OVERRIDES_VALUES_FILE }}
           sed -i "s|tag: latest|tag: ${TAG}|g" ${{ env.OVERRIDES_VALUES_FILE }}
           cat ${{ env.OVERRIDES_VALUES_FILE }}
 
