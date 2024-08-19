@@ -57,6 +57,13 @@ alfresco-connector-ms365:
     ALFRESCO_ADMIN_PASSWORD: admin
     ALFRESCO_ADMIN_USERNAME: admin
   livenessProbe: null
+  resources:
+    requests:
+      cpu: "0.01"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "512Mi"
 alfresco-connector-msteams:
   enabled: true
   image:
@@ -67,6 +74,13 @@ alfresco-connector-msteams:
     app:
       id: admin
       password: admin
+  resources:
+    requests:
+      cpu: "0.01"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "512Mi"
 dtas:
   additionalArgs:
     - --tb=short
