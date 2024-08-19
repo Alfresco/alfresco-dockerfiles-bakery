@@ -19,7 +19,7 @@ env:
   ARTIFACT_NAME: alfresco-docker-images
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: alfresco
-  TAG: ${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  TAG: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.sha }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name || github.run_id }}
