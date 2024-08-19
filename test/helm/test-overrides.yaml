@@ -50,6 +50,7 @@ alfresco-transform-service:
 #alfresco-sync-service:
 alfresco-connector-ms365:
   enabled: true
+  replicaCount: 1
   image:
     repository: localhost/alfresco-ooi-service
     tag: latest
@@ -57,16 +58,33 @@ alfresco-connector-ms365:
     ALFRESCO_ADMIN_PASSWORD: admin
     ALFRESCO_ADMIN_USERNAME: admin
   livenessProbe: null
+  resources:
+    requests:
+      cpu: "0.01"
+      memory: "256Mi"
+    limits:
+      cpu: "2"
+      memory: "512Mi"
 alfresco-connector-msteams:
   enabled: true
+  replicaCount: 1
   image:
     repository: localhost/alfresco-ms-teams-service
     tag: latest
+  readinessProbe:
+    initialDelaySeconds: 120
   livenessProbe: null
   microsoft:
     app:
       id: admin
       password: admin
+  resources:
+    requests:
+      cpu: "0.01"
+      memory: "256Mi"
+    limits:
+      cpu: "2"
+      memory: "512Mi"
 dtas:
   additionalArgs:
     - --tb=short

@@ -194,7 +194,7 @@ jobs:
 
       - name: Watch Helm deployment
         env:
-          HELM_INSTALL_TIMEOUT: 8m
+          HELM_INSTALL_TIMEOUT: 10m
         run: |
           kubectl get pods --watch &
           KWPID=$!
