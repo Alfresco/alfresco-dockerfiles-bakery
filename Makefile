@@ -18,6 +18,10 @@ prepare_search_enterprise: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Search Enterprise targets"
 	@./scripts/fetch-artifacts.sh search/enterprise
 
+prepare_connectors: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for Connectors targets"
+	@./scripts/fetch-artifacts.sh connector
+
 prepare_all: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts"
 	@./scripts/fetch-artifacts.sh
