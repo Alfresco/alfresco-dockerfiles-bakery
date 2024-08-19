@@ -54,7 +54,7 @@ alfresco-connector-ms365:
   image:
     repository: localhost/alfresco-ooi-service
     tag: latest
-    internalPort: []
+    internalPort: null
   environment:
     ALFRESCO_ADMIN_PASSWORD: admin
     ALFRESCO_ADMIN_USERNAME: admin
@@ -72,7 +72,7 @@ alfresco-connector-msteams:
   image:
     repository: localhost/alfresco-ms-teams-service
     tag: latest
-    internalPort: []
+    internalPort: null
   readinessProbe:
     initialDelaySeconds: 120
   livenessProbe: {}
