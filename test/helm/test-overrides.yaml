@@ -62,7 +62,7 @@ alfresco-connector-ms365:
       cpu: "0.01"
       memory: "256Mi"
     limits:
-      cpu: "1"
+      cpu: "2"
       memory: "512Mi"
 alfresco-connector-msteams:
   enabled: true
@@ -79,7 +79,7 @@ alfresco-connector-msteams:
       cpu: "0.01"
       memory: "256Mi"
     limits:
-      cpu: "1"
+      cpu: "2"
       memory: "512Mi"
 dtas:
   additionalArgs:
