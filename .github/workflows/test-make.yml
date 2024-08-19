@@ -36,7 +36,7 @@ jobs:
         run: |
           make all_ci
 
-      - name: Check Images are loaded and artifacts are cleanup
+      - name: Check Images are loaded
         run: |
           echo -n "Checking images are loaded in local Docker Engine..."
           docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco || echo "No Alfresco image found" && exit 1
