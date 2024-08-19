@@ -50,6 +50,7 @@ alfresco-transform-service:
 #alfresco-sync-service:
 alfresco-connector-ms365:
   enabled: true
+  replicaCount: 1
   image:
     repository: localhost/alfresco-ooi-service
     tag: latest
@@ -66,6 +67,7 @@ alfresco-connector-ms365:
       memory: "512Mi"
 alfresco-connector-msteams:
   enabled: true
+  replicaCount: 1
   image:
     repository: localhost/alfresco-ms-teams-service
     tag: latest
