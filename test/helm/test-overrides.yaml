@@ -69,6 +69,8 @@ alfresco-connector-msteams:
   image:
     repository: localhost/alfresco-ms-teams-service
     tag: latest
+  readinessProbe:
+    initialDelaySeconds: 120
   livenessProbe: null
   microsoft:
     app:
