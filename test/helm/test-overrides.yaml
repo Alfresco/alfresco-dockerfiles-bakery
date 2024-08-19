@@ -54,11 +54,11 @@ alfresco-connector-ms365:
   image:
     repository: localhost/alfresco-ooi-service
     tag: latest
-    internalPort: null
+    internalPort: []
   environment:
     ALFRESCO_ADMIN_PASSWORD: admin
     ALFRESCO_ADMIN_USERNAME: admin
-  livenessProbe: null
+  livenessProbe: {}
   resources:
     requests:
       cpu: "0.01"
@@ -72,10 +72,10 @@ alfresco-connector-msteams:
   image:
     repository: localhost/alfresco-ms-teams-service
     tag: latest
-    internalPort: null
+    internalPort: []
   readinessProbe:
     initialDelaySeconds: 120
-  livenessProbe: null
+  livenessProbe: {}
   microsoft:
     app:
       id: admin
