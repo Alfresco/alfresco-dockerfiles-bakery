@@ -35,7 +35,6 @@ jobs:
         id: make
         run: |
           make all_ci
-          echo "du=$(du -s | cut -f1)" >> $GITHUB_OUTPUT
 
       - name: Check Images are loaded and artifacts are cleanup
         run: |
