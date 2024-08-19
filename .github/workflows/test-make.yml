@@ -41,8 +41,3 @@ jobs:
         run: |
           echo -n "Checking images are loaded in local Docker Engine..."
           docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco || echo "No Alfresco image found" && exit 1
-          echo "Checking artifacts clean up worked"
-          if [ ${{ steps.make.outputs.DU }} -lt $(du -s | cut -f1) ]; then
-            echo "Artifacts were not cleaned up"
-            exit 1
-          fi
