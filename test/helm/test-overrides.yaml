@@ -57,7 +57,6 @@ alfresco-connector-ms365:
   environment:
     ALFRESCO_ADMIN_PASSWORD: admin
     ALFRESCO_ADMIN_USERNAME: admin
-  livenessProbe: {}
   resources:
     requests:
       cpu: "0.01"
@@ -71,9 +70,6 @@ alfresco-connector-msteams:
   image:
     repository: localhost/alfresco-ms-teams-service
     tag: latest
-  readinessProbe:
-    initialDelaySeconds: 120
-  livenessProbe: {}
   microsoft:
     app:
       id: admin
