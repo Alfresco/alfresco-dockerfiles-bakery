@@ -205,7 +205,7 @@ jobs:
             --values test/helm/enterprise-integration-test-values.yaml \
             --values test/helm/test-overrides.yaml \
             --set alfresco-connector-ms365.livenessProbe=null \
-            --set alfresco-connector-msteams.livenessProbe=null \
+            --set alfresco-connector-msteams.livenessProbe=null 
 
       - name: Watch Helm deployment
         env:
