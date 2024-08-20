@@ -16,7 +16,6 @@ on:
 
 env:
   ACS_CHART_VERSION: 172410cfb4ad44d4839d9aefd31b4bcefc44f316
-  ACS_VALUES_VERSION: 172410cfb4ad44d4839d9aefd31b4bcefc44f316
   ARTIFACT_NAME: alfresco-docker-images
 
 concurrency:
@@ -167,15 +166,7 @@ jobs:
           --from-file=.dockerconfigjson=$HOME/.docker/config.json
           --type=kubernetes.io/dockerconfigjson
 
-      - name: Fetch upstream values for tests
-        run: >-
-          curl -ssfL
-          https://raw.githubusercontent.com/Alfresco/acs-deployment/${{ env.ACS_VALUES_VERSION }}/test/enterprise-integration-test-values.yaml
-          -o test/helm/enterprise-integration-test-values.yaml &&
-          ls -l test/helm/enterprise-integration-test-values.yaml &&
-          cat test/helm/enterprise-integration-test-values.yaml
-
-      - name: Checkout github source
+      - name: Checkout acs-deployment sources
         uses: actions/checkout@v4
         with:
           repository: Alfresco/acs-deployment
@@ -198,7 +189,7 @@ jobs:
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
             --set global.known_urls=http://localhost \
             --set global.alfrescoRegistryPullSecrets=regcred \
-            --values test/helm/enterprise-integration-test-values.yaml \
+            --values ./github-source/test/enterprise-integration-test-values.yaml \
             --values test/helm/test-overrides.yaml
 
       - name: Watch Helm deployment
