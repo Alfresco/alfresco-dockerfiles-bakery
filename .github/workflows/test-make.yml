@@ -2,6 +2,14 @@ name: Test building using the make wrapper
 
 on:
   push:
+    branches:
+      - main
+    paths:
+      - 'Makefile'
+      - '.github/workflows/test-make.yml'
+  pull_request:
+    branches:
+      - main
     paths:
       - 'Makefile'
       - '.github/workflows/test-make.yml'
