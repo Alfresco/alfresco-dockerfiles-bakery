@@ -37,3 +37,17 @@ types of files in the right locations:
 
 * Alfresco Module Packages (AMPs) files in the [amps}(repository/amps/README.md) folder
 * Additional JAR files for the JRE in the [libs](repository/libs/README.md) folder
+
+## Architecture choice
+
+The image architecture defaults to the building system's architecture. To modify
+it, you need to adjust the `TARGET_ARCH` variable in the Bake file to a specific
+architecture, such as `linux/amd64`.
+
+```
+
+variable "TARGET_ARCH" {
+  default = "linux/amd64"
+}
+
+```
