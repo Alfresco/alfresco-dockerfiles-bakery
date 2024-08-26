@@ -117,6 +117,8 @@ jobs:
         uses: docker/bake-action@a4d7f0b5b91c14a296d792d4ec53a9db17f02e67  # v5.5.0
         with:
           push: true
+          set: TARGET_ARCH=[linux/amd64,linux/arm64]
+
 
       - name: Show all built images
         run: docker images
