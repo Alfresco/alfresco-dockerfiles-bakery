@@ -103,7 +103,7 @@ variable "ALFRESCO_REPO_USER_NAME" {
 }
 
 variable "TARGET_ARCH" {
-  default = ["",""] # e.g. ["linux/amd64"]
+  default = ""
 }
 
 target "java_base" {
@@ -139,7 +139,7 @@ target "java_base" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
   output = ["type=cacheonly"]
-  platforms = TARGET_ARCH
+  platforms = split(",", TARGET_ARCH)
 }
 
 variable "TOMCAT_MAJOR" {
@@ -183,7 +183,7 @@ target "tomcat_base" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-base-tomcat:tomcat${TOMCAT_MAJOR}-${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
   output = ["type=cacheonly"]
-  platforms = TARGET_ARCH
+  platforms = split(",", TARGET_ARCH)
 }
 
 target "repository" {
