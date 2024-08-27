@@ -103,7 +103,7 @@ variable "ALFRESCO_REPO_USER_NAME" {
 }
 
 variable "TARGET_ARCH" {
-  default = [] # e.g. ["linux/amd64"]
+  default = ["",""] # e.g. ["linux/amd64"]
 }
 
 target "java_base" {
