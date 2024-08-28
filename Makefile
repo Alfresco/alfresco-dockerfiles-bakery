@@ -46,6 +46,19 @@ connectors: prepare_connectors
 	@echo "Building Connectors images"
 	@docker buildx bake --no-cache --progress=plain connectors
 
+amd64_all: docker-bake.hcl prepare_all
+	@echo "Building all images for amd64"
+	@docker buildx bake --no-cache --progress=plain --set *.platform=linux/amd64
+
+arm64_all: docker-bake.hcl prepare_all
+	@echo "Building all images for arm64"
+	@docker buildx bake --no-cache --progress=plain --set *.platform=linux/arm64
+
+arm64_supported: docker-bake.hcl prepare_all
+	@echo "Building all supported images for arm64"
+	@export TARGET_ARCH="linux/arm64"
+	@docker buildx bake --no-cache --progress=plain java_base
+
 all: docker-bake.hcl prepare_all
 	@echo "Building all images"
 	@docker buildx bake --no-cache --progress=plain
