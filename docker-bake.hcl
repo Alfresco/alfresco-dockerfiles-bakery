@@ -102,10 +102,6 @@ variable "ALFRESCO_REPO_USER_NAME" {
   default = "alfresco"
 }
 
-variable "TARGET_ARCH" {
-  default = ""
-}
-
 target "java_base" {
   context = "./java"
   dockerfile = "Dockerfile"
@@ -139,7 +135,6 @@ target "java_base" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
   output = ["type=cacheonly"]
-  platforms = ["${TARGET_ARCH}"]
 }
 
 variable "TOMCAT_MAJOR" {

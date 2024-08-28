@@ -40,21 +40,8 @@ types of files in the right locations:
 
 ## Architecture choice
 
-The image architecture defaults to the building system's architecture when the
-`TARGET_ARCH` is empty. To modify it, you need to adjust variable in the Bake
-file to a specific architecture, such as `linux/amd64`.
-
-```
-
-variable "TARGET_ARCH" {
-  default = "linux/amd64"
-}
-
-```
-
-Setting the var to a `linux/arm64` or `linux/amd64` will result in creating
-images that are currently supporting multi platform. There is also other way to
-set the target architecture:
+The image architecture defaults to the building system's architecture. To modify
+it, you need to adjust variable when running bake command.
 
 ```sh
 
@@ -62,20 +49,10 @@ docker buildx bake --set *.platform=linux/arm64
 
 ```
 
-Simply use the above command to set the target platform for every image.
-Warning: currently we are not supporting every image on `linux/arm64` arch. 
-
-Other way to override `TARGET_ARCH` using the Makefile: 
-
-```makefile
-arm64_supported: docker-bake.hcl prepare_all
-	@echo "Building all supported images for arm64"
-	@export TARGET_ARCH="linux/arm64"
-	@docker buildx bake --no-cache --progress=plain java_base
-``` 
+To build just a specific image use e.g.:
 
 ```sh
 
-make arm64_supported
+docker buildx bake --set java_base.platform=linux/amd64 java_base
 
 ```
