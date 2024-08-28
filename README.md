@@ -64,3 +64,18 @@ docker buildx bake --set *.platform=linux/arm64
 
 Simply use the above command to set the target platform for every image.
 Warning: currently we are not supporting every image on `linux/arm64` arch. 
+
+Other way to override `TARGET_ARCH` using the Makefile: 
+
+```makefile
+arm64_supported: docker-bake.hcl prepare_all
+	@echo "Building all supported images for arm64"
+	@export TARGET_ARCH="linux/arm64"
+	@docker buildx bake --no-cache --progress=plain java_base
+``` 
+
+```sh
+
+make arm64_supported
+
+```
