@@ -2,9 +2,6 @@ FROM java_base
 
 ENV JAVA_OPTS_CONTAINER_FLAGS=-XX:MaxRAMPercentage=80
 
-ENV COMMON_PATH=tengine
-ENV EPEL_DEP_RPM_URL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
-
 EXPOSE 8090
 
 ARG ALFRESCO_AIO_GROUP_NAME
@@ -19,7 +16,7 @@ RUN --mount=type=bind,source=/,target=/dist \
     yum install -y cairo cups-libs libSM libGLU && \
     yum install -y /dist/imagemagick/imagemagick-distribution*-el9.rpm /dist/imagemagick/libs/imagemagick-distribution*-libs-el9.rpm && \
     tar xzf /dist/pdfrenderer/*.tgz -C /usr/bin && \
-    yum install -y ${EPEL_DEP_RPM_URL} && \
+    yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm && \
     yum -y install perl-Image-ExifTool && \
     rm -rf /tmp/dist && \
     yum clean all
