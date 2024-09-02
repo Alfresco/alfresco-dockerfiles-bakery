@@ -13,7 +13,7 @@ simply run the command below from the root of this project:
 make all
 ```
 
-This command will build locally all the docjker images this project offers.
+This command will build locally all the docker images this project offers.
 At the time of writing, these are:
 
 * Alfresco Content Repository (Enterprise) 23.2.2
@@ -35,7 +35,7 @@ If you want to build a specific image, you can run one of the following make tar
 The Alfresco Content Repository image can be customized by adding different
 types of files in the right locations:
 
-* Alfresco Module Packages (AMPs) files in the [amps}(repository/amps/README.md) folder
+* Alfresco Module Packages (AMPs) files in the [amps](repository/amps/README.md) folder
 * Additional JAR files for the JRE in the [libs](repository/libs/README.md) folder
 
 ## Architecture choice
