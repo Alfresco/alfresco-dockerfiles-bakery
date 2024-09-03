@@ -30,6 +30,10 @@ variable "REGISTRY_NAMESPACE" {
   default = "alfresco"
 }
 
+variable "TARGETARCH" {
+  default = "linux/amd64"
+}
+
 variable "TAG" {
   default = "latest"
 }
@@ -134,7 +138,8 @@ target "java_base" {
     "org.opencontainers.image.authors" = "${LABEL_AUTHOR}"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
-  output = ["type=cacheonly"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "TOMCAT_MAJOR" {
