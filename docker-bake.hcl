@@ -138,7 +138,7 @@ target "java_base" {
     "org.opencontainers.image.authors" = "${LABEL_AUTHOR}"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
-  output = ["type=docker"]
+  output = ["type=cacheonly"]
   platforms = split(",", "${TARGETARCH}")
 }
 
@@ -204,6 +204,7 @@ target "repository" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 target "search_liveindexing" {
@@ -243,6 +244,7 @@ target "search_liveindexing" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${liveindexing.artifact}:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_TROUTER_USER_NAME" {
@@ -272,6 +274,7 @@ target "ats_trouter" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-router:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_SFS_USER_NAME" {
@@ -301,6 +304,7 @@ target "ats_sfs" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-shared-file-store:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_IMAGEMAGICK_USER_NAME" {
@@ -330,6 +334,7 @@ target "tengine_imagemagick" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-imagemagick:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_LIBREOFFICE_USER_NAME" {
@@ -359,6 +364,7 @@ target "tengine_libreoffice" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-libreoffice:${TAG}"]
   output = ["type=docker"]
+  platforms = [ "linux/amd64" ]
 }
 
 variable "ALFRESCO_MISC_USER_NAME" {
@@ -388,6 +394,7 @@ target "tengine_misc" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-misc:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_TIKA_USER_NAME" {
@@ -417,6 +424,7 @@ target "tengine_tika" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-tika:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_PDFRENDERER_USER_NAME" {
@@ -446,6 +454,7 @@ target "tengine_pdfrenderer" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-pdf-renderer:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_AIO_USER_NAME" {
@@ -475,6 +484,7 @@ target "tengine_aio" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-core-aio:${TAG}"]
   output = ["type=docker"]
+  platforms = [ "linux/amd64" ]
 }
 
 variable "ALFRESCO_MSTEAMS_USER_NAME" {
@@ -504,6 +514,7 @@ target "connector_msteams" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-ms-teams-service:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_MS365_USER_NAME" {
@@ -533,4 +544,5 @@ target "connector_ms365" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-ooi-service:${TAG}"]
   output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
