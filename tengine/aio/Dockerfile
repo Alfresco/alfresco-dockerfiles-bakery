@@ -8,6 +8,7 @@ ARG ALFRESCO_AIO_GROUP_NAME
 ARG ALFRESCO_AIO_GROUP_ID
 ARG ALFRESCO_AIO_USER_NAME
 ARG ALFRESCO_AIO_USER_ID
+ARG DISTRIB_MAJOR
 
 RUN --mount=type=bind,source=/,target=/dist \
     mkdir /tmp/dist && \

@@ -8,6 +8,7 @@ ARG ALFRESCO_IMAGEMAGICK_GROUP_NAME
 ARG ALFRESCO_IMAGEMAGICK_GROUP_ID
 ARG ALFRESCO_IMAGEMAGICK_USER_NAME
 ARG ALFRESCO_IMAGEMAGICK_USER_ID
+ARG DISTRIB_MAJOR
 
 ADD alfresco-transform-imagemagick*.jar /opt/app.jar
 ADD imagemagick-distribution*-el9.rpm /tmp/imagemagick-distribution-el9.rpm
