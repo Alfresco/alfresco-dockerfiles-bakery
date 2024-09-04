@@ -53,5 +53,5 @@ To build just a specific image use e.g.:
 
 ```sh
 export TARGETARCH=linux/arm64
-docker buildx bake --set java_base.platform=linux/amd64 tengine_imagemagick
+docker buildx bake tengine_imagemagick
 ```
