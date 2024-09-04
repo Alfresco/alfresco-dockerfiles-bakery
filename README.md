@@ -1,4 +1,4 @@
-# Alfresco Docker images builder
+# Alfresco Docker images builder
 
 This projects aims at providing a quick and easy to build and maintain Alfresco
 Docker images.
@@ -26,7 +26,7 @@ If you want to build a specific image, you can run one of the following make tar
 
 * repo: build the Alfresco Content Repository image
 * search_enterprise: build the Alfresco Search Enterprise images
-* ats: build the Alfresco Transformation Service images 
+* ats: build the Alfresco Transformation Service images
 
 ## Customizing the images
 
@@ -35,24 +35,23 @@ If you want to build a specific image, you can run one of the following make tar
 The Alfresco Content Repository image can be customized by adding different
 types of files in the right locations:
 
-* Alfresco Module Packages (AMPs) files in the [amps](repository/amps/README.md) folder
+* Alfresco Module Packages (AMPs) files in the [amps](repository/amps/README.md)
+  folder
 * Additional JAR files for the JRE in the [libs](repository/libs/README.md) folder
 
 ## Architecture choice
 
 The image architecture defaults to the building system's architecture. To modify
-it, you need to adjust variable when running bake command.
+it, you need to adjust en environment variable when running bake command.
 
 ```sh
-
-docker buildx bake --set *.platform=linux/arm64
-
+export TARGETARCH=linux/arm64
+docker buildx bake
 ```
 
 To build just a specific image use e.g.:
 
 ```sh
-
-docker buildx bake --set java_base.platform=linux/amd64 java_base
-
+export TARGETARCH=linux/arm64
+docker buildx bake --set java_base.platform=linux/amd64 tengine_imagemagick
 ```
