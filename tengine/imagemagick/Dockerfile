@@ -9,13 +9,14 @@ ARG ALFRESCO_IMAGEMAGICK_GROUP_ID
 ARG ALFRESCO_IMAGEMAGICK_USER_NAME
 ARG ALFRESCO_IMAGEMAGICK_USER_ID
 ARG DISTRIB_MAJOR
+ARG TARGETPLATFORM
 ARG TARGETARCH
 
 ADD alfresco-transform-imagemagick*.jar /opt/app.jar
 ADD imagemagick-distribution*-el${DISTRIB_MAJOR}*.rpm /tmp/
 ADD libs/imagemagick-distribution*-libs-el${DISTRIB_MAJOR}*.rpm /tmp/
 
-RUN [ "$TARGETARCH" == 'arm64' ] && PKGARCH='-aarch64'; \
+RUN [ "$TARGETARCH" == 'arm64' ] && export PKGARCH='-aarch64'; \
     yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm; \
     yum localinstall -y /tmp/imagemagick-distribution-*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /tmp/imagemagick-distribution-*-libs-el${DISTRIB_MAJOR}${PKG_ARCH}.rpm; \
     yum clean all && rm -rf /var/cache/yum; \
