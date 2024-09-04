@@ -24,6 +24,13 @@ The `make` wrapper provides other targets to build a subset of the images.
 To get a list of all available targets, just type `make` and press TAB key
 twice.
 
+Bellow are some environment variables dedicated to the `make` wrapper which
+can be used to customize the build process:
+
+* BAKE_NO_CACHE: Set to `1` to disable the cache during the build process
+* BAKE_NO_PROVENANCE: Set to `1` to not add provenance metadata during the build
+  process. This is mostly useful if your registry do not support it.
+
 ## Building the specific images
 
 If you want to build a specific image, you can run one of the following make target:
