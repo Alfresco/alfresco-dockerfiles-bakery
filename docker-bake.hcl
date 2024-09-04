@@ -364,7 +364,7 @@ target "tengine_libreoffice" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-libreoffice:${TAG}"]
   output = ["type=docker"]
-  platforms = [ "linux/amd64" ]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_MISC_USER_NAME" {
