@@ -1,10 +1,19 @@
+SHELL := /bin/bash
 DOCKER_BAKE_ARGS := --progress=plain
 
 setenv:
 ifdef REGISTRY
 	@echo "Checking for REGISTRY authentication"
 	@if docker login ${REGISTRY}; then \
-		echo "Images will be pushed to ${REGISTRY}"; \
+		echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'; \
+		echo "Images will be pushed to ${REGISTRY}/$${REGISTRY_NAMESPACE:-alfresco}"; \
+		echo "Do make sure this location is safe to push to!"; \
+		echo "In particular, make sure you are not pushing to a public registry"; \
+		echo "without paying attention to the security & legal implications."; \
+		echo "If you are not sure, please stop the build and check"; \
+		echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'; \
+		read -p "Do you want to continue? [y/N] " -n 1 -r; \
+		[[ $$REPLY =~ ^[Yy]$$ ]] && echo -e '\n' || (echo -e "\nStopping build"; exit 1); \
 	else \
 		echo "Failed to login to ${REGISTRY}. Stopping build."; \
 		exit 1; \
