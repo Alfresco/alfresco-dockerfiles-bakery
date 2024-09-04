@@ -31,7 +31,7 @@ variable "REGISTRY_NAMESPACE" {
 }
 
 variable "TARGETARCH" {
-  default = "linux/amd64"
+  default = ""
 }
 
 variable "TAG" {
