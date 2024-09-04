@@ -42,7 +42,7 @@ types of files in the right locations:
 ## Architecture choice
 
 The image architecture defaults to the building system's architecture. To modify
-it, you need to adjust en environment variable when running bake command.
+it, you need to adjust an environment variable when running bake command.
 
 ```sh
 export TARGETARCH=linux/arm64
