@@ -8,9 +8,11 @@ ARG ALFRESCO_PDFRENDERER_GROUP_NAME
 ARG ALFRESCO_PDFRENDERER_GROUP_ID
 ARG ALFRESCO_PDFRENDERER_USER_NAME
 ARG ALFRESCO_PDFRENDERER_USER_ID
+ARG TARGETARCH
 
 RUN --mount=type=bind,source=/,target=/dist \
-    tar xzf /dist/*.tgz -C /usr/bin && \
+    [ "$TARGETARCH" == 'arm64' ] && export PDFARCH='-arm'; \
+    tar xzf /dist/*-linux${PDFARCH}.tgz -C /usr/bin alfresco-pdf-renderer && \
     yum clean all
 
 ADD alfresco-transform-pdf-renderer*.jar /opt/app.jar

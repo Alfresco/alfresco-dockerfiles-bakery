@@ -12,12 +12,12 @@ ARG DISTRIB_MAJOR
 ARG TARGETARCH
 
 RUN --mount=type=bind,source=/,target=/dist \
-    [ "$TARGETARCH" == 'arm64' ] && export PKGARCH='-aarch64'; \
+    [ "$TARGETARCH" == 'arm64' ] && export PKGARCH='-aarch64' PDFARCH='-arm'; \
     yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm && \
     yum install -y cairo cups-libs libSM libGLU perl-Image-ExifTool && \
     mkdir /tmp/dist && \
     yum localinstall -y /dist/imagemagick/imagemagick-distribution*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/imagemagick/libs/imagemagick-distribution*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm && \
-    tar xzf /dist/pdfrenderer/*.tgz -C /usr/bin && \
+    tar xzf /dist/pdfrenderer/*-linux${PDFARCH}.tgz -C /usr/bin alfresco-pdf-renderer && \
     if [ "$TARGETARCH" == 'arm64' ]; then \
         yum --enablerepo=devel install -y libreoffice && \
         update-alternatives --set java java-17-openjdk.aarch64; \
