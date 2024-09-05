@@ -115,7 +115,16 @@ jobs:
         with:
           comment_on_pr: false
 
-      - name: Bake Docker images
+      - name: Bake Docker images for amd64
+        env: 
+          TARGETARCH: linux/amd64
+        uses: docker/bake-action@a4d7f0b5b91c14a296d792d4ec53a9db17f02e67  # v5.5.0
+        with:
+          push: true
+      
+      - name: Bake Docker images for arm64
+        env: 
+          TARGETARCH: linux/arm64
         uses: docker/bake-action@a4d7f0b5b91c14a296d792d4ec53a9db17f02e67  # v5.5.0
         with:
           push: true
