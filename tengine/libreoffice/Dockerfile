@@ -1,8 +1,6 @@
 FROM java_base
 
 ENV JAVA_OPTS_CONTAINER_FLAGS=-XX:MaxRAMPercentage=80
-ENV LIBREOFFICE_ARM64_RPM_URL=https://dl.rockylinux.org/pub/rocky/9/devel/aarch64/os/Packages/l/
-ENV LIBREOFFICE_ARM64_RPM_VERSION=libreoffice-7.1.8.1
 
 EXPOSE 8090
 
@@ -15,8 +13,7 @@ ARG TARGETARCH
 RUN --mount=type=bind,source=/,target=/dist \
     yum install -y cairo cups-libs libSM libGLU && \
     if [ "$TARGETARCH" == 'arm64' ]; then \
-        LIBREOFFICE_ARM64_RPM_VERSION=$(curl -s $LIBREOFFICE_ARM64_RPM_URL | grep -o "${LIBREOFFICE_ARM64_RPM_VERSION}.*" | cut -d '"' -f 1 | sort | tail -n1) && \
-        yum --enablerepo=devel install -y ${LIBREOFFICE_ARM64_RPM_URL}${LIBREOFFICE_ARM64_RPM_VERSION} && \
+        yum --enablerepo=devel install -y libreoffice && \
         update-alternatives --set java java-17-openjdk.aarch64; \
     else \
         mkdir /tmp/dist && \
