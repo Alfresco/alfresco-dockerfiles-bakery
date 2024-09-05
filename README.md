@@ -3,6 +3,30 @@
 This projects aims at providing a quick and easy to build and maintain Alfresco
 Docker images.
 
+## Prerequisites
+
+Using this tool to build Alfresco images requires:
+
+* A recent enough Docker isntallation (with buildx support)
+* Credentials to access the Alfresco artifactories (Nexus server) that may
+  require authentication
+* Some Unix tools: `jq`, `wget`, `make`
+
+Configuring the authentication to Alfresco NExus server must be dopne using the
+wget rc file `~/.wgetrc` or `~/.netrc`:
+
+```sh
+echo -e "user=myuser\npassword=mypassword" > ~/.wgetrc
+chmod 600 ~/.wgetrc
+```
+
+or
+
+```sh
+echo -e "machine nexus.alfresco.com\nlogin myuser\npassword mypassword" > ~/.netrc
+chmod 600 ~/.netrc
+```
+
 ## Getting started quickly
 
 If you do not plan on applying specific customizations but just want to get
@@ -20,9 +44,14 @@ At the time of writing, these are:
 * Alfresco Search Enterprise 4.4.0
 * Alfresco Transformation Services 4.1.3
 
-The `make` wrapper provides other targets to build a subset of the images.
-To get a list of all available targets, just type `make` and press TAB key
-twice.
+Currently available make offers the following targets in order tobuild images:
+
+* all: build all images
+* repo: build the Alfresco Content Repository image
+* search_enterprise: build the Alfresco Search Enterprise images
+* ats: build the Alfresco Transformation Service images
+* tengines: build the Alfresco Transform engine images
+* connectors: build the Alfresco Connectors images (MS-Teams & MS-Office365)
 
 Bellow are some environment variables dedicated to the `make` wrapper which
 can be used to customize the build process:
