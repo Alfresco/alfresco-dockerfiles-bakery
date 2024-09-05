@@ -42,7 +42,7 @@ jobs:
       - name: Make Docker images
         id: make
         run: |
-          make all_ci
+          yes | make all_ci
 
       - name: Check Images are loaded
         run: |
