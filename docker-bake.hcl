@@ -484,7 +484,7 @@ target "tengine_aio" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-core-aio:${TAG}"]
   output = ["type=docker"]
-  platforms = [ "linux/amd64" ]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_MSTEAMS_USER_NAME" {
