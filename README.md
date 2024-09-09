@@ -7,7 +7,7 @@ Docker images.
 
 Using this tool to build Alfresco images requires:
 
-* A recent enough Docker isntallation (with buildx support)
+* A recent enough Docker installation (with buildx support)
 * Credentials to access the Alfresco artifactories (Nexus server) that may
   require authentication
 * Some Unix tools: `jq`, `wget`, `make`
