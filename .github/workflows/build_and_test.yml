@@ -160,7 +160,7 @@ jobs:
         arch: [arm64, amd64]
     name: helm test
     needs: build-test
-    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-latest-arm64-small' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'ARM64-16GB' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
     steps:
       - name: Setup cluster
         uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v5.35.0
