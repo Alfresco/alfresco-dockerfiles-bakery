@@ -47,7 +47,8 @@ alfresco-transform-service:
     image:
       repository: localhost/alfresco-shared-file-store
       tag: latest
-#alfresco-sync-service:
+alfresco-sync-service:
+  enabled: false ## disable till release of 5.0.1
 dtas:
   additionalArgs:
     - --tb=short
