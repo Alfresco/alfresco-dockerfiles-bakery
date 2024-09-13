@@ -47,7 +47,6 @@ jobs:
           auto-commit: "true"
 
   build-test:
-    name: Build and test
     runs-on: ubuntu-latest
     needs: pre-commit
     steps:
