@@ -11,6 +11,7 @@ RUN mkdir -p ${CATALINA_HOME}/shared/classes/alfresco/web-extension \
 
 COPY substituter.sh ${CATALINA_HOME}/shared/classes/alfresco
 
+ADD amps /tmp/amps
 ADD distribution /tmp/
 ENV DISTDIR="/tmp/distribution"
 
@@ -19,6 +20,7 @@ RUN yum install -y unzip xmlstarlet && \
     unzip ${DISTDIR}/alfresco*/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share/ &&\
     cp ${DISTDIR}/alfresco*/bin/* ${CATALINA_HOME}/alfresco-mmt/ &&\
     cp -r ${DISTDIR}/alfresco*/amps ${CATALINA_HOME}/amps_share &&\
+    cp /tmp/amps/*.amp ${CATALINA_HOME}/amps_share &&\
     cp ${DISTDIR}/alfresco*/web-extension-samples/custom-slingshot-application-context.xml.sample ${CATALINA_HOME}/shared/classes/alfresco/web-extension &&\
     cp ${DISTDIR}/alfresco*/web-extension-samples/smartfolders-amp-actions-config.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension &&\
     cp /tmp/share-config-custom.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension &&\

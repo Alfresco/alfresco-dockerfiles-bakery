@@ -8,6 +8,14 @@
         "classifier": ".zip",
         "group": "org.alfresco",
         "repository": "enterprise-releases"
+      },
+      {
+        "name": "alfresco-googledrive-share",
+        "version": "4.1.0",
+        "path": "share/amps",
+        "classifier": ".amp",
+        "group": "org.alfresco.integrations",
+        "repository": "releases"
       }
     ]
   }

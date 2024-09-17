@@ -17,7 +17,7 @@ way to build well structured AMPs.
 > SDK](https://docs.alfresco.com/content-services/latest/develop/oop-sdk/) to
 > build Docker images with your extensions.
 
-By default the `scripts/fetch-amps.sh` script will fetch the following AMPs from the Alfresco Nexus repository:
+By default the `scripts/fetch-artifacts.sh` script will fetch the following AMPs from the Alfresco Nexus repository:
 
 * alfresco-share-services
 * alfresco-aos-module
