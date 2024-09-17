@@ -53,6 +53,10 @@ prepare_connectors: scripts/fetch-artifacts.sh setenv
 	@echo "Fetching all artifacts for Connectors targets"
 	@./scripts/fetch-artifacts.sh connector
 
+prepare_share: scripts/fetch-artifacts.sh setenv
+	@echo "Fetching all artifacts for Share targets"
+	@./scripts/fetch-artifacts.sh share
+
 prepare_all: scripts/fetch-artifacts.sh setenv
 	@echo "Fetching all artifacts"
 	@./scripts/fetch-artifacts.sh
@@ -76,6 +80,10 @@ search_enterprise: prepare_search_enterprise
 connectors: prepare_connectors
 	@echo "Building Connectors images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} connectors
+
+share: prepare_share
+	@echo "Building Share images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} share
 
 all: docker-bake.hcl prepare_all
 	@echo "Building all images"

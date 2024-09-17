@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-content-services-share-distribution",
+        "version": "23.2.2",
+        "path": "share/distribution",
+        "classifier": ".zip",
+        "group": "org.alfresco",
+        "repository": "enterprise-releases"
+      }
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors"]
+  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors", "share"]
 }
 
 group "content_service" {
@@ -20,6 +20,10 @@ group "tengines" {
 
 group "connectors" {
   targets = ["connector_msteams", "connector_ms365"]
+}
+
+group "share" {
+  targets = ["share"]
 }
 
 variable "REGISTRY" {
@@ -543,6 +547,22 @@ target "connector_ms365" {
     "org.opencontainers.image.description" = "Alfresco Microsoft 365 Connector"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-ooi-service:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
+
+target "share" {
+  context = "./share"
+  dockerfile = "Dockerfile"
+  inherits = ["tomcat_base"]
+  contexts = {
+    tomcat_base = "target:tomcat_base"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Share Enterprise"
+    "org.opencontainers.image.description" = "Alfresco Share Enterprise"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}alfresco-share:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }

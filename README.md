@@ -12,7 +12,7 @@ Using this tool to build Alfresco images requires:
   require authentication
 * Some Unix tools: `jq`, `wget`, `make`
 
-Configuring the authentication to Alfresco NExus server must be dopne using the
+Configuring the authentication to Alfresco Nexus server must be done using the
 wget rc file `~/.wgetrc` or `~/.netrc`:
 
 ```sh

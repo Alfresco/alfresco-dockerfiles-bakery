@@ -3,7 +3,10 @@ alfresco-repository:
   image:
     repository: localhost/alfresco-content-repository
     tag: latest
-#share:
+share:
+  image:
+    repository: localhost/alfresco-share
+    tag: latest
 alfresco-search-enterprise:
   liveIndexing:
     content:
