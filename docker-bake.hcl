@@ -1,9 +1,9 @@
 group "default" {
-  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors", "share"]
+  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors"]
 }
 
 group "content_service" {
-  targets = ["repository"]
+  targets = ["repository", "share"]
 }
 
 group "enterprise-search" {
@@ -20,10 +20,6 @@ group "tengines" {
 
 group "connectors" {
   targets = ["connector_msteams", "connector_ms365"]
-}
-
-group "share" {
-  targets = ["share"]
 }
 
 variable "REGISTRY" {
@@ -559,8 +555,8 @@ target "share" {
     tomcat_base = "target:tomcat_base"
   }
   labels = {
-    "org.opencontainers.image.title" = "${PRODUCT_LINE} Share Enterprise"
-    "org.opencontainers.image.description" = "Alfresco Share Enterprise"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Share"
+    "org.opencontainers.image.description" = "Alfresco Share"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share:${TAG}"]
   output = ["type=docker"]
