@@ -85,7 +85,7 @@ services:
     volumes:
       - shared-file-store-volume:/tmp/Alfresco/sfs
   share:
-    image: quay.io/alfresco/alfresco-share:23.2.1
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share:${TAG}
     mem_limit: 1g
     environment:
       REPO_HOST: "alfresco"
