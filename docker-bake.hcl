@@ -562,7 +562,7 @@ target "share" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Share Enterprise"
     "org.opencontainers.image.description" = "Alfresco Share Enterprise"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}alfresco-share:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
