@@ -32,4 +32,4 @@ if [ "${CSRF_FILTER_REFERER}" != "" ] && [  "${CSRF_FILTER_ORIGIN}" != "" ]; the
     "$CATALINA_HOME"/shared/classes/alfresco/web-extension/share-config-custom.xml
 fi
 
-bash -c "$@"
+exec catalina.sh run

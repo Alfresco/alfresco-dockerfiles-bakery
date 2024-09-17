@@ -9,7 +9,7 @@ RUN mkdir -p ${CATALINA_HOME}/shared/classes/alfresco/web-extension \
     ${CATALINA_HOME}/alfresco-mmt/ \
     /licenses
 
-COPY substituter.sh ${CATALINA_HOME}/shared/classes/alfresco
+COPY entrypoint.sh ${CATALINA_HOME}/shared/classes/alfresco
 
 ADD amps /tmp/amps
 ADD distribution /tmp/
@@ -26,10 +26,10 @@ RUN yum install -y unzip xmlstarlet && \
     cp /tmp/share-config-custom.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension &&\
     rm -rf ${DISTDIR} /tmp &&\
     sed -i "s/shared.loader=/shared.loader=\${catalina.base}\/shared\/classes/" ${CATALINA_HOME}/conf/catalina.properties &&\
-    chmod +x ${CATALINA_HOME}/shared/classes/alfresco/substituter.sh &&\
+    chmod +x ${CATALINA_HOME}/shared/classes/alfresco/entrypoint.sh &&\
     yum clean all && rm -rf /var/cache/yum
     
 RUN java -jar ${CATALINA_HOME}/alfresco-mmt/alfresco-mmt*.jar install \
               ${CATALINA_HOME}/amps_share ${CATALINA_HOME}/webapps/share -directory -nobackup -force
 
-ENTRYPOINT ["/usr/local/tomcat/shared/classes/alfresco/substituter.sh", "catalina.sh run"]
+ENTRYPOINT ["/usr/local/tomcat/shared/classes/alfresco/entrypoint.sh"]
