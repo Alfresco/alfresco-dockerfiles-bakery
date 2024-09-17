@@ -123,9 +123,6 @@ jobs:
           set: |
             *.output=type=registry,push=true
 
-      - name: Show all built images
-        run: docker images
-
   compose-test:
     name: compose-test
     needs: build-test
