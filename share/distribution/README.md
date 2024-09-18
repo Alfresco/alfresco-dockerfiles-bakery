@@ -15,3 +15,4 @@ web-server/
   |_Catalina/
     |_localhost/
 ```
+Do changes to `share-config-custom.xml` according to your needs.
