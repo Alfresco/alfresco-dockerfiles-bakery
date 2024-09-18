@@ -1,4 +1,6 @@
-FROM tomcat_base
+ARG DISTRIB_NAME
+ARG DISTRIB_MAJOR
+FROM tomcat_base as share_build
 
 USER root
 EXPOSE 8000
@@ -15,7 +17,7 @@ ADD amps /tmp/amps
 ADD distribution /tmp/
 ENV DISTDIR="/tmp/distribution"
 
-RUN yum install -y unzip xmlstarlet && \
+RUN yum install -y unzip && \
     unzip /tmp/*.zip -d ${DISTDIR} &&\
     unzip ${DISTDIR}/alfresco*/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share/ &&\
     cp ${DISTDIR}/alfresco*/bin/* ${CATALINA_HOME}/alfresco-mmt/ &&\
@@ -31,5 +33,26 @@ RUN yum install -y unzip xmlstarlet && \
     
 RUN java -jar ${CATALINA_HOME}/alfresco-mmt/alfresco-mmt*.jar install \
               ${CATALINA_HOME}/amps_share ${CATALINA_HOME}/webapps/share -directory -nobackup -force
+
+FROM tomcat_base AS share-rhlike
+ARG ALFRESCO_SHARE_USER_ID
+ARG ALFRESCO_SHARE_GROUP_ID
+ARG ALFRESCO_SHARE_GROUP_NAME
+ARG ALFRESCO_SHARE_USER_NAME
+
+COPY --chown=:${ALFRESCO_SHARE_GROUP_ID} --from=share_build ${CATALINA_HOME} ${CATALINA_HOME}
+
+USER root
+RUN groupadd -g ${ALFRESCO_SHARE_GROUP_ID} ${ALFRESCO_SHARE_GROUP_NAME} && \
+    useradd -u ${ALFRESCO_SHARE_USER_ID} -g ${ALFRESCO_SHARE_GROUP_NAME} ${ALFRESCO_SHARE_USER_NAME} -G tomcat && \
+    mkdir -m 750 -p ${CATALINA_HOME}/modules/platform && \
+    chgrp -R ${ALFRESCO_SHARE_GROUP_ID} ${CATALINA_HOME}/modules && \
+    yum install -y xmlstarlet && \
+    yum clean all && rm -rf /var/cache/yum
+
+FROM share-rhlike AS share-rockylinux9
+
+FROM share-${DISTRIB_NAME}${DISTRIB_MAJOR}
+USER ${ALFRESCO_SHARE_USER_NAME}
 
 ENTRYPOINT ["/usr/local/tomcat/shared/classes/alfresco/entrypoint.sh"]
