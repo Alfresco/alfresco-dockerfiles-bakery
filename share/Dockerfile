@@ -18,8 +18,6 @@ RUN yum install -y unzip
 RUN unzip /tmp/*.zip -d ${DISTDIR} 
 RUN unzip ${DISTDIR}/alfresco*/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share/
 RUN cp -r ${DISTDIR}/alfresco*/amps/ /tmp/amps/
-RUN cp ${DISTDIR}/alfresco*/web-extension-samples/custom-slingshot-application-context.xml.sample ${CATALINA_HOME}/shared/classes/alfresco/web-extension
-RUN cp ${DISTDIR}/alfresco*/web-extension-samples/smartfolders-amp-actions-config.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension
 RUN cp /tmp/share-config-custom.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension
 RUN cp ${DISTDIR}/alfresco*/web-server/conf/Catalina/localhost/share.xml ${CATALINA_HOME}/conf/Catalina/localhost
 RUN sed -i 's|../modules/share|modules/share|' ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
