@@ -14,18 +14,18 @@ ADD amps /tmp/amps
 ADD distribution /tmp/
 ENV DISTDIR="/tmp/distribution"
 
-RUN yum install -y unzip && \
-    unzip /tmp/*.zip -d ${DISTDIR} &&\
-    unzip ${DISTDIR}/alfresco*/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share/ &&\
-    cp -r ${DISTDIR}/alfresco*/amps/ /tmp/amps/ &&\
-    cp ${DISTDIR}/alfresco*/web-extension-samples/custom-slingshot-application-context.xml.sample ${CATALINA_HOME}/shared/classes/alfresco/web-extension &&\
-    cp ${DISTDIR}/alfresco*/web-extension-samples/smartfolders-amp-actions-config.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension &&\
-    cp /tmp/share-config-custom.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension &&\
-    cp ${DISTDIR}/alfresco*/web-server/conf/Catalina/localhost/share.xml ${CATALINA_HOME}/conf/Catalina/localhost &&\
-    sed -i 's|../modules/share|modules/share|' ${CATALINA_HOME}/conf/Catalina/localhost/share.xml &&\
-    sed -i "s/shared.loader=/shared.loader=\${catalina.base}\/shared\/classes/" ${CATALINA_HOME}/conf/catalina.properties &&\
-    chmod +x ${CATALINA_HOME}/shared/classes/alfresco/entrypoint.sh &&\
-    yum clean all && rm -rf /var/cache/yum
+RUN yum install -y unzip 
+RUN unzip /tmp/*.zip -d ${DISTDIR} 
+RUN unzip ${DISTDIR}/alfresco*/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share/
+RUN cp -r ${DISTDIR}/alfresco*/amps/ /tmp/amps/
+RUN cp ${DISTDIR}/alfresco*/web-extension-samples/custom-slingshot-application-context.xml.sample ${CATALINA_HOME}/shared/classes/alfresco/web-extension
+RUN cp ${DISTDIR}/alfresco*/web-extension-samples/smartfolders-amp-actions-config.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension
+RUN cp /tmp/share-config-custom.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension
+RUN cp ${DISTDIR}/alfresco*/web-server/conf/Catalina/localhost/share.xml ${CATALINA_HOME}/conf/Catalina/localhost
+RUN sed -i 's|../modules/share|modules/share|' ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
+RUN sed -i "s/shared.loader=/shared.loader=\${catalina.base}\/shared\/classes/" ${CATALINA_HOME}/conf/catalina.properties
+RUN chmod +x ${CATALINA_HOME}/shared/classes/alfresco/entrypoint.sh
+RUN yum clean all && rm -rf /var/cache/yum
     
 RUN java -jar ${DISTDIR}/alfresco*/bin/alfresco-mmt.jar install \
               /tmp/amps/ ${CATALINA_HOME}/webapps/share -directory -nobackup -force
