@@ -25,7 +25,6 @@ RUN cp ${DISTDIR}/alfresco*/web-server/conf/Catalina/localhost/share.xml ${CATAL
 RUN sed -i 's|../modules/share|modules/share|' ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
 RUN sed -i "s/shared.loader=/shared.loader=\${catalina.base}\/shared\/classes/" ${CATALINA_HOME}/conf/catalina.properties
 RUN chmod +x ${CATALINA_HOME}/shared/classes/alfresco/entrypoint.sh
-RUN yum clean all && rm -rf /var/cache/yum
     
 RUN java -jar ${DISTDIR}/alfresco*/bin/alfresco-mmt.jar install \
               /tmp/amps/ ${CATALINA_HOME}/webapps/share -directory -nobackup -force
