@@ -8,6 +8,7 @@ on:
 
 permissions:
   security-events: write
+  contents: write
 
 jobs:
   kics:
