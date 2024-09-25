@@ -21,7 +21,7 @@ jobs:
           ignore_on_exit: results
           output_path: report-dir/
           output_formats: 'pdf'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
           enable_jobs_summary: true
           platform_type: docker
           disable_secrets: true
