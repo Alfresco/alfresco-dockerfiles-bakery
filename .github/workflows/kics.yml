@@ -21,13 +21,7 @@ jobs:
           path: './'
           ignore_on_exit: results
           output_path: report-dir/
-          output_formats: 'pdf'
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           enable_jobs_summary: true
           platform_type: dockerfile
           disable_secrets: true
-      - name: Upload KICS Report
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
-        with:
-          path: report-dir/results.pdf
-          name: kics-report
