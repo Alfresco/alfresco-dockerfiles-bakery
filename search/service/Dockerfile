@@ -1,0 +1,44 @@
+ARG DISTRIB_NAME
+ARG DISTRIB_MAJOR
+
+FROM java_base as solr_build
+
+ARG ALFRESCO_SOLR_DIST_DIR
+
+USER root
+
+COPY distribution /tmp/
+
+RUN yum install -y unzip && \
+   unzip /tmp/*.zip -d $(dirname ${ALFRESCO_SOLR_DIST_DIR}) && \
+   mkdir -p ${ALFRESCO_SOLR_DIST_DIR}/data && \
+   mv ${ALFRESCO_SOLR_DIST_DIR}/solrhome/alfrescoModels ${ALFRESCO_SOLR_DIST_DIR}/data/
+
+FROM java_base AS solr-rhlike
+
+ARG ALFRESCO_SOLR_USER_ID
+ARG ALFRESCO_SOLR_USER_NAME
+ARG ALFRESCO_SOLR_GROUP_ID
+ARG ALFRESCO_SOLR_GROUP_NAME
+ARG ALFRESCO_SOLR_DIST_DIR
+
+ENV ALFRESCO_SOLR_DIST_DIR=${ALFRESCO_SOLR_DIST_DIR}
+
+COPY --chown=:${ALFRESCO_SOLR_GROUP_ID} --from=solr_build ${ALFRESCO_SOLR_DIST_DIR} ${ALFRESCO_SOLR_DIST_DIR}
+
+USER root
+
+WORKDIR ${ALFRESCO_SOLR_DIST_DIR}
+
+RUN groupadd -g ${ALFRESCO_SOLR_GROUP_ID} ${ALFRESCO_SOLR_GROUP_NAME} && \
+  useradd -u ${ALFRESCO_SOLR_USER_ID} -g ${ALFRESCO_SOLR_GROUP_NAME} ${ALFRESCO_SOLR_USER_NAME} && \
+  chmod g+w -R {logs,data,solrhome}
+
+
+VOLUME ["${ALFRESCO_SOLR_DIST_DIR}/data","${ALFRESCO_SOLR_DIST_DIR}/solrhome","${ALFRESCO_SOLR_DIST_DIR}/keystores"]
+
+EXPOSE 8983
+
+USER ${ALFRESCO_SOLR_USER_NAME}
+
+CMD ["./solr/bin/solr","start","-f"]
