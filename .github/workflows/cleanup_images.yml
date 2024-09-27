@@ -1,0 +1,21 @@
+name: Cleanup Docker images on ghcr.io
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      
+      - name: List all packages
+        id: list-targets
+        uses: docker/bake-action/subaction/list-targets@a4d7f0b5b91c14a296d792d4ec53a9db17f02e67  # v5.5.0
+
+      - name: echo all packages
+        run: |
+          echo ${{ steps.list-targets.outputs.targets }}
