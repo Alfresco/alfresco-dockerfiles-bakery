@@ -5,19 +5,17 @@ on:
     branches:
       - main
 
+permissions:
+  packages: write
+
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      
-      - name: Extract all image names from HCL
-        id: extract_image_names
-        run: |
-          image_names=$(grep 'tags' docker-bake.hcl | sed -n 's/.*\/\([^:]*\):.*/\1/p' | tr '\n' ',' | sed 's/,$//')
-          echo "IMAGE_NAMES=$image_names" >> $GITHUB_ENV
-
-      - name: Display the list of image names
-        run: |
-          echo "Extracted image names are: ${{ env.IMAGE_NAMES }}"
+      - name: Remove tag ${{format('pr-{0}', github.event.pull_request.number)}}
+        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
+        with:
+          token: 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
+          owner: Alfresco
+          repository: alfresco-dockerfiles-bakery
+          dry-run: true
