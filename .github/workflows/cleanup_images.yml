@@ -8,6 +8,25 @@ on:
 permissions:
   packages: write
 
+env:
+  PACKAGE_NAMES: |
+    alfresco-transform-router
+    alfresco-shared-file-store
+    alfresco-content-repository
+    alfresco-imagemagick
+    alfresco-misc
+    alfresco-libreoffice
+    alfresco-pdf-renderer
+    alfresco-tika
+    alfresco-elasticsearch-live-indexing-content
+    alfresco-elasticsearch-live-indexing-path
+    alfresco-elasticsearch-live-indexing-metadata
+    alfresco-transform-core-aio
+    alfresco-elasticsearch-live-indexing
+    alfresco-share
+    alfresco-ooi-service
+    alfresco-ms-teams-service
+
 jobs:
   cleanup:
     runs-on: ubuntu-latest
@@ -18,6 +37,6 @@ jobs:
           token: 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
           owner: Alfresco
           repository: alfresco-dockerfiles-bakery
-          packages: '*'
-          expand-packages: true
+          packages: ${{ env.PACKAGE_NAMES }}
+          delete-tags: ${{format('pr-{0}', github.event.pull_request.number)}}
           dry-run: true
