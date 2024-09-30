@@ -53,7 +53,7 @@ jobs:
         with:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           owner: Alfresco
-          repository: alfresco-docker-images
+          repository: alfresco-dockerfiles-bakery
           packages: ${{ env.PACKAGE_NAMES }}
           delete-tags: ${{format('pr-{0}', github.event.pull_request.number)}}
           dry-run: true
