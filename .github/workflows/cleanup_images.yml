@@ -10,36 +10,33 @@ permissions:
 
 env:
   PACKAGE_NAMES: |
-    alfresco-transform-router
-    alfresco-shared-file-store
-    alfresco-content-repository
-    alfresco-imagemagick
-    alfresco-misc
-    alfresco-libreoffice
-    alfresco-pdf-renderer
-    alfresco-tika
-    alfresco-elasticsearch-live-indexing-content
-    alfresco-elasticsearch-live-indexing-path
-    alfresco-elasticsearch-live-indexing-metadata
-    alfresco-transform-core-aio
-    alfresco-elasticsearch-live-indexing
-    alfresco-share
-    alfresco-ooi-service
+    alfresco-transform-router,
+    alfresco-shared-file-store,
+    alfresco-content-repository,
+    alfresco-imagemagick,
+    alfresco-misc,
+    alfresco-libreoffice,
+    alfresco-pdf-renderer,
+    alfresco-tika,
+    alfresco-elasticsearch-live-indexing-content,
+    alfresco-elasticsearch-live-indexing-path,
+    alfresco-elasticsearch-live-indexing-metadata,
+    alfresco-transform-core-aio,
+    alfresco-elasticsearch-live-indexing,
+    alfresco-share,
+    alfresco-ooi-service,
     alfresco-ms-teams-service
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Convert PACKAGE_NAMES to comma-separated list
-        run: echo "PACKAGES=$(echo ${{ env.PACKAGE_NAMES }} | tr '\n' ',' | sed 's/,$//')" >> $GITHUB_ENV
-
       - name: Remove tag ${{format('pr-{0}', github.event.pull_request.number)}}
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
         with:
           token: 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
           owner: Alfresco
           repository: alfresco-dockerfiles-bakery
-          packages: ${{ env.PACKAGES }}
+          packages: ${{ env.PACKAGE_NAMES }}
           delete-tags: ${{format('pr-{0}', github.event.pull_request.number)}}
           dry-run: true
