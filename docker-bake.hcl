@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors"]
+  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors", "search_service"]
 }
 
 group "content_service" {
