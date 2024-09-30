@@ -4,9 +4,14 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: '0 0 */14 * *'  # Every 2 weeks
 
 permissions:
   packages: write
+
+env:
+  KEEP_AMOUNT: 5 # Amount of latest images to keep after scheduled cleanup
 
 jobs:
   cleanup-pr:
@@ -30,12 +35,23 @@ jobs:
           alfresco-share,\
           alfresco-ooi-service,\
           alfresco-ms-teams-service" >> $GITHUB_ENV
-      - name: Remove tag ${{format('pr-{0}', github.event.pull_request.number)}}
+      - name: Remove tag ${{format('pr-{0}', github.event.pull_request.number)}} after PR is closed
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
+        if: github.event.pull_request == 'closed'
         with:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           owner: Alfresco
           repository: alfresco-dockerfiles-bakery
           packages: ${{ env.PACKAGE_NAMES }}
           delete-tags: ${{format('pr-{0}', github.event.pull_request.number)}}
+          dry-run: true
+      - name: Remove untaged images and keep latest ${{ env.KEEP_AMOUNT }} images
+        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
+        with:
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          owner: Alfresco
+          repository: alfresco-dockerfiles-bakery
+          packages: ${{ env.PACKAGE_NAMES }}
+          keep-n-tagged: ${{ env.KEEP_AMOUNT }}
+          delete-untagged: true
           dry-run: true
