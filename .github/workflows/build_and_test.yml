@@ -137,8 +137,14 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db  # v3.6.1
-    
-      - name: Verify docker-compose
+
+      - name: Verify docker-compose (community)
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v6.0.1
+        timeout-minutes: 10
+        with:
+          compose_file_path: test/community-docker-compose.yml
+
+      - name: Verify docker-compose (enterprise)
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v6.0.1
         timeout-minutes: 10
         with:
@@ -195,7 +201,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Alfresco/acs-deployment
-          ref: ${{ env.ACS_CHART_VERSION }} 
+          ref: ${{ env.ACS_CHART_VERSION }}
           path: github-source
 
       - name: Setup helm repository
