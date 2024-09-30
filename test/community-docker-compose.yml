@@ -1,0 +1,172 @@
+# This docker-compose file will spin up an ACS community installation on a local host.
+# It requires at least 6GB of memory available to distribute among containers.
+#
+# For performance tuning, increase each container mem_limit and give a percentage of
+# it to the JVM. Use either the -Xms,-Xmx flags or the newly added flags in
+# java 10+: -XX:MaxRAMPercentage and -XX:MinRAMPercentage.
+# More details here:
+# https://www.oracle.com/technetwork/java/javase/10-relnote-issues-4108729.html
+#
+# Using version 2 as 3 does not support resource constraint options
+# (cpu_*, mem_* limits) for non swarm mode in Compose
+version: "2"
+services:
+  alfresco:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-service:${TAG}
+    mem_limit: 1900m
+    environment:
+      JAVA_TOOL_OPTIONS: >-
+        -Dencryption.keystore.type=JCEKS
+        -Dencryption.cipherAlgorithm=DESede/CBC/PKCS5Padding
+        -Dencryption.keyAlgorithm=DESede
+        -Dencryption.keystore.location=/usr/local/tomcat/shared/classes/alfresco/extension/keystore/keystore
+        -Dmetadata-keystore.password=mp6yc0UD9e
+        -Dmetadata-keystore.aliases=metadata
+        -Dmetadata-keystore.metadata.password=oKIWzVdEdA
+        -Dmetadata-keystore.metadata.algorithm=DESede
+      JAVA_OPTS: >-
+        -Ddb.driver=org.postgresql.Driver
+        -Ddb.username=alfresco
+        -Ddb.password=alfresco
+        -Ddb.url=jdbc:postgresql://postgres:5432/alfresco
+        -Dsolr.host=solr6
+        -Dsolr.port=8983
+        -Dsolr.http.connection.timeout=1000
+        -Dsolr.secureComms=secret
+        -Dsolr.sharedSecret=secret
+        -Dsolr.base.url=/solr
+        -Dindex.subsystem.name=solr6
+        -Dshare.host=127.0.0.1
+        -Dshare.port=8080
+        -Dalfresco.host=localhost
+        -Dalfresco.port=8080
+        -Dcsrf.filter.enabled=false
+        -Daos.baseUrlOverwrite=http://localhost:8080/alfresco/aos
+        -Dmessaging.broker.url="failover:(nio://activemq:61616)?timeout=3000&jms.useCompression=true"
+        -Ddeployment.method=DOCKER_COMPOSE
+        -DlocalTransform.core-aio.url=http://transform-core-aio:8090/
+        -XX:MinRAMPercentage=50
+        -XX:MaxRAMPercentage=80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.alfresco.rule=PathPrefix(`/`)"
+      - "traefik.http.services.alfresco.loadbalancer.server.port=8080"
+      - "traefik.http.routers.solrapideny.rule=PathRegexp(`^/alfresco/(wc)?s(ervice)?/api/solr/.*$`)"
+      - "traefik.http.middlewares.acsfakeauth.basicauth.users=fake:"
+      - "traefik.http.routers.solrapideny.middlewares=acsfakeauth@docker"
+
+  transform-core-aio:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transformcore-aio:${TAG}
+    mem_limit: 1536m
+    environment:
+      JAVA_OPTS: >-
+        -XX:MinRAMPercentage=50
+        -XX:MaxRAMPercentage=80
+    ports:
+      - "8090:8090"
+  share:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share:${TAG}
+    mem_limit: 1g
+    environment:
+      CSRF_FILTER_ORIGIN: http://localhost:8080
+      CSRF_FILTER_REFERER: http://localhost:8080/share/.*
+      REPO_HOST: "alfresco"
+      REPO_PORT: "8080"
+      JAVA_OPTS: >-
+        -XX:MinRAMPercentage=50
+        -XX:MaxRAMPercentage=80
+        -Dalfresco.host=localhost
+        -Dalfresco.port=8080
+        -Dalfresco.context=alfresco
+        -Dalfresco.protocol=http
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.share.rule=PathPrefix(`/share`)"
+      - "traefik.http.services.share.loadbalancer.server.port=8080"
+      - "traefik.http.routers.proxiedsolrapideny.rule=PathRegexp(`^/share/proxy/alfresco(-(noauth|feed|api))?/api/solr/`)"
+      - "traefik.http.middlewares.sharefakeauth.basicauth.users=fake:"
+      - "traefik.http.routers.proxiedsolrapideny.middlewares=sharefakeauth@docker"
+
+  postgres:
+    image: postgres:14.4
+    mem_limit: 512m
+    environment:
+      - POSTGRES_PASSWORD=alfresco
+      - POSTGRES_USER=alfresco
+      - POSTGRES_DB=alfresco
+    command: postgres -c max_connections=300 -c log_min_messages=LOG
+    ports:
+      - "5432:5432"
+  solr6:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-search-service:${TAG}
+    mem_limit: 2g
+    environment:
+      # Solr needs to know how to register itself with Alfresco
+      ALFRESCO_HOST: "alfresco"
+      ALFRESCO_PORT: "8080"
+      # Alfresco needs to know how to call solr
+      SOLR_SOLR_HOST: "solr6"
+      SOLR_SOLR_PORT: "8983"
+      # Create the default alfresco and archive cores
+      SOLR_CREATE_ALFRESCO_DEFAULTS: "alfresco,archive"
+      # HTTPS or SECRET
+      ALFRESCO_SECURE_COMMS: "secret"
+      # SHARED SECRET VALUE
+      ALFRESCO_SECURECOMMS_SECRET: >-
+        -Dalfresco.secureComms.secret=secret
+    ports:
+      - "8083:8983" # Browser port
+  activemq:
+    image: alfresco/alfresco-activemq:5.18-jre17-rockylinux8
+    mem_limit: 1g
+    ports:
+      - "8161:8161" # Web Console
+      - "5672:5672" # AMQP
+      - "61616:61616" # OpenWire
+      - "61613:61613" # STOMP
+  content-app:
+    image: alfresco/alfresco-content-app:5.0.1
+    mem_limit: 128m
+    environment:
+      APP_BASE_SHARE_URL: "http://localhost:8080/aca/#/preview/s"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aca.rule=PathPrefix(`/content-app`)"
+      - "traefik.http.middlewares.acaroot.stripprefix.prefixes=/content-app"
+      - "traefik.http.middlewares.acaforceslash.redirectregex.regex=^(.*/content-app)$$"
+      - "traefik.http.middlewares.acaforceslash.redirectregex.replacement=$${1}/"
+      - "traefik.http.middlewares.acachain.chain.middlewares=acaforceslash,acaroot"
+      - "traefik.http.routers.aca.middlewares=acachain@docker"
+
+  control-center:
+    image: quay.io/alfresco/alfresco-control-center:9.0.0
+    mem_limit: 128m
+    environment:
+      APP_CONFIG_PROVIDER: "ECM"
+      APP_CONFIG_AUTH_TYPE: "BASIC"
+      BASE_PATH: ./
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.acc.rule=PathPrefix(`/admin`)"
+      - "traefik.http.middlewares.accroot.stripprefix.prefixes=/admin"
+      - "traefik.http.middlewares.accforceslash.redirectregex.regex=^(.*/admin)$$"
+      - "traefik.http.middlewares.accforceslash.redirectregex.replacement=$${1}/"
+      - "traefik.http.middlewares.accchain.chain.middlewares=accforceslash,accroot"
+      - "traefik.http.routers.acc.middlewares=accchain@docker"
+
+  proxy:
+    image: traefik:v3.1.3
+    mem_limit: 128m
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:8080"
+      - "--entryPoints.traefik.address=:8888"
+      - "--accesslog=true"
+      - "--providers.docker.exposedByDefault=false"
+    ports:
+      - "8080:8080"
+      - "8888:8888"
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
