@@ -18,4 +18,5 @@ jobs:
           token: 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
           owner: Alfresco
           repository: alfresco-dockerfiles-bakery
+          packages: '*'
           dry-run: true
