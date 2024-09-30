@@ -6,11 +6,17 @@ on:
   schedule:
     - cron: '0 0 */14 * *'  # Every 2 weeks
   workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'If set to false, images will be deleted'
+        required: false
+        default: 'true'
 
 permissions:
   packages: write
 
 env:
+  KEEP_AMOUNT: 1 # onetime cleanup
   ORG: Alfresco
   REPO: alfresco-dockerfiles-bakery
 
@@ -45,8 +51,8 @@ jobs:
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }}
           delete-tags: ${{format('pr-{0}', github.event.pull_request.number)}}
-          dry-run: true
-      - name: Remove untaged images
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'true' }} 
+      - name: Remove untaged images and keep latest ${{ env.KEEP_AMOUNT }} images
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
@@ -54,5 +60,6 @@ jobs:
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }}
+          keep-n-tagged: ${{ env.KEEP_AMOUNT }} # onetime cleanup
           delete-untagged: true
-          dry-run: true
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'true' }}
