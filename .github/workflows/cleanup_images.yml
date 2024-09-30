@@ -8,46 +8,28 @@ on:
 permissions:
   packages: write
 
-env:
-  PACKAGE_NAMES: |
-    alfresco-transform-router,\n
-    alfresco-shared-file-store,\n
-    alfresco-content-repository,\n
-    alfresco-imagemagick,\n
-    alfresco-misc,\n
-    alfresco-libreoffice,\n
-    alfresco-pdf-renderer,\n
-    alfresco-tika,\n
-    alfresco-elasticsearch-live-indexing-content,\n
-    alfresco-elasticsearch-live-indexing-path,\n
-    alfresco-elasticsearch-live-indexing-metadata,\n
-    alfresco-transform-core-aio,\n
-    alfresco-elasticsearch-live-indexing,\n
-    alfresco-share,\n
-    alfresco-ooi-service,\n
-    alfresco-ms-teams-service
-
 jobs:
   cleanup-pr:
     runs-on: ubuntu-latest
     steps:
-      # - name: Set package names
-      #   run: |
-      #     echo "PACKAGE_NAMES=alfresco-transform-router,\
-      #     alfresco-shared-file-store,\
-      #     alfresco-content-repository,\
-      #     alfresco-imagemagick,\
-      #     alfresco-misc,\
-      #     alfresco-libreoffice,\
-      #     alfresco-pdf-renderer,\
-      #     alfresco-tika,\
-      #     alfresco-elasticsearch-live-indexing-content,\
-      #     alfresco-elasticsearch-live-indexing-path,\
-      #     alfresco-elasticsearch-live-indexing-metadata,\
-      #     alfresco-transform-core-aio,\
-      #     alfresco-elasticsearch-live-indexing,\
-      #     alfresco-share,\
-      #     alfresco-ooi-service,alfresco-ms-teams-service" >> $GITHUB_ENV
+      - name: Set package names
+        run: |
+          echo "PACKAGE_NAMES=alfresco-transform-router,\
+          alfresco-shared-file-store,\
+          alfresco-content-repository,\
+          alfresco-imagemagick,\
+          alfresco-misc,\
+          alfresco-libreoffice,\
+          alfresco-pdf-renderer,\
+          alfresco-tika,\
+          alfresco-elasticsearch-live-indexing-content,\
+          alfresco-elasticsearch-live-indexing-path,\
+          alfresco-elasticsearch-live-indexing-metadata,\
+          alfresco-transform-core-aio,\
+          alfresco-elasticsearch-live-indexing,\
+          alfresco-share,\
+          alfresco-ooi-service,\
+          alfresco-ms-teams-service" >> $GITHUB_ENV
       - name: Remove tag ${{format('pr-{0}', github.event.pull_request.number)}}
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
         with:
