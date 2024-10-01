@@ -33,8 +33,6 @@ services:
         -Dtransform.service.url=http://transform-router:8095
         -Dsfs.url=http://shared-file-store:8099/
         -DlocalTransform.core-aio.url=http://transform-core-aio:8090/
-        -Ddsync.service.uris=http://localhost:9090/alfresco
-        -XX:MinRAMPercentage=50
         -XX:MaxRAMPercentage=80
     healthcheck:
       test:
@@ -63,7 +61,6 @@ services:
     mem_limit: 1536m
     environment:
       JAVA_OPTS: >-
-        -XX:MinRAMPercentage=50
         -XX:MaxRAMPercentage=80
       ACTIVEMQ_URL: nio://activemq:61616
       FILE_STORE_URL: >-
@@ -89,7 +86,6 @@ services:
       REPO_HOST: "alfresco"
       REPO_PORT: "8080"
       JAVA_OPTS: >-
-        -XX:MinRAMPercentage=50
         -XX:MaxRAMPercentage=80
         -Dalfresco.host=localhost
         -Dalfresco.port=8080
@@ -157,23 +153,6 @@ services:
       - alfresco
       - share
       - control-center
-  sync-service:
-    image: quay.io/alfresco/service-sync:4.0.1
-    mem_limit: 1g
-    environment:
-      JAVA_OPTS: >-
-        -Dsql.db.driver=org.postgresql.Driver
-        -Dsql.db.url=jdbc:postgresql://postgres:5432/alfresco
-        -Dsql.db.username=alfresco
-        -Dsql.db.password=alfresco
-        -Dmessaging.broker.host=activemq
-        -Drepo.hostname=alfresco
-        -Drepo.port=8080
-        -Ddw.server.applicationConnectors[0].type=http
-        -XX:MinRAMPercentage=50
-        -XX:MaxRAMPercentage=80
-    ports:
-      - "9090:9090"
   live-indexing:
       image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-live-indexing:${TAG}
       environment:

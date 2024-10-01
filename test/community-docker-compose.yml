@@ -33,7 +33,6 @@ services:
         -Dmessaging.broker.url="failover:(nio://activemq:61616)?timeout=3000&jms.useCompression=true"
         -Ddeployment.method=DOCKER_COMPOSE
         -DlocalTransform.core-aio.url=http://transform-core-aio:8090/
-        -XX:MinRAMPercentage=50
         -XX:MaxRAMPercentage=80
     labels:
       - "traefik.enable=true"
@@ -48,7 +47,6 @@ services:
     mem_limit: 1536m
     environment:
       JAVA_OPTS: >-
-        -XX:MinRAMPercentage=50
         -XX:MaxRAMPercentage=80
     ports:
       - "8090:8090"
@@ -61,7 +59,6 @@ services:
       REPO_HOST: "alfresco"
       REPO_PORT: "8080"
       JAVA_OPTS: >-
-        -XX:MinRAMPercentage=50
         -XX:MaxRAMPercentage=80
         -Dalfresco.host=localhost
         -Dalfresco.port=8080

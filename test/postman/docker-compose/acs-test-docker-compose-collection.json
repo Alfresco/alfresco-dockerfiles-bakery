@@ -1498,57 +1498,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "sync-service-healthcheck",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.globals.get(\"url\");",
-									"",
-									"// only run this test if it's an Enterprise repo",
-									"if (pm.environment.get(\"repositoryEdition\") == \"Enterprise\")",
-									"{",
-									"    pm.test(\"syncServiceHealthcheck\", function () {",
-									"        pm.response.to.have.status(200);",
-									"    });",
-									"}",
-									"else",
-									"{",
-									"    pm.test(\"testResponseStatusIs404ForCommunity\", function ()",
-									"    {",
-									"        pm.response.to.have.status(404);",
-									"    });",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/syncservice/healthcheck",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"syncservice",
-								"healthcheck"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		}
