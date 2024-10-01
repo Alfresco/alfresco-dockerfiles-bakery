@@ -42,7 +42,7 @@ jobs:
           alfresco-ms-teams-service" >> $GITHUB_ENV
       - name: Remove tag ${{format('pr-{0}', github.event.pull_request.number)}} after PR is closed
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
-        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'pull_request'
         with:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           owner: ${{ env.ORG }}
@@ -50,6 +50,10 @@ jobs:
           packages: ${{ env.PACKAGE_NAMES }}
           delete-tags: ${{format('pr-{0}', github.event.pull_request.number)}}
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'true') }} 
+      - name: status
+        env: 
+          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+        run: gh auth status 
       - name: Remove untaged images and keep latest ${{ env.KEEP_AMOUNT }} images
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
