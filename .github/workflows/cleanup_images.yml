@@ -52,7 +52,7 @@ jobs:
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }}
           delete-tags: ${{format('pr-{0}', github.event.pull_request.number)}}
-          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'true' }} 
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'true') }} 
       - name: Remove untaged images and keep latest ${{ env.KEEP_AMOUNT }} images
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
@@ -63,4 +63,4 @@ jobs:
           packages: ${{ env.PACKAGE_NAMES }}
           keep-n-tagged: ${{ env.KEEP_AMOUNT }} # onetime cleanup
           delete-untagged: true
-          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'true' }}
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'true') }}
