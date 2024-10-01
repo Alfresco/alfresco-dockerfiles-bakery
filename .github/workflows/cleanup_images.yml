@@ -13,9 +13,6 @@ on:
         type: boolean
         default: true
 
-permissions:
-  packages: write
-
 env:
   KEEP_AMOUNT: 1 # onetime cleanup
   ORG: Alfresco
