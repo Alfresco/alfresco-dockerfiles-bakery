@@ -10,7 +10,8 @@ on:
       dry-run:
         description: 'If set to false, images will be deleted'
         required: false
-        default: 'true'
+        type: boolean
+        default: true
 
 permissions:
   packages: write
