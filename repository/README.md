@@ -22,7 +22,7 @@ docker buildx bake repository
 
 ### Alfresco repository configuration
 
-All preperties you would normally add in the alfresco-global.properties file can
+All properties you would normally add in the alfresco-global.properties file can
 be added in the `JAVA_OPTS` environment variable to the container.
 
 For example, to set the database URL, you can use the following environment
