@@ -127,6 +127,10 @@ jobs:
     name: compose-test
     needs: build-test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        edition: [enterprise, community]
     steps:
       - name: Log in to the Container registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
@@ -138,31 +142,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db  # v3.6.1
 
-      - name: Verify docker-compose (community)
+      - name: Verify docker-compose (${{ matrix.edition }})
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v6.0.1
         timeout-minutes: 10
         with:
-          compose_file_path: test/community-docker-compose.yml
-
-      - name: Save containers logs (Community)
-        if: always()
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v6.0.1
-        with:
-          output-archive-name: community-logs.tar.gz
-
-      - name: Verify docker-compose (enterprise)
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v6.0.1
-        timeout-minutes: 10
-        with:
-          compose_file_path: test/docker-compose.yml
+          compose_file_path: test/${{ matrix.edition }}-docker-compose.yml
           quay_username: ${{ secrets.QUAY_USERNAME }}
           quay_password: ${{ secrets.QUAY_PASSWORD }}
 
-      - name: Save containers logs (Enterprise)
+      - name: Save containers logs (${{ matrix.edition }})
         if: always()
         uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v6.0.1
         with:
-          output-archive-name: enterprise-logs.tar.gz
+          output-archive-name: ${{ matrix.edition }}-logs
 
   helm-test:
     strategy:
