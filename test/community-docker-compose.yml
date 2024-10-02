@@ -1,6 +1,6 @@
 services:
   alfresco:
-    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository:${TAG}
+    image: alfresco/alfresco-content-repository-community:23.3.0
     mem_limit: 1900m
     environment:
       JAVA_TOOL_OPTIONS: >-
