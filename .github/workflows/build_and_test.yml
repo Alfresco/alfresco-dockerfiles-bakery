@@ -144,6 +144,12 @@ jobs:
         with:
           compose_file_path: test/community-docker-compose.yml
 
+      - name: Save containers logs (Community)
+        if: always()
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v6.0.1
+        with:
+          output-archive-name: community-logs.tar.gz
+
       - name: Verify docker-compose (enterprise)
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v6.0.1
         timeout-minutes: 10
@@ -152,8 +158,11 @@ jobs:
           quay_username: ${{ secrets.QUAY_USERNAME }}
           quay_password: ${{ secrets.QUAY_PASSWORD }}
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v6.0.0
-
+      - name: Save containers logs (Enterprise)
+        if: always()
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v6.0.1
+        with:
+          output-archive-name: enterprise-logs.tar.gz
 
   helm-test:
     strategy:
