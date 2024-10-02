@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       dry-run:
-        description: 'If set to false, images will be deleted (checked is true, unchecked is false)'
+        description: 'Disable to really delete images'
         required: false
         type: boolean
         default: true
@@ -40,7 +40,7 @@ jobs:
           alfresco-ooi-service,\
           alfresco-ms-teams-service" >> $GITHUB_ENV
       - name: Remove tag ${{format('pr-{0}', github.event.pull_request.number)}} after PR is closed
-        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
+        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
         if: github.event_name == 'pull_request'
         with:
           token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
@@ -49,8 +49,8 @@ jobs:
           packages: ${{ env.PACKAGE_NAMES }}
           delete-tags: ${{format('pr-{0}', github.event.pull_request.number)}}
           dry-run: false
-      - name: Remove untaged images
-        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066
+      - name: Remove untagged images
+        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
           token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
@@ -58,4 +58,4 @@ jobs:
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }}
           delete-untagged: true
-          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'true') }}
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
