@@ -38,4 +38,12 @@ if [ "$SOLR_REPLICATION_SLAVE" == "true" ]; then echo "Alfresco Search service w
     export SOLR_OPTS="$SOLR_OPTS -Dsolr.replication.slave.role=slave -Dsolr.replication.master.url=$SOLR_REPLICATION_MASTER_URL"
 fi
 
+# Index Lock config
+if [ -n "$SOLR_DATA_DIR_ROOT" ]; then echo "Alfresco Search service will run with data directory $SOLR_DATA_DIR_ROOT"
+    export SOLR_OPTS="$SOLR_OPTS -Ddata.dir.root=$SOLR_DATA_DIR_ROOT"
+fi
+if [ -n "$SOLR_DIRECTORY_FACTORY" ]; then echo -n "Running Indexes using ${SOLR_DIRECTORY_FACTORY:-default} directory factory with locking ${SOLR_LOCK_TYPE:-native}"
+    export SOLR_OPTS="$SOLR_OPTS -Dsolr.lock.type=${SOLR_LOCK_TYPE:-native} -Dsolr.directoryFactory=${SOLR_DIRECTORY_FACTORY}"
+fi
+
 exec ./solr/bin/solr start -f
