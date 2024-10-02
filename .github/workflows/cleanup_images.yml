@@ -18,7 +18,7 @@ env:
   REPO: alfresco-dockerfiles-bakery
 
 jobs:
-  cleanup-pr:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - name: Set package names
