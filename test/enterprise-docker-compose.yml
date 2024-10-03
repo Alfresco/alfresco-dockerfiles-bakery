@@ -18,6 +18,10 @@ services:
         -Ddb.username=alfresco
         -Ddb.password=alfresco
         -Ddb.url=jdbc:postgresql://postgres:5432/alfresco
+        -Dindex.subsystem.name=elasticsearch
+        -Delasticsearch.createIndexIfNotExists=true
+        -Delasticsearch.host=elasticsearch
+        -Delasticsearch.port=9200
         -Dshare.host=127.0.0.1
         -Dshare.port=8080
         -Dalfresco.host=localhost
