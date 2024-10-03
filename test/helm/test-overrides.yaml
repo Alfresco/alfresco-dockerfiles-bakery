@@ -8,6 +8,10 @@ share:
     repository: localhost/alfresco-share
     tag: latest
 alfresco-search-enterprise:
+  reindexing:
+    image:
+      repository: localhost/alfresco-elasticsearch-reindexing
+      tag: latest
   liveIndexing:
     content:
       image:
@@ -20,6 +24,10 @@ alfresco-search-enterprise:
     path:
       image:
         repository: localhost/alfresco-elasticsearch-live-indexing-path
+        tag: latest
+    mediation:
+      image:
+        repository: localhost/alfresco-elasticsearch-live-indexing-mediation
         tag: latest
 alfresco-transform-service:
   pdfrenderer:
