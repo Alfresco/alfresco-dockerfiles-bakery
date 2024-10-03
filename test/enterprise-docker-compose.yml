@@ -1,3 +1,4 @@
+# Do not move this file to a folder that is not a first level folder
 services:
   alfresco:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository:${TAG}

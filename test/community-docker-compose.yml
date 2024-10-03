@@ -1,3 +1,4 @@
+# Do not move this file to a folder that is not a first level folder
 services:
   alfresco:
     image: alfresco/alfresco-content-repository-community:23.2.0
