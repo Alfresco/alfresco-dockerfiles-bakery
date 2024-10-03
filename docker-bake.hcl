@@ -247,18 +247,6 @@ target "search_liveindexing" {
   platforms = split(",", "${TARGETARCH}")
 }
 
-variable "ALFRESCO_SOLR_DIST_DIR" {
-  default = "/opt/alfresco-search-services"
-}
-
-variable "ALFRESCO_SOLR_USER_NAME" {
-  default = "solr"
-}
-
-variable "ALFRESCO_SOLR_USER_ID" {
-  default = "33007"
-}
-
 variable "ALFRESCO_TROUTER_USER_NAME" {
   default = "trouter"
 }
@@ -587,6 +575,18 @@ target "share" {
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
+}
+
+variable "ALFRESCO_SOLR_DIST_DIR" {
+  default = "/opt/alfresco-search-services"
+}
+
+variable "ALFRESCO_SOLR_USER_NAME" {
+  default = "solr"
+}
+
+variable "ALFRESCO_SOLR_USER_ID" {
+  default = "33007"
 }
 
 target "search_service" {
