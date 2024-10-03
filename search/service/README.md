@@ -14,7 +14,7 @@ Then, you can build the image from the root of this git repository with the
 following command:
 
 ```bash
-docker buildx bake repository
+docker buildx bake search_service
 ```
 
 ## Running the image
@@ -88,7 +88,7 @@ docker run --rm \
   localhost/alfresco/alfresco-search-service:latest
 ```
 
-This will dump the original content of the image ina a local `solrhome`
+This will dump the original content of the image in a local `solrhome`
 directory, including:
 
  * `rerank` & `noRerank` template core configurations.
