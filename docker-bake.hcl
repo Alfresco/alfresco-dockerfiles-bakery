@@ -211,6 +211,10 @@ target "search_liveindexing" {
   matrix = {
     liveindexing = [
       {
+        artifact = "alfresco-elasticsearch-live-indexing-mediation",
+        name = "mediation"
+      },
+      {
         artifact = "alfresco-elasticsearch-live-indexing-metadata",
         name = "metadata"
       },

@@ -2,6 +2,14 @@
   "artifacts": {
     "acs23": [
       {
+        "name": "alfresco-elasticsearch-live-indexing-mediation",
+        "version": "4.0.1",
+        "path": "search/enterprise/common",
+        "classifier": "-app.jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      },
+      {
         "name": "alfresco-elasticsearch-live-indexing-metadata",
         "version": "4.0.1",
         "path": "search/enterprise/common",
