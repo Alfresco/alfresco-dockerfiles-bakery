@@ -7,7 +7,7 @@ group "content_service" {
 }
 
 group "enterprise-search" {
-  targets = ["search_liveindexing"]
+  targets = ["search_liveindexing", "search_reindexing"]
 }
 
 group "ats" {
@@ -247,6 +247,22 @@ target "search_liveindexing" {
     "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name} live indexing"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${liveindexing.artifact}:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
+
+target "search_reindexing" {
+  context = "./search/enterprise/reindexing"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - reindexing"
+    "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - reindexing component"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-reindexing:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }

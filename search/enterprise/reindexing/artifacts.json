@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-elasticsearch-reindexing",
+        "version": "4.0.1",
+        "path": "search/enterprise/reindexing",
+        "classifier": "-app.jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      }
+    ]
+  }
+}
