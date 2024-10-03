@@ -42,7 +42,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v6.0.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v7.1.1
         with:
           auto-commit: "true"
 
@@ -53,7 +53,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v5.34.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v7.1.1
 
       - name: Setup nexus authentication
         run: |
@@ -62,7 +62,7 @@ jobs:
           echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ~/.netrc
 
       - name: Restore packages artifacts
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         id: artifacts-cache
         with:
           key: ${{ runner.os }}-packages-${{ hashFiles('**/artifacts.json') }}
@@ -79,7 +79,7 @@ jobs:
 
       - name: Save packages artifacts
         id: cache-primes-save
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           key: ${{ steps.artifacts-cache.outputs.cache-primary-key }}
           path: |
@@ -111,7 +111,7 @@ jobs:
             password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Collect Workflow Telemetry
-        uses: catchpoint/workflow-telemetry-action@v2
+        uses: catchpoint/workflow-telemetry-action@94c3c3d9567a0205de6da68a76c428ce4e769af1 # v2.0.0
         with:
           comment_on_pr: false
 
@@ -152,7 +152,7 @@ jobs:
 
       - name: Save containers logs (${{ matrix.edition }})
         if: always()
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v6.0.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v7.1.1
         with:
           output-archive-name: ${{ matrix.edition }}-logs
 
@@ -166,7 +166,7 @@ jobs:
     runs-on: ${{ matrix.arch == 'arm64' && 'alfrescoARM-ubuntu2404-16G-4CPU' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
     steps:
       - name: Setup cluster
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v5.35.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v7.1.1
         with:
           ingress-nginx-ref: controller-v1.8.2
           metrics: "true"
@@ -199,7 +199,7 @@ jobs:
           --type=kubernetes.io/dockerconfigjson
 
       - name: Checkout acs-deployment sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
         with:
           repository: Alfresco/acs-deployment
           ref: ${{ env.ACS_CHART_VERSION }}
