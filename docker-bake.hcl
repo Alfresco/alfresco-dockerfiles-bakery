@@ -212,23 +212,28 @@ target "search_liveindexing" {
     liveindexing = [
       {
         artifact = "alfresco-elasticsearch-live-indexing-mediation",
-        name = "mediation"
+        name = "mediation",
+        context = "common"
       },
       {
         artifact = "alfresco-elasticsearch-live-indexing-metadata",
-        name = "metadata"
+        name = "metadata",
+        context = "common"
       },
       {
         artifact = "alfresco-elasticsearch-live-indexing-path",
-        name = "path"
+        name = "path",
+        context = "common"
       },
       {
         artifact = "alfresco-elasticsearch-live-indexing-content",
-        name = "content"
+        name = "content",
+        context = "common"
       },
       {
         artifact = "alfresco-elasticsearch-live-indexing",
-        name = "all-in-one"
+        name = "all-in-one",
+        context = "all-in-one"
       }
     ]
   }
@@ -236,7 +241,7 @@ target "search_liveindexing" {
   args = {
     LIVEINDEXING = "${liveindexing.artifact}"
   }
-  context = "./search/enterprise/common"
+  context = "./search/enterprise/${liveindexing.context}"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
