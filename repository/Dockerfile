@@ -5,10 +5,13 @@ ARG ALFRESCO_REPO_GROUP_ID
 
 FROM tomcat_base AS repo_build
 
+ARG ALFRESCO_REPO_ARTIFACT
+ARG ALFRESCO_REPO_EDITION
+
 USER root
 RUN yum install -y unzip
 
-ADD distribution /tmp/
+ADD distribution/${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
 ENV DISTDIR="/tmp/distribution"
 
 RUN unzip /tmp/*.zip -d ${DISTDIR}
@@ -29,6 +32,7 @@ RUN sed -i \
   ${CATALINA_HOME}/webapps/alfresco/WEB-INF/classes/log4j2.properties
 
 ADD amps /tmp/amps
+ADD amps_${ALFRESCO_REPO_EDITION} /tmp/amps
 ADD libs ${CATALINA_HOME}/lib/
 RUN if [ -f /tmp/amps/alfresco-aos-module-*.amp ]; then umask 0027; \
      unzip ${DISTDIR}/web-server/webapps/ROOT.war -d ${CATALINA_HOME}/webapps/ROOT/; \

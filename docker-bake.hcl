@@ -197,14 +197,33 @@ target "repository" {
     ALFRESCO_REPO_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
     ALFRESCO_REPO_USER_ID = "${ALFRESCO_REPO_USER_ID}"
     ALFRESCO_REPO_USER_NAME = "${ALFRESCO_REPO_USER_NAME}"
+    ALFRESCO_REPO_ARTIFACT = "${repository_editions.artifact}"
+    ALFRESCO_REPO_EDITION = "${repository_editions.name}"
   }
   labels = {
-    "org.opencontainers.image.title" = "${PRODUCT_LINE} Content Repository"
-    "org.opencontainers.image.description" = "Alfresco Content Services Repository"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Content Repository (${repository_editions.name})"
+    "org.opencontainers.image.description" = "Alfresco Content Services Repository ${repository_editions.name} edition"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${repository_editions.image_name}:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
+
+  name = "${repository_editions.name}"
+
+  matrix = {
+    repository_editions = [
+      {
+        artifact = "alfresco-content-services-community-distribution",
+        image_name = "alfresco-content-repository-community",
+        name = "community"
+      },
+      {
+        artifact = "alfresco-content-services-distribution",
+        image_name = "alfresco-content-repository",
+        name = "enterprise"
+      }
+    ]
+  }
 }
 
 variable "ALFRESCO_LIVEINDEX_USER_ID" {

@@ -28,7 +28,7 @@
       {
         "name": "alfresco-device-sync-repo",
         "version": "5.0.0",
-        "path": "repository/amps",
+        "path": "repository/amps_enterprise",
         "classifier": ".amp",
         "group": "org.alfresco.services.sync",
         "repository": "enterprise-releases"
@@ -36,7 +36,7 @@
       {
         "name": "alfresco-googledrive-repo-enterprise",
         "version": "4.1.0",
-        "path": "repository/amps",
+        "path": "repository/amps_enterprise",
         "classifier": ".amp",
         "group": "org.alfresco.integrations",
         "repository": "enterprise-releases"
@@ -48,6 +48,14 @@
         "classifier": ".zip",
         "group": "org.alfresco",
         "repository": "enterprise-releases"
+      },
+      {
+        "name": "alfresco-content-services-community-distribution",
+        "version": "23.2.0",
+        "path": "repository/distribution",
+        "classifier": ".zip",
+        "group": "org.alfresco",
+        "repository": "public"
       }
     ]
   }

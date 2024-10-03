@@ -1,6 +1,6 @@
 ARG DISTRIB_NAME
 ARG DISTRIB_MAJOR
-FROM tomcat_base as share_build
+FROM tomcat_base AS share_build
 
 USER root
 EXPOSE 8000

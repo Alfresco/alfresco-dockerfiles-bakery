@@ -23,7 +23,6 @@ By default the `scripts/fetch-artifacts.sh` script will fetch the following AMPs
 * alfresco-aos-module
 * alfresco-device-sync-repo
 * alfresco-googledrive-repo-enterprise
-* alfresco-content-services-distribution
 
 You can replace those, remove them to keep only the ones you need or add more.
 Be careful though as some AMPs may depend on one another (e.g.
