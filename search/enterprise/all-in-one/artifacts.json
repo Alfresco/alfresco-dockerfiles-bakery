@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-elasticsearch-live-indexing",
+        "version": "4.0.1",
+        "path": "search/enterprise/all-in-one",
+        "classifier": "-app.jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      }
+    ]
+  }
+}
