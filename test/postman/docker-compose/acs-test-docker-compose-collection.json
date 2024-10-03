@@ -1473,6 +1473,32 @@
 								}
 							]
 						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\": {\r\n      \"query\": \"name:alfresco\"\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url}}/alfresco/api/-default-/public/search/versions/1/search",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"alfresco",
+								"api",
+								"-default-",
+								"public",
+								"search",
+								"versions",
+								"1",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "search-cmis-validation",
 					"event": [
