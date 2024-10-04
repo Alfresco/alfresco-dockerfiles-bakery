@@ -8,9 +8,9 @@ FROM ${IMAGE_BASE_LOCATION} AS rhlike
 ARG JDIST
 ARG JAVA_MAJOR
 
-ENV JAVA_HOME /etc/alternatives/jre
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
+ENV JAVA_HOME=/etc/alternatives/jre
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 RUN \
   yum update --security -y && \

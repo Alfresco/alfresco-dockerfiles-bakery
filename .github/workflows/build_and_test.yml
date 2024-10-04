@@ -116,6 +116,9 @@ jobs:
         uses: catchpoint/workflow-telemetry-action@94c3c3d9567a0205de6da68a76c428ce4e769af1 # v2.0.0
         with:
           comment_on_pr: false
+      
+      - name: Workaround for Bake action cache # https://github.com/docker/bake-action/issues/36
+        uses: crazy-max/ghaction-github-runtime@b3a9207c0e1ef41f4cf215303c976869d0c2c1c4 # v3.0.0
 
       - name: Bake Docker images
         env:
@@ -124,6 +127,8 @@ jobs:
         with:
           set: |
             *.output=type=registry,push=true
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=min
 
   compose-test:
     name: compose-test

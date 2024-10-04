@@ -105,9 +105,6 @@ FROM apr_pkg-rockylinux AS apr_pkg-rhel
 
 # hadolint ignore=DL3006
 FROM apr_pkg-${DISTRIB_NAME}
-ARG DISTRIB_MAJOR
-ARG CREATED
-ARG REVISION
 
 ENV CATALINA_HOME=/usr/local/tomcat
 # let "Tomcat Native" live somewhere isolated
