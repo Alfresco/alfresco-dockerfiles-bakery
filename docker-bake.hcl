@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors", "search_service"]
+  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors", "search_service", "adf_apps"]
 }
 
 group "community" {
@@ -24,6 +24,10 @@ group "tengines" {
 
 group "connectors" {
   targets = ["connector_msteams", "connector_ms365"]
+}
+
+group "adf_apps" {
+  targets = ["acc"]
 }
 
 variable "REGISTRY" {
