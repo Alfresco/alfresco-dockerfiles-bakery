@@ -128,7 +128,7 @@ jobs:
   compose-test:
     name: compose-test
     needs: build-test
-    runs-on: alfrescoPub-ubuntu2204-16G-4CPU
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
