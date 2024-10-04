@@ -98,14 +98,6 @@ variable "ALFRESCO_GROUP_NAME" {
   default = "alfresco"
 }
 
-variable "ALFRESCO_REPO_USER_ID" {
-  default = "33000"
-}
-
-variable "ALFRESCO_REPO_USER_NAME" {
-  default = "alfresco"
-}
-
 target "java_base" {
   context = "./java"
   dockerfile = "Dockerfile"
@@ -185,6 +177,14 @@ target "tomcat_base" {
   output = ["type=cacheonly"]
 }
 
+variable "ALFRESCO_REPO_USER_ID" {
+  default = "33000"
+}
+
+variable "ALFRESCO_REPO_USER_NAME" {
+  default = "alfresco"
+}
+
 target "repository" {
   context = "./repository"
   dockerfile = "Dockerfile"
@@ -205,6 +205,14 @@ target "repository" {
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
+}
+
+variable "ALFRESCO_LIVEINDEX_USER_ID" {
+  default = "33011"
+}
+
+variable "ALFRESCO_LIVEINDEX_USER_NAME" {
+  default = "liveindexer"
 }
 
 target "search_liveindexing" {
@@ -240,6 +248,10 @@ target "search_liveindexing" {
   name = "${liveindexing.artifact}"
   args = {
     LIVEINDEXING = "${liveindexing.artifact}"
+    ALFRESCO_LIVEINDEX_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_LIVEINDEX_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_LIVEINDEX_USER_ID = "${ALFRESCO_LIVEINDEX_USER_ID}"
+    ALFRESCO_LIVEINDEX_USER_NAME = "${ALFRESCO_LIVEINDEX_USER_NAME}"
   }
   context = "./search/enterprise/${liveindexing.context}"
   dockerfile = "Dockerfile"
