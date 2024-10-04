@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       dry-run:
-        description: 'Disable to really delete images'
+        description: Dry run (do not delete images)
         required: false
         type: boolean
         default: true
@@ -21,24 +21,20 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Set package names
+      - name: Checkout repository
+        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+        with:
+          fetch-depth: 0
+      - name: Get package names from bake definition
+        env:
+          JQ_FILTER: >-
+            .target
+            | map(select(has("output")))
+            | select(map(.output | index("type=docker")))[].tags[]
+            | split("/")[-1]
+            | split(":")[0]
         run: |
-          echo "PACKAGE_NAMES=alfresco-transform-router,\
-          alfresco-shared-file-store,\
-          alfresco-content-repository,\
-          alfresco-imagemagick,\
-          alfresco-misc,\
-          alfresco-libreoffice,\
-          alfresco-pdf-renderer,\
-          alfresco-tika,\
-          alfresco-elasticsearch-live-indexing-content,\
-          alfresco-elasticsearch-live-indexing-path,\
-          alfresco-elasticsearch-live-indexing-metadata,\
-          alfresco-transform-core-aio,\
-          alfresco-elasticsearch-live-indexing,\
-          alfresco-share,\
-          alfresco-ooi-service,\
-          alfresco-ms-teams-service" >> $GITHUB_ENV
+          echo PACKAGE_NAMES=$(docker buildx bake --print | jq '${{ env.JQ_FILTER }}' | jq -rn  '[inputs] | join(",")') >> $GITHUB_ENV
       - name: Remove tag ${{format('pr-{0}', github.event.pull_request.number)}} after PR is closed
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
         if: github.event_name == 'pull_request'
