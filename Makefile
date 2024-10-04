@@ -89,6 +89,10 @@ share: prepare_share
 	@echo "Building Share images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} share
 
+adf_apps: prepare_adf
+	@echo "Building ADF Apps images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} adf_apps
+
 all: docker-bake.hcl prepare_all
 	@echo "Building all images"
 	docker buildx bake ${DOCKER_BAKE_ARGS}
