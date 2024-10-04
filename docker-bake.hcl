@@ -268,12 +268,26 @@ target "search_liveindexing" {
   platforms = split(",", "${TARGETARCH}")
 }
 
+variable "ALFRESCO_REINDEX_USER_ID" {
+  default = "33011"
+}
+
+variable "ALFRESCO_REINDEX_USER_NAME" {
+  default = "liveindexer"
+}
+
 target "search_reindexing" {
   context = "./search/enterprise/reindexing"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_REINDEX_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_REINDEX_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_REINDEX_USER_ID = "${ALFRESCO_REINDEX_USER_ID}"
+    ALFRESCO_REINDEX_USER_NAME = "${ALFRESCO_REINDEX_USER_NAME}"
   }
   labels = {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - reindexing"

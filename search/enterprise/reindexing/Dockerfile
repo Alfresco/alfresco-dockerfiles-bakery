@@ -1,5 +1,10 @@
 FROM java_base
 
-ADD *-app.jar /opt/app.jar
+COPY *-app.jar /opt/app.jar
+
+RUN groupadd -g ${ALFRESCO_REINDEX_GROUP_ID} ${ALFRESCO_REINDEX_GROUP_NAME} && \
+    useradd -lu ${ALFRESCO_REINDEX_USER_ID} -g ${ALFRESCO_REINDEX_GROUP_NAME} ${ALFRESCO_REINDEX_USER_NAME}
+
+USER ${ALFRESCO_REINDEX_USER_NAME}
 
 ENTRYPOINT java $JAVA_OPTS -jar /opt/app.jar
