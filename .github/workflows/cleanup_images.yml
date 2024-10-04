@@ -28,9 +28,8 @@ jobs:
       - name: Get package names from bake definition
         env:
           JQ_FILTER: >-
-            .target
-            | map(select(has("output")))
-            | select(map(.output | index("type=docker")))[].tags[]
+            .target[]
+            | select(.output | index("type=docker")).tags[]
             | split("/")[-1]
             | split(":")[0]
         run: |
