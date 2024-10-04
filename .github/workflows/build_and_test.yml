@@ -164,6 +164,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [arm64, amd64]
+        edition: [enterprise, community]
     name: helm test
     needs: build-test
     runs-on: ${{ matrix.arch == 'arm64' && 'alfrescoARM-ubuntu2404-16G-4CPU' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
@@ -206,10 +207,10 @@ jobs:
         with:
           repository: Alfresco/acs-deployment
           ref: ${{ env.ACS_CHART_VERSION }}
-          path: github-source
+          path: acs-deployment
 
       - name: Setup helm repository
-        working-directory: github-source/helm/alfresco-content-services
+        working-directory: acs-deployment/helm/alfresco-content-services
         run: |
           helm repo add self https://alfresco.github.io/alfresco-helm-charts/
           helm repo add activiti https://activiti.github.io/activiti-cloud-helm-charts
@@ -223,16 +224,22 @@ jobs:
         run: |
           sed -i "s|localhost/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" ${{ env.OVERRIDES_VALUES_FILE }}
           sed -i "s|tag: latest|tag: ${TAG}|g" ${{ env.OVERRIDES_VALUES_FILE }}
+
+          if [ "${{ matrix.edition }}" = "community" ]; then
+            sed -i "s|localhost/alfresco-content-repository|alfresco-content-repository-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
+          fi
+
           cat ${{ env.OVERRIDES_VALUES_FILE }}
 
       - name: Helm install
         id: helm_install
         run: |
-          helm install acs ./github-source/helm/alfresco-content-services \
+          helm install acs ./acs-deployment/helm/alfresco-content-services \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
             --set global.known_urls=http://localhost \
             --set global.alfrescoRegistryPullSecrets=regcred \
-            --values ./github-source/test/enterprise-integration-test-values.yaml \
+            --values ./acs-deployment/helm/alfresco-content-services/${{ matrix.edition == 'community' && 'community_' || '' }}values.yaml \
+            --values ./acs-deployment/test/${{ matrix.edition }}-integration-test-values.yaml \
             --values test/helm/test-overrides.yaml
 
       - name: Watch Helm deployment
