@@ -250,8 +250,11 @@ jobs:
           KWPID=$!
           kubectl wait --timeout=${{ env.HELM_INSTALL_TIMEOUT }} --all=true --for=condition=Ready pods
           kill $KWPID
-          echo "Waiting for ESC Reindexing job to complete... "
-          kubectl wait --timeout=5m --for=condition=complete job/acs-alfresco-search-enterprise-reindexing
+
+          if [ "${{ matrix.edition }}" = "enterprise" ]; then
+            echo "Waiting for Enterprise Search Reindexing job to complete... "
+            kubectl wait --timeout=5m --for=condition=complete job/acs-alfresco-search-enterprise-reindexing
+          fi
 
       - name: Debug cluster status after install
         if: always() && steps.helm_install.outcome != 'skipped'
