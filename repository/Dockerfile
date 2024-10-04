@@ -11,7 +11,7 @@ ARG ALFRESCO_REPO_EDITION
 USER root
 RUN yum install -y unzip
 
-ADD distribution/${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
+COPY distribution/${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
 ENV DISTDIR="/tmp/distribution"
 
 RUN unzip /tmp/*.zip -d ${DISTDIR}
@@ -31,9 +31,9 @@ RUN sed -i \
   -re "s|(appender.rolling.filePattern=)(alfresco.log.%d\{yyyy-MM-dd\})|\1${CATALINA_HOME}/logs\/\2|" \
   ${CATALINA_HOME}/webapps/alfresco/WEB-INF/classes/log4j2.properties
 
-ADD amps /tmp/amps
-ADD amps_${ALFRESCO_REPO_EDITION} /tmp/amps
-ADD libs ${CATALINA_HOME}/lib/
+COPY amps /tmp/amps
+COPY amps_${ALFRESCO_REPO_EDITION} /tmp/amps
+COPY libs ${CATALINA_HOME}/lib/
 RUN if [ -f /tmp/amps/alfresco-aos-module-*.amp ]; then umask 0027; \
      unzip ${DISTDIR}/web-server/webapps/ROOT.war -d ${CATALINA_HOME}/webapps/ROOT/; \
      cp ${CATALINA_HOME}/webapps/ROOT/META-INF/context.xml ${CATALINA_HOME}/conf/Catalina/localhost/ROOT.xml; \
