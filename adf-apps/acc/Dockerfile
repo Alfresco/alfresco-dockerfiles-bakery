@@ -14,7 +14,7 @@ RUN unzip -o /tmp/*.zip -d /usr/share/nginx/html && \
 
 RUN chmod a+w -R ${CONFIG_PATH}
 
-VOLUME ["${CONFIG_PATH}/app.config.json"]
+VOLUME ["${CONFIG_PATH}"]
 
 USER 101
 
