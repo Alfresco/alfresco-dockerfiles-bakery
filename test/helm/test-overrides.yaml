@@ -61,6 +61,10 @@ alfresco-transform-service:
       tag: latest
 alfresco-sync-service:
   enabled: false ## disable till release of 5.0.1
+alfresco-control-center:
+  image:
+    repository: localhost/alfresco-control-center
+    tag: latest
 dtas:
   additionalArgs:
     - --tb=short

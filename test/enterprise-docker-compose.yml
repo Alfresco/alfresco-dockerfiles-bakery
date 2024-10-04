@@ -142,7 +142,7 @@ services:
       APP_CONFIG_PLUGIN_MICROSOFT_ONLINE: "false"
       APP_BASE_SHARE_URL: "http://localhost:8080/workspace/#/preview/s"
   control-center:
-    image: quay.io/alfresco/alfresco-control-center:8.4.1
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
     mem_limit: 128m
     environment:
       APP_CONFIG_PROVIDER: "ECM"

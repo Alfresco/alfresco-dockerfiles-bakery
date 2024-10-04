@@ -57,6 +57,10 @@ prepare_share: scripts/fetch-artifacts.sh setenv
 	@echo "Fetching all artifacts for Share targets"
 	@./scripts/fetch-artifacts.sh share
 
+prepare_adf: scripts/fetch-artifacts.sh setenv
+	@echo "Fetching all artifacts for ADF targets"
+	@./scripts/fetch-artifacts.sh adf-apps
+
 prepare_all: scripts/fetch-artifacts.sh setenv
 	@echo "Fetching all artifacts"
 	@./scripts/fetch-artifacts.sh

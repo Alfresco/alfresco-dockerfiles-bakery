@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-control-center",
+        "version": "9.1.0",
+        "path": "adf-apps/acc",
+        "classifier": ".zip",
+        "group": "org.alfresco",
+        "repository": "releases"
+      }
+    ]
+  }
+}

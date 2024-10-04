@@ -700,3 +700,15 @@ target "search_service" {
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
+
+target "acc" {
+  context = "./adf-apps/acc"
+  dockerfile = "Dockerfile"
+  labels = {
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Control Center"
+    "org.opencontainers.image.description" = "Alfresco Control Center"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
