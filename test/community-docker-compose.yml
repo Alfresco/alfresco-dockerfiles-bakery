@@ -1,7 +1,7 @@
 # Do not move this file to a folder that is not a first level folder
 services:
   alfresco:
-    image: alfresco/alfresco-content-repository-community:23.2.0
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository-community:${TAG}
     mem_limit: 1900m
     environment:
       JAVA_TOOL_OPTIONS: >-
