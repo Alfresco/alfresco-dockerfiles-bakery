@@ -2,6 +2,10 @@ group "default" {
   targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors", "search_service"]
 }
 
+group "community" {
+  targets = ["repository_community", "share", "search_service", "tengine_aio"]
+}
+
 group "content_service" {
   targets = ["repository", "share"]
 }
@@ -208,7 +212,7 @@ target "repository" {
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 
-  name = "${repository_editions.name}"
+  name = "repository_${repository_editions.name}"
 
   matrix = {
     repository_editions = [
