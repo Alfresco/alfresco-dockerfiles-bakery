@@ -145,9 +145,9 @@ services:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
     mem_limit: 128m
     environment:
-      APP_CONFIG_PROVIDER: "ECM"
-      APP_CONFIG_AUTH_TYPE: "BASIC"
       BASE_PATH: ./
+    volumes:
+      - ./test/adf-config/app.config.json:/usr/share/nginx/html/app.config.json
   proxy:
     image: alfresco/alfresco-acs-nginx:3.4.2
     mem_limit: 128m

@@ -1,0 +1,100 @@
+{
+  "$schema": "../../../node_modules/@alfresco/adf-core/app.config.schema.json",
+  "providers": "ECM",
+  "ecmHost": "{protocol}//{hostname}{:port}",
+  "bpmHost": "{protocol}//{hostname}{:port}",
+  "authType": "BASIC",
+  "identityHost": "{protocol}//{hostname}{:port}/auth/admin/realms/alfresco",
+  "oauth2": {
+    "host": "{protocol}//{hostname}{:port}/auth/realms/alfresco",
+    "clientId": "alfresco",
+    "scope": "openid profile email",
+    "implicitFlow": true,
+    "codeFlow": false,
+    "silentLogin": true,
+    "publicUrls": [],
+    "redirectSilentIframeUri": "{protocol}//{hostname}{:port}/assets/silent-refresh.html",
+    "redirectUri": "",
+    "audience": "",
+    "redirectUriLogout": "/",
+    "skipIssuerCheck": true,
+    "strictDiscoveryDocumentValidation": false
+  },
+  "application": {
+    "name": "Alfresco Admin App",
+    "copyright": "© 2005-2024 Hyland Software, Inc. and its affiliates. All rights reserved."
+  },
+  "plugins":{
+      "tagsEnabled": true,
+      "categoriesEnabled": true
+  },
+  "logLevel": "trace",
+  "locale": "en",
+  "pagination": {
+    "size": 50,
+    "supportedPageSizes": [25, 50, 100]
+  },
+  "export": {
+    "helm": true
+  },
+  "alfresco-dependencies": [
+    "rb",
+    "query"
+  ],
+  "content-identity": {
+    "presets": {
+      "default": [
+        {
+          "key": "id",
+          "type": "text",
+          "title": "CONTENT_IDENTITY_USERS.USER_LIST.PROPERTIES.ID",
+          "sortable": true,
+          "draggable": true
+        },
+        {
+          "key": "firstName",
+          "type": "text",
+          "title": "CONTENT_IDENTITY_USERS.USER_LIST.PROPERTIES.FIRST_NAME",
+          "sortable": true,
+          "draggable": true
+        },
+        {
+          "key": "lastName",
+          "type": "text",
+          "title": "CONTENT_IDENTITY_USERS.USER_LIST.PROPERTIES.LAST_NAME",
+          "sortable": true,
+          "draggable": true
+        },
+        {
+          "key": "email",
+          "type": "text",
+          "title": "CONTENT_IDENTITY_USERS.USER_LIST.PROPERTIES.EMAIL",
+          "sortable": false,
+          "draggable": true
+        },
+        {
+          "key": "status",
+          "type": "text",
+          "title": "CONTENT_IDENTITY_USERS.USER_LIST.PROPERTIES.STATUS",
+          "sortable": false,
+          "draggable": true
+        }
+      ]
+    },
+    "group-list-presets": {
+      "default": [
+        {
+          "key": "displayName",
+          "type": "text",
+          "title": "CONTENT_IDENTITY_GROUPS.GROUP_LIST.PROPERTIES.DISPLAY_NAME",
+          "sortable": false
+        }
+      ]
+    }
+  },
+  "security-controls": {
+    "presets": {
+        "default": []
+    }
+  }
+}
