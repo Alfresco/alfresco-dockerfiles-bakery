@@ -19,7 +19,7 @@ on:
       - 'README.md'
 
 env:
-  ACS_CHART_VERSION: v8.5.1
+  ACS_CHART_VERSION: OPSEXP-2843-community-dtas
   ARTIFACT_NAME: alfresco-docker-images
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: alfresco
