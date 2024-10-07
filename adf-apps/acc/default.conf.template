@@ -17,6 +17,28 @@ server {
         }
         index  index.html index.htm;
         alias  /usr/share/nginx/html;
+        ssi on
+        
+        set $appConfigProvider "${APP_CONFIG_PROVIDER}";
+        set $appConfigEcmHost "${APP_CONFIG_ECM_HOST}";
+        set $appConfigBpmHost "${APP_CONFIG_BPM_HOST}";
+        set $appConfigAuthType "${APP_CONFIG_AUTH_TYPE}";
+        set $appConfigIdentityHost "${APP_CONFIG_IDENTITY_HOST}";
+
+        # OAuth2 settings
+        set $appConfigOauth2Host "${APP_CONFIG_OAUTH2_HOST}";
+        set $appConfigOauth2ClientId "${APP_CONFIG_OAUTH2_CLIENTID}";
+        set $appConfigOauth2Scope "${APP_CONFIG_OAUTH2_SCOPE}";
+        set $appConfigOauth2ImplicitFlow "${APP_CONFIG_OAUTH2_IMPLICIT_FLOW}";
+        set $appConfigOauth2CodeFlow "${APP_CONFIG_OAUTH2_CODE_FLOW}";
+        set $appConfigOauth2SilentLogin "${APP_CONFIG_OAUTH2_SILENT_LOGIN}";
+        set $appConfigOauth2RedirectSilentIframeUri "${APP_CONFIG_OAUTH2_REDIRECT_SILENT_IFRAME_URI}";
+        set $appConfigOauth2RedirectUri "${APP_CONFIG_OAUTH2_REDIRECT_LOGIN}";
+        set $appConfigOauth2Audience "${APP_CONFIG_OAUTH2_AUDIENCE}";
+        set $appConfigOauth2RedirectUriLogout "${APP_CONFIG_OAUTH2_REDIRECT_LOGOUT}";
+        set $appConfigPluginTags "${APP_CONFIG_PLUGIN_TAGS}";
+        set $appConfigPluginCategories "${APP_CONFIG_PLUGIN_CATEGORIES}";
+        set $appConfigLogLevel "${APP_CONFIG_OAUTH2_LOG_LEVEL}";
     }
 
     server_tokens off;
