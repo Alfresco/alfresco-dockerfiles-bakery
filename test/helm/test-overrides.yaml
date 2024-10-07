@@ -67,4 +67,16 @@ dtas:
     - not test_api_explorer_reachability
   config:
     config:
-      search_timeout_seconds: 360
+      search_timeout_seconds: "360"
+    assertions:
+      acs:
+        edition: Enterprise
+        version: 23.2.2
+        identity: false
+        modules:
+        - id: org.alfresco.integrations.google.docs
+          version: 4.1.0
+          installed: true
+        - id: alfresco-aos-module
+          version: 3.0.0
+          installed: true
