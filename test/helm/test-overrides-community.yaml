@@ -1,0 +1,11 @@
+---
+dtas:
+  config:
+    assertions:
+      acs:
+        edition: Community
+        version: 23.2.0
+        modules:
+          - id: alfresco-aos-module
+            version: 3.0.0
+            installed: true

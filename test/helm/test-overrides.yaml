@@ -10,8 +10,9 @@ share:
 alfresco-search-enterprise:
   reindexing:
     image:
-      repository: localhost/alfresco-elasticsearch-reindexing
+      repository: localhost/alfresco/alfresco-elasticsearch-reindexing
       tag: latest
+    hookExecution: false
   liveIndexing:
     content:
       image:
@@ -27,7 +28,7 @@ alfresco-search-enterprise:
         tag: latest
     mediation:
       image:
-        repository: localhost/alfresco-elasticsearch-live-indexing-mediation
+        repository: localhost/alfresco/alfresco-elasticsearch-live-indexing-mediation
         tag: latest
 alfresco-transform-service:
   pdfrenderer:
@@ -74,9 +75,6 @@ dtas:
         version: 23.2.2
         identity: false
         modules:
-        - id: org.alfresco.integrations.google.docs
-          version: 4.1.0
-          installed: true
-        - id: alfresco-aos-module
-          version: 3.0.0
-          installed: true
+          - id: alfresco-aos-module
+            version: 3.0.0
+            installed: true

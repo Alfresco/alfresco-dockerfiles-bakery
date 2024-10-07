@@ -223,11 +223,11 @@ jobs:
         env:
           OVERRIDES_VALUES_FILE: test/helm/test-overrides.yaml
         run: |
-          sed -i "s|localhost/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" ${{ env.OVERRIDES_VALUES_FILE }}
+          sed -i "s|localhost/alfresco/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" ${{ env.OVERRIDES_VALUES_FILE }}
           sed -i "s|tag: latest|tag: ${TAG}|g" ${{ env.OVERRIDES_VALUES_FILE }}
 
           if [ "${{ matrix.edition }}" = "community" ]; then
-            sed -i "s|localhost/alfresco-content-repository|alfresco-content-repository-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
+            sed -i "s|/alfresco-content-repository|/alfresco-content-repository-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
           fi
 
           cat ${{ env.OVERRIDES_VALUES_FILE }}
@@ -241,7 +241,8 @@ jobs:
             --set global.alfrescoRegistryPullSecrets=regcred \
             --values ./acs-deployment/helm/alfresco-content-services/${{ matrix.edition == 'community' && 'community_' || '' }}values.yaml \
             --values ./acs-deployment/test/${{ matrix.edition }}-integration-test-values.yaml \
-            --values test/helm/test-overrides.yaml
+            --values test/helm/test-overrides.yaml \
+            --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
       - name: Watch Helm deployment
         env:
