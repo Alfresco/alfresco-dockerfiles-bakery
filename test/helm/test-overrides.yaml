@@ -1,11 +1,11 @@
 ---
 alfresco-repository:
   image:
-    repository: localhost/alfresco-content-repository
+    repository: localhost/alfresco/alfresco-content-repository
     tag: latest
 share:
   image:
-    repository: localhost/alfresco-share
+    repository: localhost/alfresco/alfresco-share
     tag: latest
 alfresco-search-enterprise:
   reindexing:
@@ -15,15 +15,15 @@ alfresco-search-enterprise:
   liveIndexing:
     content:
       image:
-        repository: localhost/alfresco-elasticsearch-live-indexing-content
+        repository: localhost/alfresco/alfresco-elasticsearch-live-indexing-content
         tag: latest
     metadata:
       image:
-        repository: localhost/alfresco-elasticsearch-live-indexing-metadata
+        repository: localhost/alfresco/alfresco-elasticsearch-live-indexing-metadata
         tag: latest
     path:
       image:
-        repository: localhost/alfresco-elasticsearch-live-indexing-path
+        repository: localhost/alfresco/alfresco-elasticsearch-live-indexing-path
         tag: latest
     mediation:
       image:
@@ -32,31 +32,31 @@ alfresco-search-enterprise:
 alfresco-transform-service:
   pdfrenderer:
     image:
-      repository: localhost/alfresco-pdf-renderer
+      repository: localhost/alfresco/alfresco-pdf-renderer
       tag: latest
   imagemagick:
     image:
-      repository: localhost/alfresco-imagemagick
+      repository: localhost/alfresco/alfresco-imagemagick
       tag: latest
   libreoffice:
     image:
-      repository: localhost/alfresco-libreoffice
+      repository: localhost/alfresco/alfresco-libreoffice
       tag: latest
   transformmisc:
     image:
-      repository: localhost/alfresco-misc
+      repository: localhost/alfresco/alfresco-misc
       tag: latest
   tika:
     image:
-      repository: localhost/alfresco-tika
+      repository: localhost/alfresco/alfresco-tika
       tag: latest
   transformrouter:
     image:
-      repository: localhost/alfresco-transform-router
+      repository: localhost/alfresco/alfresco-transform-router
       tag: latest
   filestore:
     image:
-      repository: localhost/alfresco-shared-file-store
+      repository: localhost/alfresco/alfresco-shared-file-store
       tag: latest
 alfresco-sync-service:
   enabled: false ## disable till release of 5.0.1

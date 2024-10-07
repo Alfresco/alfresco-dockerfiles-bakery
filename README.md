@@ -159,3 +159,14 @@ export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myorg TARGETARCH=linux/amd64
 docker login $REGISTRY
 docker buildx bake repo --set *.output=type=registry,push=true
 ```
+
+### Testing locally
+
+You can easily load all the built image in a local kind cluster with:
+
+```sh
+kind load docker-image $(docker images --format "{{.Repository}}" | grep "^localhost/alfresco" | xargs)
+```
+
+Then you can run an helm install passing as values the provided
+[test-overrides.yaml](./test/helm/test-overrides.yaml).
