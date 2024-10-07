@@ -1,4 +1,4 @@
-name: Build, Run and Test Docker Image
+name: CI
 
 on:
   push:
@@ -48,9 +48,9 @@ jobs:
         with:
           auto-commit: "true"
 
-  build-test:
-    runs-on: ubuntu-latest
+  build:
     needs: pre-commit
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -126,8 +126,7 @@ jobs:
             *.output=type=registry,push=true
 
   compose-test:
-    name: compose-test
-    needs: build-test
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -160,14 +159,13 @@ jobs:
           output-archive-name: ${{ matrix.edition }}-logs
 
   helm-test:
+    needs: build
+    runs-on: ${{ matrix.arch == 'arm64' && 'alfrescoARM-ubuntu2404-16G-4CPU' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
     strategy:
       fail-fast: false
       matrix:
         arch: [arm64, amd64]
         edition: [enterprise, community]
-    name: helm test
-    needs: build-test
-    runs-on: ${{ matrix.arch == 'arm64' && 'alfrescoARM-ubuntu2404-16G-4CPU' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
     steps:
       - name: Setup cluster
         uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v7.1.1
