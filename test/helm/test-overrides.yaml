@@ -69,6 +69,3 @@ dtas:
   config:
     config:
       search_timeout_seconds: "360"
-    assertions:
-      acs:
-        version: 23.2.2
