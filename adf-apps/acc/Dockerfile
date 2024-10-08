@@ -1,7 +1,7 @@
 FROM busybox AS unpack
 WORKDIR /unpack
 COPY ./*zip /
-RUN unzip /*zip
+RUN unzip /*zip && rm /*zip
 
 FROM nginxinc/nginx-unprivileged:alpine3.20
 
