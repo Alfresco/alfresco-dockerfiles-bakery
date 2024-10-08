@@ -12,6 +12,10 @@ on:
         required: false
         type: boolean
         default: true
+      tags:
+        description: Tags to delete for all the images (comma separated)
+        required: true
+        type: string
 
 env:
   ORG: Alfresco
@@ -53,4 +57,5 @@ jobs:
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }}
           delete-untagged: true
+          delete-tags: ${{ github.event.inputs.tags }}
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
