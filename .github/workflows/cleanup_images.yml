@@ -21,6 +21,10 @@ env:
   ORG: Alfresco
   REPO: alfresco-dockerfiles-bakery
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number }}${{ inputs.tags }}
+  cancel-in-progress: true
+
 jobs:
   cleanup:
     runs-on: ubuntu-latest
