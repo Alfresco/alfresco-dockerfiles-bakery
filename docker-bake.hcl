@@ -466,7 +466,7 @@ target "tengine_misc" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Misc"
     "org.opencontainers.image.description" = "Alfresco Transform Engine Misc"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-misc:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-misc:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }

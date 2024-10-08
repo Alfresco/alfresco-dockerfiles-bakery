@@ -7,7 +7,7 @@ Sets of variables configurable with your docker image
 ```yaml
 
 transform-core-misc:
-    image: localhost/alfresco-misc:YOUR-TAG
+    image: localhost/alfresco-transform-misc:YOUR-TAG
     environment:
       JAVA_OPTS: 
       ACTIVEMQ_URL: nio://activemq:61616
