@@ -127,6 +127,8 @@ jobs:
         with:
           set: |
             *.output=type=registry,push=${{ env.DOCKER_PUSH }}
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=min
 
   compose-test:
     needs: build
