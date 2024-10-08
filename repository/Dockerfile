@@ -59,9 +59,11 @@ RUN groupadd -g ${ALFRESCO_REPO_GROUP_ID} ${ALFRESCO_REPO_GROUP_NAME} && \
   yum install -y fontconfig && \
   yum clean all && rm -rf /var/cache/yum
 
+COPY entrypoint.sh /entrypoint.sh
+
 FROM repo-rhlike AS repo-rockylinux9
 
 FROM repo-${DISTRIB_NAME}${DISTRIB_MAJOR}
 USER ${ALFRESCO_REPO_USER_NAME}
 
-CMD ["catalina.sh", "run"]
+CMD ["/entrypoint.sh"]
