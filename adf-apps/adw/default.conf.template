@@ -1,0 +1,29 @@
+server {
+    listen       ${SERVER_PORT};
+    server_name  localhost;
+
+    #charset koi8-r;
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    root /usr/share/nginx/html;
+
+    rewrite           ^([^.]*[^/])$ $1/ permanent;
+    absolute_redirect off;
+
+    location ${BASE_PATH} {
+        set $EVAL_BASE_PATH "${BASE_PATH}";
+        if ($EVAL_BASE_PATH = "/") {
+            root   /usr/share/nginx/html;
+        }
+        index  index.html index.htm;
+        alias  /usr/share/nginx/html;
+    }
+
+    server_tokens off;
+
+    error_page   500 502 503 504  /50x.html;
+
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

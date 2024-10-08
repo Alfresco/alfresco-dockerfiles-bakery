@@ -1,4 +1,6 @@
 ---
+alfresco-digital-workspace:
+  enabled: false
 dtas:
   config:
     assertions:

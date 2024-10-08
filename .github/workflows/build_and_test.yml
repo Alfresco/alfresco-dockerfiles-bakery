@@ -224,8 +224,10 @@ jobs:
           --from-file=.dockerconfigjson=$HOME/.docker/config.json
           --type=kubernetes.io/dockerconfigjson
 
-      - name: Create configmap for acc 
-        run: kubectl create configmap acc-config --from-file=app.config.json=test/configs/acc.json
+      - name: Create configmap for adf apps
+        run: |
+          kubectl create configmap acc-config --from-file=app.config.json=test/configs/acc.json
+          kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
 
       - name: Checkout acs-deployment sources
         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0

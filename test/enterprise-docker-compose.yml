@@ -132,15 +132,12 @@ services:
       - "61616:61616" # OpenWire
       - "61613:61613" # STOMP
   digital-workspace:
-    image: quay.io/alfresco/alfresco-digital-workspace:4.4.1
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-digital-workspace:${TAG}
     mem_limit: 128m
     environment:
-      APP_CONFIG_PROVIDER: "ECM"
-      APP_CONFIG_AUTH_TYPE: "BASIC"
       BASE_PATH: ./
-      APP_CONFIG_PLUGIN_PROCESS_SERVICE: "false"
-      APP_CONFIG_PLUGIN_MICROSOFT_ONLINE: "false"
-      APP_BASE_SHARE_URL: "http://localhost:8080/workspace/#/preview/s"
+    volumes:
+      - ./configs/adw.json:/usr/share/nginx/html/app.config.json
   control-center:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
     mem_limit: 128m

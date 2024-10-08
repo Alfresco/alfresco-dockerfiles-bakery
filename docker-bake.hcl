@@ -27,7 +27,7 @@ group "connectors" {
 }
 
 group "adf_apps" {
-  targets = ["acc"]
+  targets = ["acc", "adw"]
 }
 
 variable "REGISTRY" {
@@ -714,6 +714,19 @@ target "acc" {
     "org.opencontainers.image.description" = "Alfresco Control Center"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
+
+target "adw" {
+  context = "./adf-apps/adw"
+  dockerfile = "Dockerfile"
+  labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Digital Workspace"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Digital Workspace"
+    "org.opencontainers.image.description" = "Alfresco Digital Workspace"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-digital-workspace:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
