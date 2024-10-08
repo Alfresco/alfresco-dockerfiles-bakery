@@ -118,12 +118,12 @@ services:
       - "traefik.http.routers.aca.middlewares=acachain@docker"
 
   control-center:
-    image: quay.io/alfresco/alfresco-control-center:9.0.0
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
     mem_limit: 128m
     environment:
-      APP_CONFIG_PROVIDER: "ECM"
-      APP_CONFIG_AUTH_TYPE: "BASIC"
       BASE_PATH: ./
+    volumes:
+      - ./configs/acc.json:/usr/share/nginx/html/app.config.json
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.acc.rule=PathPrefix(`/admin`)"
