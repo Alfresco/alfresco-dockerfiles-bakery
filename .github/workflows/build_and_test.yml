@@ -127,6 +127,8 @@ jobs:
         with:
           set: |
             *.output=type=registry,push=${{ env.DOCKER_PUSH }}
+            *.cache-from=type=registry,ref=ghcr.io/alfresco/bakery-cache
+            *.cache-to=type=registry,ref=ghcr.io/alfresco/bakery-cache
 
   compose-test:
     needs: build
