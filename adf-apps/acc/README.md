@@ -26,21 +26,9 @@ inside `default.conf.template`
 To run the image it is recommended to review and provide the json config file.
 Example configuration of that file is stored on this repository:
 `test/configs/acc.json`. There is few approaches you can use to provide a config
-file:
+file e.g.
 
-### Providing app.config.json at build time:
-
-1. Copy `test/configs/acc.json` into `adf-apps/acc/`
-2. Change the file according to needs
-3. Add this line to a Dockerfile (after the unzip command):
-
-```Dockerfile
-COPY app.config.json /usr/share/nginx/html/app.config.json
-```
-
-4. Build new image
-
-### Providing app.config.json at run time using docker compose:
+### Providing app.config.json at run time using docker compose
 
 1. Point config file to specific path on container:
 
@@ -49,7 +37,7 @@ volumes:
 - ./configs/acc.json:/usr/share/nginx/html/app.config.json
 ```
 
-### Providing app.config.json at run time using helm:
+### Providing app.config.json at run time using helm
 
 1. Change the `test/configs/acc.json` according to needs
 2. Create configmap from it, in the same namespace where acs is being deployed
