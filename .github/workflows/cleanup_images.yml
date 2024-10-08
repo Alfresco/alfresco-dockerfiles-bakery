@@ -56,6 +56,6 @@ jobs:
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }}
-          delete-untagged: true
+          delete-untagged: ${{ github.event_name == 'schedule' }}
           delete-tags: ${{ github.event.inputs.tags }}
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
