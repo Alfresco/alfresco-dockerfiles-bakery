@@ -100,6 +100,7 @@ jobs:
 
       - name: Login to Quay.io
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        if: github.actor != 'dependabot[bot]'
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
@@ -107,6 +108,7 @@ jobs:
 
       - name: Log in to the Container registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        if: github.actor != 'dependabot[bot]'
         with:
             registry: ${{ env.REGISTRY }}
             username: ${{ github.actor }}
@@ -120,14 +122,16 @@ jobs:
       - name: Bake Docker images
         env:
           TARGETARCH: linux/amd64,linux/arm64
+          DOCKER_PUSH: ${{ github.actor != 'dependabot[bot]'}}
         uses: docker/bake-action@2e3d19baedb14545e5d41222653874f25d5b4dfb  # v5.10.0
         with:
           set: |
-            *.output=type=registry,push=true
+            *.output=type=registry,push=${{ env.DOCKER_PUSH }}
 
   compose-test:
     needs: build
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
     strategy:
       fail-fast: false
       matrix:
@@ -161,6 +165,7 @@ jobs:
   helm-test:
     needs: build
     runs-on: ${{ matrix.arch == 'arm64' && 'alfrescoARM-ubuntu2404-16G-4CPU' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
+    if: github.actor != 'dependabot[bot]'
     strategy:
       fail-fast: false
       matrix:
