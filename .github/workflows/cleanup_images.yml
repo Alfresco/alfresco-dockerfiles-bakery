@@ -14,8 +14,13 @@ on:
         default: true
       tags:
         description: Tags to delete for all the images (comma separated)
-        required: true
+        required: false
         type: string
+      untagged:
+        description: Delete untagged images
+        required: false
+        type: boolean
+        default: false
 
 env:
   ORG: Alfresco
@@ -52,7 +57,7 @@ jobs:
           packages: ${{ env.PACKAGE_NAMES }}
           delete-tags: ${{format('pr-{0}', github.event.pull_request.number)}}
           dry-run: false
-      - name: Remove tags
+      - name: Remove images when requested
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
@@ -60,6 +65,6 @@ jobs:
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }}
-          delete-untagged: ${{ github.event_name == 'schedule' }}
+          delete-untagged: ${{ github.event_name == 'schedule' || inputs.untagged }}
           delete-tags: ${{ github.event.inputs.tags }}
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
