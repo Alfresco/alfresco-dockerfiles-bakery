@@ -63,7 +63,7 @@ alfresco-sync-service:
   enabled: false ## disable till release of 5.0.1
 alfresco-control-center:
   image:
-    repository: localhost/alfresco-control-center
+    repository: localhost/alfresco/alfresco-control-center
     tag: latest
   env:
     BASE_PATH: ./
