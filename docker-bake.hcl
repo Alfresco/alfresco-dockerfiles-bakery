@@ -51,11 +51,11 @@ variable "LABEL_AUTHOR" {
 }
 
 variable "LABEL_SOURCE" {
-  default = "https://github.com/Alfresco/alfresco-dockerfiles"
+  default = "https://github.com/Alfresco/alfresco-dockerfiles-bakery"
 }
 
-variable "CODE_REF" {
-  default = "local"
+variable "LABEL_GIT_SOURCE" {
+  default = "${LABEL_SOURCE}.git"
 }
 
 variable "PRODUCT_LINE" {
@@ -66,8 +66,12 @@ variable "CREATED" {
   default = formatdate("YYYY'-'MM'-'DD'T'hh':'mm':'ss'Z'", timestamp())
 }
 
+variable "GITHUB_SHA" {
+  default = "deadbeef"
+}
+
 variable "REVISION" {
-  default = "$GITHUB_RUN_NUMBER"
+  default = "${GITHUB_SHA}"
 }
 
 variable "DISTRIB_NAME" {
@@ -111,26 +115,22 @@ target "java_base" {
     JDIST = "${JDIST}"
     IMAGE_BASE_LOCATION = "${IMAGE_BASE_LOCATION}"
     JAVA_MAJOR = "${JAVA_MAJOR}"
-    LABEL_NAME = "${PRODUCT_LINE} Java"
-    LABEL_VENDOR = "${LABEL_VENDOR}"
-    CREATED = "${CREATED}"
-    REVISION = "${REVISION}"
   }
   labels = {
     "org.label-schema.schema-version" = "1.0"
     "org.label-schema.name" = "${PRODUCT_LINE} Java"
     "org.label-schema.vendor" = "${LABEL_VENDOR}"
     "org.label-schema.build-date" = "${CREATED}"
-    "org.label-schema.url" = "$LABEL_SOURCE"
-    "org.label-schema.vcs-url" = "$LABEL_SOURCE"
-    "org.label-schema.vcs-ref" = "$CODE_REF"
+    "org.label-schema.url" = "${LABEL_SOURCE}"
+    "org.label-schema.vcs-url" = "${LABEL_GIT_SOURCE}"
+    "org.label-schema.vcs-ref" = "${REVISION}"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Java"
     "org.opencontainers.image.description" = "A base image shipping OpenJDK JRE ${JAVA_MAJOR} for Alfresco Products"
     "org.opencontainers.image.vendor" = "${LABEL_VENDOR}"
     "org.opencontainers.image.created" = "${CREATED}"
     "org.opencontainers.image.revision" = "${REVISION}"
-    "org.opencontainers.image.url" = "$LABEL_SOURCE"
-    "org.opencontainers.image.source" = "$LABEL_SOURCE"
+    "org.opencontainers.image.url" = "${LABEL_SOURCE}"
+    "org.opencontainers.image.source" = "${LABEL_GIT_SOURCE}"
     "org.opencontainers.image.authors" = "${LABEL_AUTHOR}"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
@@ -171,9 +171,9 @@ target "tomcat_base" {
     TOMCAT_SHA512 = "${TOMCAT_SHA512}"
     TCNATIVE_VERSION = "${TCNATIVE_VERSION}"
     TCNATIVE_SHA512 = "${TCNATIVE_SHA512}"
-    LABEL_NAME = "${PRODUCT_LINE} Tomcat"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Tomcat"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Tomcat"
     "org.opencontainers.image.description" = "A base image shipping Tomcat for Alfresco Products"
   }
@@ -205,6 +205,7 @@ target "repository" {
     ALFRESCO_REPO_EDITION = "${repository_editions.name}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Content Repository (${repository_editions.name})"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Content Repository (${repository_editions.name})"
     "org.opencontainers.image.description" = "Alfresco Content Services Repository ${repository_editions.name} edition"
   }
@@ -283,6 +284,7 @@ target "search_liveindexing" {
     java_base = "target:java_base"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name}"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name}"
     "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name} live indexing"
   }
@@ -313,6 +315,7 @@ target "search_reindexing" {
     ALFRESCO_REINDEX_USER_NAME = "${ALFRESCO_REINDEX_USER_NAME}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Enterprise Search - reindexing"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - reindexing"
     "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - reindexing component"
   }
@@ -343,6 +346,7 @@ target "ats_trouter" {
     ALFRESCO_TROUTER_USER_ID = "${ALFRESCO_TROUTER_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} ATS Trouter"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} ATS Trouter"
     "org.opencontainers.image.description" = "Alfresco Transform Service Trouter"
   }
@@ -373,6 +377,7 @@ target "ats_sfs" {
     ALFRESCO_SFS_USER_ID = "${ALFRESCO_SFS_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} ATS Shared File Store"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} ATS Shared File Store"
     "org.opencontainers.image.description" = "Alfresco Transform Service ATS Shared File Store"
   }
@@ -403,6 +408,7 @@ target "tengine_imagemagick" {
     ALFRESCO_IMAGEMAGICK_USER_ID = "${ALFRESCO_IMAGEMAGICK_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Transform Engine Imagemagick"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Imagemagick"
     "org.opencontainers.image.description" = "Alfresco Transform Engine Imagemagick"
   }
@@ -433,6 +439,7 @@ target "tengine_libreoffice" {
     ALFRESCO_LIBREOFFICE_USER_ID = "${ALFRESCO_LIBREOFFICE_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Transform Engine LibreOffice"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine LibreOffice"
     "org.opencontainers.image.description" = "Alfresco Transform Engine LibreOffice"
   }
@@ -463,6 +470,7 @@ target "tengine_misc" {
     ALFRESCO_MISC_USER_ID = "${ALFRESCO_MISC_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Transform Engine Misc"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Misc"
     "org.opencontainers.image.description" = "Alfresco Transform Engine Misc"
   }
@@ -493,6 +501,7 @@ target "tengine_tika" {
     ALFRESCO_TIKA_USER_ID = "${ALFRESCO_TIKA_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Transform Engine Tika"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Tika"
     "org.opencontainers.image.description" = "Alfresco Transform Engine Tika"
   }
@@ -523,6 +532,7 @@ target "tengine_pdfrenderer" {
     ALFRESCO_PDFRENDERER_USER_ID = "${ALFRESCO_PDFRENDERER_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Transform Engine PDF Renderer"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine PDF Renderer"
     "org.opencontainers.image.description" = "Alfresco Transform Engine PDF Renderer"
   }
@@ -553,6 +563,7 @@ target "tengine_aio" {
     ALFRESCO_AIO_USER_ID = "${ALFRESCO_AIO_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Transform Engine All In One"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine All In One"
     "org.opencontainers.image.description" = "Alfresco Transform Engine All In One"
   }
@@ -583,6 +594,7 @@ target "connector_msteams" {
     ALFRESCO_MSTEAMS_USER_ID = "${ALFRESCO_MSTEAMS_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Connector Microsoft Teams"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Connector Microsoft Teams"
     "org.opencontainers.image.description" = "Alfresco Connector Microsoft Teams"
   }
@@ -613,6 +625,7 @@ target "connector_ms365" {
     ALFRESCO_MS365_USER_ID = "${ALFRESCO_MS365_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Microsoft 365 Connector"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Microsoft 365 Connector"
     "org.opencontainers.image.description" = "Alfresco Microsoft 365 Connector"
   }
@@ -643,6 +656,7 @@ target "share" {
     ALFRESCO_SHARE_USER_ID = "${ALFRESCO_SHARE_USER_ID}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Share"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Share"
     "org.opencontainers.image.description" = "Alfresco Share"
   }
@@ -678,6 +692,7 @@ target "search_service" {
     ALFRESCO_SOLR_DIST_DIR = "${ALFRESCO_SOLR_DIST_DIR}"
   }
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Search Service (Solr)"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Search Service (Solr)"
     "org.opencontainers.image.description" = "Alfresco Search Service (Solr)"
   }
