@@ -120,6 +120,8 @@ jobs:
       - name: Bake Docker images
         env:
           TARGETARCH: linux/amd64,linux/arm64
+          # Avoid cache misses due to cache api rate limiter with default token
+          BUILDX_BAKE_GIT_AUTH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
         uses: docker/bake-action@a4d7f0b5b91c14a296d792d4ec53a9db17f02e67  # v5.5.0
         with:
           set: |
