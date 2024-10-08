@@ -7,7 +7,7 @@ This Docker file is used to build an Alfresco control center.
 ## Building the image
 
 Make sure all required artifacts are present in the build context `adf-apps/acc/`.
-You can put them manually in the ``adf-apps/acc/` folder (for example if that's a
+You can put them manually in the `adf-apps/acc/` folder (for example if that's a
 custom module of yours), or use the script `./scripts/fetch-artifacts.sh` to
 download them from Alfresco's Nexus.
 
@@ -21,7 +21,7 @@ docker buildx bake acc
 ## Running the image
 
 :warning: `BASE_PATH` should still be provided as a env or directly changed
-inside default.conf.template
+inside `default.conf.template`
 
 To run the image it is recommended to review and provide the json config file.
 Example configuration of that file is stored on this repository:
