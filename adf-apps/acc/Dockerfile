@@ -1,3 +1,8 @@
+FROM busybox AS unpack
+WORKDIR /unpack
+COPY ./*zip /
+RUN unzip /*zip
+
 FROM nginxinc/nginx-unprivileged:alpine3.20
 
 ARG CONFIG_PATH=/etc/nginx/conf.d
@@ -5,10 +10,8 @@ ARG CONFIG_PATH=/etc/nginx/conf.d
 USER root
 RUN apk update && apk upgrade
 COPY default.conf.template /etc/nginx/templates/
-COPY ./*zip /tmp/
 
-RUN unzip -o /tmp/*.zip -d /usr/share/nginx/html && \
-    rm -rf /tmp/*zip
+COPY --from=unpack /unpack/ /usr/share/nginx/html/
 
 RUN chmod a+w -R ${CONFIG_PATH}
 
