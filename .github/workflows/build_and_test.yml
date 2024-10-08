@@ -119,6 +119,17 @@ jobs:
         with:
           comment_on_pr: false
 
+      - name: List targets
+        id: generate
+        uses: docker/bake-action/subaction/list-targets@2e3d19baedb14545e5d41222653874f25d5b4dfb  # v5.10.0
+        with:
+          target: default
+
+      - name: Generate cache targets
+        id: cache-targets
+        run: |
+          echo "cache-set=$(echo '${{ steps.generate.outputs.targets }}' | jq -r '.[] | "\(.).cache-from=type=gha,scope=\(.)\n\(.).cache-to=type=gha,mode=max,scope=\(.)"')" >> $GITHUB_OUTPUT
+
       - name: Bake Docker images
         env:
           TARGETARCH: linux/amd64,linux/arm64
@@ -127,8 +138,8 @@ jobs:
         with:
           set: |
             *.output=type=registry,push=${{ env.DOCKER_PUSH }}
-            *.cache-from=type=gha
-            *.cache-to=type=gha,mode=min
+            ${{ steps.cache-targets.outputs.cache-set }}
+
 
   compose-test:
     needs: build
