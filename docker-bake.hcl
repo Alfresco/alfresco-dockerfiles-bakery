@@ -3,7 +3,7 @@ group "default" {
 }
 
 group "community" {
-  targets = ["repository_community", "share", "search_service", "tengine_aio"]
+  targets = ["repository_community", "share", "search_service", "tengine_aio", "acc"]
 }
 
 group "content_service" {
