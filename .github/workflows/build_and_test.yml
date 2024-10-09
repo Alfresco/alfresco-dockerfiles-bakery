@@ -131,7 +131,9 @@ jobs:
           CACHE_TARGET: ${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/bakery-cache
         run: |
           echo 'cache-set<<EOF' >> $GITHUB_OUTPUT
-          echo '${{ steps.generate.outputs.targets }}' | jq -r '.[] | "\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ env.TAG }}-\(.)\n\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ env.TAG }}-\(.)"' >> $GITHUB_OUTPUT
+          echo '${{ steps.generate.outputs.targets }}' | jq -r '.[] | '\
+          '"\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ env.TAG }}-\(.)\n'\
+          '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ env.TAG }}-\(.)"' >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Bake Docker images
