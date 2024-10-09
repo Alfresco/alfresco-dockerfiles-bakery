@@ -3,6 +3,18 @@
 This projects aims at providing a quick and easy to build and maintain Alfresco
 Docker images.
 
+- [Alfresco Docker images builder](#alfresco-docker-images-builder)
+  - [Prerequisites](#prerequisites)
+    - [Nexus authentication](#nexus-authentication)
+  - [Getting started quickly](#getting-started-quickly)
+  - [Building the specific images](#building-the-specific-images)
+  - [Customizing the images](#customizing-the-images)
+    - [Customizing the Alfresco Content Repository image](#customizing-the-alfresco-content-repository-image)
+  - [Architecture choice](#architecture-choice)
+    - [Targeting a specific architecture](#targeting-a-specific-architecture)
+    - [Multi-arch images](#multi-arch-images)
+    - [Testing locally](#testing-locally)
+
 ## Prerequisites
 
 Using this tool to build Alfresco images requires:
@@ -44,33 +56,33 @@ make all
 This command will build locally all the docker images this project offers.
 At the time of writing, these are:
 
-* Alfresco Content Repository (Enterprise) 23.2.2
-* Alfresco Search Enterprise 4.4.0
-* Alfresco Transformation Services 4.1.3
+- Alfresco Content Repository (Enterprise) 23.2.2
+- Alfresco Search Enterprise 4.4.0
+- Alfresco Transformation Services 4.1.3
 
 Currently available make offers the following targets in order tobuild images:
 
-* all: build all images
-* repo: build the Alfresco Content Repository image
-* search_enterprise: build the Alfresco Search Enterprise images
-* ats: build the Alfresco Transformation Service images
-* tengines: build the Alfresco Transform engine images
-* connectors: build the Alfresco Connectors images (MS-Teams & MS-Office365)
+- all: build all images
+- repo: build the Alfresco Content Repository image
+- search_enterprise: build the Alfresco Search Enterprise images
+- ats: build the Alfresco Transformation Service images
+- tengines: build the Alfresco Transform engine images
+- connectors: build the Alfresco Connectors images (MS-Teams & MS-Office365)
 
 Bellow are some environment variables dedicated to the `make` wrapper which
 can be used to customize the build process:
 
-* BAKE_NO_CACHE: Set to `1` to disable the cache during the build process
-* BAKE_NO_PROVENANCE: Set to `1` to not add provenance metadata during the build
+- BAKE_NO_CACHE: Set to `1` to disable the cache during the build process
+- BAKE_NO_PROVENANCE: Set to `1` to not add provenance metadata during the build
   process. This is mostly useful if your registry do not support it.
 
 ## Building the specific images
 
 If you want to build a specific image, you can run one of the following make target:
 
-* repo: build the Alfresco Content Repository image
-* search_enterprise: build the Alfresco Search Enterprise images
-* ats: build the Alfresco Transformation Service images
+- repo: build the Alfresco Content Repository image
+- search_enterprise: build the Alfresco Search Enterprise images
+- ats: build the Alfresco Transformation Service images
 
 ## Customizing the images
 
@@ -79,17 +91,17 @@ If you want to build a specific image, you can run one of the following make tar
 The Alfresco Content Repository image can be customized by adding different
 types of files in the right locations:
 
-* Alfresco Module Packages (AMPs) files in the [amps](repository/amps/README.md)
+- Alfresco Module Packages (AMPs) files in the [amps](repository/amps/README.md)
   folder
-* Additional JAR files for the JRE in the [libs](repository/libs/README.md) folder
+- Additional JAR files for the JRE in the [libs](repository/libs/README.md) folder
 
 ## Architecture choice
 
 Depending on the environment where you plan to run the docker images you build,
 it is possible to build Alfresco images the following architectures:
 
-* X86_64 (linux/amd64): Regular intel processor based systems
-* ARM64 (linux/arm64): ARM processor based systems (e.g. Apple Silicon or AWS
+- X86_64 (linux/amd64): Regular intel processor based systems
+- ARM64 (linux/arm64): ARM processor based systems (e.g. Apple Silicon or AWS
   Graviton)
 
 Other architectures are not suported.
@@ -140,10 +152,10 @@ also requires images to be pushed to a registry that supports multi-arch.
 This is due to a limitation of the `docker` exporter in BuildKit.
 Concretely, it means in order to produce multi-arch images one needs to:
 
-* Set the REGISTRY environment variable to the target registry
-* Set the REGISTRY_NAMESPACE environment variable to the target namespace
-* Ensure docker daemon is able to login to the target registry
-* Enforce pushing resulting images to the target registry
+- Set the REGISTRY environment variable to the target registry
+- Set the REGISTRY_NAMESPACE environment variable to the target namespace
+- Ensure docker daemon is able to login to the target registry
+- Enforce pushing resulting images to the target registry
 
 The `make` wrapper would handle the authentication part for you:
 
