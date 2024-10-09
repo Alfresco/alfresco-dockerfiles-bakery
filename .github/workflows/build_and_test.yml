@@ -224,7 +224,7 @@ jobs:
           --from-file=.dockerconfigjson=$HOME/.docker/config.json
           --type=kubernetes.io/dockerconfigjson
 
-      - name: Create configmap for adf apps
+      - name: Create configmaps for adf apps
         run: |
           kubectl create configmap acc-config --from-file=app.config.json=test/configs/acc.json
           kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
