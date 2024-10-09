@@ -59,7 +59,7 @@ jobs:
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }},${{ env.CACHE_REPO }}
-          delete-tags: ^${{ env.PR_TAG }}$,^${{ env.PR_TAG }}-.*$
+          delete-tags: ^${{ env.PR_TAG }}(-.*)?$ # pr-123 and pr-123-something
           use-regex: true
           dry-run: false
 
