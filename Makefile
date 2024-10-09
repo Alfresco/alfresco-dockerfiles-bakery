@@ -97,5 +97,5 @@ all: docker-bake.hcl prepare_all
 	@echo "Building all images"
 	docker buildx bake ${DOCKER_BAKE_ARGS}
 
-all_ci: repo tengines ats search_enterprise clean connectors
+all_ci: repo tengines ats search_enterprise clean connectors share adf_apps
 	@echo "Building all images using individual targets for Continuous Integration"
