@@ -119,19 +119,19 @@ jobs:
         with:
           comment_on_pr: false
 
-      - name: List targets
-        id: generate
+      - name: Enumerate bake targets
+        id: bake-targets
         uses: docker/bake-action/subaction/list-targets@2e3d19baedb14545e5d41222653874f25d5b4dfb  # v5.10.0
         with:
           target: default
 
-      - name: Generate cache targets
+      - name: Enumerate registry cache targets
         id: cache-targets
         env:
           CACHE_TARGET: ${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/bakery-cache
         run: |
           echo 'cache-set<<EOF' >> $GITHUB_OUTPUT
-          echo '${{ steps.generate.outputs.targets }}' | jq -r '.[] | '\
+          echo '${{ steps.bake-targets.outputs.targets }}' | jq -r '.[] | '\
           '"\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ env.TAG }}-\(.)\n'\
           '\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ github.event.repository.default_branch }}-\(.)\n'\
           '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ env.TAG }}-\(.)"' >> $GITHUB_OUTPUT
