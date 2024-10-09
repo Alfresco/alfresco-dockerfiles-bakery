@@ -709,6 +709,7 @@ target "acc" {
   context = "./adf-apps/acc"
   dockerfile = "Dockerfile"
   labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Control Center"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Control Center"
     "org.opencontainers.image.description" = "Alfresco Control Center"
   }
