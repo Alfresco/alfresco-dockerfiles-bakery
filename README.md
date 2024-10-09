@@ -7,23 +7,27 @@ Docker images.
 
 Using this tool to build Alfresco images requires:
 
-* A recent enough Docker installation (with buildx support)
-* Credentials to access the Alfresco artifactories (Nexus server) that may
-  require authentication
-* Some Unix tools: `jq`, `wget`, `make`
+- A recent enough Docker installation (with buildx support)
+- Credentials to access the Alfresco artifacts (Nexus server), required for
+  Enterprise edition artifacts
+- Some Unix tools: `jq`, `wget`, `make`
 
-Configuring the authentication to Alfresco Nexus server must be done using the
-wget rc file `~/.wgetrc` or `~/.netrc`:
+### Nexus authentication
+
+Configuring the authentication to Alfresco Nexus server must be done using one
+of the standard wget configuration files like `~/.netrc`.
+
+Using your preferred editor, create `~/.netrc` with the following contents:
 
 ```sh
-echo -e "user=myuser\npassword=mypassword" > ~/.wgetrc
-chmod 600 ~/.wgetrc
+machine nexus.alfresco.com
+login myuser
+password mypassword
 ```
 
-or
+Make sure to make the file non-world readable:
 
 ```sh
-echo -e "machine nexus.alfresco.com\nlogin myuser\npassword mypassword" > ~/.netrc
 chmod 600 ~/.netrc
 ```
 
