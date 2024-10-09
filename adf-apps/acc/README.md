@@ -66,7 +66,7 @@ alfresco-control-center:
     repository: localhost/alfresco/alfresco-control-center
     tag: latest
   env:
-    BASE_PATH: ./
+    BASE_PATH: /
   volumeMounts:
     - name: app-config
       mountPath: /usr/share/nginx/html/app.config.json
