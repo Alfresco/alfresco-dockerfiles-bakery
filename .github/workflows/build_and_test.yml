@@ -147,7 +147,6 @@ jobs:
             *.output=type=registry,push=${{ env.DOCKER_PUSH }}
             ${{ steps.cache-targets.outputs.cache-set }}
 
-
   compose-test:
     needs: build
     runs-on: ubuntu-latest
