@@ -13,7 +13,7 @@ on:
         type: boolean
         default: true
       tags:
-        description: Tags to delete for all the images (comma separated)
+        description: Tags to delete for all the images (regexp enabled)
         required: false
         type: string
       untagged:
@@ -73,4 +73,5 @@ jobs:
           packages: ${{ env.PACKAGE_NAMES }},${{ env.CACHE_REPO }}
           delete-untagged: ${{ github.event_name == 'schedule' || inputs.untagged }}
           delete-tags: ${{ github.event.inputs.tags }}
+          use-regex: true
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
