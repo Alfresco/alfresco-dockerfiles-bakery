@@ -133,6 +133,7 @@ jobs:
           echo 'cache-set<<EOF' >> $GITHUB_OUTPUT
           echo '${{ steps.generate.outputs.targets }}' | jq -r '.[] | '\
           '"\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ env.TAG }}-\(.)\n'\
+          '\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ github.event.repository.default_branch }}-\(.)\n'\
           '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ env.TAG }}-\(.)"' >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
