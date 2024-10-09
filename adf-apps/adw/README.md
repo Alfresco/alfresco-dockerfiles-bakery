@@ -25,7 +25,20 @@ inside `default.conf.template`
 
 To run the image it is recommended to review and provide the json config file.
 Example configuration of that file is stored on this repository:
-`test/configs/adw.json`. There is few approaches you can use to provide a config
+`test/configs/adw.json`.
+
+:warning: It is recommended to get your own config file because it may differ
+from the one stored on this repo. To get the config file either extract it from
+the artifact zip or copy it from the running image with:
+
+```sh
+docker run --name temp-container -d localhost/alfresco/alfresco-digital-workspace:latest && \
+docker cp temp-container:/usr/share/nginx/html/app.config.json ./adw.config.json && \
+docker stop temp-container && \
+docker rm temp-container
+```
+
+There is few approaches you can use to provide a config
 file e.g.
 
 ### Providing app.config.json at run time using docker compose
@@ -34,14 +47,15 @@ file e.g.
 
 ```yaml
 volumes:
-- ./configs/adw.json:/usr/share/nginx/html/app.config.json
+- ./adw.config.json:/usr/share/nginx/html/app.config.json
 ```
+
 ### Providing app.config.json at run time using helm
-1. Change the `test/configs/adw.json` according to needs
+1. Change the `adw.config.json` according to needs
 2. Create configmap from it, in the same namespace where acs is being deployed
 
 ```sh
-kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
+kubectl create configmap adw-config --from-file=app.config.json=adw.config.json
 ```
 
 3. Mount created configmap to the adw deployment:

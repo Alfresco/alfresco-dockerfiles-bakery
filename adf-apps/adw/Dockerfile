@@ -13,7 +13,7 @@ COPY default.conf.template /etc/nginx/templates/
 
 COPY --from=unpack /unpack/ /usr/share/nginx/html/
 
-RUN chmod a+w -R ${CONFIG_PATH}
+RUN chown -R 101:101 ${CONFIG_PATH}
 
 USER 101
 

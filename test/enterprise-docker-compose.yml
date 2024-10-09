@@ -135,7 +135,7 @@ services:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-digital-workspace:${TAG}
     mem_limit: 128m
     environment:
-      BASE_PATH: ./
+      BASE_PATH: /
     volumes:
       - ./configs/adw.json:/usr/share/nginx/html/app.config.json
   control-center:
