@@ -145,7 +145,7 @@ services:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
     mem_limit: 128m
     environment:
-      BASE_PATH: ./
+      BASE_PATH: /
     volumes:
       - ./configs/acc.json:/usr/share/nginx/html/app.config.json
   proxy:
