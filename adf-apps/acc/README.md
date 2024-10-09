@@ -26,9 +26,9 @@ inside `default.conf.template`
 To run the image it is recommended to review and provide the json config file.
 Example configuration of that file is stored on this repository: `test/configs/acc.json`.
 
-:warning: It is recommended to get your own config file
-- it may differ from the one stored on this repo. To get the config file either
-extract it from the artifact zip or copy it from the running image with:
+:warning: It is recommended to get your own config file because it may differ
+from the one stored on this repo. To get the config file either extract it from
+the artifact zip or copy it from the running image with:
 
 ```sh
 docker run --name temp-container -d localhost/alfresco/alfresco-control-center:latest && \
