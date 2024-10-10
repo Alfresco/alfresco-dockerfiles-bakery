@@ -61,6 +61,10 @@ prepare_adf: scripts/fetch-artifacts.sh setenv
 	@echo "Fetching all artifacts for ADF targets"
 	@./scripts/fetch-artifacts.sh adf-apps
 
+prepare_sync: scripts/fetch-artifacts.sh setenv
+	@echo "Fetching all artifacts for ADF targets"
+	@./scripts/fetch-artifacts.sh sync
+
 prepare_all: scripts/fetch-artifacts.sh setenv
 	@echo "Fetching all artifacts"
 	@./scripts/fetch-artifacts.sh
@@ -93,9 +97,13 @@ adf_apps: prepare_adf
 	@echo "Building ADF Apps images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} adf_apps
 
+sync: prepare_sync
+	@echo "Building Sync Service images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} sync
+
 all: docker-bake.hcl prepare_all
 	@echo "Building all images"
 	docker buildx bake ${DOCKER_BAKE_ARGS}
 
-all_ci: repo tengines ats search_enterprise clean connectors share adf_apps
+all_ci: repo tengines ats search_enterprise clean connectors share adf_apps sync
 	@echo "Building all images using individual targets for Continuous Integration"
