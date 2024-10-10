@@ -26,8 +26,8 @@ docker buildx bake sync
 
 ### Alfresco Sync Service configuration
 
-All preperties you would normally add in the alfresco-global.properties file can
-be added in the `JAVA_OPTS` environment variable to the container.
+Properties can be added in the `JAVA_OPTS` environment variable to the
+container.
 
 For example, to set the repository URL, you can use the following environment
 variable:
