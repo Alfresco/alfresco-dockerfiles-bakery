@@ -1,0 +1,38 @@
+FROM busybox AS unpack
+WORKDIR /unpack
+COPY ./distribution/*zip /
+RUN unzip /*zip && rm /*zip
+
+FROM java_base 
+
+EXPOSE 8000
+
+ENV SYNC_SERVICE_FOLDER=/opt/alfresco-sync-service
+
+ARG ALFRESCO_SYNC_USER_ID
+ARG ALFRESCO_SYNC_GROUP_ID
+ARG ALFRESCO_SYNC_GROUP_NAME
+ARG ALFRESCO_SYNC_USER_NAME
+
+RUN mkdir ${SYNC_SERVICE_FOLDER}
+
+COPY --chown=${ALFRESCO_SYNC_USER_ID}:{ALFRESCO_SYNC_GROUP_ID} /configs/ ${SYNC_SERVICE_FOLDER}
+COPY --chown=${ALFRESCO_SYNC_USER_ID}:{ALFRESCO_SYNC_GROUP_ID} --from=unpack /unpack/sync/service-sync/ ${SYNC_SERVICE_FOLDER}
+
+RUN groupadd -g ${ALFRESCO_SYNC_GROUP_ID} ${ALFRESCO_SYNC_GROUP_NAME} && \
+    useradd -u ${ALFRESCO_SYNC_USER_ID} -G ${ALFRESCO_SYNC_GROUP_NAME} ${ALFRESCO_SYNC_USER_NAME} && \
+    chown -h ${ALFRESCO_SYNC_USER_NAME}:${ALFRESCO_SYNC_GROUP_NAME} $SYNC_SERVICE_FOLDER && \
+    chgrp -R ${ALFRESCO_SYNC_GROUP_NAME} ${SYNC_SERVICE_FOLDER} && \
+    chmod -R u+x ${SYNC_SERVICE_FOLDER}
+
+USER ${ALFRESCO_SYNC_USER_NAME}
+
+RUN source ${SYNC_SERVICE_FOLDER}/update-syncservice.sh ${SYNC_SERVICE_FOLDER}
+RUN source ${SYNC_SERVICE_FOLDER}/update-config-yml.sh ${SYNC_SERVICE_FOLDER}/config.yml
+
+WORKDIR ${SYNC_SERVICE_FOLDER}
+
+ENV JPDA_ADDRESS="8000"
+ENV JPDA_TRANSPORT="dt_socket"
+
+CMD ["/opt/alfresco-sync-service/sync_service_entrypoint.sh", "start"]

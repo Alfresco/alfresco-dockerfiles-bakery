@@ -1,0 +1,22 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "sync-dist-6.x",
+        "version": "4.0.1",
+        "path": "sync/distribution",
+        "classifier": ".zip",
+        "group": "org.alfresco.services.sync",
+        "repository": "enterprise-releases"
+      },
+      {
+        "name": "postgresql",
+        "version": "42.6.0",
+        "classifier": ".jar",
+        "group": "org.postgresql",
+        "repository": "central",
+        "path": "sync/configs/connectors"
+      }
+    ]
+  }
+}

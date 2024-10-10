@@ -75,7 +75,9 @@ alfresco-digital-workspace:
           - key: app.config.json
             path: app.config.json
 alfresco-sync-service:
-  enabled: false ## disable till release of 5.0.1
+  image:
+    repository: localhost/alfresco/service-sync
+    tag: latest
 alfresco-control-center:
   image:
     repository: localhost/alfresco/alfresco-control-center

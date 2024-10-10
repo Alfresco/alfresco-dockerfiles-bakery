@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors", "search_service", "adf_apps"]
+  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors", "search_service", "adf_apps", "sync"]
 }
 
 group "community" {
@@ -727,6 +727,37 @@ target "adw" {
     "org.opencontainers.image.description" = "Alfresco Digital Workspace"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-digital-workspace:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
+
+variable "ALFRESCO_SYNC_USER_NAME" {
+  default = "dsync"
+}
+
+variable "ALFRESCO_SYNC_USER_ID" {
+  default = "33020"
+}
+
+target "sync" {
+  context = "./sync"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_SYNC_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_SYNC_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_SYNC_USER_NAME = "${ALFRESCO_SYNC_USER_NAME}"
+    ALFRESCO_SYNC_USER_ID = "${ALFRESCO_SYNC_USER_ID}"
+  }
+  labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Sync Service"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Sync Service"
+    "org.opencontainers.image.description" = "Alfresco Sync Service"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/service-sync:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
