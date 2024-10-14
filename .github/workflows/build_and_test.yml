@@ -68,6 +68,7 @@ jobs:
         id: artifacts-cache
         with:
           key: ${{ runner.os }}-packages-${{ hashFiles('**/artifacts.json') }}
+          restore-keys: ${{ runner.os }}-packages-
           path: |
             **/*.jar
             **/*.zip
@@ -80,7 +81,7 @@ jobs:
         run: ./scripts/fetch-artifacts.sh
 
       - name: Save packages artifacts
-        id: cache-primes-save
+        if: steps.artifacts-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@2cdf405574d6ef1f33a1d12acccd3ae82f47b3f2 # v4.1.0
         with:
           key: ${{ steps.artifacts-cache.outputs.cache-primary-key }}
