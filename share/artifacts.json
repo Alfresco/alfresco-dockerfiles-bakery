@@ -10,6 +10,14 @@
         "repository": "enterprise-releases"
       },
       {
+        "name": "alfresco-content-services-community-distribution",
+        "version": "23.2.0",
+        "path": "share/distribution",
+        "classifier": ".zip",
+        "group": "org.alfresco",
+        "repository": "public"
+      },
+      {
         "name": "alfresco-googledrive-share",
         "version": "4.1.0",
         "path": "share/amps",
