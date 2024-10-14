@@ -14,18 +14,23 @@ ADD amps /tmp/amps
 ADD distribution /tmp/
 ENV DISTDIR="/tmp/distribution"
 
-RUN yum install -y unzip
-RUN unzip /tmp/*.zip -d ${DISTDIR}
-RUN unzip ${DISTDIR}/alfresco*/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share/
-RUN cp -r ${DISTDIR}/alfresco*/amps/ /tmp/amps/
+RUN yum install -y unzip 
+RUN unzip /tmp/*.zip -d ${DISTDIR} 
+RUN unzip ${DISTDIR}/alfresco*/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share/ || \
+    unzip ${DISTDIR}/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share
+RUN cp -r ${DISTDIR}/alfresco*/amps/ /tmp/amps/ || \
+    cp -r ${DISTDIR}/amps/ /tmp/amps/
 RUN cp /tmp/share-config-custom.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension
-RUN cp ${DISTDIR}/alfresco*/web-server/conf/Catalina/localhost/share.xml ${CATALINA_HOME}/conf/Catalina/localhost
+RUN cp ${DISTDIR}/alfresco*/web-server/conf/Catalina/localhost/share.xml ${CATALINA_HOME}/conf/Catalina/localhost || \
+    cp ${DISTDIR}/web-server/conf/Catalina/localhost/share.xml ${CATALINA_HOME}/conf/Catalina/localhost
 RUN sed -i 's|../modules/share|modules/share|' ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
 RUN sed -i "s/shared.loader=/shared.loader=\${catalina.base}\/shared\/classes/" ${CATALINA_HOME}/conf/catalina.properties
 RUN chmod +x ${CATALINA_HOME}/shared/classes/alfresco/entrypoint.sh
 
 RUN java -jar ${DISTDIR}/alfresco*/bin/alfresco-mmt.jar install \
-              /tmp/amps/ ${CATALINA_HOME}/webapps/share -directory -nobackup -force
+    /tmp/amps/ ${CATALINA_HOME}/webapps/share -directory -nobackup -force || \
+    java -jar ${DISTDIR}/bin/alfresco-mmt.jar install \
+    /tmp/amps/ ${CATALINA_HOME}/webapps/share -directory -nobackup -force
 
 FROM tomcat_base AS share-rhlike
 ARG ALFRESCO_SHARE_USER_ID
