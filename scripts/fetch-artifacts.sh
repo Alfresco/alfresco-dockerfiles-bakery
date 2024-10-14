@@ -16,7 +16,7 @@ do_fetch_mvn() {
     ARTIFACT_PATH=$(jq -r ".artifacts.acs${INDEX_KEY}[$i].path" $1)
     ARTIFACT_BASEURL="https://nexus.alfresco.com/nexus/repository/${ARTIFACT_REPO}"
     ARTIFACT_FINAL_PATH="${ARTIFACT_PATH}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}"
-    echo ""
+    echo
     if [ -f "${ARTIFACT_FINAL_PATH}" ]; then
       echo "Artifact $ARTIFACT_NAME-$ARTIFACT_VERSION already downloaded, skipping..."
       continue
