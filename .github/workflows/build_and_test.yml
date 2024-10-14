@@ -292,6 +292,17 @@ jobs:
           kubectl get all --all-namespaces
           kubectl describe pod
 
+      - name: Run helm test
+        id: helm_test
+        run: helm test acs
+
+      - name: Debug cluster status after helm test
+        if: always() && steps.helm_test.outcome != 'skipped'
+        run: |
+          kubectl logs -l app.kubernetes.io/component=dtas --tail=-1
+          kubectl get all --all-namespaces
+          kubectl describe pod
+
       - name: Collect logs from all containers
         if: always() && steps.helm_install.outcome != 'skipped'
         run: |
@@ -306,14 +317,3 @@ jobs:
         with:
           name: k8s-logs-${{ matrix.arch }}-${{ matrix.edition }}
           path: logs
-
-      - name: Run helm test
-        id: helm_test
-        run: helm test acs
-
-      - name: Debug cluster status after helm test
-        if: always() && steps.helm_test.outcome != 'skipped'
-        run: |
-          kubectl logs -l app.kubernetes.io/component=dtas --tail=-1
-          kubectl get all --all-namespaces
-          kubectl describe pod
