@@ -14,7 +14,7 @@
         "version": "42.6.0",
         "classifier": ".jar",
         "group": "org.postgresql",
-        "repository": "central",
+        "repository": "public",
         "path": "sync/configs/connectors"
       }
     ]
