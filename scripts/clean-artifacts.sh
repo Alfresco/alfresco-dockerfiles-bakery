@@ -4,7 +4,9 @@
 REPO_ROOT="$(dirname $0)/.."
 
 files=$(find -E "$REPO_ROOT" \
-  -regex ".*-.*\.(jar|zip|amp|tgz|gz|rpm|deb)")
+  ! -path '*/artifacts_cache/*' \
+  -regex ".*-.*\.(jar|zip|amp|tgz|gz|rpm|deb)" \
+  )
 
 if [ -z "$files" ]; then
   echo "No artifacts found to clean."
