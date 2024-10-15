@@ -15,3 +15,22 @@ dtas:
           - id: alfresco-aos-module
             version: 3.0.0
             installed: true
+alfresco-repository:
+  startupProbe:
+    initialDelaySeconds: 120
+alfresco-transform-service:
+  pdfrenderer:
+    livenessProbe:
+      initialDelaySeconds: 60
+  imagemagick:
+    livenessProbe:
+      initialDelaySeconds: 60
+  libreoffice:
+    livenessProbe:
+      initialDelaySeconds: 60
+  tika:
+    livenessProbe:
+      initialDelaySeconds: 60
+  transformmisc:
+    livenessProbe:
+      initialDelaySeconds: 60
