@@ -31,7 +31,7 @@ endif
 
 clean:
 	@echo "Cleaning up Artifacts"
-	@./scripts/clean-artifacts.sh
+	@./scripts/clean-artifacts.sh -f
 
 prepare_repo: scripts/fetch-artifacts.sh setenv
 	@echo "Fetching all artifacts for repository target"
