@@ -15,11 +15,11 @@
          <client-debug-autologging>false</client-debug-autologging>
       </flags>
    </config>
-   
+
    <config evaluator="string-compare" condition="WebFramework">
       <web-framework>
          <!-- SpringSurf Autowire Runtime Settings -->
-         <!-- 
+         <!--
               Developers can set mode to 'development' to disable; SpringSurf caches,
               FreeMarker template caching and Rhino JavaScript compilation.
          -->
@@ -36,7 +36,7 @@
       </web-framework>
    </config>
 
-   
+
    <!--
       CSRF filter config to mitigate CSRF/Seasurfing/XSRF attacks
 
@@ -310,7 +310,7 @@
       <share-urls>
          <!--
             To locate your current repositoryId go to Admin Console > General > Repository Information:
-              http://localhost:8080/alfresco/s/enterprise/admin/admin-repositoryinfo        
+              http://localhost:8080/alfresco/s/enterprise/admin/admin-repositoryinfo
 
             Example config entry:
               <share-url repositoryId="622f9533-2a1e-48fe-af4e-ee9e41667ea4">http://new-york-office:8080/share/</share-url>
@@ -327,13 +327,13 @@
             This is a relatively expensive operation, so should be set to "false" for Repositories with broad folder structures.
          -->
          <evaluate-child-folders>false</evaluate-child-folders>
-         
+
          <!--
             Optionally limit the number of folders shown in treeview throughout Share.
          -->
          <maximum-folder-count>1000</maximum-folder-count>
-         
-         <!--  
+
+         <!--
             Default timeout in milliseconds for folder Tree component to recieve response from Repository
          -->
          <timeout>7000</timeout>
@@ -512,7 +512,7 @@
             This is a relatively expensive operation, so should be set to "false" for Repositories with broad folder structures.
          -->
          <evaluate-child-folders>false</evaluate-child-folders>
-         
+
          <!--
             Optionally limit the number of folders shown in treeview throughout Share.
          -->
@@ -524,7 +524,7 @@
       -->
       <visible>true</visible>
    </config>
-   
+
    <!-- Kerberos settings -->
    <!-- To enable kerberos rename this condition to "Kerberos" -->
    <config evaluator="string-compare" condition="KerberosDisabled" replace="true">
@@ -595,7 +595,7 @@
             <basic-auth>true</basic-auth>
             <identity>user</identity>
          </endpoint>
-         
+
          <endpoint>
             <id>alfresco-api</id>
             <parent-id>alfresco</parent-id>
@@ -620,7 +620,7 @@
       <enable-external-users-panel>false</enable-external-users-panel>
    </config>
 
-   <!-- 
+   <!--
         Overriding endpoints to reference an Alfresco server with external SSO enabled
         NOTE: If utilising a load balancer between web-tier and repository cluster, the "sticky
               sessions" feature of your load balancer must be used.
@@ -629,12 +629,12 @@
         *Optional* ssl-config contains:
               keystore for managing client key and certificate.
               truststore for managing trusted CAs.
-        Used to authenticate share to an external SSO system such as CAS or 
+        Used to authenticate share to an external SSO system such as CAS or
         to make share talk to SSL layers that require client certificates.
         Remove the ssl-config section if not required i.e. for NTLM.
-        
+
         NOTE: For Kerberos SSO rename the "KerberosDisabled" condition above to "Kerberos"
-        
+
         NOTE: For external SSO, switch the endpoint connector to "alfrescoHeader" and set
               the userHeader value to the name of the HTTP header that the external SSO
               uses to provide the authenticated user name.
@@ -674,7 +674,7 @@
             <description>Connects to an Alfresco instance using cookie-based authentication</description>
             <class>org.alfresco.web.site.servlet.SlingshotAlfrescoConnector</class>
          </connector>
-         
+
          <connector>
             <id>alfrescoHeader</id>
             <name>Alfresco Connector</name>
@@ -692,18 +692,18 @@
             <identity>user</identity>
             <external-auth>true</external-auth>
          </endpoint>
-         
+
          <endpoint>
             <id>alfresco-feed</id>
             <parent-id>alfresco</parent-id>
             <name>Alfresco Feed</name>
-            <description>Alfresco Feed - supports basic HTTP authentication via the EndPointProxyServlet</description> 
-            <connector-id>alfrescoHeader</connector-id> 
+            <description>Alfresco Feed - supports basic HTTP authentication via the EndPointProxyServlet</description>
+            <connector-id>alfrescoHeader</connector-id>
             <endpoint-url>http://localhost:8080/alfresco/wcs</endpoint-url>
             <identity>user</identity>
             <external-auth>true</external-auth>
          </endpoint>
-         
+
          <endpoint>
             <id>alfresco-api</id>
             <parent-id>alfresco</parent-id>
@@ -727,7 +727,7 @@
          <element-reader element-name="cookie" class="org.alfresco.web.config.cookie.CookieElementReader"/>
       </element-readers>
    </plug-ins>
-   
+
    <config evaluator="string-compare" condition="Cookie" replace="true">
       <cookie>
          <enableCookie>false</enableCookie>

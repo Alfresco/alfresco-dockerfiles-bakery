@@ -43,7 +43,7 @@ alfresco-connector-ms365:
       JAVA_OPTS: ""
       REPO_HOST: alfresco
       REPO_PORT: 8080
-      CSRF_FILTER_REFERER: 
+      CSRF_FILTER_REFERER:
       CSRF_FILTER_ORIGIN:
       USE_SSL: false
 

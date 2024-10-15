@@ -3,7 +3,7 @@ WORKDIR /unpack
 COPY ./distribution/*zip /
 RUN unzip /*zip && rm /*zip
 
-FROM java_base 
+FROM java_base
 
 EXPOSE 8000
 

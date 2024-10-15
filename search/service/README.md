@@ -68,7 +68,7 @@ docker run -d \
   -p 8983:8983 \
   -v <NAMED_VOLUME>:/opt/alfresco-search-services/solrhome \
   localhost/alfresco/alfresco-search-service:latest
-``` 
+```
 
 This volume needs to be initialiazed with some default configuration files.
 You can either download the Alfresco Search Service archive and extract the

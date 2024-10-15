@@ -10,14 +10,14 @@ alfresco-connector-msteams:
     image: localhost/alfresco-ms-teams-service:YOUR-TAG
     environment:
       JAVA_OPTS:
-      ALFRESCO_BASE_URL:  
+      ALFRESCO_BASE_URL:
       ALFRESCO_DIGITAL_WORKSPACE_CONTEXT_PATH:
       MICROSOFT_APP_OAUTH_CONNECTION_NAME:
       MICROSOFT_APP_ID:
       MICROSOFT_APP_PASSWORD:
-      TEAMS_CHAT_FILENAME_ENABLED: 
+      TEAMS_CHAT_FILENAME_ENABLED:
       TEAMS_CHAT_METADATA_ENABLED:
-      TEAMS_CHAT_IMAGE_ENABLED: 
+      TEAMS_CHAT_IMAGE_ENABLED:
 ```
 
 - `JAVA_OPTS` - Additional java options

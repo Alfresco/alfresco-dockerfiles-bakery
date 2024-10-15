@@ -26,7 +26,7 @@ jobs:
           platform_type: dockerfile
           disable_secrets: true
       - name: Upload SARIF file # Remove 'if' statement after making repo public; also add 'output_formats: 'sarif'' to the KICS action
-        if: false 
+        if: false
         uses: github/codeql-action/upload-sarif@56d197570aa047eae7fe04401603196e2f68521d # v3.26.8
         with:
           sarif_file: report-dir/results.sarif

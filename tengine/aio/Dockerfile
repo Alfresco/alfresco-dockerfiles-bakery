@@ -24,7 +24,7 @@ RUN --mount=type=bind,source=/,target=/dist \
     else \
         tar xzf /dist/libreoffice/*.gz -C /tmp/dist && \
         yum localinstall -y /tmp/dist/LibreOffice*/RPMS/*.rpm; \
-    fi && \    
+    fi && \
     rm -rf /tmp/dist && \
     yum clean all && rm -rf /var/cache/yum
 

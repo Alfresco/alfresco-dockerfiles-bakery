@@ -2,7 +2,7 @@
 
 SYNC_SERVICE_FOLDER=${1}
 
-# Change dsync user as root user 
+# Change dsync user as root user
 sed -i 's/USER=\"dsync\"/USER=\"root\"/g' ${SYNC_SERVICE_FOLDER}/syncservice.sh
 
 # Remove '&' sign from the end of the command in order to work with Centos image

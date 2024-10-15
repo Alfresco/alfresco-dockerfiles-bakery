@@ -9,7 +9,7 @@ Sets of variables configurable with your docker image
 transform-router:
     image: alfresco-transform-router:YOUR-TAG
     environment:
-      JAVA_OPTS: 
+      JAVA_OPTS:
       ACTIVEMQ_URL: nio://activemq:61616
       ACTIVEMQ_USER: "admin"
       ACTIVEMQ_PASSWORD: "admin"
@@ -48,7 +48,7 @@ transform-router:
     image: localhost/alfresco-shared-file-store:YOUR-TAG
     mem_limit: 512m
     environment:
-      JAVA_OPTS: 
+      JAVA_OPTS:
         scheduler.content.age.millis: 86400000
         scheduler.cleanup.interval: 86400000
         scheduler.contract.path: /tmp/scheduler.json
