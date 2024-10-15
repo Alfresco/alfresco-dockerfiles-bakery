@@ -4,21 +4,29 @@
 REPO_ROOT="$(dirname $0)/.."
 
 FORCE=false
-while getopts "f" opt;
-do
+while getopts "f" opt; do
   case $opt in
-    f)
-      FORCE=true
-      ;;
-    *)
-      ;;
+  f)
+    FORCE=true
+    ;;
+  *) ;;
   esac
 done
 
-files=$(find -E "$REPO_ROOT" \
-  ! -path '*/artifacts_cache/*' \
-  -regex ".*-.*\.(jar|zip|amp|tgz|gz|rpm|deb)" \
-  )
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  FIND_OPTS="-regextype egrep"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  FIND_OPTS="-E"
+else
+  echo "Unsupported OS for find command."
+  exit 1
+fi
+
+files=$(
+  find "$REPO_ROOT" $FIND_OPTS \
+    ! -path '*/artifacts_cache/*' \
+    -regex ".*-.*\.(jar|zip|amp|tgz|gz|rpm|deb)"
+)
 
 if [ -z "$files" ]; then
   echo "No artifacts found to clean."
