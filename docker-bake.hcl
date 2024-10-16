@@ -3,7 +3,7 @@ group "default" {
 }
 
 group "community" {
-  targets = ["repository_community", "share", "search_service", "tengines", "acc"]
+  targets = ["repository_community", "share_community", "search_service", "tengines", "acc"]
 }
 
 group "content_service" {
@@ -658,15 +658,33 @@ target "share" {
     ALFRESCO_SHARE_GROUP_ID = "${ALFRESCO_GROUP_ID}"
     ALFRESCO_SHARE_USER_NAME = "${ALFRESCO_SHARE_USER_NAME}"
     ALFRESCO_SHARE_USER_ID = "${ALFRESCO_SHARE_USER_ID}"
+    ALFRESCO_SHARE_ARTIFACT = "${share_editions.artifact}"
   }
   labels = {
     "org.label-schema.name" = "${PRODUCT_LINE} Share"
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Share"
     "org.opencontainers.image.description" = "Alfresco Share"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${share_editions.image_name}:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
+
+  name = "share_${share_editions.name}"
+
+  matrix = {
+    share_editions = [
+      {
+        artifact = "alfresco-content-services-community-distribution",
+        image_name = "alfresco-share-community",
+        name = "community"
+      },
+      {
+        artifact = "alfresco-content-services-share-distribution",
+        image_name = "alfresco-share",
+        name = "enterprise"
+      }
+    ]
+  }
 }
 
 variable "ALFRESCO_SOLR_DIST_DIR" {

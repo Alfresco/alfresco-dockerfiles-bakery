@@ -8,15 +8,20 @@ EXPOSE 8000
 RUN mkdir -p ${CATALINA_HOME}/shared/classes/alfresco/web-extension \
     ${CATALINA_HOME}/conf/Catalina/localhost
 
+RUN yum install -y unzip
+
 COPY entrypoint.sh ${CATALINA_HOME}/shared/classes/alfresco
 
-ADD amps /tmp/amps
-ADD distribution /tmp/
+ARG ALFRESCO_SHARE_ARTIFACT
+
+COPY distribution/${ALFRESCO_SHARE_ARTIFACT}-*.zip /tmp/
+COPY distribution/share-config-custom.xml /tmp/
+COPY amps /tmp/amps
+
 ENV DISTDIR="/tmp/distribution"
 
-RUN yum install -y unzip
 RUN unzip /tmp/*.zip -d ${DISTDIR}
-RUN if ls ${DISTDIR}/alfresco* > /dev/null 2>&1; then mv ${DISTDIR}/alfresco* ${DISTDIR}/; fi
+RUN if ls ${DISTDIR}/alfresco* > /dev/null 2>&1; then mv ${DISTDIR}/alfresco*/* ${DISTDIR}/; fi
 RUN unzip ${DISTDIR}/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share
 RUN cp -r ${DISTDIR}/amps/ /tmp/amps/
 RUN cp /tmp/share-config-custom.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension

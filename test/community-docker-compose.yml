@@ -52,7 +52,7 @@ services:
     ports:
       - "8090:8090"
   share:
-    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share:${TAG}
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share-community:${TAG}
     mem_limit: 1g
     environment:
       CSRF_FILTER_ORIGIN: http://localhost:8080

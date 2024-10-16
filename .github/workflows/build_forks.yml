@@ -162,6 +162,7 @@ jobs:
           OVERRIDES_VALUES_FILE: test/helm/test-overrides.yaml
         run: |
           sed -i "s|/alfresco-content-repository|/alfresco-content-repository-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
+          sed -i "s|/alfresco-share|/alfresco-share-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
           cat ${{ env.OVERRIDES_VALUES_FILE }}
 
       - name: Helm install
