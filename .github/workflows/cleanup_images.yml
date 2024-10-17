@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [closed]
   schedule:
-    - cron: '0 0 */14 * *'  # Every 2 weeks
+    - cron: '0 19 */3 * *'  # Every 3 days after 7 PM
   workflow_dispatch:
     inputs:
       dry-run:
