@@ -21,16 +21,16 @@ alfresco-repository:
 alfresco-transform-service:
   pdfrenderer:
     livenessProbe:
-      initialDelaySeconds: 60
+      initialDelaySeconds: 120
   imagemagick:
     livenessProbe:
-      initialDelaySeconds: 60
+      initialDelaySeconds: 120
   libreoffice:
     livenessProbe:
-      initialDelaySeconds: 60
+      initialDelaySeconds: 120
   tika:
     livenessProbe:
-      initialDelaySeconds: 60
+      initialDelaySeconds: 120
   transformmisc:
     livenessProbe:
-      initialDelaySeconds: 60
+      initialDelaySeconds: 120
