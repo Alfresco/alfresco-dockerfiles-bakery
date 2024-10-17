@@ -1,7 +1,7 @@
 ARG DISTRIB_NAME
 ARG DISTRIB_MAJOR
 
-FROM java_base as solr_build
+FROM java_base AS solr_build
 
 ARG ALFRESCO_SOLR_DIST_DIR
 
