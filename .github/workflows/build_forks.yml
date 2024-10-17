@@ -171,7 +171,6 @@ jobs:
           helm install acs ./acs-deployment/helm/alfresco-content-services \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
             --set global.known_urls=http://localhost \
-            --set global.alfrescoRegistryPullSecrets=regcred \
             --values ./acs-deployment/helm/alfresco-content-services/community_values.yaml \
             --values ./acs-deployment/test/community-integration-test-values.yaml \
             --values test/helm/test-overrides.yaml \
