@@ -1,16 +1,24 @@
 group "default" {
-  targets = ["content_service", "enterprise-search", "ats", "tengines", "connectors", "search_service", "adf_apps", "sync"]
+  targets = ["enterprise", "community"]
+}
+
+group "enterprise" {
+  targets = ["content_service_enterprise", "enterprise_search", "ats", "tengines", "connectors", "adf_apps", "sync"]
 }
 
 group "community" {
-  targets = ["repository_community", "share_community", "search_service", "tengines", "acc"]
+  targets = ["content_service_community", "search_service", "tengines", "acc"]
 }
 
-group "content_service" {
-  targets = ["repository", "share"]
+group "content_service_enterprise" {
+  targets = ["repository_enterprise", "share_enterprise"]
 }
 
-group "enterprise-search" {
+group "content_service_community" {
+  targets = ["repository_community", "share_community"]
+}
+
+group "enterprise_search" {
   targets = ["search_liveindexing", "search_reindexing"]
 }
 

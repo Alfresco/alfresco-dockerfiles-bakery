@@ -83,7 +83,7 @@ ats: prepare_ats prepare_tengines
 
 search_enterprise: prepare_search_enterprise
 	@echo "Building Search Enterprise images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} enterprise-search
+	docker buildx bake ${DOCKER_BAKE_ARGS} enterprise_search
 
 connectors: prepare_connectors
 	@echo "Building Connectors images"
