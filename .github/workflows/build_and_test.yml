@@ -243,6 +243,7 @@ jobs:
 
           if [ "${{ matrix.edition }}" = "community" ]; then
             sed -i "s|/alfresco-content-repository|/alfresco-content-repository-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
+            sed -i "s|/alfresco-share|/alfresco-share-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
           fi
 
           cat ${{ env.OVERRIDES_VALUES_FILE }}
