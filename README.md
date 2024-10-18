@@ -1,16 +1,16 @@
-# Alfresco Docker images builder
+# Alfresco Dockerfiles Bakery 🍞
 
 [![CI](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_and_test.yml)
 [![CI from forks](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_forks.yml/badge.svg)](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_forks.yml)
 
-This projects aims at providing a quick and easy to build and maintain Alfresco
-Docker images.
+This projects aims at providing a quick and easy way to build and maintain
+Alfresco Docker images based on the official Alfresco artifacts with the help of
+[Docker Bake](https://docs.docker.com/build/bake/).
 
-- [Alfresco Docker images builder](#alfresco-docker-images-builder)
+- [Alfresco Dockerfiles Bakery 🍞](#alfresco-dockerfiles-bakery-)
   - [Prerequisites](#prerequisites)
     - [Nexus authentication](#nexus-authentication)
   - [Getting started quickly](#getting-started-quickly)
-  - [Building the specific images](#building-the-specific-images)
   - [Customizing the images](#customizing-the-images)
     - [Customizing the Alfresco Content Repository image](#customizing-the-alfresco-content-repository-image)
   - [Architecture choice](#architecture-choice)
@@ -20,17 +20,17 @@ Docker images.
 
 ## Prerequisites
 
-Using this tool to build Alfresco images requires:
+Building images requires the following tools:
 
 - A recent enough Docker installation (with buildx support)
-- Credentials to access the Alfresco artifacts (Nexus server), required for
-  Enterprise edition artifacts
-- Some Unix tools: `jq`, `wget`, `make`
+- Credentials to access the Alfresco artifacts (Nexus server), if building
+  Enterprise images
+- Some common unix tools: `jq`, `wget`, `make`
 
 ### Nexus authentication
 
 Configuring the authentication to Alfresco Nexus server must be done using one
-of the standard wget configuration files like `~/.netrc`.
+of the standard `wget` configuration files, like `~/.netrc`.
 
 Using your preferred editor, create `~/.netrc` with the following contents:
 
@@ -57,35 +57,18 @@ make all
 ```
 
 This command will build locally all the docker images this project offers.
-At the time of writing, these are:
 
-- Alfresco Content Repository (Enterprise) 23.2.2
-- Alfresco Search Enterprise 4.4.0
-- Alfresco Transformation Services 4.1.3
+For more information on the available images, browse the top level folders,
+excluding `artifacts_cache`, `scripts` and `test`.
 
-Currently available make offers the following targets in order tobuild images:
+For more information on the available targets, see [Makefile](./Makefile).
 
-- all: build all images
-- repo: build the Alfresco Content Repository image
-- search_enterprise: build the Alfresco Search Enterprise images
-- ats: build the Alfresco Transformation Service images
-- tengines: build the Alfresco Transform engine images
-- connectors: build the Alfresco Connectors images (MS-Teams & MS-Office365)
-
-Bellow are some environment variables dedicated to the `make` wrapper which
+Below are some environment variables dedicated to the `make` wrapper which
 can be used to customize the build process:
 
 - BAKE_NO_CACHE: Set to `1` to disable the cache during the build process
 - BAKE_NO_PROVENANCE: Set to `1` to not add provenance metadata during the build
   process. This is mostly useful if your registry do not support it.
-
-## Building the specific images
-
-If you want to build a specific image, you can run one of the following make target:
-
-- repo: build the Alfresco Content Repository image
-- search_enterprise: build the Alfresco Search Enterprise images
-- ats: build the Alfresco Transformation Service images
 
 ## Customizing the images
 
@@ -96,6 +79,10 @@ types of files in the right locations:
 
 - Alfresco Module Packages (AMPs) files in the [amps](repository/amps/README.md)
   folder
+  - Enterprise-only AMPs files in the [amps-enterprise](repository/amps_enterprise/README.md)
+    folder
+  - Community-only AMPs files in the [amps-community](repository/amps_community/README.md)
+    folder
 - Additional JAR files for the JRE in the [libs](repository/libs/README.md) folder
 
 ## Architecture choice
