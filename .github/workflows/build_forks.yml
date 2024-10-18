@@ -157,20 +157,14 @@ jobs:
           helm repo add elastic https://helm.elastic.co
           helm dependency build
 
-      - name: Preprocess test-overrides.yaml
-        env:
-          OVERRIDES_VALUES_FILE: test/helm/test-overrides.yaml
-        run: |
-          sed -i "s|/alfresco-content-repository|/alfresco-content-repository-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
-          sed -i "s|/alfresco-share|/alfresco-share-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
-          cat ${{ env.OVERRIDES_VALUES_FILE }}
-
       - name: Helm install
         id: helm_install
         run: |
           helm install acs ./acs-deployment/helm/alfresco-content-services \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
             --set global.known_urls=http://localhost \
+            --set alfresco-repository.image.repository=localhost/alfresco/alfresco-content-repository-community \
+            --set share.image.repository=localhost/alfresco/alfresco-share-community \
             --values ./acs-deployment/helm/alfresco-content-services/community_values.yaml \
             --values ./acs-deployment/test/community-integration-test-values.yaml \
             --values test/helm/test-overrides.yaml \
