@@ -96,39 +96,39 @@ all: docker-bake.hcl prepare setenv
 	@echo "Building all images"
 	docker buildx bake ${DOCKER_BAKE_ARGS}
 
-adf_apps: prepare_adf setenv
+adf_apps: docker-bake.hcl prepare_adf setenv
 	@echo "Building ADF Apps images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} adf_apps
 
-ats: prepare_ats prepare_tengines setenv
+ats: docker-bake.hcl prepare_ats prepare_tengines setenv
 	@echo "Building Transform Service images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} ats tengines
 
-connectors: prepare_connectors setenv
+connectors: docker-bake.hcl prepare_connectors setenv
 	@echo "Building Connectors images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} connectors
 
-repo: prepare_repo setenv
+repo: docker-bake.hcl prepare_repo setenv
 	@echo "Building repository image"
 	docker buildx bake ${DOCKER_BAKE_ARGS} repository
 
-search_enterprise: prepare_search_enterprise setenv
+search_enterprise: docker-bake.hcl prepare_search_enterprise setenv
 	@echo "Building Search Enterprise images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} enterprise_search
 
-search_service: prepare_search_service setenv
+search_service: docker-bake.hcl prepare_search_service setenv
 	@echo "Building Search Service images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} search_service
 
-share: prepare_share setenv
+share: docker-bake.hcl prepare_share setenv
 	@echo "Building Share images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} share
 
-sync: prepare_sync setenv
+sync: docker-bake.hcl prepare_sync setenv
 	@echo "Building Sync Service images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} sync
 
-tengines: prepare_tengines setenv
+tengines: docker-bake.hcl prepare_tengines setenv
 	@echo "Building Transform Egnine images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} tengines
 
