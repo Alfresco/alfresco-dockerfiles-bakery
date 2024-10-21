@@ -132,7 +132,7 @@ tengines: docker-bake.hcl prepare_tengines setenv
 	@echo "Building Transform Egnine images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} tengines
 
-all_ci: clean prepare all clean_caches
+all_ci: adf_apps ats connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
 
 help:
