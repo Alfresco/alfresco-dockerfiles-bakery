@@ -4,6 +4,30 @@
 SHELL := /bin/bash
 DOCKER_BAKE_ARGS := --progress=plain
 
+.PHONY: help setenv auth all clean test
+
+help:
+	@echo "Usage: make <target>"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all                Build all images"
+	@echo "  adf_apps           Build ADF Apps images"
+	@echo "  ats                Build Transform Service images"
+	@echo "  connectors         Build Connectors images"
+	@echo "  repo               Build Repository image"
+	@echo "  search_enterprise  Build Search Enterprise images"
+	@echo "  search_service     Build Search Service images"
+	@echo "  share              Build Share images"
+	@echo "  sync               Build Sync Service images"
+	@echo "  tengines           Build Transform Engines images"
+	@echo "  =================="
+	@echo "  clean              Clean up Nexus artifacts"
+	@echo "  clean_caches       Clean up Docker and artifacts caches"
+	@echo "  prepare            Prepare the environment for building"
+	@echo "  auth               Authenticate with the Docker registry"
+	@echo "  all_ci             Build all images including cleanup for Continuous Integration"
+	@echo "  help               Display this help message"
+
 setenv: auth
 ifdef BAKE_NO_CACHE
 DOCKER_BAKE_ARGS += --no-cache
@@ -134,25 +158,3 @@ tengines: docker-bake.hcl prepare_tengines setenv
 
 all_ci: adf_apps ats connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
-
-help:
-	@echo "Usage: make <target>"
-	@echo ""
-	@echo "Targets:"
-	@echo "  all                Build all images"
-	@echo "  adf_apps           Build ADF Apps images"
-	@echo "  ats                Build Transform Service images"
-	@echo "  connectors         Build Connectors images"
-	@echo "  repo               Build Repository image"
-	@echo "  search_enterprise  Build Search Enterprise images"
-	@echo "  search_service     Build Search Service images"
-	@echo "  share              Build Share images"
-	@echo "  sync               Build Sync Service images"
-	@echo "  tengines           Build Transform Engines images"
-	@echo "  =================="
-	@echo "  clean              Clean up Nexus artifacts"
-	@echo "  clean_caches       Clean up Docker and artifacts caches"
-	@echo "  prepare            Prepare the environment for building"
-	@echo "  auth               Authenticate with the Docker registry"
-	@echo "  all_ci             Build all images including cleanup for Continuous Integration"
-	@echo "  help               Display this help message"
