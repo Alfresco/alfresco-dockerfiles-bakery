@@ -13,10 +13,10 @@ Alfresco Docker images based on the official Alfresco artifacts with the help of
   - [Getting started quickly](#getting-started-quickly)
   - [Customizing the images](#customizing-the-images)
     - [Customizing the Alfresco Content Repository image](#customizing-the-alfresco-content-repository-image)
-  - [Architecture choice](#architecture-choice)
+  - [Supported Architectures](#supported-architectures)
     - [Targeting a specific architecture](#targeting-a-specific-architecture)
     - [Multi-arch images](#multi-arch-images)
-    - [Testing locally](#testing-locally)
+  - [Testing locally](#testing-locally)
 
 ## Prerequisites
 
@@ -52,7 +52,7 @@ If you do not plan on applying specific customizations but just want to get
 Alfresco images updated (e.g. with the latest OS security patches), you can
 simply run the command below from the root of this project:
 
-```bash
+```sh
 make all
 ```
 
@@ -61,14 +61,34 @@ This command will build locally all the docker images this project offers.
 For more information on the available images, browse the top level folders,
 excluding `artifacts_cache`, `scripts` and `test`.
 
-For more information on the available targets, see [Makefile](./Makefile).
+For more information on the available targets, run:
 
-Below are some environment variables dedicated to the `make` wrapper which
-can be used to customize the build process:
+```sh
+make help
+```
 
-- BAKE_NO_CACHE: Set to `1` to disable the cache during the build process
-- BAKE_NO_PROVENANCE: Set to `1` to not add provenance metadata during the build
+Below are some environment variables which can be used to customize the build
+process:
+
+- `REGISTRY`: The registry where the images will be pushed (authentication is
+  ensured by the `make` wrapper)
+- `REGISTRY_NAMESPACE`: The namespace where the images will be pushed (e.g.
+  REGISTRY/REGISTRY_NAMESPACE/IMAGE_NAME:TAG)
+- `TAG`: The tag to use for the images (default is `latest`)
+- `TARGETARCH`: The architecture to build the images for (default is the
+  architecture of the system where the build is run). See [Supported
+  Architectures](#supported-architectures) for more information.
+- `BAKE_NO_CACHE`: Set to `1` to disable the cache during the build process
+- `BAKE_NO_PROVENANCE`: Set to `1` to not add provenance metadata during the build
   process. This is mostly useful if your registry do not support it.
+
+For example, to build multi-arch images for ARM64 and X86_64 and push them to a
+custom registry, you can run the following command:
+
+```sh
+export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=linux/amd64,linux/arm64
+make all
+```
 
 ## Customizing the images
 
@@ -85,7 +105,7 @@ types of files in the right locations:
     folder
 - Additional JAR files for the JRE in the [libs](repository/libs/README.md) folder
 
-## Architecture choice
+## Supported Architectures
 
 Depending on the environment where you plan to run the docker images you build,
 it is possible to build Alfresco images the following architectures:
@@ -93,8 +113,6 @@ it is possible to build Alfresco images the following architectures:
 - X86_64 (linux/amd64): Regular intel processor based systems
 - ARM64 (linux/arm64): ARM processor based systems (e.g. Apple Silicon or AWS
   Graviton)
-
-Other architectures are not suported.
 
 By default, the images are built for the architecture of the system where the
 build is run.
@@ -140,33 +158,28 @@ also requires images to be pushed to a registry that supports multi-arch.
 
 :warning: Multi-arch build cannot be loaded into the local docker image cache.
 This is due to a limitation of the `docker` exporter in BuildKit.
-Concretely, it means in order to produce multi-arch images one needs to:
+In order to produce multi-arch images one needs to:
 
 - Set the REGISTRY environment variable to the target registry
 - Set the REGISTRY_NAMESPACE environment variable to the target namespace
-- Ensure docker daemon is able to login to the target registry
-- Enforce pushing resulting images to the target registry
 
 The `make` wrapper would handle the authentication part for you:
 
 ```sh
-export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myorg TARGETARCH=linux/amd64,linux/arm64
+export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=linux/amd64,linux/arm64
 make repo
 ```
 
-> Enter username and password when/if prompted
-
-If you're not using the `make wrapper` you need to first initiate the registry
+You can also run bake directly but you need to be sure to have done the
 authentication before running the `docker buildx bake` command with an
 additional argument to tell the tool to push the images to the registry:
 
 ```sh
-export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myorg TARGETARCH=linux/amd64,linux/arm64
-docker login $REGISTRY
+export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=linux/amd64,linux/arm64
 docker buildx bake repo --set *.output=type=registry,push=true
 ```
 
-### Testing locally
+## Testing locally
 
 You can easily load all the built image in a local kind cluster with:
 

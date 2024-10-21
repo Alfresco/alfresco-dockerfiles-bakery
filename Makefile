@@ -1,8 +1,21 @@
+## This Makefile is a wrapper around the docker-bake command
+## to provide support for login and push to a registry.
+
 SHELL := /bin/bash
 DOCKER_BAKE_ARGS := --progress=plain
 
-setenv:
-ifdef REGISTRY
+setenv: auth
+ifdef BAKE_NO_CACHE
+DOCKER_BAKE_ARGS += --no-cache
+endif
+ifdef BAKE_NO_PROVENANCE
+DOCKER_BAKE_ARGS += --provenance=false
+endif
+
+auth:
+ifeq ($(REGISTRY),localhost)
+	@echo "REGISTRY environment variable is set to localhost. Images will be build & loaded locally"
+else ifdef REGISTRY
 	@echo "Checking for REGISTRY authentication"
 	@if docker login ${REGISTRY}; then \
 		echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'; \
@@ -20,90 +33,126 @@ ifdef REGISTRY
 	fi
 DOCKER_BAKE_ARGS += --set *.output=type=registry,push=true
 else
-	@echo "REGISTRY is not set. Images will be build & loaded locally"
-endif
-ifdef BAKE_NO_CACHE
-DOCKER_BAKE_ARGS += --no-cache
-endif
-ifdef BAKE_NO_PROVENANCE
-DOCKER_BAKE_ARGS += --provenance=false
+	@echo "REGISTRY environment variable is not set. Images will be build & loaded locally"
 endif
 
 clean:
 	@echo "Cleaning up Artifacts"
 	@./scripts/clean-artifacts.sh -f
 
-prepare_repo: scripts/fetch-artifacts.sh setenv
-	@echo "Fetching all artifacts for repository target"
-	@./scripts/fetch-artifacts.sh repository
+clean_caches:
+	@echo "Cleaning up Docker cache"
+	docker builder prune -f
+	@echo "Cleaning up Artifacts cache"
+	rm -fr artifacts_cache
 
-prepare_tengines: scripts/fetch-artifacts.sh setenv
-	@echo "Fetching all artifacts for tengines targets"
-	@./scripts/fetch-artifacts.sh tengine
+## PREPARE TARGETS
+## Keep targets in alphabetical order (following the folder structure)
 
-prepare_ats: scripts/fetch-artifacts.sh setenv
-	@echo "Fetching all artifacts for ats targets"
-	@./scripts/fetch-artifacts.sh ats
-
-prepare_search_enterprise: scripts/fetch-artifacts.sh setenv
-	@echo "Fetching all artifacts for Search Enterprise targets"
-	@./scripts/fetch-artifacts.sh search/enterprise
-
-prepare_connectors: scripts/fetch-artifacts.sh setenv
-	@echo "Fetching all artifacts for Connectors targets"
-	@./scripts/fetch-artifacts.sh connector
-
-prepare_share: scripts/fetch-artifacts.sh setenv
-	@echo "Fetching all artifacts for Share targets"
-	@./scripts/fetch-artifacts.sh share
-
-prepare_adf: scripts/fetch-artifacts.sh setenv
-	@echo "Fetching all artifacts for ADF targets"
-	@./scripts/fetch-artifacts.sh adf-apps
-
-prepare_sync: scripts/fetch-artifacts.sh setenv
-	@echo "Fetching all artifacts for ADF targets"
-	@./scripts/fetch-artifacts.sh sync
-
-prepare_all: scripts/fetch-artifacts.sh setenv
+prepare: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts"
 	@./scripts/fetch-artifacts.sh
 
-repo: prepare_repo
-	@echo "Building repository image"
-	docker buildx bake ${DOCKER_BAKE_ARGS} repository
+prepare_adf: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for ADF targets"
+	@./scripts/fetch-artifacts.sh adf-apps
 
-tengines: prepare_tengines
-	@echo "Building Transform Egnine images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} tengines
+prepare_ats: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for ats targets"
+	@./scripts/fetch-artifacts.sh ats
 
-ats: prepare_ats prepare_tengines
-	@echo "Building Transform Service images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} ats tengines
+prepare_connectors: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for Connectors targets"
+	@./scripts/fetch-artifacts.sh connector
 
-search_enterprise: prepare_search_enterprise
-	@echo "Building Search Enterprise images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} enterprise_search
+prepare_repo: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for repository target"
+	@./scripts/fetch-artifacts.sh repository
 
-connectors: prepare_connectors
-	@echo "Building Connectors images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} connectors
+prepare_search_enterprise: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for Search Enterprise targets"
+	@./scripts/fetch-artifacts.sh search/enterprise
 
-share: prepare_share
-	@echo "Building Share images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} share
+prepare_search_service: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for Search Service targets"
+	@./scripts/fetch-artifacts.sh search/service
 
-adf_apps: prepare_adf
-	@echo "Building ADF Apps images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} adf_apps
+prepare_share: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for Share targets"
+	@./scripts/fetch-artifacts.sh share
 
-sync: prepare_sync
-	@echo "Building Sync Service images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} sync
+prepare_sync: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for ADF targets"
+	@./scripts/fetch-artifacts.sh sync
 
-all: docker-bake.hcl prepare_all
+prepare_tengines: scripts/fetch-artifacts.sh
+	@echo "Fetching all artifacts for tengines targets"
+	@./scripts/fetch-artifacts.sh tengine
+
+## BUILD TARGETS
+## Keep targets in alphabetical order (following the folder structure)
+
+all: docker-bake.hcl prepare setenv
 	@echo "Building all images"
 	docker buildx bake ${DOCKER_BAKE_ARGS}
 
-all_ci: repo tengines ats search_enterprise clean connectors share adf_apps sync
-	@echo "Building all images using individual targets for Continuous Integration"
+adf_apps: prepare_adf setenv
+	@echo "Building ADF Apps images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} adf_apps
+
+ats: prepare_ats prepare_tengines setenv
+	@echo "Building Transform Service images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} ats tengines
+
+connectors: prepare_connectors setenv
+	@echo "Building Connectors images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} connectors
+
+repo: prepare_repo setenv
+	@echo "Building repository image"
+	docker buildx bake ${DOCKER_BAKE_ARGS} repository
+
+search_enterprise: prepare_search_enterprise setenv
+	@echo "Building Search Enterprise images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} enterprise_search
+
+search_service: prepare_search_service setenv
+	@echo "Building Search Service images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} search_service
+
+share: prepare_share setenv
+	@echo "Building Share images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} share
+
+sync: prepare_sync setenv
+	@echo "Building Sync Service images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} sync
+
+tengines: prepare_tengines setenv
+	@echo "Building Transform Egnine images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} tengines
+
+all_ci: clean prepare all clean_caches
+	@echo "Building all targets including cleanup for Continuous Integration"
+
+help:
+	@echo "Usage: make <target>"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all                Build all images"
+	@echo "  adf_apps           Build ADF Apps images"
+	@echo "  ats                Build Transform Service images"
+	@echo "  connectors         Build Connectors images"
+	@echo "  repo               Build Repository image"
+	@echo "  search_enterprise  Build Search Enterprise images"
+	@echo "  search_service     Build Search Service images"
+	@echo "  share              Build Share images"
+	@echo "  sync               Build Sync Service images"
+	@echo "  tengines           Build Transform Engines images"
+	@echo "  =================="
+	@echo "  clean              Clean up Nexus artifacts"
+	@echo "  clean_caches       Clean up Docker and artifacts caches"
+	@echo "  prepare            Prepare the environment for building"
+	@echo "  auth               Authenticate with the Docker registry"
+	@echo "  all_ci             Build all images including cleanup for Continuous Integration"
+	@echo "  help               Display this help message"
