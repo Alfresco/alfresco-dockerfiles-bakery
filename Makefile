@@ -122,39 +122,60 @@ all: docker-bake.hcl prepare setenv
 
 adf_apps: docker-bake.hcl prepare_adf setenv
 	@echo "Building ADF Apps images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} adf_apps
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
-ats: docker-bake.hcl prepare_ats prepare_tengines setenv
+ats: docker-bake.hcl tengines prepare_ats prepare_tengines setenv
 	@echo "Building Transform Service images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} ats tengines
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
 connectors: docker-bake.hcl prepare_connectors setenv
 	@echo "Building Connectors images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} connectors
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
 repo: docker-bake.hcl prepare_repo setenv
 	@echo "Building repository image"
 	docker buildx bake ${DOCKER_BAKE_ARGS} repository
+	$(call grype_scan,repository)
 
 search_enterprise: docker-bake.hcl prepare_search_enterprise setenv
 	@echo "Building Search Enterprise images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} enterprise_search
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
 search_service: docker-bake.hcl prepare_search_service setenv
 	@echo "Building Search Service images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} search_service
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
 share: docker-bake.hcl prepare_share setenv
 	@echo "Building Share images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} share
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
 sync: docker-bake.hcl prepare_sync setenv
 	@echo "Building Sync Service images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} sync
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
 tengines: docker-bake.hcl prepare_tengines setenv
 	@echo "Building Transform Egnine images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} tengines
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
-all_ci: adf_apps ats connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
+all_ci: adf_apps ats connectors repo search_enterprise search_service share sync tengines all prepare grype clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
+
+grype:
+	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation. Aborting."; exit 1; }
+	@echo "Running grype scan"
+	@docker buildx bake --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype -f high {}
+
+ifneq (, $(shell which grype))
+define grype_scan
+	@echo "Running grype scan for $(1)"
+	@docker buildx bake $(1) --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype -f high --only-fixed --ignore-states wont-fix {}
+endef
+endif
