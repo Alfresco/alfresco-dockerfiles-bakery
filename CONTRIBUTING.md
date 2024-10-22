@@ -24,6 +24,10 @@ unacceptable behavior to alfresco-build at hyland dot com.
    * `git push origin my-feature-branch`
 6. Open a pull request (PR) against the main branch of the original repository.
 
+For more information on working with Git and GitHub, refer to the [Contributing
+to a project
+guidelines](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project).
+
 ## Contribution Guidelines
 
 When contributing to Alfresco Bakery, please follow these guidelines:
