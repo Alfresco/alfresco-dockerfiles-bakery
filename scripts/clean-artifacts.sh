@@ -13,17 +13,19 @@ while getopts "f" opt; do
   esac
 done
 
+FIND_OPTS=""
+FIND_MAC_OPTS=""
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   FIND_OPTS="-regextype egrep"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-  FIND_OPTS="-E"
+  FIND_MAC_OPTS="-E"
 else
   echo "Unsupported OS for find command."
   exit 1
 fi
 
 files=$(
-  find "$REPO_ROOT" $FIND_OPTS \
+  find $FIND_MAC_OPTS "$REPO_ROOT" $FIND_OPTS \
     ! -path '*/artifacts_cache/*' \
     -regex ".*-.*\.(jar|zip|amp|tgz|gz|rpm|deb)"
 )
