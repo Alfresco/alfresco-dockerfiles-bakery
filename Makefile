@@ -171,7 +171,7 @@ all_ci: adf_apps ats connectors repo search_enterprise search_service share sync
 grype:
 	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation. Aborting."; exit 1; }
 	@echo "Running grype scan"
-	@docker buildx bake --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype -f high {}
+	@docker buildx bake --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype {}
 
 ifneq (, $(shell which grype))
 define grype_scan
