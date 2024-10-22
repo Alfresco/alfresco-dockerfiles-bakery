@@ -3,7 +3,7 @@ group "default" {
 }
 
 group "enterprise" {
-  targets = ["content_service_enterprise", "enterprise_search", "ats", "tengines", "connectors", "adf_apps", "sync"]
+  targets = ["content_service_enterprise", "search_enterprise", "ats", "tengines", "connectors", "adf_apps", "sync"]
 }
 
 group "community" {
@@ -18,7 +18,7 @@ group "content_service_community" {
   targets = ["repository_community", "share_community"]
 }
 
-group "enterprise_search" {
+group "search_enterprise" {
   targets = ["search_liveindexing", "search_reindexing"]
 }
 
