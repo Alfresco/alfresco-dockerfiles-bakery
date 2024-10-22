@@ -8,7 +8,7 @@ on:
       - 'Makefile'
       - '.github/workflows/test-make.yml'
       - '.github/workflows/kics.yml'
-      - 'README.md'
+      - '**/*.md'
   pull_request:
     branches:
       - main
@@ -16,7 +16,7 @@ on:
       - 'Makefile'
       - '.github/workflows/test-make.yml'
       - '.github/workflows/kics.yml'
-      - 'README.md'
+      - '**/*.md'
 
 env:
   ACS_CHART_VERSION: 8a819c9b90b9015e5ab2654c47961fef4183cbcf # v8.5.1 plus the fix for community test values
