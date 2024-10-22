@@ -156,7 +156,7 @@ services:
       - share
       - control-center
   sync-service:
-    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/service-sync:${TAG}
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-sync-service:${TAG}
     mem_limit: 1g
     environment:
       JAVA_OPTS: >-

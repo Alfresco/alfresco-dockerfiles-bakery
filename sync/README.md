@@ -34,7 +34,7 @@ variable:
 
 ```bash
 docker run -e JAVA_OPTS="-Drepo.hostname=alfresco" \
-  localhost/alfresco/service-sync:latest
+  localhost/alfresco/alfresco-sync-service:latest
 ```
 
 > Set of required properties: https://docs.alfresco.com/sync-service/4.0/config/#required-properties

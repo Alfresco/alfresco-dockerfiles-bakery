@@ -783,7 +783,7 @@ target "sync" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Sync Service"
     "org.opencontainers.image.description" = "Alfresco Sync Service"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/service-sync:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-sync-service:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }

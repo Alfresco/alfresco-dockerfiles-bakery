@@ -76,7 +76,7 @@ alfresco-digital-workspace:
             path: app.config.json
 alfresco-sync-service:
   image:
-    repository: localhost/alfresco/service-sync
+    repository: localhost/alfresco/alfresco-sync-service
     tag: latest
 alfresco-control-center:
   image:
