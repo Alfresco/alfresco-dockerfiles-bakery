@@ -165,7 +165,7 @@ tengines: docker-bake.hcl prepare_tengines setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
-all_ci: adf_apps ats connectors repo search_enterprise search_service share sync tengines all prepare grype clean clean_caches
+all_ci: adf_apps ats connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
 
 grype:

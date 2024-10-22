@@ -45,3 +45,11 @@ jobs:
         run: |
           echo -n "Checking images are loaded in local Docker Engine..."
           docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco || { echo "No Alfresco image found"; exit 1; }
+
+      - name: Install Grype
+        uses: anchore/scan-action/download-grype@ef0b0b023552a0c077534074723a9915280284bb # v5.1.0
+        id: grype
+
+      - name: Grype scan
+        run: |
+          make grype
