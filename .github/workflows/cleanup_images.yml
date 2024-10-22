@@ -58,9 +58,8 @@ jobs:
           token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
-          packages: ${{ env.PACKAGE_NAMES }},${{ env.CACHE_REPO }}
-          delete-tags: ^${{ env.PR_TAG }}(-.*)?$ # pr-123 and pr-123-something
-          use-regex: true
+          packages: ${{ env.PACKAGE_NAMES }}
+          delete-tags: ${{ env.PR_TAG }}
           dry-run: false
 
       - name: Remove images when requested
