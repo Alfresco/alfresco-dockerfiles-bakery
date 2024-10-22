@@ -17,6 +17,7 @@ Alfresco Docker images based on the official Alfresco artifacts with the help of
     - [Targeting a specific architecture](#targeting-a-specific-architecture)
     - [Multi-arch images](#multi-arch-images)
   - [Testing locally](#testing-locally)
+  - [Security scanning](#security-scanning)
 
 ## Prerequisites
 
@@ -189,3 +190,19 @@ kind load docker-image $(docker images --format "{{.Repository}}" | grep "^local
 
 Then you can run an helm install passing as values the provided
 [test-overrides.yaml](./test/helm/test-overrides.yaml).
+
+## Security scanning
+
+The images built by this project are automatically scanned for vulnerabilities
+using Grype, if the `grype` binary is available in the PATH.
+
+If you want to run the security scan manually, you can use the following command:
+
+```sh
+make grype GRYPE_TARGET=repo GRYPE_OPTS="-f high --only-fixed --ignore-states wont-fix"
+```
+
+You can pass `GRYPE_OPTS` to override the default options passed to Grype, which
+by default exit with a non-zero status if any vulnerability greater than high is
+found and is filtering out known issues for which a fix is not available (yet or
+ever).

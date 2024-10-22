@@ -168,14 +168,16 @@ tengines: docker-bake.hcl prepare_tengines setenv
 all_ci: adf_apps ats connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
 
+GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix
+
 grype:
 	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation. Aborting."; exit 1; }
 	@echo "Running grype scan"
-	@docker buildx bake --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype {}
+	@docker buildx bake $(GRYPE_TARGET) --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype $(GRYPE_OPTS) {}
 
 ifneq (, $(shell which grype))
 define grype_scan
 	@echo "Running grype scan for $(1)"
-	@docker buildx bake $(1) --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype -f high --only-fixed --ignore-states wont-fix {}
+	@docker buildx bake $(1) --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype $(GRYPE_OPTS) {}
 endef
 endif
