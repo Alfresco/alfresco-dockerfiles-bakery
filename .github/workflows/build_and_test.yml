@@ -156,7 +156,7 @@ jobs:
 
       - name: Verify docker-compose (${{ matrix.edition }})
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v7.1.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.0.0
         timeout-minutes: 10
         with:
           compose_file_path: test/${{ matrix.edition }}-docker-compose.yml
@@ -165,7 +165,7 @@ jobs:
 
       - name: Save containers logs (${{ matrix.edition }})
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v7.1.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.0.0
         with:
           output-archive-name: ${{ matrix.edition }}-logs
 
