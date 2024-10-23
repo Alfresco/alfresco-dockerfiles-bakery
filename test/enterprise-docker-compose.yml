@@ -242,8 +242,8 @@ services:
       retries: 3
       start_period: 20s
     depends_on:
-      reindexing:
-        condition: service_completed_successfully
+      transform-router:
+        condition: service_healthy
       activemq:
         condition: service_healthy
       elasticsearch:
