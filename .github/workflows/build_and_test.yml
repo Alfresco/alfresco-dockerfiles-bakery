@@ -139,10 +139,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
-    strategy:
-      fail-fast: false
-      matrix:
-        edition: [enterprise, community]
+    # strategy:
+    #   fail-fast: false
+    #   matrix:
+    #     edition: [enterprise, community]
     steps:
       - name: Log in to the Container registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
@@ -154,20 +154,23 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349  # v3.7.1
 
-      - name: Verify docker-compose (${{ matrix.edition }})
+      - name: Fetch compose from acs-deployment
+        run: ./scripts/fetch-compose.sh
+
+      - name: Verify docker-compose
         id: verify_compose
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.0.0
         timeout-minutes: 10
         with:
-          compose_file_path: test/${{ matrix.edition }}-docker-compose.yml
+          compose_file_path: "test/compose.yaml -f test/compose.override.yaml"
           quay_username: ${{ secrets.QUAY_USERNAME }}
           quay_password: ${{ secrets.QUAY_PASSWORD }}
 
-      - name: Save containers logs (${{ matrix.edition }})
-        if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.0.0
-        with:
-          output-archive-name: ${{ matrix.edition }}-logs
+      # - name: Save containers logs (${{ matrix.edition }})
+      #   if: always() && steps.verify_compose.outcome != 'skipped'
+      #   uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.0.0
+      #   with:
+      #     output-archive-name: ${{ matrix.edition }}-logs
 
   helm-test:
     needs: build

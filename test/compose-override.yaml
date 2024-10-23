@@ -1,0 +1,35 @@
+# Do not move this file to a folder that is not a first level folder
+services:
+  alfresco:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository:${TAG}
+  transform-router:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-router:${TAG}
+  transform-core-aio:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-core-aio:${TAG}
+  shared-file-store:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-shared-file-store:${TAG}
+  share:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share:${TAG}
+  digital-workspace:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-digital-workspace:${TAG}
+    environment:
+      BASE_PATH: /
+    volumes:
+      - ./configs/adw.json:/usr/share/nginx/html/app.config.json
+  control-center:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
+    environment:
+      BASE_PATH: /
+    volumes:
+      - ./configs/acc.json:/usr/share/nginx/html/app.config.json
+  sync-service:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-sync-service:${TAG}
+  search:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-live-indexing:${TAG}
+  search-reindexing:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-reindexing:${TAG}
+volumes:
+  shared-file-store-volume:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
