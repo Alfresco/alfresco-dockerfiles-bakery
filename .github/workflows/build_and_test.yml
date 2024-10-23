@@ -161,7 +161,7 @@ jobs:
         run: ./scripts/fetch-compose.sh
 
       - name: Merge Docker Compose files
-        run: docker-compose -f test/compose.yaml -f test/compose.override.yaml config > test/merged-compose.yaml
+        run: docker compose -f test/compose.yaml -f test/compose.override.yaml config > test/merged-compose.yaml
 
       - name: Verify docker-compose
         id: verify_compose
