@@ -8,7 +8,7 @@ on:
       - '.github/workflows/build_forks.yml'
 
 env:
-  ACS_CHART_VERSION: 8a819c9b90b9015e5ab2654c47961fef4183cbcf # v8.5.1 plus the fix for community test values
+  ACS_CHART_VERSION: v8.5.2
   ARTIFACT_NAME: alfresco-docker-images
   REGISTRY: localhost
   REGISTRY_NAMESPACE: alfresco
