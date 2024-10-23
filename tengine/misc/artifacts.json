@@ -3,7 +3,7 @@
     "acs23": [
       {
         "name": "alfresco-transform-misc",
-        "version": "5.1.3",
+        "version": "5.1.4",
         "path": "tengine/misc",
         "classifier": ".jar",
         "repository": "releases",

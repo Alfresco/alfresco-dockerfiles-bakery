@@ -11,7 +11,7 @@
       },
       {
         "name": "alfresco-share-services",
-        "version": "23.2.2.3",
+        "version": "23.3.1.3",
         "path": "repository/amps",
         "classifier": ".amp",
         "group": "org.alfresco",
@@ -19,7 +19,7 @@
       },
       {
         "name": "alfresco-aos-module",
-        "version": "3.0.0",
+        "version": "3.1.0",
         "path": "repository/amps",
         "classifier": ".amp",
         "group": "org.alfresco.aos-module",
@@ -27,7 +27,7 @@
       },
       {
         "name": "alfresco-device-sync-repo",
-        "version": "5.0.0",
+        "version": "4.0.1",
         "path": "repository/amps_enterprise",
         "classifier": ".amp",
         "group": "org.alfresco.services.sync",
@@ -43,7 +43,7 @@
       },
       {
         "name": "alfresco-content-services-distribution",
-        "version": "23.2.2",
+        "version": "23.3.2",
         "path": "repository/distribution",
         "classifier": ".zip",
         "group": "org.alfresco",
@@ -51,7 +51,7 @@
       },
       {
         "name": "alfresco-content-services-community-distribution",
-        "version": "23.2.0",
+        "version": "23.3.0",
         "path": "repository/distribution",
         "classifier": ".zip",
         "group": "org.alfresco",

@@ -3,7 +3,7 @@
     "acs23": [
       {
         "name": "alfresco-elasticsearch-live-indexing-mediation",
-        "version": "4.0.1",
+        "version": "4.1.0",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
         "repository": "enterprise-releases",
@@ -11,7 +11,7 @@
       },
       {
         "name": "alfresco-elasticsearch-live-indexing-metadata",
-        "version": "4.0.1",
+        "version": "4.1.0",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
         "repository": "enterprise-releases",
@@ -19,7 +19,7 @@
       },
       {
         "name": "alfresco-elasticsearch-live-indexing-path",
-        "version": "4.0.1",
+        "version": "4.1.0",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
         "repository": "enterprise-releases",
@@ -27,7 +27,7 @@
       },
       {
         "name": "alfresco-elasticsearch-live-indexing-content",
-        "version": "4.0.1",
+        "version": "4.1.0",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
         "repository": "enterprise-releases",
@@ -35,7 +35,7 @@
       },
       {
         "name": "alfresco-elasticsearch-live-indexing",
-        "version": "4.0.1",
+        "version": "4.1.0",
         "path": "search/enterprise/common",
         "classifier": "-app.jar",
         "repository": "enterprise-releases",

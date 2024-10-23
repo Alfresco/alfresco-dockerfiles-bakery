@@ -19,7 +19,7 @@
       },
       {
         "name": "alfresco-transform-pdf-renderer",
-        "version": "5.1.3",
+        "version": "5.1.4",
         "path": "tengine/pdfrenderer",
         "classifier": ".jar",
         "repository": "releases",

@@ -3,7 +3,7 @@
     "acs23": [
       {
         "name": "alfresco-elasticsearch-live-indexing",
-        "version": "4.0.1",
+        "version": "4.1.0",
         "path": "search/enterprise/all-in-one",
         "classifier": "-app.jar",
         "repository": "enterprise-releases",

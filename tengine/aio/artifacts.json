@@ -3,7 +3,7 @@
     "acs23": [
       {
         "name": "alfresco-transform-core-aio",
-        "version": "5.1.3",
+        "version": "5.1.4",
         "path": "tengine/aio",
         "classifier": ".jar",
         "repository": "releases",

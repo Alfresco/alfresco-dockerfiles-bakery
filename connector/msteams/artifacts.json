@@ -3,7 +3,7 @@
     "acs23": [
       {
         "name": "alfresco-ms-teams-springboot",
-        "version": "2.0.2",
+        "version": "2.0.3",
         "path": "connector/msteams",
         "classifier": ".jar",
         "repository": "enterprise-releases",

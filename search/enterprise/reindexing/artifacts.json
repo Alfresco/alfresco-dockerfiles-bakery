@@ -3,7 +3,7 @@
     "acs23": [
       {
         "name": "alfresco-elasticsearch-reindexing",
-        "version": "4.0.1",
+        "version": "4.1.0",
         "path": "search/enterprise/reindexing",
         "classifier": "-app.jar",
         "repository": "enterprise-releases",

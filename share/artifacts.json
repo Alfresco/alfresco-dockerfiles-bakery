@@ -3,7 +3,7 @@
     "acs23": [
       {
         "name": "alfresco-content-services-share-distribution",
-        "version": "23.2.2",
+        "version": "23.3.2",
         "path": "share/distribution",
         "classifier": ".zip",
         "group": "org.alfresco",
@@ -11,7 +11,7 @@
       },
       {
         "name": "alfresco-content-services-community-distribution",
-        "version": "23.2.0",
+        "version": "23.3.0",
         "path": "share/distribution",
         "classifier": ".zip",
         "group": "org.alfresco",

@@ -155,11 +155,11 @@ variable "TOMCAT_MAJOR" {
 }
 
 variable "TOMCAT_VERSION" {
-  default = "10.1.26"
+  default = "10.1.31"
 }
 
 variable "TOMCAT_SHA512" {
-  default = "0a62e55c1ff9f8f04d7aff938764eac46c289eda888abf43de74a82ceb7d879e94a36ea3e5e46186bc231f07871fcc4c58f11e026f51d4487a473badb21e9355"
+  default = "0e3d423a843e2d9ba4f28a9f0a2f1073d5a1389557dfda041759f8df968bace63cd6948bd76df2727b5133ddb7c33e05dab43cea1d519ca0b6d519461152cce9"
 }
 
 variable "TCNATIVE_VERSION" {
