@@ -39,7 +39,6 @@ jobs:
         id: artifacts-cache
         with:
           key: ${{ runner.os }}-packages-community-v2-${{ hashFiles('**/artifacts.json') }}
-          restore-keys: ${{ runner.os }}-packages-community-v2
           path: artifacts_cache/**
 
       - name: Fetch artifacts from nexus
