@@ -168,7 +168,7 @@ jobs:
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.0.0
         timeout-minutes: 10
         with:
-          compose_file_path: "test/merged-compose.yaml"
+          compose_file_path: test/merged-compose.yaml
           quay_username: ${{ secrets.QUAY_USERNAME }}
           quay_password: ${{ secrets.QUAY_PASSWORD }}
 
