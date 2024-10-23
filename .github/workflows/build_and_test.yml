@@ -175,11 +175,11 @@ jobs:
           quay_username: ${{ secrets.QUAY_USERNAME }}
           quay_password: ${{ secrets.QUAY_PASSWORD }}
 
-      # - name: Save containers logs (${{ matrix.edition }})
-      #   if: always() && steps.verify_compose.outcome != 'skipped'
-      #   uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.0.0
-      #   with:
-      #     output-archive-name: ${{ matrix.edition }}-logs
+      - name: Save containers logs
+        if: always()
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.0.0
+        with:
+          output-archive-name: compose-logs
 
   helm-test:
     needs: build
