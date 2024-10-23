@@ -48,7 +48,10 @@ jobs:
 
       - name: Install Grype
         uses: anchore/scan-action/download-grype@ef0b0b023552a0c077534074723a9915280284bb # v5.1.0
-        id: grype
+        id: grype-install
+
+      - name: Add Grype to PATH
+        run: echo "$(dirname ${{ steps.grype-install.outputs.cmd }})" >> $GITHUB_PATH
 
       - name: Grype scan
         run: |
