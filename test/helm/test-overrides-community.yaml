@@ -10,11 +10,12 @@ dtas:
     assertions:
       acs:
         edition: Community
-        version: 23.2.0
+        version: 23.3.0
         modules:
           - id: alfresco-aos-module
-            version: 3.0.0
+            version: 3.1.0
             installed: true
+      adw: null
 alfresco-repository:
   startupProbe:
     initialDelaySeconds: 120
