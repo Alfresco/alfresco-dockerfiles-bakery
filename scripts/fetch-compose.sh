@@ -1,22 +1,25 @@
 #!/bin/bash
 
-# URL of the compose file
-COMPOSE_URL="https://raw.githubusercontent.com/Alfresco/acs-deployment/OPSEXP-2253/docker-compose/compose.yaml"
+if [ "$#" -ne 3 ]; then
+  echo "Usage: $0 <enterprise|community> <destination-filename> <acs-version>" >&2
+  exit 1
+fi
 
-# Destination path for the downloaded file
-DESTINATION_PATH="test/compose.yaml"
+if [ "$1" = "enterprise" ]; then
+  COMPOSE_FILE="compose.yaml"
+else
+  COMPOSE_FILE="community-compose.yaml"
+fi
 
-# Function to download the compose file using wget
-download_compose_file_wget() {
-  echo "Downloading compose file from ${COMPOSE_URL}..."
-  wget -O "${DESTINATION_PATH}" "${COMPOSE_URL}"
-  if [ $? -eq 0 ]; then
-    echo "Compose file downloaded successfully to ${DESTINATION_PATH}"
-  else
-    echo "Failed to download compose file" >&2
-    exit 1
-  fi
-}
+COMPOSE_URL="https://raw.githubusercontent.com/Alfresco/acs-deployment/$3/docker-compose/${COMPOSE_FILE}"
 
-# Download the compose file
-download_compose_file_wget
+DESTINATION_PATH="$2"
+
+echo "Downloading compose file from ${COMPOSE_URL}..."
+wget -O "${DESTINATION_PATH}" "${COMPOSE_URL}"
+if [ $? -eq 0 ]; then
+  echo "Compose file downloaded successfully to ${DESTINATION_PATH}"
+else
+  echo "Failed to download compose file" >&2
+  exit 1
+fi

@@ -139,10 +139,15 @@ jobs:
     needs: build
     runs-on: alfrescoPub-ubuntu2204-16G-4CPU
     if: github.actor != 'dependabot[bot]'
-    # strategy:
-    #   fail-fast: false
-    #   matrix:
-    #     edition: [enterprise, community]
+    strategy:
+      fail-fast: false
+      matrix:
+        edition: [enterprise, community]
+    env:
+      UPSTREAM_COMPOSE_PATH: test/${{ matrix.edition }}.yaml
+      OVERRIDE_COMPOSE_PATH: test/${{ matrix.edition }}-override.yaml
+      MERGED_COMPOSE_PATH: test/merged-compose.yaml
+      ACS_COMPOSE_VERSION: OPSEXP-2253
     steps:
       - name: Checkout
         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
@@ -158,28 +163,25 @@ jobs:
         uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349  # v3.7.1
 
       - name: Fetch compose from acs-deployment
-        run: ./scripts/fetch-compose.sh
+        run: ./scripts/fetch-compose.sh ${{ matrix.edition }} ${{ env.UPSTREAM_COMPOSE_PATH }} ${{ env.ACS_COMPOSE_VERSION }}
 
       - name: Merge Docker Compose files
-        run: docker compose -f test/compose.yaml -f test/compose-override.yaml config > test/merged-compose.yaml
+        run: docker compose -f ${{ env.UPSTREAM_COMPOSE_PATH }} -f ${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
 
-      - name: List files in test directory
-        run: ls -l test
-
-      - name: Verify docker-compose
+      - name: Verify docker-compose (${{ matrix.edition }})
         id: verify_compose
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@OPSEXP-2909-checkout
         timeout-minutes: 10
         with:
-          compose_file_path: test/merged-compose.yaml
+          compose_file_path: ${{ env.MERGED_COMPOSE_PATH }}
           quay_username: ${{ secrets.QUAY_USERNAME }}
           quay_password: ${{ secrets.QUAY_PASSWORD }}
 
-      - name: Save containers logs
-        if: always()
+      - name: Save containers logs (${{ matrix.edition }})
+        if: always() && steps.verify_compose.outcome != 'skipped'
         uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.0.0
         with:
-          output-archive-name: compose-logs
+          output-archive-name: ${{ matrix.edition }}-logs
 
   helm-test:
     needs: build

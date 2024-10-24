@@ -1,0 +1,16 @@
+# Do not move this file to a folder that is not a first level folder
+services:
+  alfresco:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository-community:${TAG}
+  transform-core-aio:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-core-aio:${TAG}
+  share:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share-community:${TAG}
+  solr6:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-search-service:${TAG}
+  control-center:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
+    environment:
+      BASE_PATH: /
+    volumes:
+      - ./configs/acc.json:/usr/share/nginx/html/app.config.json
