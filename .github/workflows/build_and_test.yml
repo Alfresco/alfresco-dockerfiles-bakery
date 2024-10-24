@@ -168,6 +168,11 @@ jobs:
       - name: Merge Docker Compose files
         run: docker compose -f ${{ env.UPSTREAM_COMPOSE_PATH }} -f ${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
 
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
+        with:
+          limit-access-to-actor: true
+
       - name: Verify docker-compose (${{ matrix.edition }})
         id: verify_compose
         uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@OPSEXP-2909-checkout

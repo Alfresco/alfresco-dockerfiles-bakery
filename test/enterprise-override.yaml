@@ -15,13 +15,13 @@ services:
     environment:
       BASE_PATH: /
     volumes:
-      - ./test/configs/adw.json:/usr/share/nginx/html/app.config.json
+      - ./configs/adw.json:/usr/share/nginx/html/app.config.json
   control-center:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
     environment:
       BASE_PATH: /
     volumes:
-      - ./test/configs/acc.json:/usr/share/nginx/html/app.config.json
+      - ./configs/acc.json:/usr/share/nginx/html/app.config.json
   sync-service:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-sync-service:${TAG}
   search:

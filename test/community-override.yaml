@@ -20,4 +20,4 @@ services:
     environment:
       BASE_PATH: /
     volumes:
-      - ./test/configs/acc.json:/usr/share/nginx/html/app.config.json
+      - ./configs/acc.json:/usr/share/nginx/html/app.config.json
