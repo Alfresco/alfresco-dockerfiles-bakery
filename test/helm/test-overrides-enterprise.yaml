@@ -3,7 +3,7 @@ dtas:
     assertions:
       acs:
         edition: Enterprise
-        version: 23.3.2
+        version: 23.3.1
         modules:
           - id: alfresco-aos-module
             version: 3.1.0
