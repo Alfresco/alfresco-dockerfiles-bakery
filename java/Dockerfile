@@ -13,7 +13,7 @@ ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
 RUN \
-  yum update --security -y && \
+  yum update -y && \
   yum install -y langpacks-en java-${JAVA_MAJOR}-openjdk-headless which procps && \
   yum clean all && rm -rf /var/cache/yum
 
