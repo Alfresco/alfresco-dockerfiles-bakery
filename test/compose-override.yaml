@@ -28,6 +28,13 @@ services:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-live-indexing:${TAG}
   search-reindexing:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-reindexing:${TAG}
+  #disable till adding alfresco-audit-storage
+  kibana:
+    image: busybox:musl
+    command: "true"
+  audit-storage:
+    image: busybox:musl
+    command: "true"
 volumes:
   shared-file-store-volume:
     driver_opts:

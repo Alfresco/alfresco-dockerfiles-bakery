@@ -137,7 +137,7 @@ jobs:
 
   compose-test:
     needs: build
-    runs-on: alfrescoPub-ubuntu2204-16G-4CPU
+    runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
     # strategy:
     #   fail-fast: false
