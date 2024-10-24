@@ -3,7 +3,7 @@
     "acs23": [
       {
         "name": "postgresql",
-        "version": "42.6.0",
+        "version": "42.6.1",
         "classifier": ".jar",
         "group": "org.postgresql",
         "repository": "public",
