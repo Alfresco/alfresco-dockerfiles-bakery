@@ -193,8 +193,14 @@ Then you can run an helm install passing as values the provided
 
 ## Security scanning
 
-The images built by this project are automatically scanned for vulnerabilities
-using Grype, if the `grype` binary is available in the PATH.
+The images built by this project may be scanned for vulnerabilities using Grype,
+if the `grype` binary is available in the PATH.
+
+> Grype is an open-source vulnerability scanner for container images that
+> supports languages like Java by checking JAR files for known issues. However,
+> it may flag vulnerabilities inaccurately, as it detects libraries but can't
+> confirm if vulnerable functions are actually used. Always refer to Alfresco
+> Security bulletins for the most reliable information.
 
 If you want to run the security scan manually, you can use the following command:
 
@@ -206,3 +212,10 @@ You can pass `GRYPE_OPTS` to override the default options passed to Grype, which
 by default exit with a non-zero status if any vulnerability greater than high is
 found and is filtering out known issues for which a fix is not available (yet or
 ever).
+
+You can also run grype automatically at the end of the build process by setting
+`GRYPE_ONBUILD`:
+
+```sh
+make all GRYPE_ONBUILD=1
+```

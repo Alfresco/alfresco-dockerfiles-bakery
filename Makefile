@@ -175,8 +175,9 @@ grype:
 	@echo "Running grype scan"
 	@docker buildx bake $(GRYPE_TARGET) --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype $(GRYPE_OPTS) {}
 
-ifneq (, $(shell which grype))
+ifdef GRYPE_ONBUILD
 define grype_scan
+	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation. Aborting."; exit 1; }
 	@echo "Running grype scan for $(1)"
 	@docker buildx bake $(1) --print | jq '.target[] | select(.output == ["type=docker"]) | .tags[]' | xargs -I {} grype $(GRYPE_OPTS) {}
 endef
