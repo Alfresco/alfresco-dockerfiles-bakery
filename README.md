@@ -3,9 +3,16 @@
 [![CI](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_and_test.yml)
 [![CI from forks](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_forks.yml/badge.svg)](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_forks.yml)
 
-This projects aims at providing a quick and easy way to build and maintain
-Alfresco Docker images based on the official Alfresco artifacts with the help of
-[Docker Bake](https://docs.docker.com/build/bake/).
+As outlined in the [Hyland Alfresco support
+policy](https://docs.alfresco.com/support/latest/policies/deployment/),
+pre-built container images are intended as reference for creating your own
+customized images, incorporating deployment guidelines, security best practices,
+and any necessary custom extensions. While this policy remains unchanged, we are
+supporting the community further by open-sourcing the Alfresco Dockerfiles
+Bakery, a tool designed to simplify the deployment of the Alfresco platform and
+assist you in building tailored container images, with the help of [Docker
+Bake](https://docs.docker.com/build/bake/).
+
 
 - [Alfresco Dockerfiles Bakery 🍞](#alfresco-dockerfiles-bakery-)
   - [Prerequisites](#prerequisites)
