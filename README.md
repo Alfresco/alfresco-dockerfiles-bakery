@@ -196,11 +196,14 @@ Then you can run an helm install passing as values the provided
 The images built by this project may be scanned for vulnerabilities using Grype,
 if the `grype` binary is available in the PATH.
 
-> Grype is an open-source vulnerability scanner for container images that
-> supports languages like Java by checking JAR files for known issues. However,
-> it may flag vulnerabilities inaccurately, as it detects libraries but can't
-> confirm if vulnerable functions are actually used. Always refer to Alfresco
-> Security bulletins for the most reliable information.
+> Grype is an open-source scanner for container images, ideal for identifying
+> recent vulnerabilities, especially within base OS images. While it supports
+> application libraries, it lacks reachability analysis, meaning it cannot
+> confirm whether vulnerabilities are actually exploitable in the context of the
+> application. For accurate insights, refer to Alfresco Security bulletins and
+> contact Hyland support, as these sources provide vetted information after
+> manual triaging of scanner findings within the application code. Remember to
+> always assess findings within the context of your specific deployment.
 
 If you want to run the security scan manually, you can use the following command:
 
