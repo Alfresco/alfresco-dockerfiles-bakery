@@ -78,6 +78,10 @@ jobs:
     name: compose-test
     needs: build
     runs-on: ubuntu-latest
+    env:
+      EDITION: community
+      MERGED_COMPOSE_PATH: test/merged-compose.yaml
+      ACS_COMPOSE_VERSION: OPSEXP-2253
     steps:
       - name: Checkout
         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
@@ -93,17 +97,25 @@ jobs:
           docker load -i /tmp/${{ env.ARTIFACT_NAME }}.tar
           docker image ls -a
 
+      - name: Fetch compose from acs-deployment
+        run: ./scripts/fetch-compose.sh ${{ env.EDITION }} test/${{ env.EDITION }} ${{ env.ACS_COMPOSE_VERSION }}
+
+      - name: Merge Docker Compose files
+        run: docker compose -f test/${{ env.EDITION }} -f test/${{ env.EDITION }}-override.yaml config > ${{ env.MERGED_COMPOSE_PATH }}
+
       - name: Verify docker-compose
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v7.1.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.1.0
         timeout-minutes: 10
         with:
+          postman_path: test/postman/docker-compose
+          postman_json: acs-test-docker-compose-collection.json
           compose_pull: false
-          compose_file_path: test/community-docker-compose.yml
+          compose_file_path: ${{ env.MERGED_COMPOSE_PATH }}
 
       - name: Save containers logs
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v7.1.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.1.0
         with:
           output-archive-name: community-logs
 
