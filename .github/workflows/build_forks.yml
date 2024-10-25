@@ -81,7 +81,7 @@ jobs:
     env:
       EDITION: community
       MERGED_COMPOSE_PATH: test/merged-compose.yaml
-      ACS_COMPOSE_VERSION: OPSEXP-2253
+      ACS_COMPOSE_VERSION: 78132d95e29d7126025e127740d10cf958164947
     steps:
       - name: Checkout
         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
