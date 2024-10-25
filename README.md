@@ -206,14 +206,7 @@ You can use docker compose to test locally with:
 ./scripts/fetch-compose.sh enterprise test/compose.yaml master
 ```
 
-2. Either create a resulting compose, review it and run it:
-
-```sh
-docker compose -f test/compose.yaml -f test/enterprise-override.yaml config > test/merged-compose.yaml
-docker compose -f test/merged-compose.yaml up
-```
-
-3. Or run it directly:
+2. Run the compose with overriding file
 
 ```sh
 docker compose -f test/compose.yaml -f test/enterprise-override.yaml up
@@ -249,3 +242,4 @@ You can also run grype automatically at the end of the build process by setting
 
 ```sh
 make all GRYPE_ONBUILD=1
+```

@@ -8,7 +8,7 @@ on:
       - '.github/workflows/build_forks.yml'
 
 env:
-  ACS_CHART_VERSION: 8a819c9b90b9015e5ab2654c47961fef4183cbcf # v8.5.1 plus the fix for community test values
+  ACS_DEPLOYMENT_VERSION: 78132d95e29d7126025e127740d10cf958164947 # 8.6.0-alpha.0 with compose healthcheck
   ARTIFACT_NAME: alfresco-docker-images
   REGISTRY: localhost
   REGISTRY_NAMESPACE: alfresco
@@ -81,7 +81,6 @@ jobs:
     env:
       EDITION: community
       MERGED_COMPOSE_PATH: test/merged-compose.yaml
-      ACS_COMPOSE_VERSION: 78132d95e29d7126025e127740d10cf958164947
     steps:
       - name: Checkout
         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
@@ -98,7 +97,7 @@ jobs:
           docker image ls -a
 
       - name: Fetch compose from acs-deployment
-        run: ./scripts/fetch-compose.sh ${{ env.EDITION }} test/${{ env.EDITION }}.yaml ${{ env.ACS_COMPOSE_VERSION }}
+        run: ./scripts/fetch-compose.sh ${{ env.EDITION }} test/${{ env.EDITION }}.yaml ${{ env.ACS_DEPLOYMENT_VERSION }}
 
       - name: Merge Docker Compose files
         run: docker compose -f test/${{ env.EDITION }}.yaml -f test/${{ env.EDITION }}-override.yaml config > ${{ env.MERGED_COMPOSE_PATH }}
@@ -156,7 +155,7 @@ jobs:
         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
         with:
           repository: Alfresco/acs-deployment
-          ref: ${{ env.ACS_CHART_VERSION }}
+          ref: ${{ env.ACS_DEPLOYMENT_VERSION }}
           path: acs-deployment
 
       - name: Setup helm repository
