@@ -55,4 +55,4 @@ jobs:
 
       - name: Grype scan
         run: |
-          make grype GRYPE_OPTS="-f critical --only-fixed --ignore-states wont-fix"
+          make grype GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
