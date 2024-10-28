@@ -1,5 +1,6 @@
 # Alfresco Dockerfiles Bakery 🍞
 
+[![release](https://img.shields.io/github/v/release/Alfresco/alfresco-dockerfiles-bakery?display_name=release)](https://github.com/Alfresco/alfresco-dockerfiles-bakery/releases/latest)
 [![CI](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_and_test.yml)
 [![CI from forks](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_forks.yml/badge.svg)](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_forks.yml)
 

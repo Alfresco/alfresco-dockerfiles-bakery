@@ -24,7 +24,7 @@ concurrency:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
-    # if github.event.pull_request.head.repo.fork TODO: enable when repo is public
+    if: github.event.pull_request.head.repo.fork
     steps:
       - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v7.1.1
 
