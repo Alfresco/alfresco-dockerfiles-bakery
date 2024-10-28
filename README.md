@@ -63,7 +63,7 @@ Alfresco images updated (e.g. with the latest OS security patches), you can
 simply run the command below from the root of this project:
 
 ```sh
-make all
+make enterprise
 ```
 
 or for Community edition:

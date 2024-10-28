@@ -121,6 +121,11 @@ all: docker-bake.hcl prepare setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS}
 	$(call grype_scan,$@)
 
+enterprise: docker-bake.hcl prepare setenv
+	@echo "Building all community images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
 community: docker-bake.hcl prepare setenv
 	@echo "Building all community images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
