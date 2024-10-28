@@ -119,6 +119,12 @@ prepare_tengines: scripts/fetch-artifacts.sh
 all: docker-bake.hcl prepare setenv
 	@echo "Building all images"
 	docker buildx bake ${DOCKER_BAKE_ARGS}
+	$(call grype_scan,$@)
+
+community: docker-bake.hcl prepare setenv
+	@echo "Building all community images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
 adf_apps: docker-bake.hcl prepare_adf setenv
 	@echo "Building ADF Apps images"

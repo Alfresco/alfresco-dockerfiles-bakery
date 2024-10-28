@@ -66,6 +66,12 @@ simply run the command below from the root of this project:
 make all
 ```
 
+or for Community edition:
+
+```sh
+make community
+```
+
 This command will build locally all the docker images this project offers.
 
 For more information on the available images, browse the top level folders,
