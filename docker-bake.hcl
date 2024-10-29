@@ -163,11 +163,11 @@ variable "TOMCAT_SHA512" {
 }
 
 variable "TCNATIVE_VERSION" {
-  default = "1.3.0"
+  default = "2.0.8"
 }
 
 variable "TCNATIVE_SHA512" {
-  default = "5a6c7337280774525c97e36e24d7d278ba15edd63c66cec1b3e5ecdc472f8d0535e31eac83cf0bdc68810eb779e2a118d6b4f6238b509f69a71d037c905fa433"
+  default = "fd45533b9c34b008717d18ed49334c7286b93c849c487c1c42746f2998cc4a6ff0362e536a8b5124c6539847a92a9f7631c7638a21cd5d22134fe1a9bb0f0702"
 }
 
 target "tomcat_base" {
