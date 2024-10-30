@@ -13,16 +13,16 @@ help:
 	@echo "  all                Build all images"
 	@echo "  adf_apps           Build ADF Apps images"
 	@echo "  ats                Build Transform Service images"
-	@echo "  connectors         Build Connectors images"
+	@echo "  connectors         Build Connector images"
 	@echo "  repo               Build Repository image"
 	@echo "  search_enterprise  Build Search Enterprise images"
 	@echo "  search_service     Build Search Service images"
 	@echo "  share              Build Share images"
 	@echo "  sync               Build Sync Service images"
-	@echo "  tengines           Build Transform Engines images"
+	@echo "  tengines           Build Transform Engine images"
 	@echo "  =================="
 	@echo "  clean              Clean up Nexus artifacts"
-	@echo "  clean_caches       Clean up Docker and artifacts caches"
+	@echo "  clean_caches       Clean up Docker and artifact caches"
 	@echo "  prepare            Prepare the environment for building"
 	@echo "  auth               Authenticate with the Docker registry"
 	@echo "  all_ci             Build all images including cleanup for Continuous Integration"
@@ -82,15 +82,15 @@ prepare_adf: scripts/fetch-artifacts.sh
 	@./scripts/fetch-artifacts.sh adf-apps
 
 prepare_ats: scripts/fetch-artifacts.sh
-	@echo "Fetching all artifacts for ats targets"
+	@echo "Fetching all artifacts for ATS targets"
 	@./scripts/fetch-artifacts.sh ats
 
 prepare_connectors: scripts/fetch-artifacts.sh
-	@echo "Fetching all artifacts for Connectors targets"
+	@echo "Fetching all artifacts for Connector targets"
 	@./scripts/fetch-artifacts.sh connector
 
 prepare_repo: scripts/fetch-artifacts.sh
-	@echo "Fetching all artifacts for repository target"
+	@echo "Fetching all artifacts for Repository target"
 	@./scripts/fetch-artifacts.sh repository
 
 prepare_search_enterprise: scripts/fetch-artifacts.sh
@@ -110,7 +110,7 @@ prepare_sync: scripts/fetch-artifacts.sh
 	@./scripts/fetch-artifacts.sh sync
 
 prepare_tengines: scripts/fetch-artifacts.sh
-	@echo "Fetching all artifacts for tengines targets"
+	@echo "Fetching all artifacts for TEngine targets"
 	@./scripts/fetch-artifacts.sh tengine
 
 ## BUILD TARGETS
@@ -122,17 +122,17 @@ all: docker-bake.hcl prepare setenv
 	$(call grype_scan,$@)
 
 enterprise: docker-bake.hcl prepare setenv
-	@echo "Building all community images"
+	@echo "Building all Enterprise images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
 community: docker-bake.hcl prepare setenv
-	@echo "Building all community images"
+	@echo "Building all Community images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
 adf_apps: docker-bake.hcl prepare_adf setenv
-	@echo "Building ADF Apps images"
+	@echo "Building ADF App images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
@@ -142,12 +142,12 @@ ats: docker-bake.hcl tengines prepare_ats prepare_tengines setenv
 	$(call grype_scan,$@)
 
 connectors: docker-bake.hcl prepare_connectors setenv
-	@echo "Building Connectors images"
+	@echo "Building Connector images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
 repo: docker-bake.hcl prepare_repo setenv
-	@echo "Building repository image"
+	@echo "Building Repository images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} repository
 	$(call grype_scan,repository)
 
