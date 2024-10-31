@@ -18,6 +18,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
+env:
+  MAKE_TARGET: ${{ github.event.pull_request.head.repo.fork && 'community' || 'all_ci' }}
+
 jobs:
   make-test:
     runs-on: ubuntu-latest
@@ -25,6 +28,7 @@ jobs:
       - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v7.1.1
 
       - name: Setup nexus authentication
+        if: ! github.event.pull_request.head.repo.fork
         run: |
           echo "machine nexus.alfresco.com" >> ~/.netrc
           echo "login ${{ secrets.NEXUS_USERNAME }}" >> ~/.netrc
@@ -39,7 +43,7 @@ jobs:
       - name: Make Docker images
         id: make
         run: |
-          make all_ci
+          make ${{ env.MAKE_TARGET }}
 
       - name: Check Images are loaded
         run: |
@@ -55,4 +59,4 @@ jobs:
 
       - name: Grype scan
         run: |
-          make grype GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
+          make grype GRYPE_TARGET="${{ env.MAKE_TARGET }}" GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
