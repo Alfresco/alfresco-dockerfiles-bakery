@@ -145,8 +145,6 @@ jobs:
       matrix:
         edition: [enterprise, community]
     env:
-      UPSTREAM_COMPOSE_PATH: test/${{ matrix.edition }}.yaml
-      OVERRIDE_COMPOSE_PATH: test/${{ matrix.edition }}-override.yaml
       MERGED_COMPOSE_PATH: test/merged-compose.yaml
     steps:
       - name: Checkout
@@ -163,9 +161,12 @@ jobs:
         uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349  # v3.7.1
 
       - name: Fetch compose from acs-deployment
-        run: ./scripts/fetch-compose.sh ${{ matrix.edition }} ${{ env.UPSTREAM_COMPOSE_PATH }} ${{ env.ACS_DEPLOYMENT_VERSION }}
+        run: ./scripts/fetch-compose.sh ${{ env.ACS_DEPLOYMENT_VERSION }}
 
       - name: Merge Docker Compose files
+        env:
+          UPSTREAM_COMPOSE_PATH: test/${{ matrix.edition == 'community'&& 'community-' }}compose.yaml
+          OVERRIDE_COMPOSE_PATH: test/${{ matrix.edition }}-override.yaml
         run: docker compose -f ${{ env.UPSTREAM_COMPOSE_PATH }} -f ${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
 
       - name: Verify docker-compose (${{ matrix.edition }})
