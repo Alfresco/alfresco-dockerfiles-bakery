@@ -80,7 +80,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      EDITION: community
       MERGED_COMPOSE_PATH: test/merged-compose.yaml
     steps:
       - name: Checkout
@@ -98,10 +97,13 @@ jobs:
           docker image ls -a
 
       - name: Fetch compose from acs-deployment
-        run: ./scripts/fetch-compose.sh ${{ env.EDITION }} test/${{ env.EDITION }}.yaml ${{ env.ACS_DEPLOYMENT_VERSION }}
+        run: ./scripts/fetch-compose.sh ${{ env.ACS_DEPLOYMENT_VERSION }}
 
       - name: Merge Docker Compose files
-        run: docker compose -f test/${{ env.EDITION }}.yaml -f test/${{ env.EDITION }}-override.yaml config > ${{ env.MERGED_COMPOSE_PATH }}
+        env:
+          UPSTREAM_COMPOSE_PATH: test/community-compose.yaml
+          OVERRIDE_COMPOSE_PATH: test/community-override.yaml
+        run: docker compose -f ${{ env.UPSTREAM_COMPOSE_PATH }} -f ${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
 
       - name: Verify docker-compose
         id: verify_compose
