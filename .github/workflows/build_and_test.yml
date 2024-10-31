@@ -165,7 +165,7 @@ jobs:
 
       - name: Merge Docker Compose files
         env:
-          UPSTREAM_COMPOSE_PATH: test/${{ matrix.edition == 'community'&& 'community-' }}compose.yaml
+          UPSTREAM_COMPOSE_PATH: test/${{ matrix.edition == 'community' && 'community-' || '' }}compose.yaml
           OVERRIDE_COMPOSE_PATH: test/${{ matrix.edition }}-override.yaml
         run: docker compose -f ${{ env.UPSTREAM_COMPOSE_PATH }} -f ${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
 
