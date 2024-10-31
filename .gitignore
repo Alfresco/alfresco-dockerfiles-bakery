@@ -8,4 +8,6 @@ artifacts_cache
 *.gz
 *.tgz
 
+test/compose.yaml
+test/community-compose.yaml
 test/helm/enterprise-integration-test-values.yaml

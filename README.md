@@ -209,22 +209,32 @@ kind load docker-image $(docker images --format "{{.Repository}}" | grep "^local
 Then you can run an helm install passing as values the provided
 [test-overrides.yaml](./test/helm/test-overrides.yaml).
 
-
 ### With docker compose
 
-You can use docker compose to test locally with:
+You can use Docker Compose to test the built images locally as follows:
 
-1. Fetch compose from acs-deployment repo using `scripts/fetch-compose.sh` script e.g.:
+1. Fetch upstream compose from acs-deployment repository using the provided
+   script (you can specify a git branch or tag):
 
-```sh
-./scripts/fetch-compose.sh enterprise test/compose.yaml master
-```
+   ```sh
+   ./scripts/fetch-compose.sh master
+   ```
 
-2. Run the compose with overriding file
+2. Run compose together with one of the available override files, which allow
+   you to easily reference built images using
+   `$REGISTRY/$REGISTRY_NAMESPACE/component-name:$TAG` format:
 
-```sh
-docker compose -f test/compose.yaml -f test/enterprise-override.yaml up
-```
+   ```sh
+   REGISTRY=localhost REGISTRY_NAMESPACE=alfresco TAG=latest
+   docker compose -f test/compose.yaml -f test/enterprise-override.yaml up -d
+   ```
+
+   For community edition instead:
+
+    ```sh
+    REGISTRY=localhost REGISTRY_NAMESPACE=alfresco TAG=latest
+    docker compose -f test/community-compose.yaml -f test/community-override.yaml up -d
+    ```
 
 ## Security scanning
 
