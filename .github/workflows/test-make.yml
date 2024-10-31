@@ -28,7 +28,7 @@ jobs:
       - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v7.1.1
 
       - name: Setup nexus authentication
-        if: ! github.event.pull_request.head.repo.fork
+        if: '! github.event.pull_request.head.repo.fork'
         run: |
           echo "machine nexus.alfresco.com" >> ~/.netrc
           echo "login ${{ secrets.NEXUS_USERNAME }}" >> ~/.netrc
