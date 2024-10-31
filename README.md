@@ -202,14 +202,62 @@ Once the images are built, you can test them locally using either Helm or Docker
 
 ### Testing with helm
 
-You can easily load all the built image in a local kind cluster with:
+Follow the general instructions for [installing Alfresco on
+KinD](https://alfresco.github.io/acs-deployment/docs/helm/kind-deployment.html)
+until the point where you have to run `helm install`.
+
+If the images has not been pushed to a remote repository, you can easily load
+all the locally built images in the local KinD cluster with:
 
 ```sh
 kind load docker-image $(docker images --format "{{.Repository}}" | grep "^localhost/alfresco" | xargs)
 ```
 
-Then you can run an helm install passing as values the provided
-[test-overrides.yaml](./test/helm/test-overrides.yaml).
+Before running the `helm install` command, you need adjust the registry and
+image namespace references in the provided
+[test-overrides.yaml](test/helm/test-overrides.yaml) file:
+
+```sh
+REGISTRY=localhost REGISTRY_NAMESPACE=alfresco TAG=latest
+sed -i "s|localhost/alfresco/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" test/helm/test-overrides.yaml
+sed -i "s|tag: latest|tag: ${TAG}|g" test/helm/test-overrides.yaml
+```
+
+If you are testing the community edition, you also need to adjust the image
+references for the Share and Repository images:
+
+```sh
+sed -i "s|/alfresco-content-repository|/alfresco-content-repository-community|g" test/helm/test-overrides.yaml
+sed -i "s|/alfresco-share|/alfresco-share-community|g" test/helm/test-overrides.yaml
+```
+
+Then you can finally run `helm install` passing as values the provided files.
+
+For enterprise edition:
+
+```sh
+helm install acs alfresco/alfresco-content-services \
+  --values=test/helm/enterprise-integration-test-values.yaml \
+  --values=test/helm/test-overrides.yaml \
+  --values=test/helm/test-overrides-enterprise.yaml \
+  --atomic \
+  --timeout 10m0s \
+  --namespace alfresco
+```
+
+For community edition:
+
+```sh
+helm install acs alfresco/alfresco-content-services \
+  --values=test/helm/community_values.yaml \
+  --values=test/helm/community-integration-test-values.yaml \
+  --values=test/helm/test-overrides.yaml \
+  --values=test/helm/test-overrides-community.yaml \
+  --set global.search.sharedSecret=$(openssl rand -hex 24) \
+  --atomic \
+  --timeout 10m0s \
+  --namespace=alfresco
+```
 
 ### Testing with docker compose
 
