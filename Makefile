@@ -110,7 +110,7 @@ prepare_sync: scripts/fetch-artifacts.sh
 	@./scripts/fetch-artifacts.sh sync
 
 prepare_tengines: scripts/fetch-artifacts.sh
-	@echo "Fetching all artifacts for TEngine targets"
+	@echo "Fetching all artifacts for Transform Engine targets"
 	@./scripts/fetch-artifacts.sh tengine
 
 ## BUILD TARGETS
