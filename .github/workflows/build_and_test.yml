@@ -22,6 +22,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  # telemetry
+  actions: read
+  # ghcr push
+  packages: write
+  attestations: write
+  id-token: write
+
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
