@@ -41,7 +41,7 @@ do_fetch_mvn() {
   done
 }
 
-TARGETS=$(find "${REPO_ROOT}" -regex "${REPO_ROOT}/${1:+$1/}.*" -name artifacts.json -mindepth 2 -print)
+TARGETS=$(find "${REPO_ROOT}" -regex "${REPO_ROOT}/${2:+$2/}.*" -name artifacts.json -mindepth 2 -print)
 
 for i in $TARGETS ; do
   do_fetch_mvn $i
