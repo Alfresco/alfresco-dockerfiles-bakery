@@ -23,22 +23,6 @@ on:
         description: 'ACS deployment version'
         required: true
         type: string
-    secrets:
-      QUAY_USERNAME:
-        description: 'Quay.io username'
-        required: true
-      QUAY_PASSWORD:
-        description: 'Quay.io password'
-        required: true
-      GITHUB_TOKEN:
-        description: 'GitHub token'
-        required: true
-      NEXUS_USERNAME:
-        description: 'Nexus username'
-        required: true
-      NEXUS_PASSWORD:
-        description: 'Nexus password'
-        required: true
 
 jobs:
   pre-commit:
