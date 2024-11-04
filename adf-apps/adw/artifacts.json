@@ -17,7 +17,7 @@
           "path": "adf-apps/adw",
           "classifier": ".zip",
           "group": "org.alfresco",
-          "repository": "public"
+          "repository": "enterprise-releases"
         }
       ]
     }
