@@ -48,7 +48,7 @@ jobs:
         uses: actions/cache/restore@2cdf405574d6ef1f33a1d12acccd3ae82f47b3f2 # v4.1.0
         id: artifacts-cache
         with:
-          key: ${{ runner.os }}-packages-v2-${{ hashFiles('**/artifacts.json') }}
+          key: ${{ runner.os }}-packages-v2-${{ hashFiles('**/artifacts.json') }}-${{ inputs.acs_version }}
           path: artifacts_cache/**
 
       - name: Fetch artifacts from nexus
