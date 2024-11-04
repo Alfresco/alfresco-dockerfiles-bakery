@@ -24,28 +24,8 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: read
-  # telemetry
-  actions: read
-  # ghcr push
-  packages: write
-  attestations: write
-  id-token: write
-
 jobs:
-  pre-commit:
-    runs-on: ubuntu-latest
-    if: '! github.event.pull_request.head.repo.fork'
-    permissions:
-      contents: write
-    steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v7.1.1
-        with:
-          auto-commit: "true"
-
   build:
-    needs: pre-commit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
