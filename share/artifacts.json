@@ -25,6 +25,32 @@
         "group": "org.alfresco.integrations",
         "repository": "releases"
       }
+    ],
+    "acs74": [
+      {
+        "name": "alfresco-content-services-share-distribution",
+        "version": "7.4.2.1",
+        "path": "share/distribution",
+        "classifier": ".zip",
+        "group": "org.alfresco",
+        "repository": "enterprise-releases"
+      },
+      {
+        "name": "alfresco-content-services-community-distribution",
+        "version": "7.4.2",
+        "path": "share/distribution",
+        "classifier": ".zip",
+        "group": "org.alfresco",
+        "repository": "public"
+      },
+      {
+        "name": "alfresco-googledrive-share",
+        "version": "3.4.2",
+        "path": "share/amps",
+        "classifier": ".amp",
+        "group": "org.alfresco.integrations",
+        "repository": "releases"
+      }
     ]
   }
 }

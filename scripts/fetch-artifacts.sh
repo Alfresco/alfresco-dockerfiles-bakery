@@ -4,8 +4,7 @@
 REPO_ROOT="$(dirname $0)/.."
 TEMP_DIR=$(mktemp -d)
 
-ACS_VERSION=${ACS_VERSION:=23.2.2}
-INDEX_KEY=${ACS_VERSION%%.*}
+INDEX_KEY=$1
 
 do_fetch_mvn() {
   for i in $(jq -r ".artifacts.acs${INDEX_KEY} | keys | .[]" $1); do

@@ -9,6 +9,16 @@
           "group": "org.alfresco",
           "repository": "enterprise-releases"
         }
+      ],
+      "acs74": [
+        {
+          "name": "alfresco-digital-workspace",
+          "version": "4.4.1",
+          "path": "adf-apps/adw",
+          "classifier": ".zip",
+          "group": "org.alfresco",
+          "repository": "public"
+        }
       ]
     }
   }

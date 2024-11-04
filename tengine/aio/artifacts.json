@@ -9,6 +9,16 @@
         "repository": "releases",
         "group": "org.alfresco"
       }
+    ],
+    "acs74": [
+      {
+        "name": "alfresco-transform-core-aio",
+        "version": "5.1.4",
+        "path": "tengine/aio",
+        "classifier": ".jar",
+        "repository": "releases",
+        "group": "org.alfresco"
+      }
     ]
   }
 }

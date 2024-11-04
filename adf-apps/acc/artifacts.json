@@ -9,6 +9,16 @@
         "group": "org.alfresco",
         "repository": "releases"
       }
+    ],
+    "acs74": [
+      {
+        "name": "alfresco-control-center",
+        "version": "8.3.0",
+        "path": "adf-apps/acc",
+        "classifier": ".zip",
+        "group": "org.alfresco",
+        "repository": "releases"
+      }
     ]
   }
 }

@@ -9,6 +9,16 @@
         "repository": "enterprise-releases",
         "group": "org.alfresco"
       }
+    ],
+    "acs74": [
+      {
+        "name": "alfresco-elasticsearch-reindexing",
+        "version": "3.3.3",
+        "path": "search/enterprise/reindexing",
+        "classifier": "-app.jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      }
     ]
   }
 }

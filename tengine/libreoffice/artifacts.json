@@ -17,6 +17,24 @@
         "repository": "releases",
         "group": "org.alfresco"
       }
+    ],
+    "acs74": [
+      {
+        "name": "libreoffice-dist",
+        "version": "7.2.5",
+        "path": "tengine/libreoffice",
+        "classifier": "-linux.gz",
+        "repository": "thirdparty",
+        "group": "org.libreoffice"
+      },
+      {
+        "name": "alfresco-transform-libreoffice",
+        "version": "5.1.4",
+        "path": "tengine/libreoffice",
+        "classifier": ".jar",
+        "repository": "releases",
+        "group": "org.alfresco"
+      }
     ]
   }
 }
