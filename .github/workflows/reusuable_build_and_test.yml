@@ -24,6 +24,11 @@ on:
         required: true
         type: string
 
+env:
+  REGISTRY: ${{ inputs.registry }}
+  REGISTRY_NAMESPACE: ${{ inputs.registry_namespace }}
+  TAG: ${{ inputs.tag }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -74,7 +79,7 @@ jobs:
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         if: github.actor != 'dependabot[bot]'
         with:
-            registry: ${{ inputs.registry }}
+            registry: ${{ env.REGISTRY }}
             username: ${{ github.actor }}
             password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -92,7 +97,7 @@ jobs:
       - name: Enumerate registry cache targets
         id: cache-targets
         env:
-          CACHE_TARGET: ${{ inputs.registry }}/${{ inputs.registry_namespace }}/bakery-cache
+          CACHE_TARGET: ${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/bakery-cache
         run: |
           echo 'cache-set<<EOF' >> $GITHUB_OUTPUT
           echo '${{ steps.bake-targets.outputs.targets }}' | jq -r '.[] | '\
@@ -130,7 +135,7 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
-          registry: ${{ inputs.registry }}
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -193,7 +198,7 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
-            registry: ${{ inputs.registry }}
+            registry: ${{ env.REGISTRY }}
             username: ${{ github.actor }}
             password: ${{ secrets.GITHUB_TOKEN }}
 
