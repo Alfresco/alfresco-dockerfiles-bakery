@@ -30,7 +30,7 @@ do_fetch_mvn() {
       continue
     fi
     echo "Downloading $ARTIFACT_GROUP:$ARTIFACT_NAME $ARTIFACT_VERSION from $ARTIFACT_BASEURL"
-    if ! wget "${ARTIFACT_BASEURL}/${ARTIFACT_GROUP//\./\/}/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}" \
+    if ! wget "${ARTIFACT_BASEURL}/${ARTIFACT_GROUP//\.//}/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}" \
       -O "${ARTIFACT_TMP_PATH}" \
       --no-verbose; then
       rm -f "${ARTIFACT_TMP_PATH}" # wget leaves a 0 byte file if it fails
