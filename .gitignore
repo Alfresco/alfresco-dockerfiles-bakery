@@ -11,6 +11,7 @@ artifacts_cache
 # Files fetched by scripts/fetch_compose.sh
 test/compose.yaml
 test/community-compose.yaml
+test/7.4.N-compose.yaml
 # Files fetched by scripts/fetch_helm.sh
 test/helm/enterprise-integration-test-values.yaml
 test/helm/community-integration-test-values.yaml
