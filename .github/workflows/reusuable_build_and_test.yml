@@ -121,20 +121,21 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
     outputs:
-      matrix_json: ${{ steps.compose-values.outputs.matrix_json }}
+        matrix_json: ${{ steps.compose-values.outputs.matrix_json }}
     steps:
       - name: Calculate values for compose
         id: compose-values
         run: |
-          echo "matrix_json=$(
-            if [[ '${{ inputs.acs_version }}' == '23' ]]; then
+          matrix_json=$(
+          if [[ '${{ inputs.acs_version }}' == '23' ]]; then
               jq -n '{"edition": ["enterprise", "community"]}'
-            elif [[ '${{ inputs.acs_version }}' == '74' ]]; then
+          elif [[ '${{ inputs.acs_version }}' == '74' ]]; then
               jq -n '{"edition": ["74"]}'
-            else
+          else
               jq -n '{"edition": []}'
-            fi
-          )" >> $GITHUB_OUTPUT
+          fi
+          )
+          echo "matrix_json=$matrix_json" >> $GITHUB_OUTPUT
 
   compose-test:
     needs: build-matrix
