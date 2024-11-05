@@ -25,8 +25,8 @@ jobs:
           enable_jobs_summary: true
           platform_type: dockerfile
           disable_secrets: true
+          output_formats: sarif
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
         with:
           sarif_file: report-dir/results.sarif
-          output_formats: sarif
