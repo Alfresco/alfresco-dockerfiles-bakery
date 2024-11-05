@@ -126,15 +126,13 @@ jobs:
       - name: Calculate values for compose
         id: compose-values
         run: |
-          matrix_json=$(
           if [[ '${{ inputs.acs_version }}' == '23' ]]; then
-              jq -n '{"edition": ["enterprise", "community"]}'
+            matrix_json='{"edition": ["enterprise", "community"]}'
           elif [[ '${{ inputs.acs_version }}' == '74' ]]; then
-              jq -n '{"edition": ["74"]}'
+            matrix_json='{"edition": ["74"]}'
           else
-              jq -n '{"edition": []}'
+            matrix_json='{"edition": []}'
           fi
-          )
           echo "matrix_json=$matrix_json" >> $GITHUB_OUTPUT
 
   compose-test:
