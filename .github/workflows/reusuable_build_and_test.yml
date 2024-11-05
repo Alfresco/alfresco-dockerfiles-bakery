@@ -170,6 +170,7 @@ jobs:
             echo "UPSTREAM_COMPOSE_PATH=test/community-compose.yaml" >> $GITHUB_ENV
           else
             echo "UPSTREAM_COMPOSE_PATH=test/compose.yaml" >> $GITHUB_ENV
+          fi
 
       - name: Merge Docker Compose files
         env:
