@@ -4,7 +4,8 @@
 REPO_ROOT="$(dirname $0)/.."
 TEMP_DIR=$(mktemp -d)
 
-INDEX_KEY=$1
+ACS_VERSION=${ACS_VERSION:=23}
+INDEX_KEY=${ACS_VERSION}
 
 do_fetch_mvn() {
   for i in $(jq -r ".artifacts.acs${INDEX_KEY} | keys | .[]" $1); do
@@ -41,7 +42,7 @@ do_fetch_mvn() {
   done
 }
 
-TARGETS=$(find "${REPO_ROOT}" -regex "${REPO_ROOT}/${2:+$2/}.*" -name artifacts.json -mindepth 2 -print)
+TARGETS=$(find "${REPO_ROOT}" -regex "${REPO_ROOT}/${1:+$1/}.*" -name artifacts.json -mindepth 2 -print)
 
 for i in $TARGETS ; do
   do_fetch_mvn $i
