@@ -1,24 +1,9 @@
-# This values file can be used to install ACS 7.4.x using the latest version of
-# the chart
-activemq:
-  image:
-    repository: quay.io/alfresco/alfresco-activemq
-    tag: 5.17.6-jre17-rockylinux8
-alfresco-ai-transformer:
-  image:
-    tag: 3.1.6
 alfresco-search:
   enabled: true
 alfresco-search-enterprise:
   enabled: false
 elasticsearch:
   enabled: false
-postgresql:
-  image:
-    tag: 14.10.0
-postgresql-sync:
-  image:
-    tag: 14.10.0
 elasticsearch-audit:
   enabled: false
 kibana-audit:
