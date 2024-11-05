@@ -131,30 +131,19 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
     outputs:
-      compose_matrix_json: ${{ steps.compose-values.outputs.compose_matrix_json }}
-      helm_matrix_json: ${{ steps.helm-values.outputs.helm_matrix_json }}
+      compose_matrix_json: ${{ steps.set-matrix.outputs.compose_matrix_json }}
+      helm_matrix_json: ${{ steps.set-matrix.outputs.helm_matrix_json }}
     steps:
-      - name: Calculate values for compose
-        id: compose-values
+      - name: Set matrix values for Compose and Helm
+        id: set-matrix
         run: |
-          if [[ '${{ inputs.acs_version }}' == '23' ]]; then
-            compose_matrix_json='{"edition": ["enterprise", "community"]}'
-          elif [[ '${{ inputs.acs_version }}' == '74' ]]; then
-            compose_matrix_json='{"edition": ["74"]}'
-          else
-            compose_matrix_json='{"edition": []}'
+          if [[ "${{ inputs.acs_version }}" == "23" ]]; then
+            echo 'compose_matrix_json={"edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
+            echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
+          elif [[ "${{ inputs.acs_version }}" == "74" ]]; then
+            echo 'compose_matrix_json={"edition": ["74"]}' >> $GITHUB_OUTPUT
+            echo 'helm_matrix_json={"arch": ["amd64"], "edition": ["74"]}' >> $GITHUB_OUTPUT
           fi
-          echo "compose_matrix_json=$compose_matrix_json" >> $GITHUB_OUTPUT
-
-      - name: Calculate values for helm
-        id: helm-values
-        run: |
-          if [[ '${{ inputs.acs_version }}' == '23' ]]; then
-            helm_matrix_json='{"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}'
-          elif [[ '${{ inputs.acs_version }}' == '74' ]]; then
-            helm_matrix_json='{"arch": ["amd64"], "edition": ["74"]}'
-          fi
-          echo "helm_matrix_json=$helm_matrix_json" >> $GITHUB_OUTPUT
 
   compose-test:
     needs: build-matrix
