@@ -106,6 +106,14 @@ jobs:
           '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ inputs.tag }}-\(.)"' >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
+      - name: Set Tomcat environment variables
+        run: |
+          if [[ '${{ inputs.acs_version }}' != '23' ]]; then
+            echo "TOMCAT_MAJOR=9" >> $GITHUB_ENV
+            echo "TOMCAT_VERSION=9.0.96" >> $GITHUB_ENV
+            echo "TOMCAT_SHA512=ef3ac81debbc3a519c43d1fdb1c88ab26a8052af424d81bceccfbd6e663050a06d7aad7960fd5d11c17849829daebbebf33d92ac1158902283d0e534514aab93" >> $GITHUB_ENV
+          fi
+
       - name: Bake Docker images
         env:
           TARGETARCH: ${{ inputs.acs_version == '23' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
