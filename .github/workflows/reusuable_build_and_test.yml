@@ -116,8 +116,26 @@ jobs:
             *.output=type=registry,push=${{ env.DOCKER_PUSH }}
             ${{ steps.cache-targets.outputs.cache-set }}
 
-  compose-test:
+  build-matrix:
     needs: build
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
+    steps:
+      - name: Calculate values for compose
+        id: compose-values
+        run: |
+          echo "matrix_json=$(
+            if [[ '${{ inputs.acs_version }}' == '23' ]]; then
+              jq -n '{"edition": ["enterprise", "community"]}'
+            elif [[ '${{ inputs.acs_version }}' == '74' ]]; then
+              jq -n '{"edition": ["74"]}'
+            else
+              jq -n '{"edition": []}'
+            fi
+          )" >> $GITHUB_OUTPUT
+
+  compose-test:
+    needs: build-matrix
     runs-on: ${{ matrix.edition == 'enterprise' && 'alfrescoPub-ubuntu2204-16G-4CPU' || 'ubuntu-latest' }}
     if: github.actor != 'dependabot[bot]'
     strategy:
@@ -166,7 +184,7 @@ jobs:
           output-archive-name: ${{ matrix.edition }}-logs-${{ inputs.acs_version }}
 
   helm-test:
-    needs: build
+    needs: build-matrix
     runs-on: ${{ matrix.arch == 'arm64' && 'alfrescoARM-ubuntu2404-16G-4CPU' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
     if: github.actor != 'dependabot[bot]'
     strategy:
