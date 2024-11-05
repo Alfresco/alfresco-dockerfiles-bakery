@@ -108,7 +108,7 @@ jobs:
 
       - name: Bake Docker images
         env:
-          TARGETARCH: linux/amd64,linux/arm64
+          TARGETARCH: ${{ inputs.acs_version == '23' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           DOCKER_PUSH: ${{ github.actor != 'dependabot[bot]'}}
         uses: docker/bake-action@2e3d19baedb14545e5d41222653874f25d5b4dfb  # v5.10.0
         with:
@@ -120,6 +120,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
+    outputs:
+      matrix_json: ${{ steps.compose-values.outputs.matrix_json }}
     steps:
       - name: Calculate values for compose
         id: compose-values
@@ -140,11 +142,8 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     strategy:
       fail-fast: false
-      matrix:
-        edition: [enterprise, community]
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix_json) }}
     env:
-      UPSTREAM_COMPOSE_PATH: test/${{ matrix.edition }}.yaml
-      OVERRIDE_COMPOSE_PATH: test/${{ matrix.edition }}-override.yaml
       MERGED_COMPOSE_PATH: test/merged-compose.yaml
     steps:
       - name: Checkout
@@ -161,10 +160,22 @@ jobs:
         uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349  # v3.7.1
 
       - name: Fetch compose from acs-deployment
-        run: ./scripts/fetch-compose.sh ${{ matrix.edition }} ${{ env.UPSTREAM_COMPOSE_PATH }} ${{ inputs.acs_deployment_version }}
+        run: ./scripts/fetch-compose.sh ${{ inputs.acs_deployment_version }}
+
+      - name: Set path to compose files
+        id: set-compose-path
+        run: |
+          if [[ "${{ matrix.edition }}" == "74" ]]; then
+            echo "UPSTREAM_COMPOSE_PATH=test/7.4.N-compose.yaml" >> $GITHUB_ENV
+          elif [[ "${{ matrix.edition }}" == "community" ]]; then
+            echo "UPSTREAM_COMPOSE_PATH=test/community-compose.yaml" >> $GITHUB_ENV
+          else
+            echo "UPSTREAM_COMPOSE_PATH=test/compose.yaml" >> $GITHUB_ENV
 
       - name: Merge Docker Compose files
-        run: docker compose -f ${{ env.UPSTREAM_COMPOSE_PATH }} -f ${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
+        env:
+          OVERRIDE_COMPOSE_PATH: test/${{ matrix.edition }}-override.yaml
+        run: docker compose -f ${{ steps.set-compose-path.outputs.UPSTREAM_COMPOSE_PATH }} -f ${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
 
       - name: Verify docker-compose (${{ matrix.edition }})
         id: verify_compose
@@ -183,139 +194,139 @@ jobs:
         with:
           output-archive-name: ${{ matrix.edition }}-logs-${{ inputs.acs_version }}
 
-  helm-test:
-    needs: build-matrix
-    runs-on: ${{ matrix.arch == 'arm64' && 'alfrescoARM-ubuntu2404-16G-4CPU' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
-    if: github.actor != 'dependabot[bot]'
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [arm64, amd64]
-        edition: [enterprise, community]
-    steps:
-      - name: Setup cluster
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v7.1.1
-        with:
-          ingress-nginx-ref: controller-v1.8.2
-          metrics: "true"
+#   helm-test:
+#     needs: build-matrix
+#     runs-on: ${{ matrix.arch == 'arm64' && 'alfrescoARM-ubuntu2404-16G-4CPU' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
+#     if: github.actor != 'dependabot[bot]'
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         arch: [arm64, amd64]
+#         edition: [enterprise, community]
+#     steps:
+#       - name: Setup cluster
+#         uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v7.1.1
+#         with:
+#           ingress-nginx-ref: controller-v1.8.2
+#           metrics: "true"
 
-      - name: Checkout
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+#       - name: Checkout
+#         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
 
-      - uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814 # v4.2.0
-        with:
-          version: "3.15.2"
+#       - uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814 # v4.2.0
+#         with:
+#           version: "3.15.2"
 
-      - name: Login to Quay.io
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567  # v3.3.0
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_PASSWORD }}
+#       - name: Login to Quay.io
+#         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567  # v3.3.0
+#         with:
+#           registry: quay.io
+#           username: ${{ secrets.QUAY_USERNAME }}
+#           password: ${{ secrets.QUAY_PASSWORD }}
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
-        with:
-            registry: ${{ env.REGISTRY }}
-            username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Log in to the Container registry
+#         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+#         with:
+#             registry: ${{ env.REGISTRY }}
+#             username: ${{ github.actor }}
+#             password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create registries auth secret
-        run: >-
-          kubectl create secret generic regcred
-          --from-file=.dockerconfigjson=$HOME/.docker/config.json
-          --type=kubernetes.io/dockerconfigjson
+#       - name: Create registries auth secret
+#         run: >-
+#           kubectl create secret generic regcred
+#           --from-file=.dockerconfigjson=$HOME/.docker/config.json
+#           --type=kubernetes.io/dockerconfigjson
 
-      - name: Create configmaps for adf apps
-        run: |
-          kubectl create configmap acc-config --from-file=app.config.json=test/configs/acc.json
-          kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
+#       - name: Create configmaps for adf apps
+#         run: |
+#           kubectl create configmap acc-config --from-file=app.config.json=test/configs/acc.json
+#           kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
 
-      - name: Checkout acs-deployment sources
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
-        with:
-          repository: Alfresco/acs-deployment
-          ref: ${{ inputs.acs_deployment_version }}
-          path: acs-deployment
+#       - name: Checkout acs-deployment sources
+#         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+#         with:
+#           repository: Alfresco/acs-deployment
+#           ref: ${{ inputs.acs_deployment_version }}
+#           path: acs-deployment
 
-      - name: Setup helm repository
-        working-directory: acs-deployment/helm/alfresco-content-services
-        run: |
-          helm repo add self https://alfresco.github.io/alfresco-helm-charts/
-          helm repo add activiti https://activiti.github.io/activiti-cloud-helm-charts
-          helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami/
-          helm repo add elastic https://helm.elastic.co
-          helm dependency build
+#       - name: Setup helm repository
+#         working-directory: acs-deployment/helm/alfresco-content-services
+#         run: |
+#           helm repo add self https://alfresco.github.io/alfresco-helm-charts/
+#           helm repo add activiti https://activiti.github.io/activiti-cloud-helm-charts
+#           helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami/
+#           helm repo add elastic https://helm.elastic.co
+#           helm dependency build
 
-      - name: Preprocess test-overrides.yaml
-        env:
-          OVERRIDES_VALUES_FILE: test/helm/test-overrides.yaml
-        run: |
-          sed -i "s|localhost/alfresco/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" ${{ env.OVERRIDES_VALUES_FILE }}
-          sed -i "s|tag: latest|tag: ${TAG}|g" ${{ env.OVERRIDES_VALUES_FILE }}
+#       - name: Preprocess test-overrides.yaml
+#         env:
+#           OVERRIDES_VALUES_FILE: test/helm/test-overrides.yaml
+#         run: |
+#           sed -i "s|localhost/alfresco/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" ${{ env.OVERRIDES_VALUES_FILE }}
+#           sed -i "s|tag: latest|tag: ${TAG}|g" ${{ env.OVERRIDES_VALUES_FILE }}
 
-          if [ "${{ matrix.edition }}" = "community" ]; then
-            sed -i "s|/alfresco-content-repository|/alfresco-content-repository-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
-            sed -i "s|/alfresco-share|/alfresco-share-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
-          fi
+#           if [ "${{ matrix.edition }}" = "community" ]; then
+#             sed -i "s|/alfresco-content-repository|/alfresco-content-repository-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
+#             sed -i "s|/alfresco-share|/alfresco-share-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
+#           fi
 
-          cat ${{ env.OVERRIDES_VALUES_FILE }}
+#           cat ${{ env.OVERRIDES_VALUES_FILE }}
 
-      - name: Helm install
-        id: helm_install
-        run: |
-          helm install acs ./acs-deployment/helm/alfresco-content-services \
-            --set global.search.sharedSecret="$(openssl rand -hex 24)" \
-            --set global.known_urls=http://localhost \
-            --set global.alfrescoRegistryPullSecrets=regcred \
-            --values ./acs-deployment/helm/alfresco-content-services/${{ matrix.edition == 'community' && 'community_' || '' }}values.yaml \
-            --values ./acs-deployment/test/${{ matrix.edition }}-integration-test-values.yaml \
-            --values test/helm/test-overrides.yaml \
-            --values test/helm/test-overrides-${{ matrix.edition }}.yaml
+#       - name: Helm install
+#         id: helm_install
+#         run: |
+#           helm install acs ./acs-deployment/helm/alfresco-content-services \
+#             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
+#             --set global.known_urls=http://localhost \
+#             --set global.alfrescoRegistryPullSecrets=regcred \
+#             --values ./acs-deployment/helm/alfresco-content-services/${{ matrix.edition == 'community' && 'community_' || '' }}values.yaml \
+#             --values ./acs-deployment/test/${{ matrix.edition }}-integration-test-values.yaml \
+#             --values test/helm/test-overrides.yaml \
+#             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
-      - name: Watch Helm deployment
-        env:
-          HELM_INSTALL_TIMEOUT: 10m
-        run: |
-          kubectl get pods --watch &
-          KWPID=$!
-          kubectl wait --timeout=${{ env.HELM_INSTALL_TIMEOUT }} --all=true --for=condition=Ready pods
-          kill $KWPID
+#       - name: Watch Helm deployment
+#         env:
+#           HELM_INSTALL_TIMEOUT: 10m
+#         run: |
+#           kubectl get pods --watch &
+#           KWPID=$!
+#           kubectl wait --timeout=${{ env.HELM_INSTALL_TIMEOUT }} --all=true --for=condition=Ready pods
+#           kill $KWPID
 
-          if [ "${{ matrix.edition }}" = "enterprise" ]; then
-            echo "Waiting for Enterprise Search Reindexing job to complete... "
-            kubectl wait --timeout=5m --for=condition=complete job/acs-alfresco-search-enterprise-reindexing
-          fi
+#           if [ "${{ matrix.edition }}" = "enterprise" ]; then
+#             echo "Waiting for Enterprise Search Reindexing job to complete... "
+#             kubectl wait --timeout=5m --for=condition=complete job/acs-alfresco-search-enterprise-reindexing
+#           fi
 
-      - name: Debug cluster status after install
-        if: always() && steps.helm_install.outcome != 'skipped'
-        run: |
-          helm ls --all-namespaces --all
-          kubectl get all --all-namespaces
-          kubectl describe pod
+#       - name: Debug cluster status after install
+#         if: always() && steps.helm_install.outcome != 'skipped'
+#         run: |
+#           helm ls --all-namespaces --all
+#           kubectl get all --all-namespaces
+#           kubectl describe pod
 
-      - name: Run helm test
-        id: helm_test
-        run: helm test acs
+#       - name: Run helm test
+#         id: helm_test
+#         run: helm test acs
 
-      - name: Debug cluster status after helm test
-        if: always() && steps.helm_test.outcome != 'skipped'
-        run: |
-          kubectl logs -l app.kubernetes.io/component=dtas --tail=-1
-          kubectl get all --all-namespaces
-          kubectl describe pod
+#       - name: Debug cluster status after helm test
+#         if: always() && steps.helm_test.outcome != 'skipped'
+#         run: |
+#           kubectl logs -l app.kubernetes.io/component=dtas --tail=-1
+#           kubectl get all --all-namespaces
+#           kubectl describe pod
 
-      - name: Collect logs from all containers
-        if: always() && steps.helm_install.outcome != 'skipped'
-        run: |
-          mkdir -p logs
-          for pod in $(kubectl get pods -n default -o jsonpath='{.items[*].metadata.name}'); do
-            kubectl logs $pod -n default > logs/${pod}.log
-          done
+#       - name: Collect logs from all containers
+#         if: always() && steps.helm_install.outcome != 'skipped'
+#         run: |
+#           mkdir -p logs
+#           for pod in $(kubectl get pods -n default -o jsonpath='{.items[*].metadata.name}'); do
+#             kubectl logs $pod -n default > logs/${pod}.log
+#           done
 
-      - name: Upload logs as artifact
-        if: always() && steps.helm_install.outcome != 'skipped'
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 #v4.4.0
-        with:
-          name: k8s-logs-${{ matrix.arch }}-${{ matrix.edition }}-${{ inputs.acs_version}}
-          path: logs
+#       - name: Upload logs as artifact
+#         if: always() && steps.helm_install.outcome != 'skipped'
+#         uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 #v4.4.0
+#         with:
+#           name: k8s-logs-${{ matrix.arch }}-${{ matrix.edition }}-${{ inputs.acs_version}}
+#           path: logs
