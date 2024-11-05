@@ -150,7 +150,7 @@ jobs:
           if [[ '${{ inputs.acs_version }}' == '23' ]]; then
             helm_matrix_json='{"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}'
           elif [[ '${{ inputs.acs_version }}' == '74' ]]; then
-            helm_matrix_json='{"arch": ["amd64"], "edition": ["enterprise"]}'
+            helm_matrix_json='{"arch": ["amd64"], "edition": ["74"]}'
           fi
           echo "helm_matrix_json=$helm_matrix_json" >> $GITHUB_OUTPUT
 
@@ -289,6 +289,17 @@ jobs:
 
           cat ${{ env.OVERRIDES_VALUES_FILE }}
 
+      - name: Set path to compose files
+        id: set-helm-values
+        run: |
+          if [[ "${{ matrix.edition }}" == "74" ]]; then
+            echo "UPSTREAM_HELM_VALUES=7.4.N_values.yaml" >> $GITHUB_ENV
+          elif [[ "${{ matrix.edition }}" == "community" ]]; then
+            echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
+          else
+            echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
+          fi
+
       - name: Helm install
         id: helm_install
         run: |
@@ -296,7 +307,7 @@ jobs:
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
             --set global.known_urls=http://localhost \
             --set global.alfrescoRegistryPullSecrets=regcred \
-            --values ./acs-deployment/helm/alfresco-content-services/${{ matrix.edition == 'community' && 'community_' || '' }}values.yaml \
+            --values ./acs-deployment/helm/alfresco-content-services/${{ env.UPSTREAM_HELM_VALUES }} \
             --values ./acs-deployment/test/${{ matrix.edition == 'community' && 'community' || 'enterprise' }}-integration-test-values.yaml \
             --values test/helm/test-overrides.yaml \
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
