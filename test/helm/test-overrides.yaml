@@ -8,7 +8,6 @@ share:
     repository: localhost/alfresco/alfresco-share
     tag: latest
 alfresco-search:
-  enabled: false
   image:
     repository: localhost/alfresco/alfresco-search-service
     tag: latest
