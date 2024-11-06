@@ -150,27 +150,16 @@ target "java_base" {
   platforms = split(",", "${TARGETARCH}")
 }
 
-variable "ACS_VERSION" {
-  default = "23"
-}
-
-function "determine_tomcat_version" {
-  params = [acs_version, tomcat10, tomcat9]
-  result = acs_version == "23" ? tomcat10 : tomcat9
-}
-
 variable "TOMCAT_MAJOR" {
-  default = determine_tomcat_version("${ACS_VERSION}", "10", "9")
+  default = "10"
 }
 
 variable "TOMCAT_VERSION" {
-  default = determine_tomcat_version("${ACS_VERSION}", "10.1.31", "9.0.96")
+  default = "10.1.31"
 }
 
 variable "TOMCAT_SHA512" {
-  default = determine_tomcat_version("${ACS_VERSION}",
-  "0e3d423a843e2d9ba4f28a9f0a2f1073d5a1389557dfda041759f8df968bace63cd6948bd76df2727b5133ddb7c33e05dab43cea1d519ca0b6d519461152cce9",
-  "ef3ac81debbc3a519c43d1fdb1c88ab26a8052af424d81bceccfbd6e663050a06d7aad7960fd5d11c17849829daebbebf33d92ac1158902283d0e534514aab93")
+  default = "0e3d423a843e2d9ba4f28a9f0a2f1073d5a1389557dfda041759f8df968bace63cd6948bd76df2727b5133ddb7c33e05dab43cea1d519ca0b6d519461152cce9"
 }
 
 variable "TCNATIVE_VERSION" {

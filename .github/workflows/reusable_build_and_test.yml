@@ -97,9 +97,15 @@ jobs:
           '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ inputs.tag }}-\(.)"' >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
+      - name: Determine the tomcat version using script
+        run: |
+          ./scripts/determine-tomcat-version.sh ${{ inputs.acs_version }}
+          echo "TOMCAT_MAJOR=${TOMCAT_MAJOR}" >> $GITHUB_ENV
+          echo "TOMCAT_VERSION=${TOMCAT_VERSION}" >> $GITHUB_ENV
+          echo "TOMCAT_SHA512=${TOMCAT_SHA512}" >> $GITHUB_ENV
+
       - name: Bake Docker images
         env:
-          ACS_VERSION: ${{ inputs.acs_version }}
           TARGETARCH: ${{ inputs.acs_version == '23' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           DOCKER_PUSH: ${{ github.actor != 'dependabot[bot]'}}
         uses: docker/bake-action@2e3d19baedb14545e5d41222653874f25d5b4dfb  # v5.10.0
