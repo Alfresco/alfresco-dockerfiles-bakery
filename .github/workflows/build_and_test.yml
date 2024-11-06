@@ -43,15 +43,12 @@ jobs:
           auto-commit: "true"
   CI:
     needs: pre-commit
-    uses: ./.github/workflows/reusuable_build_and_test.yml
+    uses: ./.github/workflows/reusable_build_and_test.yml
     strategy:
       fail-fast: false
       matrix:
         version: [23, 74]
     with:
-      registry: ghcr.io
-      registry_namespace: alfresco
       tag: ${{ github.event_name == 'pull_request' && format('pr-{0}-v{1}', github.event.pull_request.number, matrix.version) || format('{0}-v{1}', github.ref_name, matrix.version) }}
-      acs_deployment_version: 78132d95e29d7126025e127740d10cf958164947 # 8.6.0-alpha.0 with compose healthcheck
       acs_version: ${{ matrix.version }}
     secrets: inherit
