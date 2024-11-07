@@ -97,12 +97,18 @@ jobs:
           '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ inputs.tag }}-\(.)"' >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
-      - name: Determine the tomcat version using script
+      - name: Determine the tomcat version
+        env:
+          TOMCAT_VERSIONS_FILE: "tomcat/tomcat_versions.yaml"
         run: |
-          source ./scripts/determine-tomcat-version.sh ${{ inputs.acs_version }}
-          echo "TOMCAT_MAJOR=${TOMCAT_MAJOR}" >> $GITHUB_ENV
-          echo "TOMCAT_VERSION=${TOMCAT_VERSION}" >> $GITHUB_ENV
-          echo "TOMCAT_SHA512=${TOMCAT_SHA512}" >> $GITHUB_ENV
+          if [[ ${{ inputs.acs_version }} == "23" ]]; then
+            tomcat_field="tomcat10"
+          else
+            tomcat_field="tomcat9"
+          fi
+          echo "TOMCAT_MAJOR=$(yq e ".${tomcat_field}.major" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
+          echo "TOMCAT_VERSION=$(yq e ".${tomcat_field}.version" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
+          echo "TOMCAT_SHA512=$(yq e ".${tomcat_field}.sha512"  ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
 
       - name: Bake Docker images
         env:

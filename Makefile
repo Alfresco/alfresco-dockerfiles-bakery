@@ -28,6 +28,19 @@ help:
 	@echo "  all_ci             Build all images including cleanup for Continuous Integration"
 	@echo "  help               Display this help message"
 
+ACS_VERSION ?= 23
+TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
+
+ifeq ($(ACS_VERSION), 23)
+  TOMCAT_FIELD := "tomcat10"
+else
+  TOMCAT_FIELD := "tomcat9"
+endif
+
+TOMCAT_MAJOR := $(shell yq e '.${TOMCAT_FIELD}.major' $(TOMCAT_VERSIONS_FILE))
+TOMCAT_VERSION := $(shell yq e '.${TOMCAT_FIELD}.version' $(TOMCAT_VERSIONS_FILE))
+TOMCAT_SHA512 := $(shell yq e '.${TOMCAT_FIELD}.sha512' $(TOMCAT_VERSIONS_FILE))
+
 setenv: auth
 ifdef BAKE_NO_CACHE
 DOCKER_BAKE_ARGS += --no-cache
