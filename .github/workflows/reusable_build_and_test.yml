@@ -137,6 +137,9 @@ jobs:
           elif [[ "${{ inputs.acs_version }}" == "74" ]]; then
             echo 'compose_matrix_json={"edition": ["74"]}' >> $GITHUB_OUTPUT
             echo 'helm_matrix_json={"arch": ["amd64"], "edition": ["74"]}' >> $GITHUB_OUTPUT
+          elif [[ "${{ inputs.acs_version }}" == "73" ]]; then
+            echo 'compose_matrix_json={"edition": ["73"]}' >> $GITHUB_OUTPUT
+            echo 'helm_matrix_json={"arch": ["amd64"], "edition": ["73"]}' >> $GITHUB_OUTPUT
           fi
 
   compose-test:
@@ -170,6 +173,8 @@ jobs:
         run: |
           if [[ "${{ matrix.edition }}" == "74" ]]; then
             echo "UPSTREAM_COMPOSE_PATH=test/7.4.N-compose.yaml" >> $GITHUB_ENV
+          elif [[ "${{ matrix.edition }}" == "73" ]]; then
+            echo "UPSTREAM_COMPOSE_PATH=test/7.3.N-compose.yaml" >> $GITHUB_ENV
           elif [[ "${{ matrix.edition }}" == "community" ]]; then
             echo "UPSTREAM_COMPOSE_PATH=test/community-compose.yaml" >> $GITHUB_ENV
           else
@@ -279,6 +284,8 @@ jobs:
         run: |
           if [[ "${{ matrix.edition }}" == "74" ]]; then
             echo "UPSTREAM_HELM_VALUES=7.4.N_values.yaml" >> $GITHUB_ENV
+          elif [[ "${{ matrix.edition }}" == "73" ]]; then
+            echo "UPSTREAM_HELM_VALUES=7.3.N_values.yaml" >> $GITHUB_ENV
           elif [[ "${{ matrix.edition }}" == "community" ]]; then
             echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
           else

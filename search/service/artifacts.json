@@ -19,6 +19,16 @@
         "repository": "releases",
         "group": "org.alfresco"
       }
+    ],
+    "acs73": [
+      {
+        "name": "alfresco-search-services",
+        "version": "2.0.12",
+        "path": "search/service/distribution",
+        "classifier": ".zip",
+        "repository": "releases",
+        "group": "org.alfresco"
+      }
     ]
   }
 }

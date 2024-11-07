@@ -19,6 +19,16 @@
         "repository": "enterprise-releases",
         "group": "org.alfresco"
       }
+    ],
+    "acs73": [
+      {
+        "name": "alfresco-ms-teams-springboot",
+        "version": "1.1.0",
+        "path": "connector/msteams",
+        "classifier": ".jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      }
     ]
   }
 }

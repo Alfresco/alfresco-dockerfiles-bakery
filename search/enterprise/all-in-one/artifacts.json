@@ -19,6 +19,16 @@
         "repository": "enterprise-releases",
         "group": "org.alfresco"
       }
+    ],
+    "acs73": [
+      {
+        "name": "alfresco-elasticsearch-live-indexing",
+        "version": "3.2.1",
+        "path": "search/enterprise/all-in-one",
+        "classifier": "-app.jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      }
     ]
   }
 }

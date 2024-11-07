@@ -19,6 +19,16 @@
         "repository": "releases",
         "group": "org.alfresco"
       }
+    ],
+    "acs73": [
+      {
+        "name": "alfresco-transform-core-aio",
+        "version": "3.1.2",
+        "path": "tengine/aio",
+        "classifier": ".jar",
+        "repository": "releases",
+        "group": "org.alfresco"
+      }
     ]
   }
 }
