@@ -1,5 +1,4 @@
-name: Build and Test
-run-name: Build v${{ inputs.acs_version }}
+name: CI
 
 on:
   workflow_call:
