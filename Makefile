@@ -68,7 +68,7 @@ clean_caches:
 	@echo "Cleaning up Docker cache"
 	docker builder prune -f
 	@echo "Cleaning up Artifacts cache"
-	rm -fr artifacts_cache
+	find artifacts_cache/ ! -name .gitkeep -mindepth 1 -delete
 
 ## PREPARE TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
