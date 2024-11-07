@@ -62,14 +62,6 @@
         "group": "org.alfresco"
       },
       {
-        "name": "alfresco-pdf-renderer",
-        "version": "1.1",
-        "path": "tengine/pdfrenderer",
-        "classifier": "-linux-arm.tgz",
-        "repository": "releases",
-        "group": "org.alfresco"
-      },
-      {
         "name": "alfresco-transform-pdf-renderer",
         "version": "3.1.2",
         "path": "tengine/pdfrenderer",
