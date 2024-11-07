@@ -5,16 +5,15 @@ REPO_ROOT="$(dirname $0)/.."
 TEMP_DIR=$(mktemp -d)
 
 ACS_VERSION=${ACS_VERSION:=23}
-INDEX_KEY=${ACS_VERSION}
 
 do_fetch_mvn() {
-  for i in $(jq -r ".artifacts.acs${INDEX_KEY} | keys | .[]" $1); do
-    ARTIFACT_REPO=$(jq -r ".artifacts.acs${INDEX_KEY}[$i].repository" $1)
-    ARTIFACT_NAME=$(jq -r ".artifacts.acs${INDEX_KEY}[$i].name" $1)
-    ARTIFACT_VERSION=$(jq -r ".artifacts.acs${INDEX_KEY}[$i].version" $1)
-    ARTIFACT_EXT=$(jq -r ".artifacts.acs${INDEX_KEY}[$i].classifier" $1)
-    ARTIFACT_GROUP=$(jq -r ".artifacts.acs${INDEX_KEY}[$i].group" $1)
-    ARTIFACT_PATH=$(jq -r ".artifacts.acs${INDEX_KEY}[$i].path" $1)
+  for i in $(jq -r ".artifacts.acs${ACS_VERSION} | keys | .[]" $1); do
+    ARTIFACT_REPO=$(jq -r ".artifacts.acs${ACS_VERSION}[$i].repository" $1)
+    ARTIFACT_NAME=$(jq -r ".artifacts.acs${ACS_VERSION}[$i].name" $1)
+    ARTIFACT_VERSION=$(jq -r ".artifacts.acs${ACS_VERSION}[$i].version" $1)
+    ARTIFACT_EXT=$(jq -r ".artifacts.acs${ACS_VERSION}[$i].classifier" $1)
+    ARTIFACT_GROUP=$(jq -r ".artifacts.acs${ACS_VERSION}[$i].group" $1)
+    ARTIFACT_PATH=$(jq -r ".artifacts.acs${ACS_VERSION}[$i].path" $1)
     ARTIFACT_BASEURL="https://nexus.alfresco.com/nexus/repository/${ARTIFACT_REPO}"
     ARTIFACT_TMP_PATH="${TEMP_DIR}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}"
     ARTIFACT_CACHE_PATH="${REPO_ROOT}/artifacts_cache/${ARTIFACT_NAME}-${ARTIFACT_VERSION}${ARTIFACT_EXT}"

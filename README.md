@@ -36,7 +36,7 @@ Building images requires the following tools:
 - A recent enough Docker installation (with buildx support)
 - Credentials to access the Alfresco artifacts (Nexus server), if building
   Enterprise images
-- Some common unix tools: `jq`, `wget`, `make`
+- Some common unix tools: `jq`, `yq`, `wget`, `make`
 
 ### Nexus authentication
 
