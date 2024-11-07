@@ -27,7 +27,7 @@
         "path": "adf-apps/acc",
         "classifier": ".zip",
         "group": "org.alfresco",
-        "repository": "releases"
+        "repository": "internal-releases"
       }
     ]
   }
