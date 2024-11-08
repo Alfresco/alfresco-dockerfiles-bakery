@@ -10,7 +10,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 ACS_DEPLOYMENT_VERSION="$1"
-COMPOSE_FILES=(compose.yaml community-compose.yaml 7.4.N-compose.yaml)
+COMPOSE_FILES=(compose.yaml community-compose.yaml 7.4.N-compose.yaml 7.3.N-compose.yaml)
 DESTINATION_DIR="$(dirname "$0")/../test"
 
 for COMPOSE_FILE in "${COMPOSE_FILES[@]}"; do
