@@ -1,0 +1,24 @@
+alfresco-search:
+  enabled: true
+alfresco-search-enterprise:
+  enabled: false
+elasticsearch:
+  enabled: false
+elasticsearch-audit:
+  enabled: false
+kibana-audit:
+  enabled: false
+alfresco-audit-storage:
+  enabled: false
+dtas:
+  config:
+    assertions:
+      acs:
+        version: 7.3.2
+        modules:
+        - id: org.alfresco.integrations.google.docs
+          version: 3.3.1
+          installed: true
+        - id: alfresco-aos-module
+          version: 1.5.0
+          installed: true
