@@ -29,7 +29,7 @@ RUN sed -i 's|../modules/platform|modules/platform|' ${CATALINA_HOME}/conf/Catal
 RUN sed -i \
   -re "s|(appender.rolling.fileName\=)(alfresco.log)|\1${CATALINA_HOME}/logs\/\2|" \
   -re "s|(appender.rolling.filePattern=)(alfresco.log.%d\{yyyy-MM-dd\})|\1${CATALINA_HOME}/logs\/\2|" \
-  ${CATALINA_HOME}/webapps/alfresco/WEB-INF/classes/log4j2.properties
+  ${CATALINA_HOME}/webapps/alfresco/WEB-INF/classes/log4j*.properties
 
 COPY amps /tmp/amps
 COPY amps_${ALFRESCO_REPO_EDITION} /tmp/amps
