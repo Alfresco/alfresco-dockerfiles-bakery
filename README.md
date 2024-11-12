@@ -212,6 +212,14 @@ Make sets the correct version of Tomcat based on the ACS version. If you want to
 build older version of images using `docker buildx bake` it is required to set
 the Tomcat versions manually in bake file or using env variables.
 
+```sh
+export TOMCAT_VERSIONS_FILE=tomcat/tomcat_versions.yaml
+export TOMCAT_MAJOR=$(yq e '.tomcat9.major' $TOMCAT_VERSIONS_FILE)
+export TOMCAT_VERSION=$(yq e '.tomcat9.version' $TOMCAT_VERSIONS_FILE)
+export TOMCAT_SHA512=$(yq e '.tomcat9.sha512' $TOMCAT_VERSIONS_FILE)
+docker buildx bake tomcat_base
+```
+
 ## Testing locally
 
 Once the images are built, you can test them locally using either Helm or Docker Compose.
