@@ -220,6 +220,13 @@ export TOMCAT_SHA512=$(yq e '.tomcat9.sha512' $TOMCAT_VERSIONS_FILE)
 docker buildx bake tomcat_base
 ```
 
+Before switching build to other version clean the artifacts using `make clean`
+then fetch correct version with e.g.:
+
+```sh
+make prepare ACS_VERSION=74
+```
+
 ## Testing locally
 
 Once the images are built, you can test them locally using either Helm or Docker Compose.
