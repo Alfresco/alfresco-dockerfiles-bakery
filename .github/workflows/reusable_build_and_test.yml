@@ -173,17 +173,19 @@ jobs:
         run: |
           if [[ "${{ matrix.edition }}" == "74" ]]; then
             echo "UPSTREAM_COMPOSE_PATH=test/7.4.N-compose.yaml" >> $GITHUB_ENV
+            echo "OVERRIDE_COMPOSE_PATH=test/solr-search-override.yaml" >> $GITHUB_ENV
           elif [[ "${{ matrix.edition }}" == "73" ]]; then
             echo "UPSTREAM_COMPOSE_PATH=test/7.3.N-compose.yaml" >> $GITHUB_ENV
+            echo "OVERRIDE_COMPOSE_PATH=test/solr-search-override.yaml" >> $GITHUB_ENV
           elif [[ "${{ matrix.edition }}" == "community" ]]; then
             echo "UPSTREAM_COMPOSE_PATH=test/community-compose.yaml" >> $GITHUB_ENV
+            echo "OVERRIDE_COMPOSE_PATH=test/community-override.yaml" >> $GITHUB_ENV
           else
             echo "UPSTREAM_COMPOSE_PATH=test/compose.yaml" >> $GITHUB_ENV
+            echo "OVERRIDE_COMPOSE_PATH=test/enterprise-override.yaml" >> $GITHUB_ENV
           fi
 
       - name: Merge Docker Compose files
-        env:
-          OVERRIDE_COMPOSE_PATH: test/${{ matrix.edition }}-override.yaml
         run: docker compose -f ${{ env.UPSTREAM_COMPOSE_PATH }} -f ${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
 
       - name: Verify docker-compose (${{ matrix.edition }})
