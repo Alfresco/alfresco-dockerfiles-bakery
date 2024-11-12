@@ -208,8 +208,9 @@ To build older version pass `ACS_VERSION` env to make command.
 make enterprise ACS_VERSION=74
 ```
 
-Preferred way to build older versions is to do it with use of `make` command as
-it sets the correct version of Tomcat based on the ACS version.
+Make sets the correct version of Tomcat based on the ACS version. If you want to
+build older version of images using `docker buildx bake` it is required to set
+the Tomcat versions manually in bake file or using env variables.
 
 ## Testing locally
 
