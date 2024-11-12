@@ -24,6 +24,7 @@ Bake](https://docs.docker.com/build/bake/).
   - [Supported Architectures](#supported-architectures)
     - [Targeting a specific architecture](#targeting-a-specific-architecture)
     - [Multi-arch images](#multi-arch-images)
+  - [Building older versions](#building-older-versions)
   - [Testing locally](#testing-locally)
     - [Testing with helm](#testing-with-helm)
     - [Testing with docker compose](#testing-with-docker-compose)
@@ -195,6 +196,20 @@ additional argument to tell the tool to push the images to the registry:
 export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=linux/amd64,linux/arm64
 docker buildx bake repo --set *.output=type=registry,push=true
 ```
+
+## Building older versions
+
+To build older version pass `ACS_VERSION` env to make command.
+- ACS 23 (current) - `ACS_VERSION=23` - set by default
+- ACS 7.4 - `ACS_VERSION=74`
+- ACS 7.3 - `ACS_VERSION=73`
+
+```sh
+make enterprise ACS_VERSION=74
+```
+
+Preferred way to build older versions is to do it with use of `make` command as
+it sets the correct version of Tomcat based on the ACS version.
 
 ## Testing locally
 
