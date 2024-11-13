@@ -226,7 +226,7 @@ Before switching build to other version clean the artifacts using `make clean`
 then fetch correct version with e.g.:
 
 ```sh
-make prepare ACS_VERSION=74
+make clean prepare ACS_VERSION=74
 ```
 
 ## Testing locally
