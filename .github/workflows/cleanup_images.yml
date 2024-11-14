@@ -21,6 +21,16 @@ on:
         required: false
         type: boolean
         default: false
+      clean-old-cache:
+        description: Delete old cache images
+        required: false
+        type: boolean
+        default: false
+      old-cache-period:
+        description: Period to keep cache images
+        required: false
+        type: string
+        default: 2 weeks
 
 env:
   ORG: Alfresco
@@ -62,18 +72,18 @@ jobs:
           delete-tags: ${{ env.PR_TAGS }}
           dry-run: false
 
-      - name: Remove ${{ env.CACHE_REPO }} tags older than ${{ env.PERIOD }} after PR is closed
+      - name: Remove ${{ env.CACHE_REPO }} tags older than ${{ env.PERIOD }} when requested
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.clean-old-cache)
         env:
-          PERIOD: 2 weeks
+          PERIOD: ${{ github.event_name == 'workflow_dispatch' && inputs.old-cache-period || (github.event_name != 'workflow_dispatch' && '2 weeks') }}
         with:
           token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.CACHE_REPO }}
           older-than: ${{ env.PERIOD }}
-          dry-run: false
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
 
       - name: Remove images when requested
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
