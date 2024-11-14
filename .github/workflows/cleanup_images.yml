@@ -62,6 +62,19 @@ jobs:
           delete-tags: ${{ env.PR_TAGS }}
           dry-run: false
 
+      - name: Remove ${{ env.CACHE_REPO }} tags older than ${{ env.PERIOD }} after PR is closed
+        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
+        if: github.event_name == 'pull_request'
+        env:
+          PERIOD: 2 weeks
+        with:
+          token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
+          owner: ${{ env.ORG }}
+          repository: ${{ env.REPO }}
+          packages: ${{ env.CACHE_REPO }}
+          older-than: ${{ env.PERIOD }}
+          dry-run: false
+
       - name: Remove images when requested
         uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
