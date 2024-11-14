@@ -87,15 +87,15 @@ jobs:
           older-than: ${{ env.PERIOD }}
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
 
-      # - name: Remove images when requested
-      #   uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
-      #   if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-      #   with:
-      #     token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
-      #     owner: ${{ env.ORG }}
-      #     repository: ${{ env.REPO }}
-      #     packages: ${{ env.PACKAGE_NAMES }},${{ env.CACHE_REPO }}
-      #     delete-untagged: ${{ github.event_name == 'schedule' || inputs.untagged }}
-      #     delete-tags: ${{ github.event.inputs.tags }}
-      #     use-regex: true
-      #     dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
+      - name: Remove images when requested
+        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        with:
+          token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
+          owner: ${{ env.ORG }}
+          repository: ${{ env.REPO }}
+          packages: ${{ env.PACKAGE_NAMES }},${{ env.CACHE_REPO }}
+          delete-untagged: ${{ github.event_name == 'schedule' || inputs.untagged }}
+          delete-tags: ${{ github.event.inputs.tags }}
+          use-regex: true
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
