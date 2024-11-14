@@ -82,6 +82,7 @@ jobs:
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.CACHE_REPO }}
+          delete-untagged: false
           older-than: ${{ env.PERIOD }}
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
 
