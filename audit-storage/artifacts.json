@@ -4,7 +4,7 @@
       {
         "name": "alfresco-audit-storage-app",
         "version": "1.0.0",
-        "path": "connector/audit",
+        "path": "audit-storage",
         "classifier": ".jar",
         "repository": "enterprise-releases",
         "group": "org.alfresco"
