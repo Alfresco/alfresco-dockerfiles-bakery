@@ -7,7 +7,8 @@ ARG ALFRESCO_AUDIT_STORAGE_GROUP_ID
 ARG ALFRESCO_AUDIT_STORAGE_USER_NAME
 ARG ALFRESCO_AUDIT_STORAGE_USER_ID
 
-ADD alfresco-audit-storage-app*.jar /opt/app.jar
+COPY alfresco-audit-storage-app*.jar /opt/app.jar
+COPY --from=local alfresco-audit-storage-app*.jar /opt/app.jar
 
 RUN groupadd -g ${ALFRESCO_AUDIT_STORAGE_GROUP_ID} ${ALFRESCO_AUDIT_STORAGE_GROUP_NAME} && \
     useradd -u ${ALFRESCO_AUDIT_STORAGE_USER_ID} -g ${ALFRESCO_AUDIT_STORAGE_GROUP_NAME} ${ALFRESCO_AUDIT_STORAGE_USER_NAME} && \
@@ -15,5 +16,6 @@ RUN groupadd -g ${ALFRESCO_AUDIT_STORAGE_GROUP_ID} ${ALFRESCO_AUDIT_STORAGE_GROU
 
 USER ${ALFRESCO_AUDIT_STORAGE_USER_NAME}
 
-COPY entrypoint.sh /entrypoint.sh
+ADD entrypoint.sh /entrypoint.sh
+
 CMD ["/entrypoint.sh"]

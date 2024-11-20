@@ -801,6 +801,7 @@ target "audit-storage" {
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
+    local = "cwd://audit-storage"
     java_base = "target:java_base"
   }
   args = {
