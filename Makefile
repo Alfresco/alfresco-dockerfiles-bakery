@@ -11,6 +11,8 @@ help:
 	@echo ""
 	@echo "Targets:"
 	@echo "  all                Build all images"
+	@echo "  enterprise         Build enterprise images"
+	@echo "  community          Build community images"
 	@echo "  adf_apps           Build ADF Apps images"
 	@echo "  ats                Build Transform Service images"
 	@echo "  connectors         Build Connector images"
@@ -23,9 +25,6 @@ help:
 	@echo "  =================="
 	@echo "  clean              Clean up Nexus artifacts"
 	@echo "  clean_caches       Clean up Docker and artifact caches"
-	@echo "  prepare            Prepare the environment for building"
-	@echo "  auth               Authenticate with the Docker registry"
-	@echo "  all_ci             Build all images including cleanup for Continuous Integration"
 	@echo "  help               Display this help message"
 
 ACS_VERSION ?= 23
