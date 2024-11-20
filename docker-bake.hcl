@@ -3,7 +3,7 @@ group "default" {
 }
 
 group "enterprise" {
-  targets = ["content_service_enterprise", "search_enterprise", "ats", "tengines", "connectors", "adf_apps", "sync"]
+  targets = ["content_service_enterprise", "search_enterprise", "ats", "tengines", "connectors", "adf_apps", "sync", "audit_storage"]
 }
 
 group "community" {
@@ -11,7 +11,7 @@ group "community" {
 }
 
 group "content_service_enterprise" {
-  targets = ["repository_enterprise", "share_enterprise"]
+  targets = ["repository_enterprise", "share_enterprise", "audit_storage"]
 }
 
 group "content_service_community" {
@@ -784,6 +784,37 @@ target "sync" {
     "org.opencontainers.image.description" = "Alfresco Sync Service"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-sync-service:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
+
+variable "ALFRESCO_AUDIT_STORAGE_USER_NAME" {
+  default = "auditstorage"
+}
+
+variable "ALFRESCO_AUDIT_STORAGE_USER_ID" {
+  default = "33008"
+}
+
+target "audit-storage" {
+  context = "./audit-storage"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_AUDIT_STORAGE_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_AUDIT_STORAGE_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_AUDIT_STORAGE_USER_NAME = "${ALFRESCO_AUDIT_STORAGE_USER_NAME}"
+    ALFRESCO_AUDIT_STORAGE_USER_ID = "${ALFRESCO_AUDIT_STORAGE_USER_ID}"
+  }
+  labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Audit Storage"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's Audit Storage"
+    "org.opencontainers.image.description" = "Alfresco Audit Storage for repository events"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-audit-storage:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
