@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "acs23": [
+      {
+        "name": "alfresco-audit-storage-app",
+        "version": "1.0.0",
+        "path": "connector/audit",
+        "classifier": ".jar",
+        "repository": "enterprise-releases",
+        "group": "org.alfresco"
+      }
+    ]
+  }
+}
