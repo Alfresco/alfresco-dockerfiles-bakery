@@ -3,7 +3,15 @@ group "default" {
 }
 
 group "enterprise" {
-  targets = ["content_service_enterprise", "search_enterprise", "ats", "tengines", "connectors", "adf_apps", "sync", "audit_storage"]
+  targets = [
+    "content_service_enterprise",
+    "search_enterprise",
+    "ats",
+    "tengines",
+    "connectors",
+    "adf_apps",
+    "sync"
+  ]
 }
 
 group "community" {
@@ -11,7 +19,16 @@ group "community" {
 }
 
 group "content_service_enterprise" {
-  targets = ["repository_enterprise", "share_enterprise", "audit_storage"]
+  targets = trim_from_acs7(
+    [
+      "repository_enterprise",
+      "share_enterprise",
+      "audit_storage"
+    ],
+    [
+      "audit_storage"
+    ]
+  )
 }
 
 group "content_service_community" {
@@ -116,6 +133,17 @@ variable "ALFRESCO_GROUP_ID" {
 
 variable "ALFRESCO_GROUP_NAME" {
   default = "alfresco"
+}
+
+variable "ACS_VERSION" {
+}
+
+function "trim_from_acs7" {
+  params = [
+    inputlist,
+    excludees
+    ]
+  result = substr("${ACS_VERSION}", 0, 1) == "7" ? setsubtract(inputlist, excludees) : inputlist
 }
 
 target "java_base" {
