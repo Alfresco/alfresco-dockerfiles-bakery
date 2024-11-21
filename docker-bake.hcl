@@ -796,7 +796,7 @@ variable "ALFRESCO_AUDIT_STORAGE_USER_ID" {
   default = "33008"
 }
 
-target "audit-storage" {
+target "audit_storage" {
   context = "./audit-storage"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
