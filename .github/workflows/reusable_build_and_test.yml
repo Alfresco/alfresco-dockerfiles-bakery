@@ -81,6 +81,8 @@ jobs:
 
       - name: Enumerate bake targets
         id: bake-targets
+        env:
+          ACS_VERSION: ${{ inputs.acs_version }}
         uses: docker/bake-action/subaction/list-targets@2e3d19baedb14545e5d41222653874f25d5b4dfb  # v5.10.0
         with:
           target: default
@@ -112,6 +114,7 @@ jobs:
 
       - name: Bake Docker images
         env:
+          ACS_VERSION: ${{ inputs.acs_version }}
           TARGETARCH: ${{ inputs.acs_version == '23' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           DOCKER_PUSH: ${{ github.actor != 'dependabot[bot]'}}
         uses: docker/bake-action@2e3d19baedb14545e5d41222653874f25d5b4dfb  # v5.10.0
