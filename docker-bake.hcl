@@ -19,7 +19,8 @@ group "community" {
 }
 
 group "content_service_enterprise" {
-  targets = trim_from_acs7(
+  targets = trim_from_major(
+    ["74", "73"],
     [
       "repository_enterprise",
       "share_enterprise",
@@ -138,12 +139,13 @@ variable "ALFRESCO_GROUP_NAME" {
 variable "ACS_VERSION" {
 }
 
-function "trim_from_acs7" {
+function "trim_from_major" {
   params = [
-    inputlist,
-    excludees
+    versions,  # list of string versions
+    inputlist, # list of string targets
+    excludees  # list of string targets to exclude
     ]
-  result = substr("${ACS_VERSION}", 0, 1) == "7" ? setsubtract(inputlist, excludees) : inputlist
+  result = sethaselement(versions,"${ACS_VERSION}") ? setsubtract(inputlist, excludees) : inputlist
 }
 
 target "java_base" {
