@@ -1,4 +1,6 @@
 # Alfresco Base Java Image
+# Skip InvalidDefaultArgInFrom as it's defined in the baske file (DRY)
+# check=skip=InvalidDefaultArgInFrom
 ARG DISTRIB_NAME
 ARG DISTRIB_MAJOR
 ARG IMAGE_BASE_LOCATION
