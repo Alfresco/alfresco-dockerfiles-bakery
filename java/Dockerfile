@@ -1,5 +1,3 @@
-# Alfresco Base Java Image
-# Skip InvalidDefaultArgInFrom as it's defined in the baske file (DRY)
 # syntax=docker/dockerfile:1
 # check=skip=InvalidDefaultArgInFrom
 # Skip USER enforcement as it's a transient image. Consumer MUST handle USER
