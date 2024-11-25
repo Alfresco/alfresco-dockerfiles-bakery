@@ -2,6 +2,8 @@
 services:
   alfresco:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository:${TAG}
+  audit-storage:
+    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-audit-storage:${TAG}
   transform-router:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-router:${TAG}
   transform-core-aio:
