@@ -1,3 +1,7 @@
+alfresco-audit-storage:
+  image:
+    repository: localhost/alfresco/alfresco-audit-storage
+    tag: latest
 dtas:
   config:
     assertions:
