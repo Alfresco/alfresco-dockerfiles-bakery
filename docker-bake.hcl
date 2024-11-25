@@ -19,7 +19,7 @@ group "community" {
 }
 
 group "content_service_enterprise" {
-  targets = trim_from_major(
+  targets = exclude_if_version(
     ["74", "73"],
     [
       "repository_enterprise",
@@ -139,7 +139,7 @@ variable "ALFRESCO_GROUP_NAME" {
 variable "ACS_VERSION" {
 }
 
-function "trim_from_major" {
+function "exclude_if_version" {
   params = [
     versions,  # list of string versions
     inputlist, # list of string targets
