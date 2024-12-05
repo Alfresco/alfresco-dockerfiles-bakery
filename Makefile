@@ -103,7 +103,7 @@ prepare_connectors: scripts/fetch-artifacts.sh
 
 prepare_repo: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Repository target"
-	@./scripts/fetch-artifacts.sh repository
+	@./scripts/fetch-artifacts-yaml.sh repository
 
 prepare_search_enterprise: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Search Enterprise targets"

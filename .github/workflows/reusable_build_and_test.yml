@@ -43,7 +43,9 @@ jobs:
       - name: Fetch artifacts from nexus
         env:
           ACS_VERSION: ${{ inputs.acs_version }}
-        run: ./scripts/fetch-artifacts.sh
+        run: |
+          ./scripts/fetch-artifacts.sh
+          ./scripts/fetch-artifacts-yaml.sh
 
       - name: Save packages artifacts
         if: steps.artifacts-cache.outputs.cache-hit != 'true'
