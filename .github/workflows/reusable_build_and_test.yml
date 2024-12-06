@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.2.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.4.0
 
       - name: Setup nexus authentication
         run: |
@@ -193,7 +193,7 @@ jobs:
 
       - name: Verify docker-compose (${{ matrix.edition }})
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.2.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.4.0
         timeout-minutes: 10
         with:
           postman_path: test/postman/docker-compose
@@ -204,7 +204,7 @@ jobs:
 
       - name: Save containers logs (${{ matrix.edition }})
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.2.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.4.0
         with:
           output-archive-name: ${{ matrix.edition }}-logs-${{ inputs.acs_version }}
 
@@ -217,7 +217,7 @@ jobs:
       matrix: ${{ fromJson(needs.build-matrix.outputs.helm_matrix_json) }}
     steps:
       - name: Setup cluster
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v8.2.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v8.4.0
         with:
           ingress-nginx-ref: controller-v1.8.2
           metrics: "true"
