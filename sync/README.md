@@ -37,8 +37,10 @@ docker run -e JAVA_OPTS="-Drepo.hostname=alfresco" \
   localhost/alfresco/alfresco-sync-service:latest
 ```
 
-> Set of required properties: https://docs.alfresco.com/sync-service/4.0/config/#required-properties
+> Set of required properties: [sync]
 
 > If the image is meant to be used with the Alfresco Content Services Helm
 > chart, you can use other [higher level means of
 > configuration](https://github.com/Alfresco/alfresco-helm-charts/blob/main/charts/alfresco-sync-service/README.md).
+
+[sync]: https://support.hyland.com/r/Alfresco/Alfresco-Sync-Service/5.1/Alfresco-Sync-Service/Configure/Overview/Required-properties
