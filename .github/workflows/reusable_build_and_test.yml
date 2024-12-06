@@ -95,7 +95,7 @@ jobs:
           echo 'cache-set<<EOF' >> $GITHUB_OUTPUT
           echo '${{ steps.bake-targets.outputs.targets }}' | jq -r '.[] | '\
           '"\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ inputs.tag }}-\(.)\n'\
-          '\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ github.event.repository.default_branch }}-\(.)\n'\
+          '\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ github.event.repository.default_branch }}-v${{ inputs.acs_version }}-\(.)\n'\
           '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ inputs.tag }}-\(.)"' >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
