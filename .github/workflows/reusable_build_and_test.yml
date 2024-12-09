@@ -45,7 +45,7 @@ jobs:
           ACS_VERSION: ${{ inputs.acs_version }}
         run: |
           ./scripts/fetch-artifacts.sh
-          ./scripts/fetch-artifacts-yaml.sh
+          python ./scripts/fetch_artifacts.py
 
       - name: Save packages artifacts
         if: steps.artifacts-cache.outputs.cache-hit != 'true'
