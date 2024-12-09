@@ -14,8 +14,8 @@ Bakery, a tool designed to simplify the deployment of the Alfresco platform and
 assist you in building tailored container images, with the help of [Docker
 Bake](https://docs.docker.com/build/bake/).
 
-
 - [Alfresco Dockerfiles Bakery 🍞](#alfresco-dockerfiles-bakery-)
+  - [Recent changes](#recent-changes)
   - [Prerequisites](#prerequisites)
     - [Nexus authentication](#nexus-authentication)
   - [Getting started quickly](#getting-started-quickly)
@@ -30,14 +30,24 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
 
+## Recent changes
+
+- We are migrating the `fetch-artifacts.sh` script to Python, which will be
+  available as `fetch-artifacts.py`. The new script is more robust and easier to
+  maintain, and it will be the default script for fetching artifacts in the
+  future. We are also switching the previous `artifacts.json` format to a more
+  human-readable and more easy to automate `artifacts-$ACS_VERSION.yaml` format.
+
 ## Prerequisites
 
 Building images requires the following tools:
 
-- A recent enough Docker installation (with buildx support)
+- A recent enough Docker installation (with `buildx` support)
 - Credentials to access the Alfresco artifacts (Nexus server), if building
   Enterprise images
 - Some common unix tools: `jq`, `yq`, `wget`, `make`
+- Python 3 with pyyaml (`pip install pyyaml`) for fetching artifacts via the
+  `fetch-artifacts.py` script
 
 ### Nexus authentication
 
