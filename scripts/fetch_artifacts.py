@@ -103,8 +103,8 @@ def get_credentials_from_netrc(machine):
     except FileNotFoundError:
         # Ignore if .netrc file is not found
         pass
-    except netrc.NetrcParseError:
-        print("Error parsing .netrc file")
+    except netrc.NetrcParseError as e:
+        print(f"Error parsing .netrc file: {e}")
     return None, None
 
 def main(target_subdir=""):

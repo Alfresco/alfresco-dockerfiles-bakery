@@ -28,10 +28,14 @@ jobs:
       - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.2.0
 
       - name: Setup nexus authentication
+        env:
+          NETRC_PATH: ~/.netrc
         run: |
-          echo "machine nexus.alfresco.com" >> ~/.netrc
-          echo "login ${{ secrets.NEXUS_USERNAME }}" >> ~/.netrc
-          echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ~/.netrc
+          touch ${{ env.NETRC_PATH }}
+          chmod 600 ${{ env.NETRC_PATH }}
+          echo "machine nexus.alfresco.com" >> ${{ env.NETRC_PATH }}
+          echo "login ${{ secrets.NEXUS_USERNAME }}" >> ${{ env.NETRC_PATH }}
+          echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ${{ env.NETRC_PATH }}
 
       - name: Restore packages artifacts
         uses: actions/cache/restore@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
