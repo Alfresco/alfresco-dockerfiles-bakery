@@ -29,10 +29,14 @@ jobs:
 
       - name: Setup nexus authentication
         if: '! github.event.pull_request.head.repo.fork'
+        env:
+          NETRC_PATH: ~/.netrc
         run: |
-          echo "machine nexus.alfresco.com" >> ~/.netrc
-          echo "login ${{ secrets.NEXUS_USERNAME }}" >> ~/.netrc
-          echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ~/.netrc
+          touch ${{ env.NETRC_PATH }}
+          chmod 600 ${{ env.NETRC_PATH }}
+          echo "machine nexus.alfresco.com" >> ${{ env.NETRC_PATH }}
+          echo "login ${{ secrets.NEXUS_USERNAME }}" >> ${{ env.NETRC_PATH }}
+          echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ${{ env.NETRC_PATH }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1

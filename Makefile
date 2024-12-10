@@ -88,6 +88,7 @@ clean_caches:
 prepare: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts"
 	@./scripts/fetch-artifacts.sh
+	@python ./scripts/fetch_artifacts.py
 
 prepare_adf: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for ADF targets"
@@ -101,9 +102,9 @@ prepare_connectors: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Connector targets"
 	@./scripts/fetch-artifacts.sh connector
 
-prepare_repo: scripts/fetch-artifacts.sh
+prepare_repo: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Repository target"
-	@./scripts/fetch-artifacts.sh repository
+	@python ./scripts/fetch_artifacts.py repository
 
 prepare_search_enterprise: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Search Enterprise targets"
