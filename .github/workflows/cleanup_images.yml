@@ -60,7 +60,7 @@ jobs:
           echo PACKAGE_NAMES=$(docker buildx bake --print | jq -r '${{ env.JQ_FILTER }}') >> $GITHUB_ENV
 
       - name: Remove tags after PR is closed
-        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
+        uses: dataaxiom/ghcr-cleanup-action@2d58aab3d24aed94070e032d3091b83d50d93534 # v1.0.15
         if: github.event_name == 'pull_request'
         env:
           PR_TAGS: ${{ format('pr-{0}*', github.event.pull_request.number) }}
@@ -73,7 +73,7 @@ jobs:
           dry-run: false
 
       - name: Remove ${{ env.CACHE_REPO }} tags older than ${{ env.PERIOD }} when requested
-        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
+        uses: dataaxiom/ghcr-cleanup-action@2d58aab3d24aed94070e032d3091b83d50d93534 # v1.0.15
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.clean-old-cache)
         env:
           PERIOD: ${{ github.event_name == 'workflow_dispatch' && inputs.old-cache-period || (github.event_name != 'workflow_dispatch' && '2 weeks') }}
@@ -88,7 +88,7 @@ jobs:
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || (github.event_name != 'workflow_dispatch' && 'false') }}
 
       - name: Remove images when requested
-        uses: dataaxiom/ghcr-cleanup-action@98b4022383d6ddb70ccbf6a378b4d8c67a60f066 # v1.0.13
+        uses: dataaxiom/ghcr-cleanup-action@2d58aab3d24aed94070e032d3091b83d50d93534 # v1.0.15
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
           token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
