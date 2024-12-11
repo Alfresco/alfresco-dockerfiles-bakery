@@ -1,0 +1,62 @@
+---
+name: Bump versions
+run-name: Bump using alfresco-updatecli/${{ inputs.alfresco-updatecli-ref || 'master' }}
+
+on:
+  push:
+    paths:
+      - .github/workflows/bumpVersions.yml
+      - .github/updatecli.tpl
+      - .github/updatecli_amps.tpl
+      - .github/updatecli_amps_values.yaml
+  workflow_dispatch:
+    inputs:
+      alfresco-updatecli-ref:
+        description: "The version to use for alfresco/alfresco-updatecli configs"
+        type: string
+        default: master
+
+env:
+  DEFAULT_BRANCH_NAME: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Bump versions
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+
+      - name: Install Updatecli
+        uses: updatecli/updatecli-action@704a64517239e0993c5e3bf6749a063b8f950d9f # v2.70.0
+
+      - name: Checkout updatecli configs
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: alfresco/alfresco-updatecli
+          ref: ${{ inputs.alfresco-updatecli-ref || 'master' }}
+          path: alfresco-updatecli
+
+      - name: Build manifest and run Updatecli pipelines
+        shell: bash
+        run: |
+          for i in */artifacts-*.yaml; do
+             updatecli apply -c .github/updatecli.tpl -v ./${i} -v alfresco-updatecli/deployments/values/supported-matrix.yaml
+          done
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          UPDATECLI_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+
+      - name: Git Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
+        with:
+          commit_message: |
+            🛠 Updatecli pipeline artifacts bump
+          commit_user_name: ${{ vars.BOT_GITHUB_USERNAME }}
+          commit_user_email: ${{ vars.BOT_GITHUB_EMAIL }}
+          branch: ${{ github.ref_name == env.DEFAULT_BRANCH_NAME && 'updatecli-bump-versions' || github.ref_name }}
+          create_branch: ${{ github.ref_name == env.DEFAULT_BRANCH_NAME }}
+          push_options: ${{ github.ref_name == env.DEFAULT_BRANCH_NAME && '--force' || '' }}

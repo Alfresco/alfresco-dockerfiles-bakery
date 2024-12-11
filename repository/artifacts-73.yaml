@@ -1,4 +1,6 @@
 ---
+updatecli_self: repository/artifacts-73.yaml
+updatecli_matrix_version: 7.3.N
 artifacts:
   postgresql:
     name: postgresql
@@ -42,6 +44,7 @@ artifacts:
     classifier: ".zip"
     group: org.alfresco
     repository: enterprise-releases
+    updatecli_matrix_target: acs
   alfresco-content-services-community-distribution:
     name: alfresco-content-services-community-distribution
     version: 7.3.2
@@ -49,3 +52,4 @@ artifacts:
     classifier: ".zip"
     group: org.alfresco
     repository: public
+    updatecli_matrix_target: acs
