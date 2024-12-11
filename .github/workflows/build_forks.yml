@@ -22,7 +22,7 @@ concurrency:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.head.repo.fork
+    if: github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]'
     steps:
       - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v8.2.0
 
