@@ -12,14 +12,14 @@ artifacts:
     path: repository/libs
   alfresco-share-services:
     name: alfresco-share-services
-    version: '22.23'
+    version: 22.32
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco
     repository: releases
   alfresco-aos-module:
     name: alfresco-aos-module
-    version: 1.6.3
+    version: 1.6.2
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco.aos-module
@@ -40,7 +40,7 @@ artifacts:
     repository: enterprise-releases
   alfresco-content-services-distribution:
     name: alfresco-content-services-distribution
-    version: 7.4.2.1
+    version: 7.4.2.4
     path: repository/distribution
     classifier: ".zip"
     group: org.alfresco
