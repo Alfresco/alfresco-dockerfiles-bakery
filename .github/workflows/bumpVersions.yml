@@ -16,6 +16,10 @@ on:
         type: string
         default: master
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name || github.run_id }}
+  cancel-in-progress: true
+
 env:
   DEFAULT_BRANCH_NAME: main
 
