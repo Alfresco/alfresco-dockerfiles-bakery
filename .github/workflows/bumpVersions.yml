@@ -46,9 +46,8 @@ jobs:
       - name: Updatecli apply
         shell: bash
         run: |
-          set +x
           for i in */artifacts-*.yaml; do
-             updatecli apply -c .github/updatecli.tpl -v ${i} -v .github/updatecli_values.yaml -v alfresco-updatecli/deployments/values/supported-matrix.yaml
+             updatecli apply -c .github/updatecli.tpl -v ${i} -v alfresco-updatecli/deployments/values/supported-matrix.yaml
              updatecli apply -c .github/updatecli_amps.tpl -v ${i} -v .github/updatecli_amps_values.yaml
           done
         env:
