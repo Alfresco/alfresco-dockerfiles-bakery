@@ -40,7 +40,7 @@ artifacts:
     repository: enterprise-releases
   alfresco-content-services-distribution:
     name: alfresco-content-services-distribution
-    version: 23.4.0
+    version: 23.3.2
     path: repository/distribution
     classifier: ".zip"
     group: org.alfresco
@@ -48,7 +48,7 @@ artifacts:
     updatecli_matrix_target: acs
   alfresco-content-services-community-distribution:
     name: alfresco-content-services-community-distribution
-    version: 23.4.0
+    version: 23.3.0
     path: repository/distribution
     classifier: ".zip"
     group: org.alfresco
