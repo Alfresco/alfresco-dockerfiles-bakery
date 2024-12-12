@@ -1,0 +1,14 @@
+---
+artifacts:
+  alfresco-share-services:
+    updatecli_scm_id: acsEntRepo
+    updatecli_xml_target: "/project/properties/dependency.alfresco-community-repo.version"
+  alfresco-aos-module:
+    updatecli_scm_id: acsComRepo
+    updatecli_xml_target: "/project/properties/alfresco.aos-module.version"
+  alfresco-device-sync-repo:
+    updatecli_scm_id: acsPackaging
+    updatecli_xml_target: "/project/properties/alfresco.desktop-sync.version"
+  alfresco-googledrive-repo-enterprise:
+    updatecli_scm_id: acsComRepo
+    updatecli_xml_target: "/project/properties/alfresco.googledrive.version"

@@ -1,0 +1,6 @@
+---
+artifacts:
+  alfresco-content-services-distribution:
+    updatecli_matrix_target: acs
+  alfresco-content-services-community-distribution:
+    updatecli_matrix_target: acs

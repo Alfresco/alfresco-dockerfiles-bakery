@@ -1,6 +1,7 @@
 ---
 updatecli_self: repository/artifacts-73.yaml
 updatecli_matrix_version: 7.3.N
+updatecli_release_branch: release/7.3.2
 artifacts:
   postgresql:
     name: postgresql

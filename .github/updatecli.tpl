@@ -29,6 +29,6 @@ targets:
     sourceid: src_{{ $key }}
     spec:
       file: "{{ $.updatecli_self }}"
-      key: "artifacts.{{ $key }}.version"
+      key: "$.artifacts.{{ $key }}.version"
   {{- end }}
 {{- end }}
