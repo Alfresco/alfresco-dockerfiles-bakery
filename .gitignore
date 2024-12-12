@@ -16,3 +16,6 @@ test/7.4.N-compose.yaml
 test/helm/enterprise-integration-test-values.yaml
 test/helm/community-integration-test-values.yaml
 test/helm/community_values.yaml
+
+# CI/CD
+alfresco-updatecli
