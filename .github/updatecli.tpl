@@ -2,7 +2,7 @@ name: Update Artifacts for {{ .updatecli_matrix_version }} version using reusabl
 
 sources:
 {{- range $key, $artifact := .artifacts }}
-  {{- if $artifact.updatecli_matrix_target }}
+  {{- if $artifact.updatecli_matrix_component_key }}
   src_{{ $key }}:
     name: {{ $artifact.name }}
     kind: maven
@@ -10,7 +10,7 @@ sources:
       repository: {{ requiredEnv "NEXUS_USERNAME" }}:{{ requiredEnv "NEXUS_PASSWORD" }}@nexus.alfresco.com/nexus/repository/{{ $artifact.repository }}
       groupid: {{ $artifact.group }}
       artifactid: {{ $artifact.name}}
-      {{- $matrix_filter := index $ "matrix" $.updatecli_matrix_version $artifact.updatecli_matrix_target }}
+      {{- $matrix_filter := index $ "matrix" $.updatecli_matrix_version $artifact.updatecli_matrix_component_key }}
       {{- if $matrix_filter }}
       versionFilter:
         kind: regex
@@ -22,7 +22,7 @@ sources:
 
 targets:
 {{- range $key, $artifact := .artifacts }}
-  {{- if $artifact.updatecli_matrix_target }}
+  {{- if $artifact.updatecli_matrix_component_key }}
   yml_{{ $key }}:
     name: {{ $artifact.name }} yml
     kind: yaml
