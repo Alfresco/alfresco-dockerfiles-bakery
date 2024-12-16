@@ -1,0 +1,9 @@
+---
+artifacts:
+  onedrive-springboot:
+    name: onedrive-springboot
+    version: 2.0.3
+    classifier: ".jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: connector/ms365
