@@ -333,7 +333,9 @@ jobs:
 
       - name: Run helm test
         id: helm_test
-        run: helm test acs
+        env:
+          HELM_TEST_TIMEOUT: 20m
+        run: helm test acs --timeout=${{ env.HELM_TEST_TIMEOUT }}
 
       - name: Debug cluster status after helm test
         if: always() && steps.helm_test.outcome != 'skipped'
