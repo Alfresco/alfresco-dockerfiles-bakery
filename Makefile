@@ -85,22 +85,22 @@ clean_caches:
 ## PREPARE TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
 
-prepare: scripts/fetch-artifacts.sh
+prepare: scripts/fetch-artifacts.sh scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts"
 	@./scripts/fetch-artifacts.sh
 	@python ./scripts/fetch_artifacts.py
 
-prepare_adf: scripts/fetch-artifacts.sh
+prepare_adf: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF targets"
-	@./scripts/fetch-artifacts.sh adf-apps
+	@python ./scripts/fetch_artifacts.py adf-apps
 
-prepare_ats: scripts/fetch-artifacts.sh
+prepare_ats: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ATS targets"
-	@./scripts/fetch-artifacts.sh ats
+	@python ./scripts/fetch_artifacts.py ats
 
 prepare_connectors: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Connector targets"
-	@./scripts/fetch-artifacts.sh connector
+	@python ./scripts/fetch_artifacts.py connector
 
 prepare_repo: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Repository target"
