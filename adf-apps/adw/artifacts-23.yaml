@@ -1,0 +1,9 @@
+---
+artifacts:
+  alfresco-digital-workspace:
+    name: alfresco-digital-workspace
+    version: 5.1.0
+    classifier: ".zip"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: adf-apps/adw
