@@ -1,0 +1,9 @@
+---
+artifacts:
+  alfresco-shared-file-store-controller:
+    name: alfresco-shared-file-store-controller
+    version: 4.1.4
+    classifier: ".jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: ats/sfs
