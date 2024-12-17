@@ -77,7 +77,7 @@ def do_parse_and_mvn_fetch(file_path):
                 os.remove(artifact_final_path)
 
         if os.path.isfile(artifact_cache_path):
-            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, open(artifact_final_path, 'rb'))
+            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, open(artifact_cache_path, 'rb'))
             if src_checksum == computed_checksum:
                 print(f"Artifact {artifact_name}-{artifact_version} already present in cache, copying...")
                 shutil.copy(artifact_cache_path, artifact_final_path)
