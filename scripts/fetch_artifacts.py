@@ -8,7 +8,7 @@ import shutil
 import sys
 import tempfile
 import urllib.request
-
+import hashlib
 import yaml
 
 # Constants
@@ -31,6 +31,7 @@ def do_parse_and_mvn_fetch(file_path):
         artifact_name = artifact_details.get("name")
         artifact_version = artifact_details.get("version")
         artifact_ext = artifact_details.get("classifier", "")
+        artifact_checksum = artifact_details.get("checksum")
         artifact_group = artifact_details.get("group")
         artifact_path = artifact_details.get("path")
 
@@ -58,6 +59,21 @@ def do_parse_and_mvn_fetch(file_path):
         try:
             with urllib.request.urlopen(artifact_url) as response, open(artifact_tmp_path, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
+            # if checksum if provided, verify the checksum of the downloaded artifact and raise exception if checksum doesn't match
+            if artifact_checksum and artifact_checksum.split(":")[0] in ["md5", "sha1", "sha256", "sha512"]:
+                checksum_type = artifact_checksum.split(":")[0]
+                with open(artifact_tmp_path, 'rb') as f:
+                    computed_checksum = hashlib.new(checksum_type, f.read()).hexdigest()
+                    if not artifact_checksum.split(":")[1]:
+                        with urllib.request.urlopen(f"{artifact_url}.{checksum_type}") as checksum_response:
+                            checksum = checksum_response.read().decode("utf-8").strip()
+                    else:
+                        checksum = artifact_checksum.split(":")[1]
+                    if checksum != computed_checksum:
+                        raise Exception(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Expected: {artifact_checksum}, Got: {checksum}")
+            else:
+                print(f"No valid checksum found for {artifact_name}-{artifact_version}{artifact_ext}, skipping verification...")
+
         except Exception as e:
             print(f"Skipping after failure: {e}")
             if os.path.exists(artifact_tmp_path):
