@@ -30,7 +30,7 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
 
-## Recent changes
+## Work in Progress
 
 - We are migrating the `fetch-artifacts.sh` script to Python, which will be
   available as `fetch-artifacts.py`. The new script is more robust and easier to
@@ -46,7 +46,7 @@ Building images requires the following tools:
 - Credentials to access the Alfresco artifacts (Nexus server), if building
   Enterprise images
 - Some common unix tools: `jq`, `yq`, `wget`, `make`
-- Python 3 with pyyaml (`pip install pyyaml`) for fetching artifacts via the
+- Python 3 with hashlib & pyyaml (`pip install pyyaml hashlib`) for fetching artifacts via the
   `fetch-artifacts.py` script
 
 ### Nexus authentication
@@ -220,9 +220,10 @@ To build older version pass `ACS_VERSION` env to make command.
 make enterprise ACS_VERSION=74
 ```
 
-Make sets the correct version of Tomcat based on the ACS version. If you want to
-build older version of images using `docker buildx bake` it is required to set
-the Tomcat versions manually in bake file or using env variables.
+When using `make`, it sets the correct version of Tomcat based on the ACS version.
+If you want to build older version of images using `docker buildx bake` it is
+required to set the Tomcat versions manually in bake file or using env
+variables.
 
 ```sh
 export TOMCAT_VERSIONS_FILE=tomcat/tomcat_versions.yaml
@@ -238,6 +239,13 @@ then fetch correct version with e.g.:
 ```sh
 make clean prepare ACS_VERSION=74
 ```
+
+Artifacts set in the artifatcts file are fetched from the Nexus repository and
+their checksum is verified, provided the artifact has a checksum value which is
+a concatenation of the algorithm and optionnaly the checksum in the format
+`<algorithm>:<checksum>`. If the checksum is not provided, the script will
+try to fetch it from the Nexus repository reusing the computed artifact url and
+appending the `.algorithm` extension to it.
 
 ## Testing locally
 
