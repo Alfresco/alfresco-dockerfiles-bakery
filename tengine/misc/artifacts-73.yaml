@@ -1,0 +1,9 @@
+---
+artifacts:
+  alfresco-transform-misc:
+    name: alfresco-transform-misc
+    version: 3.1.2
+    classifier: ".jar"
+    repository: releases
+    group: org.alfresco
+    path: tengine/misc

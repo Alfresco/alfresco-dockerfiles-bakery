@@ -1,0 +1,23 @@
+---
+artifacts:
+  alfresco-pdf-renderer-x64:
+    name: alfresco-pdf-renderer
+    version: '1.2'
+    path: tengine/pdfrenderer
+    classifier: "-linux.tgz"
+    repository: releases
+    group: org.alfresco
+  alfresco-pdf-renderer-arm:
+    name: alfresco-pdf-renderer
+    version: '1.2'
+    path: tengine/pdfrenderer
+    classifier: "-linux-arm.tgz"
+    repository: releases
+    group: org.alfresco
+  alfresco-pdf-renderer-jar:
+    name: alfresco-transform-pdf-renderer
+    version: 5.1.4
+    path: tengine/pdfrenderer
+    classifier: ".jar"
+    repository: releases
+    group: org.alfresco
