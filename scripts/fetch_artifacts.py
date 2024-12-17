@@ -18,6 +18,28 @@ ACS_VERSION = os.getenv("ACS_VERSION", "23")
 MAVEN_FQDN = os.getenv("MAVEN_FQDN", "nexus.alfresco.com")
 MAVEN_REPO = os.getenv("MAVEN_REPO", f"https://{MAVEN_FQDN}/nexus/repository")
 
+def get_checksums(artifact_checksum, artifact_url, artifact_file):
+    """
+    Get source checksum that must match and the computed checksum
+    """
+    if artifact_checksum and artifact_checksum.split(":")[0] in ["md5", "sha1", "sha256", "sha512"]:
+        checksum_type = artifact_checksum.split(":")[0]
+    else:
+        print(f"No valid checksum found, skipping verification...")
+        return None, None
+    if not artifact_checksum.split(":")[1]:
+        try:
+            with urllib.request.urlopen(f"{artifact_url}.{checksum_type}") as checksum_response:
+                checksum = checksum_response.read().decode("utf-8").strip()
+        except Exception as e:
+            print(f"Failed to fetch checksum from {artifact_url}.{checksum_type}: {e}")
+            return None, None
+    else:
+        checksum = artifact_checksum.split(":")[1]
+    computed_checksum = hashlib.new(checksum_type, artifact_file.read()).hexdigest()
+    return checksum, computed_checksum
+
+
 def do_parse_and_mvn_fetch(file_path):
     """
     Parse the artifacts yaml file and download the artifacts from the Alfresco Nexus repository
@@ -39,40 +61,39 @@ def do_parse_and_mvn_fetch(file_path):
         artifact_tmp_path = os.path.join(TEMP_DIR, f"{artifact_name}-{artifact_version}{artifact_ext}")
         artifact_cache_path = os.path.join(REPO_ROOT, "artifacts_cache", f"{artifact_name}-{artifact_version}{artifact_ext}")
         artifact_final_path = os.path.join(artifact_path, f"{artifact_name}-{artifact_version}{artifact_ext}")
+        artifact_url = f"{artifact_baseurl}/{artifact_group.replace('.', '/')}/{artifact_name}/{artifact_version}/{artifact_name}-{artifact_version}{artifact_ext}"
 
         # Newline for better readability
         print()
 
         # Check if the artifact is already present
         if os.path.isfile(artifact_final_path):
-            print(f"Artifact {artifact_name}-{artifact_version} already present, skipping...")
-            continue
+            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, open(artifact_final_path, 'rb'))
+            if src_checksum == computed_checksum:
+                print(f"Artifact {artifact_name}-{artifact_version} already present, skipping...")
+                continue
+            else:
+                print(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
+                os.remove(artifact_final_path)
 
         if os.path.isfile(artifact_cache_path):
-            print(f"Artifact {artifact_name}-{artifact_version} already present in cache, copying...")
-            shutil.copy(artifact_cache_path, artifact_final_path)
-            continue
+            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, open(artifact_final_path, 'rb'))
+            if src_checksum == computed_checksum:
+                print(f"Artifact {artifact_name}-{artifact_version} already present in cache, copying...")
+                shutil.copy(artifact_cache_path, artifact_final_path)
+                continue
+            else:
+                print(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
+                os.remove(artifact_cache_path)
 
         # Download the artifact
-        artifact_url = f"{artifact_baseurl}/{artifact_group.replace('.', '/')}/{artifact_name}/{artifact_version}/{artifact_name}-{artifact_version}{artifact_ext}"
         print(f"Downloading {artifact_group}:{artifact_name} {artifact_version} from {artifact_baseurl}")
         try:
             with urllib.request.urlopen(artifact_url) as response, open(artifact_tmp_path, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
-            # if checksum if provided, verify the checksum of the downloaded artifact and raise exception if checksum doesn't match
-            if artifact_checksum and artifact_checksum.split(":")[0] in ["md5", "sha1", "sha256", "sha512"]:
-                checksum_type = artifact_checksum.split(":")[0]
-                with open(artifact_tmp_path, 'rb') as f:
-                    computed_checksum = hashlib.new(checksum_type, f.read()).hexdigest()
-                    if not artifact_checksum.split(":")[1]:
-                        with urllib.request.urlopen(f"{artifact_url}.{checksum_type}") as checksum_response:
-                            checksum = checksum_response.read().decode("utf-8").strip()
-                    else:
-                        checksum = artifact_checksum.split(":")[1]
-                    if checksum != computed_checksum:
-                        raise Exception(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Expected: {artifact_checksum}, Got: {checksum}")
-            else:
-                print(f"No valid checksum found for {artifact_name}-{artifact_version}{artifact_ext}, skipping verification...")
+                checksums = get_checksums(artifact_checksum, artifact_url, open(artifact_tmp_path, 'rb'))
+                if checksums[0] != checksums[1]:
+                    raise Exception(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}")
 
         except Exception as e:
             print(f"Skipping after failure: {e}")
