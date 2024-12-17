@@ -89,27 +89,27 @@ clean_caches:
 prepare: scripts/fetch-artifacts.sh scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts"
 	@./scripts/fetch-artifacts.sh
-	@python ./scripts/fetch_artifacts.py
+	@python3 ./scripts/fetch_artifacts.py
 
 prepare_adf: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF targets"
-	@python ./scripts/fetch_artifacts.py adf-apps
+	@python3 ./scripts/fetch_artifacts.py adf-apps
 
 prepare_ats: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ATS targets"
-	@python ./scripts/fetch_artifacts.py ats
+	@python3 ./scripts/fetch_artifacts.py ats
 
 prepare_audit_storage:
 	@echo "Fetching all artifacts for Audit Storage targets"
-	@python ./scripts/fetch_artifacts.py audit-storage
+	@python3 ./scripts/fetch_artifacts.py audit-storage
 
 prepare_connectors: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Connector targets"
-	@python ./scripts/fetch_artifacts.py connector
+	@python3 ./scripts/fetch_artifacts.py connector
 
 prepare_repo: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Repository target"
-	@python ./scripts/fetch_artifacts.py repository
+	@python3 ./scripts/fetch_artifacts.py repository
 
 prepare_search_enterprise: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Search Enterprise targets"
