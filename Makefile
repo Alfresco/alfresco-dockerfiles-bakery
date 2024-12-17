@@ -15,6 +15,7 @@ help:
 	@echo "  community          Build community images"
 	@echo "  adf_apps           Build ADF Apps images"
 	@echo "  ats                Build Transform Service images"
+	@echo "  audit_storage      Build Audit Storage images"
 	@echo "  connectors         Build Connector images"
 	@echo "  repo               Build Repository image"
 	@echo "  search_enterprise  Build Search Enterprise images"
@@ -98,6 +99,10 @@ prepare_ats: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ATS targets"
 	@python ./scripts/fetch_artifacts.py ats
 
+prepare_audit_storage:
+	@echo "Fetching all artifacts for Audit Storage targets"
+	@python ./scripts/fetch_artifacts.py audit-storage
+
 prepare_connectors: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Connector targets"
 	@python ./scripts/fetch_artifacts.py connector
@@ -154,6 +159,11 @@ ats: docker-bake.hcl tengines prepare_ats prepare_tengines setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
+audit_storage: docker-bake.hcl prepare_audit_storage setenv
+	@echo "Building Audit Storage images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
 connectors: docker-bake.hcl prepare_connectors setenv
 	@echo "Building Connector images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
@@ -189,7 +199,7 @@ tengines: docker-bake.hcl prepare_tengines setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
-all_ci: adf_apps ats connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
+all_ci: adf_apps ats audit_storage connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
 
 GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix
