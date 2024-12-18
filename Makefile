@@ -86,9 +86,8 @@ clean_caches:
 ## PREPARE TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
 
-prepare: scripts/fetch-artifacts.sh scripts/fetch_artifacts.py
+prepare: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts"
-	@./scripts/fetch-artifacts.sh
 	@python3 ./scripts/fetch_artifacts.py
 
 prepare_adf: scripts/fetch_artifacts.py
@@ -99,11 +98,11 @@ prepare_ats: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ATS targets"
 	@python3 ./scripts/fetch_artifacts.py ats
 
-prepare_audit_storage:
+prepare_audit_storage: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Audit Storage targets"
 	@python3 ./scripts/fetch_artifacts.py audit-storage
 
-prepare_connectors: scripts/fetch-artifacts.sh
+prepare_connectors: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Connector targets"
 	@python3 ./scripts/fetch_artifacts.py connector
 
@@ -111,25 +110,25 @@ prepare_repo: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Repository target"
 	@python3 ./scripts/fetch_artifacts.py repository
 
-prepare_search_enterprise: scripts/fetch-artifacts.sh
+prepare_search_enterprise: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Search Enterprise targets"
-	@./scripts/fetch-artifacts.sh search/enterprise
+	@python3 ./scripts/fetch_artifacts.py search/enterprise
 
-prepare_search_service: scripts/fetch-artifacts.sh
+prepare_search_service: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Search Service targets"
-	@./scripts/fetch-artifacts.sh search/service
+	@python3 ./scripts/fetch_artifacts.py search/service
 
-prepare_share: scripts/fetch-artifacts.sh
+prepare_share: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Share targets"
-	@./scripts/fetch-artifacts.sh share
+	@python3 ./scripts/fetch_artifacts.py share
 
-prepare_sync: scripts/fetch-artifacts.sh
+prepare_sync: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF targets"
-	@./scripts/fetch-artifacts.sh sync
+	@python3 ./scripts/fetch_artifacts.py sync
 
-prepare_tengines: scripts/fetch-artifacts.sh
+prepare_tengines: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Transform Engine targets"
-	@./scripts/fetch-artifacts.sh tengine
+	@python3 ./scripts/fetch_artifacts.py tengine
 
 ## BUILD TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
