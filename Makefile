@@ -15,6 +15,7 @@ help:
 	@echo "  community          Build community images"
 	@echo "  adf_apps           Build ADF Apps images"
 	@echo "  ats                Build Transform Service images"
+	@echo "  audit_storage      Build Audit Storage images"
 	@echo "  connectors         Build Connector images"
 	@echo "  repo               Build Repository image"
 	@echo "  search_enterprise  Build Search Enterprise images"
@@ -85,26 +86,30 @@ clean_caches:
 ## PREPARE TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
 
-prepare: scripts/fetch-artifacts.sh
+prepare: scripts/fetch-artifacts.sh scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts"
 	@./scripts/fetch-artifacts.sh
-	@python ./scripts/fetch_artifacts.py
+	@python3 ./scripts/fetch_artifacts.py
 
-prepare_adf: scripts/fetch-artifacts.sh
+prepare_adf: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF targets"
-	@./scripts/fetch-artifacts.sh adf-apps
+	@python3 ./scripts/fetch_artifacts.py adf-apps
 
-prepare_ats: scripts/fetch-artifacts.sh
+prepare_ats: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ATS targets"
-	@./scripts/fetch-artifacts.sh ats
+	@python3 ./scripts/fetch_artifacts.py ats
+
+prepare_audit_storage:
+	@echo "Fetching all artifacts for Audit Storage targets"
+	@python3 ./scripts/fetch_artifacts.py audit-storage
 
 prepare_connectors: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Connector targets"
-	@./scripts/fetch-artifacts.sh connector
+	@python3 ./scripts/fetch_artifacts.py connector
 
 prepare_repo: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Repository target"
-	@python ./scripts/fetch_artifacts.py repository
+	@python3 ./scripts/fetch_artifacts.py repository
 
 prepare_search_enterprise: scripts/fetch-artifacts.sh
 	@echo "Fetching all artifacts for Search Enterprise targets"
@@ -154,6 +159,11 @@ ats: docker-bake.hcl tengines prepare_ats prepare_tengines setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
+audit_storage: docker-bake.hcl prepare_audit_storage setenv
+	@echo "Building Audit Storage images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
 connectors: docker-bake.hcl prepare_connectors setenv
 	@echo "Building Connector images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
@@ -189,7 +199,7 @@ tengines: docker-bake.hcl prepare_tengines setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
-all_ci: adf_apps ats connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
+all_ci: adf_apps ats audit_storage connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
 
 GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix

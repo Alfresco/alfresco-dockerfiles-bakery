@@ -1,0 +1,9 @@
+---
+artifacts:
+  alfresco-transform-router:
+    name: alfresco-transform-router
+    version: 2.1.2
+    classifier: ".jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: ats/trouter

@@ -1,0 +1,9 @@
+---
+artifacts:
+  alfresco-audit-storage-app:
+    name: alfresco-audit-storage-app
+    version: 1.0.0
+    classifier: ".jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: audit-storage
