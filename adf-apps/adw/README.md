@@ -8,7 +8,7 @@ This Docker file is used to build an Alfresco digital workspace.
 
 Make sure all required artifacts are present in the build context `adf-apps/adw/`.
 You can put them manually in the `adf-apps/adw/` folder (for example if that's a
-custom module of yours), or use the script `./scripts/fetch-artifacts.sh` to
+custom module of yours), or use the script `./scripts/fetch-artifacts.py` to
 download them from Alfresco's Nexus.
 
 Then, you can build the image from the root of this git repository with the

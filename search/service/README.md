@@ -7,7 +7,7 @@ This Docker file is used to build an Alfresco Serach Service image.
 ## Building the image
 
 Make sure all required artifacts are present in the build context `search/service/`.
-Use the script `./scripts/fetch-artifacts.sh` to download them from Alfresco's
+Use the script `./scripts/fetch-artifacts.py` to download them from Alfresco's
 Nexus.
 
 Then, you can build the image from the root of this git repository with the

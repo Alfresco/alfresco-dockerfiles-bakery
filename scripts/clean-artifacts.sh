@@ -1,5 +1,5 @@
 #!/bin/bash -e
-# Clean all artifacts fetched by fetch-artifacts.sh
+# Clean all artifacts fetched by fetch-artifacts.py
 
 REPO_ROOT="$(dirname $0)/.."
 

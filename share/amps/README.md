@@ -13,7 +13,7 @@ The [in-process Alfresco SDK][sdk] provides a way to build well structured AMPs.
 > use the [out-of-process Alfresco SDK][oop] to
 > build Docker images with your extensions.
 
-By default the `scripts/fetch-artifacts.sh` script will fetch the following AMPs from the Alfresco Nexus repository:
+By default the `scripts/fetch-artifacts.py` script will fetch the following AMPs from the Alfresco Nexus repository:
 
 * alfresco-googledrive-share
 

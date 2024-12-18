@@ -1,5 +1,10 @@
 """
 Process artifacts yml files to download the artifacts from the Alfresco Nexus repository
+
+Run this script with:
+python3 scripts/fetch_artifacts.py [<target_subdir>]
+
+The target_subdir is the subdirectory where the artifacts yaml files are located (optional)
 """
 
 import netrc
