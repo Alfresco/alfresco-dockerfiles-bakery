@@ -1,0 +1,9 @@
+---
+artifacts:
+  alfresco-elasticsearch-live-indexing:
+    name: alfresco-elasticsearch-live-indexing
+    version: 4.1.0
+    classifier: "-app.jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: search/enterprise/all-in-one

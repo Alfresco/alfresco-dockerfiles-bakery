@@ -1,0 +1,9 @@
+---
+artifacts:
+  alfresco-elasticsearch-reindexing:
+    name: alfresco-elasticsearch-reindexing
+    version: 3.2.1
+    classifier: "-app.jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: search/enterprise/reindexing
