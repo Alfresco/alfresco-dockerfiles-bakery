@@ -1,0 +1,16 @@
+---
+artifacts:
+  sync-distribution:
+    name: sync-dist-6.x
+    version: 4.0.1
+    classifier: ".zip"
+    group: org.alfresco.services.sync
+    repository: enterprise-releases
+    path: sync/distribution
+  postgresql:
+    name: postgresql
+    version: 42.6.1
+    classifier: ".jar"
+    group: org.postgresql
+    repository: public
+    path: sync/configs/connectors
