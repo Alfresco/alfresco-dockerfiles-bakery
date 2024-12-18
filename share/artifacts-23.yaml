@@ -1,0 +1,23 @@
+---
+artifacts:
+  alfresco-content-services-share-distribution:
+    name: alfresco-content-services-share-distribution
+    version: 23.3.2
+    classifier: ".zip"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: share/distribution
+  alfresco-content-services-community-distribution:
+    name: alfresco-content-services-community-distribution
+    version: 23.3.0
+    classifier: ".zip"
+    group: org.alfresco
+    repository: public
+    path: share/distribution
+  alfresco-googledrive-share:
+    name: alfresco-googledrive-share
+    version: 4.1.0
+    classifier: ".amp"
+    group: org.alfresco.integrations
+    repository: releases
+    path: share/amps
