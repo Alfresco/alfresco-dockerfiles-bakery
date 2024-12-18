@@ -240,9 +240,9 @@ then fetch correct version with e.g.:
 make clean prepare ACS_VERSION=74
 ```
 
-Artifacts set in the artifatcts file are fetched from the Nexus repository and
+Artifacts set in the artifacts file are fetched from the Nexus repository and
 their checksum is verified, provided the artifact has a checksum value which is
-a concatenation of the algorithm and optionnaly the checksum in the format
+a concatenation of the algorithm and optionally the checksum in the format
 `<algorithm>:<checksum>`. If the checksum is not provided, the script will
 try to fetch it from the Nexus repository reusing the computed artifact url and
 appending the `.algorithm` extension to it.
