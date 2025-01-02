@@ -2,7 +2,7 @@ name: Update Artifacts for {{ .updatecli_matrix_version }} version using reusabl
 
 sources:
 {{- range $key, $artifact := .artifacts }}
-  {{- if $artifact.updatecli_matrix_component_key }}
+  {{- if all $artifact.updatecli_matrix_component_key $artifact.group $artifact.name }}
   src_{{ $key }}:
     name: {{ $artifact.name }}
     kind: maven
@@ -22,7 +22,7 @@ sources:
 
 targets:
 {{- range $key, $artifact := .artifacts }}
-  {{- if $artifact.updatecli_matrix_component_key }}
+  {{- if all $artifact.updatecli_matrix_component_key $artifact.group $artifact.name }}
   yml_{{ $key }}:
     name: {{ $artifact.name }} yml
     kind: yaml
