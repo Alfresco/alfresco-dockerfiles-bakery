@@ -28,7 +28,7 @@ scms:
 
 sources:
 {{- range $key, $artifact := .artifacts }}
-  {{- if $artifact.updatecli_xml_target }}
+  {{- if all $artifact.updatecli_xml_target $artifact.updatecli_scm_id $artifact.name }}
   src_{{ $key }}:
     name: {{ $artifact.name }}
     scmid: {{ $artifact.updatecli_scm_id }}
@@ -41,7 +41,7 @@ sources:
 
 targets:
 {{- range $key, $artifact := .artifacts }}
-  {{- if $artifact.updatecli_xml_target }}
+  {{- if all $artifact.updatecli_xml_target $artifact.updatecli_scm_id $artifact.name }}
   yml_{{ $key }}:
     name: {{ $artifact.name }} yml
     kind: yaml
