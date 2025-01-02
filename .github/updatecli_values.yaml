@@ -4,3 +4,5 @@ artifacts:
     updatecli_matrix_component_key: acs
   alfresco-content-services-community-distribution:
     updatecli_matrix_component_key: acs
+  alfresco-content-services-share-distribution:
+    updatecli_matrix_component_key: share
