@@ -6,7 +6,7 @@ scms:
     spec:
       owner: Alfresco
       repository: acs-packaging
-      branch: {{ .updatecli_release_branch }}
+      branch: {{ .updatecli_amps_release_branch }}
       token: {{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}
       username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
   acsEntRepo:
@@ -14,7 +14,7 @@ scms:
     spec:
       owner: Alfresco
       repository: alfresco-enterprise-repo
-      branch: {{ .updatecli_release_branch }}
+      branch: {{ .updatecli_amps_release_branch }}
       token: {{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}
       username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
   acsComRepo:
@@ -22,7 +22,7 @@ scms:
     spec:
       owner: Alfresco
       repository: alfresco-community-repo
-      branch: {{ .updatecli_release_branch }}
+      branch: {{ .updatecli_amps_release_branch }}
       token: {{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}
       username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
 
