@@ -6,3 +6,7 @@ artifacts:
     updatecli_matrix_component_key: acs
   alfresco-content-services-share-distribution:
     updatecli_matrix_component_key: share
+  alfresco-control-center:
+    updatecli_matrix_component_key: adminApp
+  alfresco-digital-workspace:
+    updatecli_matrix_component_key: adw

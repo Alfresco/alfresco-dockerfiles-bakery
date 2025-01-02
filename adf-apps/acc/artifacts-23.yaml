@@ -1,4 +1,6 @@
 ---
+updatecli_self: adf-apps/acc/artifacts-23.yaml
+updatecli_matrix_version: current
 artifacts:
   alfresco-control-center:
     name: alfresco-control-center

@@ -1,4 +1,6 @@
 ---
+updatecli_self: adf-apps/adw/artifacts-23.yaml
+updatecli_matrix_version: current
 artifacts:
   alfresco-digital-workspace:
     name: alfresco-digital-workspace
