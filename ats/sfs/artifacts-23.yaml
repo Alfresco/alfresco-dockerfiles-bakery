@@ -1,4 +1,6 @@
 ---
+updatecli_self: ats/sfs/artifacts-23.yaml
+updatecli_matrix_version: current
 artifacts:
   alfresco-shared-file-store-controller:
     name: alfresco-shared-file-store-controller

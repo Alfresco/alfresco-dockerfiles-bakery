@@ -1,4 +1,6 @@
 ---
+updatecli_self: ats/sfs/artifacts-74.yaml
+updatecli_matrix_version: 7.4.N
 artifacts:
   alfresco-shared-file-store-controller:
     name: alfresco-shared-file-store-controller

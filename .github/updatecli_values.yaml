@@ -10,3 +10,7 @@ artifacts:
     updatecli_matrix_component_key: adminApp
   alfresco-digital-workspace:
     updatecli_matrix_component_key: adw
+  alfresco-shared-file-store-controller:
+    updatecli_matrix_component_key: sfs
+  alfresco-transform-router:
+    updatecli_matrix_component_key: trouter

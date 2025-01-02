@@ -1,4 +1,6 @@
 ---
+updatecli_self: ats/trouter/artifacts-74.yaml
+updatecli_matrix_version: 7.4.N
 artifacts:
   alfresco-transform-router:
     name: alfresco-transform-router
