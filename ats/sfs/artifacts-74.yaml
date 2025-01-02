@@ -4,7 +4,7 @@ updatecli_matrix_version: 7.4.N
 artifacts:
   alfresco-shared-file-store-controller:
     name: alfresco-shared-file-store-controller
-    version: 4.1.4
+    version: 4.1.5
     classifier: ".jar"
     repository: enterprise-releases
     group: org.alfresco
