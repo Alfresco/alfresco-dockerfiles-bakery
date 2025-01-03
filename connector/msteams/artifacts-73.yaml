@@ -4,7 +4,7 @@ updatecli_matrix_version: 7.3.N
 artifacts:
   alfresco-ms-teams-springboot:
     name: alfresco-ms-teams-springboot
-    version: 1.1.0
+    version: 2.0.4
     classifier: ".jar"
     repository: enterprise-releases
     group: org.alfresco
