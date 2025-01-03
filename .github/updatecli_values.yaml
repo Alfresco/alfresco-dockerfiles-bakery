@@ -14,3 +14,7 @@ artifacts:
     updatecli_matrix_component_key: sfs
   alfresco-transform-router:
     updatecli_matrix_component_key: trouter
+  alfresco-ms-teams-springboot:
+    updatecli_matrix_component_key: msteams
+  onedrive-springboot:
+    updatecli_matrix_component_key: onedrive
