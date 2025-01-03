@@ -1,4 +1,4 @@
-name: Test building using the make wrapper
+name: Test make
 
 on:
   push:
