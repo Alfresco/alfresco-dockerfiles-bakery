@@ -30,3 +30,5 @@ artifacts:
     updatecli_matrix_component_key: search-enterprise
   alfresco-elasticsearch-reindexing:
     updatecli_matrix_component_key: search-enterprise
+  alfresco-search-services:
+    updatecli_matrix_component_key: search
