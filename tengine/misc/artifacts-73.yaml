@@ -1,4 +1,6 @@
 ---
+updatecli_self: tengine/misc/artifacts-73.yaml
+updatecli_matrix_version: 7.3.N
 artifacts:
   alfresco-transform-misc:
     name: alfresco-transform-misc

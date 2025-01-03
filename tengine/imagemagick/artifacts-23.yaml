@@ -1,4 +1,6 @@
 ---
+updatecli_self: tengine/imagemagick/artifacts-23.yaml
+updatecli_matrix_version: current
 artifacts:
   imagemagick-distribution-el9-libs:
     name: imagemagick-distribution

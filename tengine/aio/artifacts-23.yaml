@@ -1,4 +1,6 @@
 ---
+updatecli_self: tengine/aio/artifacts-23.yaml
+updatecli_matrix_version: current
 artifacts:
   alfresco-transform-core-aio:
     name: alfresco-transform-core-aio

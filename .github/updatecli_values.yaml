@@ -34,3 +34,15 @@ artifacts:
     updatecli_matrix_component_key: search
   sync-distribution:
     updatecli_matrix_component_key: sync
+  alfresco-transform-core-aio:
+    updatecli_matrix_component_key: tengine-aio
+  alfresco-transform-imagemagick:
+    updatecli_matrix_component_key: tengine-im
+  alfresco-transform-libreoffice:
+    updatecli_matrix_component_key: tengine-lo
+  alfresco-transform-misc:
+    updatecli_matrix_component_key: tengine-misc
+  alfresco-pdf-renderer-jar:
+    updatecli_matrix_component_key: tengine-pdf
+  alfresco-transform-tika:
+    updatecli_matrix_component_key: tengine-tika
