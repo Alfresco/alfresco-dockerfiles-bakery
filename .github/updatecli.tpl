@@ -1,4 +1,4 @@
-name: Update Artifacts for {{ .updatecli_matrix_version }} version using reusable matrix
+name: Update Artifacts for version {{ .updatecli_matrix_version }} in {{ .updatecli_self }}
 
 sources:
 {{- range $key, $artifact := .artifacts }}

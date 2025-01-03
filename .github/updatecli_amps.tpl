@@ -1,4 +1,4 @@
-name: Update AMPs artifacts for {{ .updatecli_matrix_version }} version using acs-packaging repository
+name: Update AMPs artifacts for version {{ .updatecli_matrix_version }} in {{ .updatecli_self }}
 
 scms:
   acsPackaging:
