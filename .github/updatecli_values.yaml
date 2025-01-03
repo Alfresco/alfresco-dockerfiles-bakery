@@ -18,3 +18,15 @@ artifacts:
     updatecli_matrix_component_key: msteams
   onedrive-springboot:
     updatecli_matrix_component_key: onedrive
+  alfresco-elasticsearch-live-indexing:
+    updatecli_matrix_component_key: search-enterprise
+  alfresco-elasticsearch-live-indexing-mediation:
+    updatecli_matrix_component_key: search-enterprise
+  alfresco-elasticsearch-live-indexing-metadata:
+    updatecli_matrix_component_key: search-enterprise
+  alfresco-elasticsearch-live-indexing-path:
+    updatecli_matrix_component_key: search-enterprise
+  alfresco-elasticsearch-live-indexing-content:
+    updatecli_matrix_component_key: search-enterprise
+  alfresco-elasticsearch-reindexing:
+    updatecli_matrix_component_key: search-enterprise

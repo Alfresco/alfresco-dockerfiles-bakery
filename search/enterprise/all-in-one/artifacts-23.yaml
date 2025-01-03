@@ -1,4 +1,6 @@
 ---
+updatecli_self: search/enterprise/all-in-one/artifacts-23.yaml
+updatecli_matrix_version: current
 artifacts:
   alfresco-elasticsearch-live-indexing:
     name: alfresco-elasticsearch-live-indexing

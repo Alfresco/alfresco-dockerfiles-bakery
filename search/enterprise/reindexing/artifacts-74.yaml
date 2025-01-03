@@ -1,4 +1,6 @@
 ---
+updatecli_self: search/enterprise/reindexing/artifacts-74.yaml
+updatecli_matrix_version: 7.4.N
 artifacts:
   alfresco-elasticsearch-reindexing:
     name: alfresco-elasticsearch-reindexing

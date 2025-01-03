@@ -1,4 +1,6 @@
 ---
+updatecli_self: search/enterprise/common/artifacts-73.yaml
+updatecli_matrix_version: 7.3.N
 artifacts:
   alfresco-elasticsearch-live-indexing-mediation:
     name: alfresco-elasticsearch-live-indexing-mediation
