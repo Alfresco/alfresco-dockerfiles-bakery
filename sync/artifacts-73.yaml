@@ -1,4 +1,6 @@
 ---
+updatecli_self: sync/artifacts-73.yaml
+updatecli_matrix_version: 7.3.N
 artifacts:
   sync-distribution:
     name: sync-dist-6.x

@@ -32,3 +32,5 @@ artifacts:
     updatecli_matrix_component_key: search-enterprise
   alfresco-search-services:
     updatecli_matrix_component_key: search
+  sync-distribution:
+    updatecli_matrix_component_key: sync
