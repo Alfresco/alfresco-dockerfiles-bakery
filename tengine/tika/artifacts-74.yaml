@@ -4,7 +4,7 @@ updatecli_matrix_version: 7.4.N
 artifacts:
   alfresco-transform-tika:
     name: alfresco-transform-tika
-    version: 5.1.4
+    version: 5.1.5
     classifier: ".jar"
     repository: releases
     group: org.alfresco
