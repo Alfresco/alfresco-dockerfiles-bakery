@@ -51,7 +51,10 @@ jobs:
           set -x
           find . -type f -name 'artifacts-*.yaml' | while read -r i; do
              updatecli apply -c .github/updatecli.tpl      -v ${i} -v .github/updatecli_values.yaml -v alfresco-updatecli/deployments/values/supported-matrix.yaml
-             updatecli apply -c .github/updatecli_amps.tpl -v ${i} -v .github/updatecli_amps_values.yaml
+
+            if yq -e '.updatecli_amps_release_branch' ${i} > /dev/null; then
+              updatecli apply -c .github/updatecli_amps.tpl -v ${i} -v .github/updatecli_amps_values.yaml
+            fi
           done
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
