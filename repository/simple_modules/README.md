@@ -1,11 +1,11 @@
-# Alfresco Content Repository Simple Module
+# Alfresco Content Repository Simple Module (JAR)
 
 Full documentation on Simple Module is here:
-https://docs.alfresco.com/content-services/latest/develop/extension-packaging/#simplemodule
+https://support.hyland.com/r/Alfresco/Alfresco-Content-Services/23.4/Alfresco-Content-Services/Develop/Extension-Packaging-Modules/Module-Package-Formats/Alfresco-Module-Package-AMP/Using-the-Module-Management-Tool-MMT/Simple-Module-JAR
 
 To add Simple Module with alfresco-dockerfiles-bakery:
 
-1. Copy jar into `repository/simple_modules/jars`
+1. Copy jar files produced by the Alfresco SDK into `repository/simple_modules/jars`
 
 2. If your module consists configuration files such as `module.properties` copy
    them into `repository/simple_modules/config/properties/<your_module_name>`.
