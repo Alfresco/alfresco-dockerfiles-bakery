@@ -59,6 +59,10 @@ RUN groupadd -g ${ALFRESCO_REPO_GROUP_ID} ${ALFRESCO_REPO_GROUP_NAME} && \
   yum install -y fontconfig && \
   yum clean all && rm -rf /var/cache/yum
 
+COPY simple_modules/jars/*.jar ${CATALINA_HOME}/modules/platform/
+COPY simple_modules/config/properties/* ${CATALINA_HOME}/shared/classes/alfresco/module/
+COPY simple_modules/config/resources/* ${CATALINA_HOME}/shared/classes/alfresco/META-INF/resources/
+
 COPY entrypoint.sh /entrypoint.sh
 
 FROM repo-rhlike AS repo-rockylinux9
