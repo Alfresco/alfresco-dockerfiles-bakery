@@ -59,6 +59,21 @@ RUN groupadd -g ${ALFRESCO_REPO_GROUP_ID} ${ALFRESCO_REPO_GROUP_NAME} && \
   yum install -y fontconfig && \
   yum clean all && rm -rf /var/cache/yum
 
+COPY simple_modules /tmp/simple_modules
+
+RUN if [ -f /tmp/simple_modules/jars/*.jar ]; \
+    then cp /tmp/simple_modules/jars/*.jar ${CATALINA_HOME}/modules/platform/; \
+    else echo "No simple modules found"; \
+    fi && \
+    if [ -f /tmp/simple_modules/config/properties/*/* ]; \
+    then cp -a /tmp/simple_modules/config/properties/. ${CATALINA_HOME}/shared/classes/alfresco/module/; \
+    else echo "No simple modules properties found"; \
+    fi && \
+    if [ -f /tmp/simple_modules/config/resources/*/* ]; \
+    then cp -a /tmp/simple_modules/config/resources/. ${CATALINA_HOME}/shared/classes/alfresco/META-INF/resources/; \
+    else echo "No simple modules resources found"; \
+    fi
+
 COPY simple_modules/jars/*.jar ${CATALINA_HOME}/modules/platform/
 COPY simple_modules/config/properties/* ${CATALINA_HOME}/shared/classes/alfresco/module/
 COPY simple_modules/config/resources/* ${CATALINA_HOME}/shared/classes/alfresco/META-INF/resources/
