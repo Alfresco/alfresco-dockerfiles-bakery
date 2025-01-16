@@ -74,10 +74,6 @@ RUN if [ -f /tmp/simple_modules/jars/*.jar ]; \
     else echo "No simple modules resources found"; \
     fi
 
-COPY simple_modules/jars/*.jar ${CATALINA_HOME}/modules/platform/
-COPY simple_modules/config/properties/* ${CATALINA_HOME}/shared/classes/alfresco/module/
-COPY simple_modules/config/resources/* ${CATALINA_HOME}/shared/classes/alfresco/META-INF/resources/
-
 COPY entrypoint.sh /entrypoint.sh
 
 FROM repo-rhlike AS repo-rockylinux9
