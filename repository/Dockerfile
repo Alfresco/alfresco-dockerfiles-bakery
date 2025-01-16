@@ -43,25 +43,9 @@ RUN if [ -f /tmp/amps/alfresco-aos-module-*.amp ]; then umask 0027; \
 RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar install /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory && \
     java -jar ${DISTDIR}/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/alfresco
 
-FROM tomcat_base AS repo-rhlike
-ARG ALFRESCO_REPO_USER_ID
-ARG ALFRESCO_REPO_GROUP_ID
-ARG ALFRESCO_REPO_GROUP_NAME
-ARG ALFRESCO_REPO_USER_NAME
-
-COPY --chown=:${ALFRESCO_REPO_GROUP_ID} --from=repo_build ${CATALINA_HOME} ${CATALINA_HOME}
-
-USER root
-RUN groupadd -g ${ALFRESCO_REPO_GROUP_ID} ${ALFRESCO_REPO_GROUP_NAME} && \
-  useradd -u ${ALFRESCO_REPO_USER_ID} -g ${ALFRESCO_REPO_GROUP_NAME} ${ALFRESCO_REPO_USER_NAME} -G tomcat && \
-  mkdir -m 750 -p ${CATALINA_HOME}/modules/platform && \
-  chgrp -R ${ALFRESCO_REPO_GROUP_ID} ${CATALINA_HOME}/modules && \
-  yum install -y fontconfig && \
-  yum clean all && rm -rf /var/cache/yum
-
 COPY simple_modules /tmp/simple_modules
-
-RUN if [ -f /tmp/simple_modules/jars/*.jar ]; \
+RUN mkdir -m 750 -p ${CATALINA_HOME}/modules/platform && \
+    if [ -f /tmp/simple_modules/jars/*.jar ]; \
     then cp /tmp/simple_modules/jars/*.jar ${CATALINA_HOME}/modules/platform/; \
     else echo "No simple modules found"; \
     fi && \
@@ -73,6 +57,20 @@ RUN if [ -f /tmp/simple_modules/jars/*.jar ]; \
     then cp -a /tmp/simple_modules/config/resources/. ${CATALINA_HOME}/shared/classes/alfresco/META-INF/resources/; \
     else echo "No simple modules resources found"; \
     fi
+
+FROM tomcat_base AS repo-rhlike
+ARG ALFRESCO_REPO_USER_ID
+ARG ALFRESCO_REPO_GROUP_ID
+ARG ALFRESCO_REPO_GROUP_NAME
+ARG ALFRESCO_REPO_USER_NAME
+
+COPY --chown=:${ALFRESCO_REPO_GROUP_ID} --from=repo_build ${CATALINA_HOME} ${CATALINA_HOME}
+
+USER root
+RUN groupadd -g ${ALFRESCO_REPO_GROUP_ID} ${ALFRESCO_REPO_GROUP_NAME} && \
+  useradd -u ${ALFRESCO_REPO_USER_ID} -g ${ALFRESCO_REPO_GROUP_NAME} ${ALFRESCO_REPO_USER_NAME} -G tomcat && \
+  yum install -y fontconfig && \
+  yum clean all && rm -rf /var/cache/yum
 
 COPY entrypoint.sh /entrypoint.sh
 
