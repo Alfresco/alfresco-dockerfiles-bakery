@@ -53,7 +53,7 @@ jobs:
         run: |
           python3 ./scripts/fetch_artifacts.py
 
-      - name: Fetch simple module artifact for testing when acs version is 23
+      - name: Fetch artifacts for testing when ACS version is 23
         if: inputs.acs_version == '23'
         env:
           ACS_VERSION: "test"
