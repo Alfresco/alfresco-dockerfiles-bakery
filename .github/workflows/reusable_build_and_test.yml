@@ -41,8 +41,10 @@ jobs:
       - name: Restore packages artifacts
         uses: actions/cache/restore@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
         id: artifacts-cache
+        env:
+          HASH_FILES_NAME: '**/artifacts-${{ inputs.acs_version }}.yaml'
         with:
-          key: ${{ runner.os }}-packages-v2-${{ hashFiles('**/artifacts.json') }}-${{ inputs.acs_version }}
+          key: ${{ runner.os }}-packages-v2-${{ hashFiles(env.HASH_FILES_NAME) }}-${{ inputs.acs_version }}
           path: artifacts_cache/**
 
       - name: Fetch artifacts from nexus
