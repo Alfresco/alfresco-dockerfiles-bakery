@@ -33,6 +33,28 @@ RUN chmod +x ${CATALINA_HOME}/shared/classes/alfresco/entrypoint.sh
 RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar install \
     /tmp/amps/ ${CATALINA_HOME}/webapps/share -directory -nobackup -force
 
+COPY simple_modules /tmp/simple_modules
+RUN mkdir -m 750 -p ${CATALINA_HOME}/modules/share && \
+    for j in /tmp/simple_modules/jars/*.jar; do \
+      if [ -f "$j" ]; then \
+        j_name=${j##*/}; \
+        echo "Adding $j_name simple module..."; \
+        cp "$j" ${CATALINA_HOME}/modules/share/; \
+      else \
+        echo "No simple module JARs found."; \
+      fi; \
+    done && \
+    if [ -f /tmp/simple_modules/config/properties/*/* ]; \
+      then cp -a /tmp/simple_modules/config/properties/. ${CATALINA_HOME}/shared/classes/alfresco/module/; \
+    else \
+      echo "No simple modules properties found"; \
+    fi && \
+    if [ -f /tmp/simple_modules/config/resources/*/* ]; \
+      then cp -a /tmp/simple_modules/config/resources/. ${CATALINA_HOME}/shared/classes/alfresco/META-INF/resources/; \
+    else \
+      echo "No simple modules resources found"; \
+    fi
+
 FROM tomcat_base AS share-rhlike
 ARG ALFRESCO_SHARE_USER_ID
 ARG ALFRESCO_SHARE_GROUP_ID
@@ -44,8 +66,6 @@ COPY --chown=${ALFRESCO_SHARE_USER_ID}:${ALFRESCO_SHARE_GROUP_ID} --from=share_b
 USER root
 RUN groupadd -g ${ALFRESCO_SHARE_GROUP_ID} ${ALFRESCO_SHARE_GROUP_NAME} && \
     useradd -u ${ALFRESCO_SHARE_USER_ID} -g ${ALFRESCO_SHARE_GROUP_NAME} ${ALFRESCO_SHARE_USER_NAME} -G tomcat && \
-    mkdir -m 750 -p ${CATALINA_HOME}/modules/share && \
-    chgrp -R ${ALFRESCO_SHARE_GROUP_ID} ${CATALINA_HOME}/modules && \
     yum install -y xmlstarlet && \
     yum clean all && rm -rf /var/cache/yum
 
