@@ -5,7 +5,7 @@ https://support.hyland.com/r/Alfresco/Alfresco-Content-Services/23.4/Alfresco-Co
 
 To add Simple Module with alfresco-dockerfiles-bakery:
 
-1. Copy jar files produced by the Alfresco SDK into `share/simple_modules/jars`
+1. Copy jar files produced by the [Alfresco SDK](https://github.com/Alfresco/alfresco-sdk) into `share/simple_modules/jars`
 
 2. If your module consists configuration files such as `module.properties` copy
    them into `share/simple_modules/config/properties/<your_module_name>`.
