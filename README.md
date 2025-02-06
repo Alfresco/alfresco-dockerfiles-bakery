@@ -30,14 +30,6 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
 
-## Work in Progress
-
-- We are migrating the `fetch-artifacts.sh` script to Python, which will be
-  available as `fetch-artifacts.py`. The new script is more robust and easier to
-  maintain, and it will be the default script for fetching artifacts in the
-  future. We are also switching the previous `artifacts.json` format to a more
-  human-readable and more easy to automate `artifacts-$ACS_VERSION.yaml` format.
-
 ## Prerequisites
 
 Building images requires the following tools:
