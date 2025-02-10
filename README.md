@@ -38,7 +38,7 @@ Building images requires the following tools:
 - Credentials to access the Alfresco artifacts (Nexus server), if building
   Enterprise images
 - Some common unix tools: `jq`, `yq`, `wget`, `make`
-- Python 3 with hashlib & pyyaml (`pip install pyyaml hashlib`) for fetching artifacts via the
+- Python 3 with pyyaml (`pip install pyyaml`) for fetching artifacts via the
   `fetch-artifacts.py` script
 
 ### Nexus authentication
