@@ -16,6 +16,12 @@ import urllib.request
 import hashlib
 import yaml
 
+# Custom exceptions
+class ChecksumMismatchError(Exception):
+    """
+    Exception raised when the checksum of the downloaded artifact does not match the source checksum
+    """
+
 # Constants
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 TEMP_DIR = tempfile.mkdtemp()
@@ -98,13 +104,18 @@ def do_parse_and_mvn_fetch(file_path):
                 shutil.copyfileobj(response, out_file)
                 checksums = get_checksums(artifact_checksum, artifact_url, open(artifact_tmp_path, 'rb'))
                 if checksums[0] != checksums[1]:
-                    raise Exception(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}")
+                    raise ChecksumMismatchError(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}")
 
-        except Exception as e:
-            print(f"Skipping after failure: {e}")
+        except urllib.error.HTTPError as e:
+            if e.code == 401:
+                print("Invalid or missing credentials, skipping...")
+                continue
+            else:
+                # rethrow the exception to exit with failure
+                raise e
+        finally:
             if os.path.exists(artifact_tmp_path):
                 os.remove(artifact_tmp_path)
-            continue
 
         # Move to cache and copy to final path
         shutil.move(artifact_tmp_path, artifact_cache_path)
