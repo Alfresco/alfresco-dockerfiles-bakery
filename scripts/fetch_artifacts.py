@@ -29,14 +29,13 @@ ACS_VERSION = os.getenv("ACS_VERSION", "23")
 MAVEN_FQDN = os.getenv("MAVEN_FQDN", "nexus.alfresco.com")
 MAVEN_REPO = os.getenv("MAVEN_REPO", f"https://{MAVEN_FQDN}/nexus/repository")
 
-def get_checksums(artifact_checksum, artifact_url, artifact_file):
+def get_checksums(artifact_checksum, artifact_url, artifact_file_path):
     """
     Get source checksum that must match and the computed checksum
     """
     if artifact_checksum and artifact_checksum.split(":")[0] in ["md5", "sha1", "sha256", "sha512"]:
         checksum_type = artifact_checksum.split(":")[0]
     else:
-        print("No valid checksum found, skipping verification...")
         return None, None
     if not artifact_checksum.split(":")[1]:
         try:
@@ -47,7 +46,8 @@ def get_checksums(artifact_checksum, artifact_url, artifact_file):
             return None, None
     else:
         checksum = artifact_checksum.split(":")[1]
-    computed_checksum = hashlib.new(checksum_type, artifact_file.read()).hexdigest()
+    with open(artifact_file_path, "rb") as artifact_file:
+        computed_checksum = hashlib.new(checksum_type, artifact_file.read()).hexdigest()
     return checksum, computed_checksum
 
 
@@ -79,16 +79,19 @@ def do_parse_and_mvn_fetch(file_path):
 
         # Check if the artifact is already present
         if os.path.isfile(artifact_final_path):
-            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, open(artifact_final_path, 'rb'))
-            if src_checksum == computed_checksum:
-                print(f"Artifact {artifact_name}-{artifact_version} already present, skipping...")
+            print(f"Artifact {artifact_name}-{artifact_version} already present.")
+            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, artifact_final_path)
+            if not src_checksum and not computed_checksum:
+                print('No valid checksum found, skipping verification...')
                 continue
-            else:
-                print(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
-                os.remove(artifact_final_path)
+            if src_checksum == computed_checksum:
+                print(f"Checksum matched for {artifact_name}-{artifact_version}{artifact_ext}")
+                continue
+            print(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
+            os.remove(artifact_final_path)
 
         if os.path.isfile(artifact_cache_path):
-            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, open(artifact_cache_path, 'rb'))
+            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, artifact_cache_path)
             if src_checksum == computed_checksum:
                 print(f"Artifact {artifact_name}-{artifact_version} already present in cache, copying...")
                 shutil.copy(artifact_cache_path, artifact_final_path)
@@ -102,15 +105,16 @@ def do_parse_and_mvn_fetch(file_path):
         try:
             with urllib.request.urlopen(artifact_url) as response, open(artifact_tmp_path, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
-                checksums = get_checksums(
-                    artifact_checksum, artifact_url,
-                    open(artifact_tmp_path, 'rb')
+
+            checksums = get_checksums(
+                artifact_checksum, artifact_url,
+                artifact_tmp_path
+            )
+            if checksums[0] != checksums[1]:
+                raise ChecksumMismatchError(
+                    f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}."
+                    f"Expected: {checksums[0]}, Computed: {checksums[1]}"
                 )
-                if checksums[0] != checksums[1]:
-                    raise ChecksumMismatchError(
-                        f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}."
-                        f"Expected: {checksums[0]}, Computed: {checksums[1]}"
-                    )
 
         except urllib.error.HTTPError as e:
             if e.code == 401:
