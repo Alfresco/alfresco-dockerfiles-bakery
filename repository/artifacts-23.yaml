@@ -13,7 +13,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-share-services:
     name: alfresco-share-services
-    version: 23.3.4.1
+    version: 23.4.2.4
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco
@@ -21,7 +21,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-aos-module:
     name: alfresco-aos-module
-    version: 3.1.0
+    version: 3.2.0
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco.aos-module
@@ -29,7 +29,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-device-sync-repo:
     name: alfresco-device-sync-repo
-    version: 4.0.0
+    version: 5.1.0
     path: repository/amps_enterprise
     classifier: ".amp"
     group: org.alfresco.services.sync
@@ -53,7 +53,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-content-services-community-distribution:
     name: alfresco-content-services-community-distribution
-    version: 23.4.0
+    version: 23.4.1
     path: repository/distribution
     classifier: ".zip"
     group: org.alfresco

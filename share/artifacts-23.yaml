@@ -12,7 +12,7 @@ artifacts:
     path: share/distribution
   alfresco-content-services-community-distribution:
     name: alfresco-content-services-community-distribution
-    version: 23.4.0
+    version: 23.4.1
     classifier: ".zip"
     group: org.alfresco
     repository: public

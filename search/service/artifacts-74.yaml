@@ -4,7 +4,7 @@ updatecli_matrix_version: 7.4.N
 artifacts:
   alfresco-search-services:
     name: alfresco-search-services
-    version: 2.0.13
+    version: 2.0.14
     classifier: ".zip"
     repository: releases
     group: org.alfresco

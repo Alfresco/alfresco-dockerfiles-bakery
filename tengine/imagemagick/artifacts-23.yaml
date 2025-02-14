@@ -32,7 +32,7 @@ artifacts:
     path: tengine/imagemagick
   alfresco-transform-imagemagick:
     name: alfresco-transform-imagemagick
-    version: 5.1.5
+    version: 5.1.6
     classifier: ".jar"
     repository: releases
     group: org.alfresco

@@ -4,7 +4,7 @@ updatecli_matrix_version: 7.3.N
 artifacts:
   onedrive-springboot:
     name: onedrive-springboot
-    version: 2.0.4
+    version: 2.0.5
     classifier: ".jar"
     repository: enterprise-releases
     group: org.alfresco
