@@ -113,9 +113,6 @@ def do_parse_and_mvn_fetch(file_path):
             else:
                 # rethrow the exception to exit with failure
                 raise e
-        finally:
-            if os.path.exists(artifact_tmp_path):
-                os.remove(artifact_tmp_path)
 
         # Move to cache and copy to final path
         shutil.move(artifact_tmp_path, artifact_cache_path)
