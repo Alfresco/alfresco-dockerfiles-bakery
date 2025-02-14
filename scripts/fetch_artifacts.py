@@ -36,13 +36,13 @@ def get_checksums(artifact_checksum, artifact_url, artifact_file):
     if artifact_checksum and artifact_checksum.split(":")[0] in ["md5", "sha1", "sha256", "sha512"]:
         checksum_type = artifact_checksum.split(":")[0]
     else:
-        print(f"No valid checksum found, skipping verification...")
+        print("No valid checksum found, skipping verification...")
         return None, None
     if not artifact_checksum.split(":")[1]:
         try:
             with urllib.request.urlopen(f"{artifact_url}.{checksum_type}") as checksum_response:
                 checksum = checksum_response.read().decode("utf-8").strip()
-        except Exception as e:
+        except urllib.error.HTTPError as e:
             print(f"Failed to fetch checksum from {artifact_url}.{checksum_type}: {e}")
             return None, None
     else:
@@ -102,9 +102,15 @@ def do_parse_and_mvn_fetch(file_path):
         try:
             with urllib.request.urlopen(artifact_url) as response, open(artifact_tmp_path, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
-                checksums = get_checksums(artifact_checksum, artifact_url, open(artifact_tmp_path, 'rb'))
+                checksums = get_checksums(
+                    artifact_checksum, artifact_url,
+                    open(artifact_tmp_path, 'rb')
+                )
                 if checksums[0] != checksums[1]:
-                    raise ChecksumMismatchError(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}")
+                    raise ChecksumMismatchError(
+                        f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}."
+                        f"Expected: {checksums[0]}, Computed: {checksums[1]}"
+                    )
 
         except urllib.error.HTTPError as e:
             if e.code == 401:
