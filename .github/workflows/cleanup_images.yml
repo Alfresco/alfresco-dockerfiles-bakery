@@ -53,20 +53,18 @@ jobs:
         env:
           JQ_FILTER: >-
             .target
-            | map(select(.output | index("type=docker")))
+            | map(select(.output | any(.type == "docker")))
             | map(.tags[] | split("/")[-1] | split(":")[0])
             | join(",")
         run: |
           echo PACKAGE_NAMES=$(docker buildx bake --print | jq -r '${{ env.JQ_FILTER }}') >> $GITHUB_ENV
 
-      - name: Debug PACKAGE_NAMES
+      - name: Ensure PACKAGE_NAMES is not empty
         run: |
-          echo $PACKAGE_NAMES
-          echo "DEBUG"
-          set -x
-          docker buildx bake --print
-          docker buildx bake --print | jq -r '.target | map(select(.output | index("type=docker"))) | join(",")'
-
+          if [ -z "$PACKAGE_NAMES" ]; then
+            echo "No packages found in bake definition"
+            exit 1
+          fi
 
       - name: Remove tags after PR is closed
         uses: dataaxiom/ghcr-cleanup-action@2d58aab3d24aed94070e032d3091b83d50d93534 # v1.0.15
