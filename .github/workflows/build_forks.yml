@@ -45,6 +45,7 @@ jobs:
       - name: Fetch artifacts from nexus
         run: |
           python3 ./scripts/fetch_artifacts.py
+          ls -la adf-apps/acc
 
       - name: Save packages artifacts
         if: steps.artifacts-cache.outputs.cache-hit != 'true'
