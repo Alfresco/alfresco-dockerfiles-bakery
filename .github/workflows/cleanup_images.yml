@@ -62,7 +62,7 @@ jobs:
           fi
 
       - name: Remove tags after PR is closed
-        uses: dataaxiom/ghcr-cleanup-action@2d58aab3d24aed94070e032d3091b83d50d93534 # v1.0.15
+        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
         if: github.event_name == 'pull_request'
         env:
           PR_TAGS: ${{ format('pr-{0}*', github.event.pull_request.number) }}
@@ -75,7 +75,7 @@ jobs:
           dry-run: false
 
       - name: Remove every repo tags older than ${{ env.PERIOD }}
-        uses: dataaxiom/ghcr-cleanup-action@2d58aab3d24aed94070e032d3091b83d50d93534 # v1.0.15
+        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
         if: inputs.cleanup-old-tags || github.event_name == 'schedule'
         env:
           PERIOD: ${{ inputs.cleanup-old-tags-period || '2 weeks' }}
@@ -90,7 +90,7 @@ jobs:
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'false' }}
 
       - name: Remove images when requested
-        uses: dataaxiom/ghcr-cleanup-action@2d58aab3d24aed94070e032d3091b83d50d93534 # v1.0.15
+        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
           token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
