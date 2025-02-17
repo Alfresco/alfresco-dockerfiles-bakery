@@ -63,6 +63,7 @@ jobs:
           TARGETARCH: linux/amd64
         uses: docker/bake-action@7bff531c65a5cda33e52e43950a795b91d450f63  # v6.3.0
         with:
+          source: .
           targets: community
 
       - name: Export all baked images whose name include `alfresco`

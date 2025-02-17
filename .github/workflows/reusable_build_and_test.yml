@@ -130,6 +130,7 @@ jobs:
           TARGETARCH: ${{ inputs.acs_version == '23' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
         uses: docker/bake-action@7bff531c65a5cda33e52e43950a795b91d450f63  # v6.3.0
         with:
+          source: .
           set: |
             *.output=type=registry,push=true
             ${{ steps.cache-targets.outputs.cache-set }}
