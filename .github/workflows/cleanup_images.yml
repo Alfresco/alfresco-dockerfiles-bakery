@@ -83,7 +83,7 @@ jobs:
           token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
-          packages: ${{ env.CACHE_REPO }}
+          packages: ${{ env.PACKAGE_NAMES }},${{ env.CACHE_REPO }}
           delete-untagged: false
           keep-n-tagged: 0
           older-than: ${{ env.PERIOD }}
