@@ -16,7 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MAKE_TARGET: ${{ github.event.pull_request.head.repo.fork && 'community' || 'enterprise' }}
+  MAKE_TARGET: ${{ github.event.pull_request.head.repo.fork && 'community' || 'all_ci' }}
+  BAKE_TARGET: ${{ github.event.pull_request.head.repo.fork && 'community' || 'enterprise' }}
 
 jobs:
   make-test:
@@ -57,4 +58,4 @@ jobs:
 
       - name: Grype scan
         run: |
-          make grype GRYPE_TARGET="${{ env.MAKE_TARGET }}" GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
+          make grype GRYPE_TARGET="${{ env.BAKE_TARGET }}" GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
