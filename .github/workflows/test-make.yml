@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MAKE_TARGET: ${{ github.event.pull_request.head.repo.fork && 'community' || 'all_ci' }}
+  MAKE_TARGET: ${{ github.event.pull_request.head.repo.fork && 'community' || 'enterprise' }}
 
 jobs:
   make-test:
