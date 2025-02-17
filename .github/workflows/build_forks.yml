@@ -59,8 +59,8 @@ jobs:
 
       - name: Bake Docker images
         env:
+          ACS_VERSION: 23
           TARGETARCH: linux/amd64
-          DOCKER_PUSH: false
         uses: docker/bake-action@3fc70e1131fee40a422dd8dd0ff22014ae20a1f3  # v5.11.0
         with:
           targets: community
