@@ -1,7 +1,7 @@
 FROM busybox AS unpack
 WORKDIR /unpack
-COPY ./*zip /
-RUN unzip /*zip && rm /*zip
+COPY alfresco-digital-workspace-*.zip .
+RUN unzip alfresco-digital-workspace-*.zip && rm alfresco-digital-workspace-*.zip
 
 FROM nginxinc/nginx-unprivileged:alpine3.20
 

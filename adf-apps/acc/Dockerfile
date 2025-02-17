@@ -1,7 +1,7 @@
 FROM busybox AS unpack
 WORKDIR /unpack
-COPY ./*zip /
-RUN unzip /*zip && rm /*zip
+COPY alfresco-control-center-*.zip .
+RUN unzip alfresco-control-center-*.zip && rm alfresco-control-center-*.zip
 
 FROM nginxinc/nginx-unprivileged:alpine3.20
 
