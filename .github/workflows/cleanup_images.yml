@@ -9,26 +9,21 @@ on:
     inputs:
       dry-run:
         description: Dry run (do not delete images)
-        required: false
         type: boolean
         default: true
       tags:
         description: Tags to delete for all the images (regexp enabled)
-        required: false
         type: string
       untagged:
         description: Delete untagged images
-        required: false
         type: boolean
         default: false
-      clean-old-cache:
-        description: Delete old cache images
-        required: false
+      cleanup-old-tags:
+        description: Remove old tags from every repository
         type: boolean
         default: false
-      old-cache-period:
-        description: Period to keep cache images
-        required: false
+      cleanup-old-tags-period:
+        description: Keep tags newer than this period
         type: string
         default: 2 weeks
 
@@ -79,11 +74,11 @@ jobs:
           delete-tags: ${{ env.PR_TAGS }}
           dry-run: false
 
-      - name: Remove ${{ env.CACHE_REPO }} tags older than ${{ env.PERIOD }} when requested
+      - name: Remove every repo tags older than ${{ env.PERIOD }}
         uses: dataaxiom/ghcr-cleanup-action@2d58aab3d24aed94070e032d3091b83d50d93534 # v1.0.15
-        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.clean-old-cache)
+        if: inputs.cleanup-old-tags || github.event_name == 'schedule'
         env:
-          PERIOD: ${{ github.event_name == 'workflow_dispatch' && inputs.old-cache-period || (github.event_name != 'workflow_dispatch' && '2 weeks') }}
+          PERIOD: ${{ github.event_name == 'workflow_dispatch' && inputs.cleanup-old-tags-period || (github.event_name != 'workflow_dispatch' && '2 weeks') }}
         with:
           token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
           owner: ${{ env.ORG }}
