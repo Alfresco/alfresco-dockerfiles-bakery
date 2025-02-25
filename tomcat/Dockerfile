@@ -61,9 +61,10 @@ RUN xmlstarlet ed -L \
   -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]' -t attr -n deployXML -v false \
   -u '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/@autoDeploy' -v false \
   -u '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/@unpackWARs' -v false \
-  # Enable RemoteIP valve for better monitoring/logging
+  # Enable RemoteIP valve for better handling when behind reverse proxy
   -s '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]' -t elem -n 'Valve' \
   -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/Valve[last()]' -t attr -n className -v org.apache.catalina.valves.RemoteIpValve \
+  -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/Valve[last()]' -t attr -n portHeader -v X-Forwarded-Port \
   # Do not leak server info within error pages
   -s '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]' -t elem -n 'Valve' \
   -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/Valve[last()]' -t attr -n className -v org.apache.catalina.valves.ErrorReportValve \
