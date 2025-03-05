@@ -16,7 +16,7 @@ env:
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: alfresco
   TAG: ${{ inputs.tag }}
-  ACS_DEPLOYMENT_VERSION: 78132d95e29d7126025e127740d10cf958164947 # 8.6.0-alpha.0 with compose healthcheck
+  ACS_DEPLOYMENT_VERSION: helm-enterprite-runner
 
 jobs:
   build:
@@ -220,7 +220,7 @@ jobs:
 
   helm-test:
     needs: build-matrix
-    runs-on: ${{ matrix.arch == 'arm64' && 'alfrescoARM-ubuntu2404-16G-4CPU' || 'alfrescoPub-ubuntu2204-16G-4CPU' }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.helm_matrix_json) }}
@@ -318,26 +318,8 @@ jobs:
             --values test/helm/test-overrides.yaml \
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
-      - name: Watch Helm deployment
-        env:
-          HELM_INSTALL_TIMEOUT: 10m
-        run: |
-          kubectl get pods --watch &
-          KWPID=$!
-          kubectl wait --timeout=${{ env.HELM_INSTALL_TIMEOUT }} --all=true --for=condition=Ready pods
-          kill $KWPID
-
-          if [ "${{ matrix.edition }}" = "enterprise" ]; then
-            echo "Waiting for Enterprise Search Reindexing job to complete... "
-            kubectl wait --timeout=5m --for=condition=complete job/acs-alfresco-search-enterprise-reindexing
-          fi
-
-      - name: Debug cluster status after install
-        if: always() && steps.helm_install.outcome != 'skipped'
-        run: |
-          helm ls --all-namespaces --all
-          kubectl get all --all-namespaces
-          kubectl describe pod
+      - name: Wait for pods to be ready
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@OPSEXP-3069-kubectl-wait
 
       - name: Run helm test
         id: helm_test
