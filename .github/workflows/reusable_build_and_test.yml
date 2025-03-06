@@ -223,7 +223,7 @@ jobs:
         if: always() && steps.verify_compose.outcome != 'skipped'
         uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.14.0
         with:
-          output-archive-name: ${{ matrix.edition }}-logs-${{ inputs.acs_version }}
+          output-archive-name: compose-${{ matrix.edition }}-logs-${{ inputs.acs_version }}
 
   helm-test:
     needs: build-matrix
