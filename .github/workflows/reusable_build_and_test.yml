@@ -16,7 +16,7 @@ env:
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: alfresco
   TAG: ${{ inputs.tag }}
-  ACS_DEPLOYMENT_VERSION: 79a4d3c4facc9912a5f3990144488ba0da965dfc
+  ACS_DEPLOYMENT_VERSION: 79a4d3c4facc9912a5f3990144488ba0da965dfc # waiting for the next release
 
 jobs:
   build:

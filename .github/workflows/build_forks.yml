@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  ACS_DEPLOYMENT_VERSION: 78132d95e29d7126025e127740d10cf958164947 # 8.6.0-alpha.0 with compose healthcheck
+  ACS_DEPLOYMENT_VERSION: 79a4d3c4facc9912a5f3990144488ba0da965dfc # waiting for the next release
   ARTIFACT_NAME: alfresco-docker-images
   REGISTRY: localhost
   REGISTRY_NAMESPACE: alfresco
