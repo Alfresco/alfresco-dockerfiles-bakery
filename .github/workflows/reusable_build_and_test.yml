@@ -16,7 +16,7 @@ env:
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: alfresco
   TAG: ${{ inputs.tag }}
-  ACS_DEPLOYMENT_VERSION: helm-enterprite-runner
+  ACS_DEPLOYMENT_VERSION: 79a4d3c4facc9912a5f3990144488ba0da965dfc
 
 jobs:
   build:
@@ -319,7 +319,7 @@ jobs:
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
       - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@OPSEXP-3069-kubectl-wait
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.15.0
 
       - name: Run helm test
         id: helm_test
