@@ -64,6 +64,8 @@ alfresco-transform-service:
       repository: localhost/alfresco/alfresco-shared-file-store
       tag: latest
 alfresco-digital-workspace:
+  podSecurityContext:
+    runAsUser: 101
   image:
     repository: localhost/alfresco/alfresco-digital-workspace
     tag: latest
@@ -83,6 +85,8 @@ alfresco-sync-service:
     repository: localhost/alfresco/alfresco-sync-service
     tag: latest
 alfresco-control-center:
+  podSecurityContext:
+    runAsUser: 101
   image:
     repository: localhost/alfresco/alfresco-control-center
     tag: latest
