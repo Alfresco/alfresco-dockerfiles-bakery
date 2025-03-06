@@ -97,6 +97,10 @@ alfresco-control-center:
         items:
           - key: app.config.json
             path: app.config.json
+alfresco-audit-storage:
+  image:
+    repository: localhost/alfresco/alfresco-audit-storage
+    tag: latest
 dtas:
   additionalArgs:
     - --tb=short
