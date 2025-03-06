@@ -158,7 +158,7 @@ jobs:
 
   compose-test:
     needs: build-matrix
-    runs-on: ${{ matrix.edition == 'enterprise' && 'alfrescoPub-ubuntu2204-16G-4CPU' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.compose_matrix_json) }}
