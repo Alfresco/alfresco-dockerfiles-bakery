@@ -323,7 +323,7 @@ jobs:
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
       - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.15.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.16.0
 
       - name: Run helm test
         id: helm_test
