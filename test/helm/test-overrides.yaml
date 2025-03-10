@@ -113,3 +113,8 @@ dtas:
   config:
     config:
       search_timeout_seconds: "360"
+global:
+  alfrescoRegistryPullSecrets: regcred
+  imagePullSecrets:
+    - name: regcred
+  known_urls: http://localhost
