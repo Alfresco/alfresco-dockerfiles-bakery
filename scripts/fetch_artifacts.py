@@ -128,7 +128,7 @@ def do_parse_and_mvn_fetch(file_path):
         shutil.move(artifact_tmp_path, artifact_cache_path)
         shutil.copy(artifact_cache_path, artifact_final_path)
 
-def find_targets_recursively(root_path, subdir=""):
+def find_targets_recursively(root_path):
     """
     Find all the artifacts yaml files from the root path recursively which match the given pattern
     """
@@ -171,7 +171,7 @@ def main(target_subdir=""):
     """
     Find all the artifacts yaml files and process them
     """
-    targets = find_targets_recursively(REPO_ROOT, target_subdir)
+    targets = find_targets_recursively(os.path.sep.join([REPO_ROOT, target_subdir]))
 
     username, password = get_credentials_from_netrc('nexus.alfresco.com')
     if os.getenv('NEXUS_USERNAME') and os.getenv('NEXUS_PASSWORD'):
