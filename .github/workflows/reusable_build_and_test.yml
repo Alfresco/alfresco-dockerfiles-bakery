@@ -16,7 +16,6 @@ env:
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: alfresco
   TAG: ${{ inputs.tag }}
-  ACS_DEPLOYMENT_VERSION: 78132d95e29d7126025e127740d10cf958164947 # 8.6.0-alpha.0 with compose healthcheck
 
 jobs:
   build:
@@ -168,6 +167,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567  # v3.3.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Log in to the Container registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
@@ -175,31 +180,31 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2  # v3.10.0
-
-      - name: Fetch compose from acs-deployment
-        run: ./scripts/fetch-compose.sh ${{ env.ACS_DEPLOYMENT_VERSION }}
+      - name: Checkout acs-deployment sources
+        uses: ./.github/actions/acs-deployment
 
       - name: Set path to compose files
         id: set-compose-path
         run: |
           if [[ "${{ matrix.edition }}" == "74" ]]; then
-            echo "UPSTREAM_COMPOSE_PATH=test/7.4.N-compose.yaml" >> $GITHUB_ENV
-            echo "OVERRIDE_COMPOSE_PATH=test/solr-search-override.yaml" >> $GITHUB_ENV
+            echo "UPSTREAM_COMPOSE_PATH=7.4.N-compose.yaml" >> $GITHUB_ENV
+            echo "OVERRIDE_COMPOSE_PATH=solr-search-override.yaml" >> $GITHUB_ENV
           elif [[ "${{ matrix.edition }}" == "73" ]]; then
-            echo "UPSTREAM_COMPOSE_PATH=test/7.3.N-compose.yaml" >> $GITHUB_ENV
-            echo "OVERRIDE_COMPOSE_PATH=test/solr-search-override.yaml" >> $GITHUB_ENV
+            echo "UPSTREAM_COMPOSE_PATH=7.3.N-compose.yaml" >> $GITHUB_ENV
+            echo "OVERRIDE_COMPOSE_PATH=solr-search-override.yaml" >> $GITHUB_ENV
           elif [[ "${{ matrix.edition }}" == "community" ]]; then
-            echo "UPSTREAM_COMPOSE_PATH=test/community-compose.yaml" >> $GITHUB_ENV
-            echo "OVERRIDE_COMPOSE_PATH=test/community-override.yaml" >> $GITHUB_ENV
+            echo "UPSTREAM_COMPOSE_PATH=community-compose.yaml" >> $GITHUB_ENV
+            echo "OVERRIDE_COMPOSE_PATH=community-override.yaml" >> $GITHUB_ENV
           else
-            echo "UPSTREAM_COMPOSE_PATH=test/compose.yaml" >> $GITHUB_ENV
-            echo "OVERRIDE_COMPOSE_PATH=test/enterprise-override.yaml" >> $GITHUB_ENV
+            echo "UPSTREAM_COMPOSE_PATH=compose.yaml" >> $GITHUB_ENV
+            echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
           fi
 
       - name: Merge Docker Compose files
-        run: docker compose -f ${{ env.UPSTREAM_COMPOSE_PATH }} -f ${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
+        run: |
+          cp -r acs-deployment/docker-compose/* test/
+          docker compose -f test/${{ env.UPSTREAM_COMPOSE_PATH }} -f test/${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
+          cat ${{ env.MERGED_COMPOSE_PATH }}
 
       - name: Verify docker-compose (${{ matrix.edition }})
         id: verify_compose
@@ -216,7 +221,7 @@ jobs:
         if: always() && steps.verify_compose.outcome != 'skipped'
         uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.16.0
         with:
-          output-archive-name: ${{ matrix.edition }}-logs-${{ inputs.acs_version }}
+          output-archive-name: compose-${{ matrix.edition }}-logs-${{ inputs.acs_version }}
 
   helm-test:
     needs: build-matrix
@@ -237,6 +242,12 @@ jobs:
       - uses: azure/setup-helm@b9e51907a09c216f16ebe8536097933489208112 # v4.3.0
         with:
           version: "3.15.2"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567  # v3.3.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Login to Quay.io
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567  # v3.3.0
@@ -264,11 +275,7 @@ jobs:
           kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
 
       - name: Checkout acs-deployment sources
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          repository: Alfresco/acs-deployment
-          ref: ${{ env.ACS_DEPLOYMENT_VERSION  }}
-          path: acs-deployment
+        uses: ./.github/actions/acs-deployment
 
       - name: Setup helm repository
         working-directory: acs-deployment/helm/alfresco-content-services
@@ -311,8 +318,6 @@ jobs:
         run: |
           helm install acs ./acs-deployment/helm/alfresco-content-services \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
-            --set global.known_urls=http://localhost \
-            --set global.alfrescoRegistryPullSecrets=regcred \
             --values ./acs-deployment/helm/alfresco-content-services/${{ env.UPSTREAM_HELM_VALUES }} \
             --values ./acs-deployment/test/${{ matrix.edition == 'community' && 'community' || 'enterprise' }}-integration-test-values.yaml \
             --values test/helm/test-overrides.yaml \

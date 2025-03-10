@@ -306,14 +306,20 @@ helm install acs alfresco/alfresco-content-services \
 
 You can use Docker Compose to test the built images locally as follows:
 
-1. Fetch upstream compose from acs-deployment repository using the provided
-   script (you can specify a git branch or tag):
+1. Fetch upstream compose definitions from acs-deployment repository:
 
    ```sh
-   ./scripts/fetch-compose.sh master
+   git clone https://github.com/Alfresco/acs-deployment.git
    ```
 
-2. Run compose together with one of the available override files, which allow
+2. Copy the compose files from the acs-deployment repository to the test folder
+   of this repository:
+
+   ```sh
+   cp -r acs-deployment/docker-compose/* test/
+   ```
+
+3. Run compose together with one of the available override files, which allow
    you to easily reference built images using
    `$REGISTRY/$REGISTRY_NAMESPACE/component-name:$TAG` format:
 

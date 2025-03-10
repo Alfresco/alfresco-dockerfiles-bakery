@@ -64,6 +64,8 @@ alfresco-transform-service:
       repository: localhost/alfresco/alfresco-shared-file-store
       tag: latest
 alfresco-digital-workspace:
+  podSecurityContext:
+    runAsUser: 101
   image:
     repository: localhost/alfresco/alfresco-digital-workspace
     tag: latest
@@ -83,6 +85,8 @@ alfresco-sync-service:
     repository: localhost/alfresco/alfresco-sync-service
     tag: latest
 alfresco-control-center:
+  podSecurityContext:
+    runAsUser: 101
   image:
     repository: localhost/alfresco/alfresco-control-center
     tag: latest
@@ -97,6 +101,10 @@ alfresco-control-center:
         items:
           - key: app.config.json
             path: app.config.json
+alfresco-audit-storage:
+  image:
+    repository: localhost/alfresco/alfresco-audit-storage
+    tag: latest
 dtas:
   additionalArgs:
     - --tb=short
@@ -105,3 +113,8 @@ dtas:
   config:
     config:
       search_timeout_seconds: "360"
+global:
+  alfrescoRegistryPullSecrets: regcred
+  imagePullSecrets:
+    - name: regcred
+  known_urls: http://localhost
