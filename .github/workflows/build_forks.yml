@@ -9,7 +9,6 @@ on:
       - main
 
 env:
-  ACS_DEPLOYMENT_VERSION: 79a4d3c4facc9912a5f3990144488ba0da965dfc # waiting for the next release
   ARTIFACT_NAME: alfresco-docker-images
   REGISTRY: localhost
   REGISTRY_NAMESPACE: alfresco
@@ -99,11 +98,7 @@ jobs:
           docker image ls -a
 
       - name: Checkout acs-deployment sources
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          repository: Alfresco/acs-deployment
-          ref: ${{ env.ACS_DEPLOYMENT_VERSION  }}
-          path: acs-deployment
+        uses: ./.github/actions/acs-deployment
 
       - name: Merge Docker Compose files
         env:
@@ -163,11 +158,7 @@ jobs:
           kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
 
       - name: Checkout acs-deployment sources
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          repository: Alfresco/acs-deployment
-          ref: ${{ env.ACS_DEPLOYMENT_VERSION }}
-          path: acs-deployment
+        uses: ./.github/actions/acs-deployment
 
       - name: Setup helm repository
         working-directory: acs-deployment/helm/alfresco-content-services
