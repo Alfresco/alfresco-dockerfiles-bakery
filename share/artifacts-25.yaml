@@ -5,14 +5,14 @@ updatecli_amps_release_branch: release/25.1
 artifacts:
   alfresco-content-services-share-distribution:
     name: alfresco-content-services-share-distribution
-    version: 23.4.1
+    version: 25.1.0
     classifier: ".zip"
     group: org.alfresco
     repository: enterprise-releases
     path: share/distribution
   alfresco-content-services-community-distribution:
     name: alfresco-content-services-community-distribution
-    version: 23.4.1
+    version: 25.1.0
     classifier: ".zip"
     group: org.alfresco
     repository: public

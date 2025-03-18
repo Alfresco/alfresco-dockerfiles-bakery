@@ -13,7 +13,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-share-services:
     name: alfresco-share-services
-    version: 22.35
+    version: 22.36
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco

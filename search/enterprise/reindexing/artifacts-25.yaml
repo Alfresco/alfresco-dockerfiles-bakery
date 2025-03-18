@@ -4,7 +4,7 @@ updatecli_matrix_version: current
 artifacts:
   alfresco-elasticsearch-reindexing:
     name: alfresco-elasticsearch-reindexing
-    version: 4.2.0
+    version: 5.0.0
     classifier: "-app.jar"
     repository: enterprise-releases
     group: org.alfresco
