@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache/restore@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
         id: artifacts-cache
         with:
-          key: ${{ runner.os }}-packages-community-v2-${{ hashFiles('**/artifacts-23.yaml') }}
+          key: ${{ runner.os }}-packages-community-v2-${{ hashFiles('**/artifacts-25.yaml') }}
           path: artifacts_cache/**
 
       - name: Fetch artifacts from nexus
@@ -57,7 +57,7 @@ jobs:
 
       - name: Bake Docker images
         env:
-          ACS_VERSION: 23
+          ACS_VERSION: 25
           TARGETARCH: linux/amd64
         uses: docker/bake-action@4ba453fbc2db7735392b93edf935aaf9b1e8f747  # v6.5.0
         with:

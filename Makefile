@@ -28,10 +28,10 @@ help:
 	@echo "  clean_caches       Clean up Docker and artifact caches"
 	@echo "  help               Display this help message"
 
-ACS_VERSION ?= 23
+ACS_VERSION ?= 25
 TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
 
-ifeq ($(ACS_VERSION), 23)
+ifeq ($(filter $(ACS_VERSION),23 25),$(ACS_VERSION))
   TOMCAT_FIELD := "tomcat10"
 else
   TOMCAT_FIELD := "tomcat9"
