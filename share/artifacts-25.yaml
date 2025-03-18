@@ -1,0 +1,26 @@
+---
+updatecli_self: share/artifacts-25.yaml
+updatecli_matrix_version: current
+updatecli_amps_release_branch: release/23.4
+artifacts:
+  alfresco-content-services-share-distribution:
+    name: alfresco-content-services-share-distribution
+    version: 23.4.1
+    classifier: ".zip"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: share/distribution
+  alfresco-content-services-community-distribution:
+    name: alfresco-content-services-community-distribution
+    version: 23.4.1
+    classifier: ".zip"
+    group: org.alfresco
+    repository: public
+    path: share/distribution
+  alfresco-googledrive-share:
+    name: alfresco-googledrive-share
+    version: 4.1.0
+    classifier: ".amp"
+    group: org.alfresco.integrations
+    repository: releases
+    path: share/amps

@@ -1,0 +1,11 @@
+---
+updatecli_self: search/enterprise/reindexing/artifacts-25.yaml
+updatecli_matrix_version: current
+artifacts:
+  alfresco-elasticsearch-reindexing:
+    name: alfresco-elasticsearch-reindexing
+    version: 4.2.0
+    classifier: "-app.jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: search/enterprise/reindexing

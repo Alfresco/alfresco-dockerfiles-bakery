@@ -1,0 +1,18 @@
+---
+updatecli_self: sync/artifacts-25.yaml
+updatecli_matrix_version: current
+artifacts:
+  sync-distribution:
+    name: sync-dist-6.x
+    version: 5.1.0
+    classifier: ".zip"
+    group: org.alfresco.services.sync
+    repository: enterprise-releases
+    path: sync/distribution
+  postgresql:
+    name: postgresql
+    version: 42.6.1
+    classifier: ".jar"
+    group: org.postgresql
+    repository: public
+    path: sync/configs/connectors

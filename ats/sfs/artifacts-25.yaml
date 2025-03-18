@@ -1,0 +1,11 @@
+---
+updatecli_self: ats/sfs/artifacts-25.yaml
+updatecli_matrix_version: current
+artifacts:
+  alfresco-shared-file-store-controller:
+    name: alfresco-shared-file-store-controller
+    version: 4.1.6
+    classifier: ".jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: ats/sfs
