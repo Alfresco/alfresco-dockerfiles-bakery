@@ -48,7 +48,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [23, 74, 73]
+        version: [25, 23, 74, 73]
     with:
       tag: ${{ github.event_name == 'pull_request' && format('pr-{0}-v{1}', github.event.pull_request.number, matrix.version) || format('{0}-v{1}', github.ref_name, matrix.version) }}
       acs_version: ${{ matrix.version }}
