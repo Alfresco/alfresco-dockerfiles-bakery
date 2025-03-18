@@ -7,3 +7,4 @@ artifacts:
     repository: enterprise-releases
     group: org.alfresco
     path: audit-storage
+updatecli_matrix_version: 23.N

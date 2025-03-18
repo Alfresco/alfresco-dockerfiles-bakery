@@ -1,6 +1,6 @@
 ---
 updatecli_self: search/enterprise/reindexing/artifacts-23.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 23.N
 artifacts:
   alfresco-elasticsearch-reindexing:
     name: alfresco-elasticsearch-reindexing

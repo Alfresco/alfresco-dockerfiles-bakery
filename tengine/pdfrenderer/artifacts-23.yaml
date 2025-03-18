@@ -1,6 +1,6 @@
 ---
 updatecli_self: tengine/pdfrenderer/artifacts-23.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 23.N
 artifacts:
   alfresco-pdf-renderer-x64:
     name: alfresco-pdf-renderer

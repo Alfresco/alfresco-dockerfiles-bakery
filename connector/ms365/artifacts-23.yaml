@@ -1,6 +1,6 @@
 ---
 updatecli_self: connector/ms365/artifacts-23.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 23.N
 artifacts:
   onedrive-springboot:
     name: onedrive-springboot
