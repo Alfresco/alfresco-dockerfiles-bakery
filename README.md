@@ -201,12 +201,13 @@ docker buildx bake repo --set *.output=type=registry,push=true
 
 ## Building older versions
 
-Versions of artifacts being downloaded specific to the ACS version are defined in `artifacts.json` files for each component.
+Versions of artifacts being downloaded specific to the ACS version are defined
+in `artifacts-XX.yaml` files for each component.
 
 To build older version pass `ACS_VERSION` env to make command.
-- ACS 23 (current) - `ACS_VERSION=23` - `"acs23"` section in `artifacts.json` files - set by default
-- ACS 7.4 - `ACS_VERSION=74` - `"acs74"` section in `artifacts.json` files
-- ACS 7.3 - `ACS_VERSION=73` - `"acs73"` section in `artifacts.json` files
+- ACS 23  - `ACS_VERSION=23` - Will use `artifacts-23.yaml` files
+- ACS 7.4 - `ACS_VERSION=74` - Will use `artifacts-74.yaml` files
+- ACS 7.3 - `ACS_VERSION=73` - Will use `artifacts-73.yaml` files
 
 ```sh
 make enterprise ACS_VERSION=74
