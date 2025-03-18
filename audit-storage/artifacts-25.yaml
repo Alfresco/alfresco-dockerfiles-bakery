@@ -8,3 +8,4 @@ artifacts:
     group: org.alfresco
     path: audit-storage
 updatecli_matrix_version: current
+updatecli_self: audit-storage/artifacts-25.yaml
