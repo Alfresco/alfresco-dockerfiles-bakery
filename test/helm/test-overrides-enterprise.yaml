@@ -1,3 +1,5 @@
+alfresco-sync-service:
+  replicaCount: 2
 dtas:
   config:
     assertions:
