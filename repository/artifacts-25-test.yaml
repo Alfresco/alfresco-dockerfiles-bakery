@@ -2,7 +2,7 @@
 artifacts:
   alfresco-hxinsight-connector-hxinsight-extension:
     name: alfresco-hxinsight-connector-hxinsight-extension
-    version: 1.0.1
+    version: 1.1.0
     path: repository/simple_modules
     classifier: ".jar"
     group: org.alfresco
