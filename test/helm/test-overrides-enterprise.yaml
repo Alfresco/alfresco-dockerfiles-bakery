@@ -12,5 +12,5 @@ dtas:
             version: 4.1.0
             installed: true
           - id: alfresco-hxinsight-connector-hxinsight-extension
-            version: 1.1.0
+            version: 1.0.1
             installed: true
