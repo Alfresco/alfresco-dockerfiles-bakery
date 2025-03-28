@@ -1,9 +1,10 @@
-name: "Bump tomcat versions"
+name: Bump tomcat versions
 
 {{ $tomcatMajors := list "10" "9" }}
 
 sources:
 {{ range $tomcatMajor := $tomcatMajors }}
+
   tomcat{{ $tomcatMajor }}Version:
     name: Get latest tomcat {{ $tomcatMajor }} version
     kind: gittag
@@ -12,12 +13,13 @@ sources:
       versionfilter:
         kind: semver
         pattern: ~{{ $tomcatMajor }}
+  {{ $tomcatSourceRef := printf "tomcat%sVersion" $tomcatMajor }}
   tomcat{{ $tomcatMajor }}Checksum:
     name: Get tomcat {{ $tomcatMajor }} archive checksum
     kind: http
-    sourceid: tomcat{{ $tomcatMajor }}Version
+    sourceid: {{ $tomcatSourceRef }}
     spec:
-      url: 'https://archive.apache.org/dist/tomcat/tomcat-{{ $tomcatMajor }}/v{{ source (printf "tomcat%sVersion" $tomcatMajor) }}/bin/apache-tomcat-{{ source (printf "tomcat%sVersion" $tomcatMajor) }}.tar.gz.sha512'
+      url: 'https://archive.apache.org/dist/tomcat/tomcat-{{ $tomcatMajor }}/v{{ source $tomcatSourceRef }}/bin/apache-tomcat-{{ source $tomcatSourceRef }}.tar.gz.sha512'
     transformers:
       - findsubmatch:
           pattern: '([a-fA-F0-9]{128})'
@@ -25,12 +27,13 @@ sources:
 
 conditions:
 {{ range $tomcatMajor := $tomcatMajors }}
+  {{ $tomcatSourceRef := printf "tomcat%sVersion" $tomcatMajor }}
   tomcat{{ $tomcatMajor }}targz:
     name: Check if artifact exists on mirror
     kind: http
-    sourceid: tomcat{{ $tomcatMajor }}Version
+    sourceid: {{ $tomcatSourceRef }}
     spec:
-      url: 'https://archive.apache.org/dist/tomcat/tomcat-{{ $tomcatMajor }}/v{{ source (printf "tomcat%sVersion" $tomcatMajor) }}/bin/apache-tomcat-{{ source (printf "tomcat%sVersion" $tomcatMajor) }}.tar.gz'
+      url: 'https://archive.apache.org/dist/tomcat/tomcat-{{ $tomcatMajor }}/v{{ source $tomcatSourceRef }}/bin/apache-tomcat-{{ source $tomcatSourceRef }}.tar.gz'
       request:
         verb: HEAD
 {{ end }}
@@ -66,7 +69,7 @@ actions:
 
 scms:
   github:
-    kind: "github"
+    kind: github
     spec:
       owner: Alfresco
       repository: alfresco-dockerfiles-bakery
