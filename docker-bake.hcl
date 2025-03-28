@@ -180,17 +180,10 @@ target "java_base" {
   platforms = split(",", "${TARGETARCH}")
 }
 
-variable "TOMCAT_MAJOR" {
-  default = "10"
-}
-
-variable "TOMCAT_VERSION" {
-  default = "10.1.31"
-}
-
-variable "TOMCAT_SHA512" {
-  default = "0e3d423a843e2d9ba4f28a9f0a2f1073d5a1389557dfda041759f8df968bace63cd6948bd76df2727b5133ddb7c33e05dab43cea1d519ca0b6d519461152cce9"
-}
+# Tomcat variables are set by makefile using tomcat/tomcat_versions.yaml
+variable "TOMCAT_MAJOR" {}
+variable "TOMCAT_VERSION" {}
+variable "TOMCAT_SHA512" {}
 
 variable "TCNATIVE_VERSION" {
   default = "2.0.8"
