@@ -92,6 +92,14 @@ jobs:
       - name: Install Updatecli
         uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v8.18.0
 
+      - name: Updatecli scm cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/updatecli
+          key: updatecli-tomcat-v1-${{ hashFiles('.github/updatecli_tomcat.tpl') }}
+          restore-keys: |
+            updatecli-tomcat-v1-
+
       - run: updatecli apply -c .github/updatecli_tomcat.tpl
         env:
           UPDATECLI_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
