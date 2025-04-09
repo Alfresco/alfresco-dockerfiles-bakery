@@ -19,3 +19,5 @@ test/helm/community_values.yaml
 
 # CI/CD
 alfresco-updatecli
+.idea
+.vscode

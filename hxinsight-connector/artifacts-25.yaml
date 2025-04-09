@@ -1,0 +1,11 @@
+---
+updatecli_self: hxinsight-connector/artifacts-25.yaml
+updatecli_matrix_version: current
+artifacts:
+  alfresco-hxinsight-connector-distribution:
+    name: alfresco-hxinsight-connector-distribution
+    version: 2.0.1
+    classifier: ".jar"
+    repository: internal
+    group: org.alfresco
+    path: hxinsight-connector

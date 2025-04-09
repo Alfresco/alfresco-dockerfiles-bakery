@@ -102,6 +102,10 @@ prepare_audit_storage: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Audit Storage targets"
 	@python3 ./scripts/fetch_artifacts.py audit-storage
 
+prepare_hxinsight: scripts/fetch_artifacts.py
+	@echo "Fetching all artifacts for HxInsight Connector target"
+	@python3 ./scripts/fetch_artifacts.py hxinsight-connector
+
 prepare_connectors: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Connector targets"
 	@python3 ./scripts/fetch_artifacts.py connector
@@ -163,6 +167,11 @@ audit_storage: docker-bake.hcl prepare_audit_storage setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
+hxinsight_connector: docker-bake.hcl prepare_hxinsight setenv
+	@echo "Building HxInsight connector"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
 connectors: docker-bake.hcl prepare_connectors setenv
 	@echo "Building Connector images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
@@ -198,7 +207,7 @@ tengines: docker-bake.hcl prepare_tengines setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
-all_ci: adf_apps ats audit_storage connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
+all_ci: adf_apps ats audit_storage hxinsight_connector connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
 
 GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix

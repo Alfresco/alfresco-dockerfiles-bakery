@@ -841,3 +841,34 @@ target "audit_storage" {
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
+
+variable "HXINSIGHT_USER_NAME" {
+  default = "hsinsight"
+}
+
+variable "HXINSIGHT_USER_ID" {
+  default = "33009"
+}
+
+target "hxinsight_connector" {
+  context = "./hxinsight-connector"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    HXINSIGHT_CONNECTOR_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    HXINSIGHT_CONNECTOR_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    HXINSIGHT_CONNECTOR_USER_NAME = "${HXINSIGHT_USER_NAME}"
+    HXINSIGHT_CONNECTOR_USER_ID = "${HXINSIGHT_USER_ID}"
+  }
+  labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} HxInsight Connector"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector"
+    "org.opencontainers.image.description" = "Alfresco HxInsight Connector"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
