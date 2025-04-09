@@ -43,7 +43,7 @@ service behaviour. The following table lists the available variables:
 | RMI_PORT | RMI port to use when JMX is enabled | `18983` |
 | SOLR_DATA_DIR_ROOT | Location where actual index files are stored (should map to a volume) | `/opt/alfresco-search-services/data` |
 | SOLR_DIRECTORY_FACTORY | Solr [Directory Factory](https://solr.apache.org/guide/6_6/datadir-and-directoryfactory-in-solrconfig.html#DataDirandDirectoryFactoryinSolrConfig-SpecifyingtheDirectoryFactoryForYourIndex) to use | `solr.StandardDirectoryFactory` |
-| SOLR_HEAPSIZE | Amount of Heap memory Solr can use | `1g` |
+| SOLR_HEAP | Amount of Heap memory Solr can use | `1g` |
 | SOLR_HOME | Location of the Solr cores configuration & other configuration files (mount it as a volume to allow any type of custom configuration) | `/opt/alfresco-search-services/solrhome` |
 | SOLR_HOST | Set to the externally reachable Solr hostname. Mostly usefullwith remote jmx acces with NAT | `localhost` |
 | SOLR_LOCK_TYPE | Solr Type of [index locking](https://solr.apache.org/guide/8_1/indexconfig-in-solrconfig.html#index-locks) | `native` |
