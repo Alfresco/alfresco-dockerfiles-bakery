@@ -325,14 +325,14 @@ You can use Docker Compose to test the built images locally as follows:
    `$REGISTRY/$REGISTRY_NAMESPACE/component-name:$TAG` format:
 
    ```sh
-   REGISTRY=localhost REGISTRY_NAMESPACE=alfresco TAG=latest
+   export REGISTRY=localhost REGISTRY_NAMESPACE=alfresco TAG=latest
    docker compose -f test/compose.yaml -f test/enterprise-override.yaml up -d
    ```
 
    For community edition instead:
 
     ```sh
-    REGISTRY=localhost REGISTRY_NAMESPACE=alfresco TAG=latest
+    export REGISTRY=localhost REGISTRY_NAMESPACE=alfresco TAG=latest
     docker compose -f test/community-compose.yaml -f test/community-override.yaml up -d
     ```
 
