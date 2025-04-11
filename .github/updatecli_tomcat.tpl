@@ -66,6 +66,8 @@ actions:
       title: Bump Tomcat versions
       labels:
         - updatecli
+      reviewers:
+        - Alfresco/alfresco-ops-readiness
 
 scms:
   github:
