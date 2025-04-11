@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 env:
   ARTIFACT_NAME: alfresco-docker-images
@@ -21,7 +22,7 @@ concurrency:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]'
+    if: github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]' || github.event_name == 'workflow_dispatch'
     steps:
       - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v8.18.0
 
