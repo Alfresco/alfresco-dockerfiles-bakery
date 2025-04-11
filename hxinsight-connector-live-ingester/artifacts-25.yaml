@@ -1,0 +1,11 @@
+---
+updatecli_self: hxinsight-connector-live-ingester/artifacts-25.yaml
+updatecli_matrix_version: current
+artifacts:
+  alfresco-hxinsight-connector-live-ingester:
+    name: alfresco-hxinsight-connector-live-ingester
+    version: 2.0.1
+    classifier: "-app.jar"
+    repository: internal
+    group: org.alfresco
+    path: hxinsight-connector-live-ingester

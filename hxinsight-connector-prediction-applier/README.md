@@ -2,7 +2,7 @@
 
 Sets of variables configurable with your docker image
 
-## Alfresco HxInsight component
+## Alfresco HxInsight Prediction Applier component
 
 ```yaml
 
@@ -40,30 +40,6 @@ alfresco-hxinsight-connector:
 | `AUTH_PROVIDERS_ALFRESCO_USERNAME`       | `admin`                  | Repository user name           |
 | `AUTH_PROVIDERS_ALFRESCO_PASSWORD`       | `admin`                  | Repository user password       |
 
-### Live Ingester configuration (includes Java, ActiveMQ and Repository configuration variables)
-
-| Variable                                         | Default | Description                                              |
-|--------------------------------------------------|---------|----------------------------------------------------------|
-| `HYLANDEXPERIENCE_INSIGHT_INGESTION_BASEURL`     | None    | Base URL for Insight Ingestion API of HxI environment    |
-| `AUTH_PROVIDERS_HYLANDEXPERIENCE_CLIENTID`       | None    | Client Id of HxI environment                             |
-| `AUTH_PROVIDERS_HYLANDEXPERIENCE_CLIENTSECRET`   | None    | Client secret of HxI environment                         |
-| `AUTH_PROVIDERS_HYLANDEXPERIENCE_ENVIRONMENTKEY` | None    | HxI environment key                                      |
-| `AUTH_PROVIDERS_HYLANDEXPERIENCE_TOKENURI`       | None    | URL for token of HxI environment                         |
-| `AUTH_PROVIDERS_HYLANDEXPERIENCE_GRANTTYPE`      | None    | HxI grant type credentials                               |
-| `APPLICATION_SOURCEID`                           | None    | UUID identifying which systems can use this agent        |
-| `ALFRESCO_FILTER_ASPECT_ALLOW`                   | None    | Allow lists to filter the aspects sent to Hyland Insight |
-| `ALFRESCO_FILTER_ASPECT_DENY`                    | None    | Deny lists to filter the aspects sent to Hyland Insight  |
-| `ALFRESCO_FILTER_TYPE_ALLOW`                     | None    | Allow lists to filter the types sent to Hyland Insight   |
-| `ALFRESCO_FILTER_TYPE_DENY`                      | None    | Deny lists to filter the types sent to Hyland Insight    |
-| `ALFRESCO_FILTER_PATH_ALLOW`                     | None    | Allow lists to filter the paths sent to Hyland Insight   |
-| `ALFRESCO_FILTER_PATH_DENY`                      | None    | Deny lists to filter the paths sent to Hyland Insight    |
-| `HYLANDEXPERIENCE_INSIGHT_PREDICTIONS_BASEURL`   | None    | Base URL for Prediction API of HxI environment           |
-| `ALFRESCO_TRANSFORM_SHAREDFILESTORE_BASEURL`     | None    | Shared file store basic URL.                             |
-
-Allow and deny lists to filter the nodes sent to Hyland Insight.  
-Any node with an aspect/type/ancestor matching something in each “allow” list will be sent to Insight unless it also matches something in a “deny” list.  
-An empty “allow” list is treated as matching all nodes.
-
 ### Prediction Applier configuration (includes Java, ActiveMQ and Repository configuration variables)
 
 | Variable                                         | Default | Description                                       |
@@ -75,14 +51,6 @@ An empty “allow” list is treated as matching all nodes.
 | `AUTH_PROVIDERS_HYLANDEXPERIENCE_TOKENURI`       | None    | URL for token of HxI environment                  |
 | `AUTH_PROVIDERS_HYLANDEXPERIENCE_GRANTTYPE`      | None    | HxI grant type credentials                        |
 | `APPLICATION_SOURCEID`                           | None    | UUID identifying which systems can use this agent |
-
-### Bulk Ingester configuration (includes Live Ingester configuration variables)
-
-| Variable                     | Default | Description       |
-|------------------------------|---------|-------------------|
-| `SPRING_DATASOURCE_URL`      | None    | Database URL      |
-| `SPRING_DATASOURCE_USERNAME` | None    | Database username |
-| `SPRING_DATASOURCE_PASSWORD` | None    | Database password |
 
 ### Logging configuration
 

@@ -850,8 +850,8 @@ variable "HXINSIGHT_USER_ID" {
   default = "33009"
 }
 
-target "hxinsight_connector" {
-  context = "./hxinsight-connector"
+target "hxinsight_connector_bulk_ingester" {
+  context = "./hxinsight-connector-bulk-ingester"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
@@ -864,11 +864,57 @@ target "hxinsight_connector" {
     HXINSIGHT_CONNECTOR_USER_ID = "${HXINSIGHT_USER_ID}"
   }
   labels = {
-    "org.label-schema.name" = "${PRODUCT_LINE} HxInsight Connector"
-    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector"
-    "org.opencontainers.image.description" = "Alfresco HxInsight Connector"
+    "org.label-schema.name" = "${PRODUCT_LINE} HxInsight Connector Bulk Ingester"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector Bulk Ingester"
+    "org.opencontainers.image.description" = "Alfresco HxInsight Connector Bulk Ingester"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-bulk-ingester:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
+
+target "hxinsight_connector_live_ingester" {
+  context = "./hxinsight-connector-live-ingester"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    HXINSIGHT_CONNECTOR_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    HXINSIGHT_CONNECTOR_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    HXINSIGHT_CONNECTOR_USER_NAME = "${HXINSIGHT_USER_NAME}"
+    HXINSIGHT_CONNECTOR_USER_ID = "${HXINSIGHT_USER_ID}"
+  }
+  labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} HxInsight Connector Live Ingester"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector Live Ingester"
+    "org.opencontainers.image.description" = "Alfresco HxInsight Connector Live Ingester"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-live-ingester:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
+
+target "hxinsight_connector_prediction_applier" {
+  context = "./hxinsight-connector-prediction-applier"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    HXINSIGHT_CONNECTOR_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    HXINSIGHT_CONNECTOR_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    HXINSIGHT_CONNECTOR_USER_NAME = "${HXINSIGHT_USER_NAME}"
+    HXINSIGHT_CONNECTOR_USER_ID = "${HXINSIGHT_USER_ID}"
+  }
+  labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} HxInsight Connector Prediction Applier"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector Prediction Applier"
+    "org.opencontainers.image.description" = "Alfresco HxInsight Connector Prediction Applier"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-prediction-applier:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }

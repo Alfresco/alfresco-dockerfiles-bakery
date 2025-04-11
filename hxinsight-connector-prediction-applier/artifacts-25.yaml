@@ -1,0 +1,11 @@
+---
+updatecli_self: hxinsight-connector-prediction-applier/artifacts-25.yaml
+updatecli_matrix_version: current
+artifacts:
+  alfresco-hxinsight-connector-prediction-applier:
+    name: alfresco-hxinsight-connector-prediction-applier
+    version: 2.0.1
+    classifier: "-app.jar"
+    repository: internal
+    group: org.alfresco
+    path: hxinsight-connector-prediction-applier

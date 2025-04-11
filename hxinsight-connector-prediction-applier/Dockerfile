@@ -10,7 +10,7 @@ ARG HXINSIGHT_CONNECTOR_GROUP_ID
 ARG HXINSIGHT_CONNECTOR_USER_NAME
 ARG HXINSIGHT_CONNECTOR_USER_ID
 
-COPY alfresco-hxinsight-connector-*.jar /opt/app.jar
+COPY alfresco-hxinsight-connector-prediction-applier*.jar /opt/app.jar
 
 RUN groupadd -g ${HXINSIGHT_CONNECTOR_GROUP_ID} ${HXINSIGHT_CONNECTOR_GROUP_NAME} && \
     useradd -lu ${HXINSIGHT_CONNECTOR_USER_ID} -g ${HXINSIGHT_CONNECTOR_GROUP_NAME} ${HXINSIGHT_CONNECTOR_USER_NAME} && \
