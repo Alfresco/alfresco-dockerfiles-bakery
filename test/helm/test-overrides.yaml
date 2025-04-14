@@ -118,3 +118,9 @@ global:
   imagePullSecrets:
     - name: regcred
   known_urls: http://localhost
+alfresco-knowledge-retrieval:
+  enabled: true
+  liveIngester:
+    image:
+      repository: quay.io/alfresco/alfresco-hxinsight-connector-live-ingester
+      tag: 2.0.1
