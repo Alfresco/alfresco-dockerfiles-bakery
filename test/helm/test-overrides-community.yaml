@@ -36,3 +36,5 @@ alfresco-transform-service:
   transformmisc:
     livenessProbe:
       initialDelaySeconds: 120
+alfresco-knowledge-retrieval:
+  enabled: false

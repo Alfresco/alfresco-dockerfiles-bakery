@@ -10,6 +10,8 @@ kibana-audit:
   enabled: false
 alfresco-audit-storage:
   enabled: false
+alfresco-knowledge-retrieval:
+  enabled: false
 dtas:
   config:
     assertions:
