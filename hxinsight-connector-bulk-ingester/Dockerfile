@@ -1,4 +1,4 @@
-# Ignore linter checks enforcing Image Version as base is a trasient build stage
+# Ignore linter checks enforcing Image Version as base is a transient build stage
 # kics-scan disable=9efb0b2d-89c9-41a3-91ca-dcc0aec911fd
 # hadolint ignore=DL3006
 FROM java_base
