@@ -102,6 +102,18 @@ prepare_audit_storage: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Audit Storage targets"
 	@python3 ./scripts/fetch_artifacts.py audit-storage
 
+prepare_hxinsight_bulk_ingester: scripts/fetch_artifacts.py
+	@echo "Fetching all artifacts for HxInsight Bulk Ingester target"
+	@python3 ./scripts/fetch_artifacts.py hxinsight-connector-bulk-ingester
+
+prepare_hxinsight_live_ingester: scripts/fetch_artifacts.py
+	@echo "Fetching all artifacts for HxInsight Live Ingester target"
+	@python3 ./scripts/fetch_artifacts.py hxinsight-connector-live-ingester
+
+prepare_hxinsight_prediction_applier: scripts/fetch_artifacts.py
+	@echo "Fetching all artifacts for HxInsight Prediction Applier target"
+	@python3 ./scripts/fetch_artifacts.py hxinsight-connector-prediction-applier
+
 prepare_connectors: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Connector targets"
 	@python3 ./scripts/fetch_artifacts.py connector
@@ -163,6 +175,25 @@ audit_storage: docker-bake.hcl prepare_audit_storage setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
+hxinsight_connector_bulk_ingester: docker-bake.hcl prepare_hxinsight_bulk_ingester setenv
+	@echo "Building HxInsight Bulk Ingester Connector component"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
+hxinsight_connector_live_ingester: docker-bake.hcl prepare_hxinsight_live_ingester setenv
+	@echo "Building HxInsight Live Ingester connector component"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
+hxinsight_connector_prediction_applier: docker-bake.hcl prepare_hxinsight_prediction_applier setenv
+	@echo "Building HxInsight Prediction Applier Connector component"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
+hxinsight_connector: hxinsight_connector_bulk_ingester hxinsight_connector_live_ingester hxinsight_connector_prediction_applier
+	@echo "Building HxInsight Connector components"
+	$(call grype_scan,$@)
+
 connectors: docker-bake.hcl prepare_connectors setenv
 	@echo "Building Connector images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
@@ -198,7 +229,7 @@ tengines: docker-bake.hcl prepare_tengines setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
-all_ci: adf_apps ats audit_storage connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
+all_ci: adf_apps ats audit_storage hxinsight_connector connectors repo search_enterprise search_service share sync tengines all prepare clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
 
 GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix

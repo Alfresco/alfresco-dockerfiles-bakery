@@ -24,36 +24,36 @@ docker buildx bake search_service
 This image offers a set of environment variables one can use to change Search
 service behaviour. The following table lists the available variables:
 
-| Variable name | Description | Default value  |
-|---------------|-------------|--------------- |
-| ALFRESCO_HOST | hostname of the Alfresco content repository | `localhost` |
-| ALFRESCO_PORT | port where the Alfresco content repository listens to connections | `8080`|
-| ALFRESCO_PORT_SSL | port where the Alfresco content repository listens to secure connections (mtLS) | `8443` |
-| ALFRESCO_BASEURL | The context where Alfresco content repository is serving requests | `/alfresco` |
-| ALFRESCO_ENCRYPTION_SSL_KEYSTORE_TYPE | Type of keystore (used with ALFRESCO_SECURECOMMS=https) | `JCEKS` |
-| ALFRESCO_ENCRYPTION_SSL_KEYSTORE_LOCATION | Location of the keystore file (used with `ALFRESCO_SECURECOMMS=https`) | `ssl.repo.client.keystore` |
-| ALFRESCO_ENCRYPTION_SSL_KEYSTORE_PASSWORDFILELOCATION | Location of the file containing the keystore pass (used with `ALFRESCO_SECURECOMMS=https`) |  |
-| ALFRESCO_ENCRYPTION_SSL_TRUSTSTORE_TYPE | Type of truststore | `JCEKS` |
-| ALFRESCO_ENCRYPTION_SSL_TRUSTSTORE_LOCATION | Location of the trustore file (used with `ALFRESCO_SECURECOMMS=https`) | `ssl.repo.client.truststore` |
-| ALFRESCO_ENCRYPTION_SSL_TRUSTSTORE_PASSWORDFILELOCATION | Location of the file containing the truststore password (used with `ALFRESCO_SECURECOMMS=https`) |  |
-| ALFRESCO_SECURECOMMS | Type of authentication to use between Solr & Alfresco repository (`https` provides mTLS authentication while `secret` provides shared secret based auth. | `https` |
-| ALFRESCO_SECURECOMMS_SECRET | Value of the shared secret to when `ALFRESCO_SECURECOMMS=secret`|  |
-| ENABLE_REMOTE_JMX_OPTS | Enable plain, remote and unauthenticated access to JMX interface (debug only) | `false` |
-| GC_LOG_OPTS | Java Garbage collector configuration options | |
-| RMI_PORT | RMI port to use when JMX is enabled | `18983` |
-| SOLR_DATA_DIR_ROOT | Location where actual index files are stored (should map to a volume) | `/opt/alfresco-search-services/data` |
-| SOLR_DIRECTORY_FACTORY | Solr [Directory Factory](https://solr.apache.org/guide/6_6/datadir-and-directoryfactory-in-solrconfig.html#DataDirandDirectoryFactoryinSolrConfig-SpecifyingtheDirectoryFactoryForYourIndex) to use | `solr.StandardDirectoryFactory` |
-| SOLR_HEAP | Amount of Heap memory Solr can use | `1g` |
-| SOLR_HOME | Location of the Solr cores configuration & other configuration files (mount it as a volume to allow any type of custom configuration) | `/opt/alfresco-search-services/solrhome` |
-| SOLR_HOST | Set to the externally reachable Solr hostname. Mostly usefullwith remote jmx acces with NAT | `localhost` |
-| SOLR_LOCK_TYPE | Solr Type of [index locking](https://solr.apache.org/guide/8_1/indexconfig-in-solrconfig.html#index-locks) | `native` |
-| SOLR_LOG_DIR | Location where should Solr log activity | `/opt/alfresco-search-services/logs` |
-| SOLR_LOG_LEVEL | Minimum level of messages to be logged | `INFO` |
-| SOLR_REPLICATION_MASTER | Is the Solr instance a master | `false` |
-| SOLR_OPTS | Additional Solr options to pass to the JVM | |
-| SOLR_REPLICATION_MASTER_URL | URL of the replication endpoint when behaving as a slave replica | Must be set if SOLR_REPLICATION_SLAVE is set to `true` |
-| SOLR_REPLICATION_SLAVE | Is the Solr instance a slave replica | `false` |
-| SOLR_SOLR_HOST | Set to the externally reachable Solr hostname. Only required when using Search service JDBC endpoint | |
+| Variable name                                           | Description                                                                                                                                                                                         | Default value                                          |
+|---------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| ALFRESCO_HOST                                           | hostname of the Alfresco content repository                                                                                                                                                         | `localhost`                                            |
+| ALFRESCO_PORT                                           | port where the Alfresco content repository listens to connections                                                                                                                                   | `8080`                                                 |
+| ALFRESCO_PORT_SSL                                       | port where the Alfresco content repository listens to secure connections (mtLS)                                                                                                                     | `8443`                                                 |
+| ALFRESCO_BASEURL                                        | The context where Alfresco content repository is serving requests                                                                                                                                   | `/alfresco`                                            |
+| ALFRESCO_ENCRYPTION_SSL_KEYSTORE_TYPE                   | Type of keystore (used with ALFRESCO_SECURECOMMS=https)                                                                                                                                             | `JCEKS`                                                |
+| ALFRESCO_ENCRYPTION_SSL_KEYSTORE_LOCATION               | Location of the keystore file (used with `ALFRESCO_SECURECOMMS=https`)                                                                                                                              | `ssl.repo.client.keystore`                             |
+| ALFRESCO_ENCRYPTION_SSL_KEYSTORE_PASSWORDFILELOCATION   | Location of the file containing the keystore pass (used with `ALFRESCO_SECURECOMMS=https`)                                                                                                          |                                                        |
+| ALFRESCO_ENCRYPTION_SSL_TRUSTSTORE_TYPE                 | Type of truststore                                                                                                                                                                                  | `JCEKS`                                                |
+| ALFRESCO_ENCRYPTION_SSL_TRUSTSTORE_LOCATION             | Location of the trustore file (used with `ALFRESCO_SECURECOMMS=https`)                                                                                                                              | `ssl.repo.client.truststore`                           |
+| ALFRESCO_ENCRYPTION_SSL_TRUSTSTORE_PASSWORDFILELOCATION | Location of the file containing the truststore password (used with `ALFRESCO_SECURECOMMS=https`)                                                                                                    |                                                        |
+| ALFRESCO_SECURECOMMS                                    | Type of authentication to use between Solr & Alfresco repository (`https` provides mTLS authentication while `secret` provides shared secret based auth.                                            | `https`                                                |
+| ALFRESCO_SECURECOMMS_SECRET                             | Value of the shared secret to when `ALFRESCO_SECURECOMMS=secret`                                                                                                                                    |                                                        |
+| ENABLE_REMOTE_JMX_OPTS                                  | Enable plain, remote and unauthenticated access to JMX interface (debug only)                                                                                                                       | `false`                                                |
+| GC_LOG_OPTS                                             | Java Garbage collector configuration options                                                                                                                                                        |                                                        |
+| RMI_PORT                                                | RMI port to use when JMX is enabled                                                                                                                                                                 | `18983`                                                |
+| SOLR_DATA_DIR_ROOT                                      | Location where actual index files are stored (should map to a volume)                                                                                                                               | `/opt/alfresco-search-services/data`                   |
+| SOLR_DIRECTORY_FACTORY                                  | Solr [Directory Factory](https://solr.apache.org/guide/6_6/datadir-and-directoryfactory-in-solrconfig.html#DataDirandDirectoryFactoryinSolrConfig-SpecifyingtheDirectoryFactoryForYourIndex) to use | `solr.StandardDirectoryFactory`                        |
+| SOLR_HEAP                                               | Amount of Heap memory Solr can use                                                                                                                                                                  | `1g`                                                   |
+| SOLR_HOME                                               | Location of the Solr cores configuration & other configuration files (mount it as a volume to allow any type of custom configuration)                                                               | `/opt/alfresco-search-services/solrhome`               |
+| SOLR_HOST                                               | Set to the externally reachable Solr hostname. Mostly usefullwith remote jmx acces with NAT                                                                                                         | `localhost`                                            |
+| SOLR_LOCK_TYPE                                          | Solr Type of [index locking](https://solr.apache.org/guide/8_1/indexconfig-in-solrconfig.html#index-locks)                                                                                          | `native`                                               |
+| SOLR_LOG_DIR                                            | Location where should Solr log activity                                                                                                                                                             | `/opt/alfresco-search-services/logs`                   |
+| SOLR_LOG_LEVEL                                          | Minimum level of messages to be logged                                                                                                                                                              | `INFO`                                                 |
+| SOLR_REPLICATION_MASTER                                 | Is the Solr instance a master                                                                                                                                                                       | `false`                                                |
+| SOLR_OPTS                                               | Additional Solr options to pass to the JVM                                                                                                                                                          |                                                        |
+| SOLR_REPLICATION_MASTER_URL                             | URL of the replication endpoint when behaving as a slave replica                                                                                                                                    | Must be set if SOLR_REPLICATION_SLAVE is set to `true` |
+| SOLR_REPLICATION_SLAVE                                  | Is the Solr instance a slave replica                                                                                                                                                                | `false`                                                |
+| SOLR_SOLR_HOST                                          | Set to the externally reachable Solr hostname. Only required when using Search service JDBC endpoint                                                                                                |                                                        |
 
 ## Solr configuration
 
