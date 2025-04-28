@@ -291,6 +291,15 @@ jobs:
           kubectl create configmap acc-config --from-file=app.config.json=test/configs/acc.json
           kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
 
+      - name: Create secret for hxi
+        if: ${{ matrix.edition == 'enterprise' }}
+        run: |
+          kubectl create secret generic hxi-secret \
+            --from-literal=HXI_AUTH_PROVIDERS_HYLANDEXPERIENCE_CLIENTID=sc-e26b1939-0012-4fb6-b270-d63188d6b78c \
+            --from-literal=HXI_AUTH_PROVIDERS_HYLANDEXPERIENCE_CLIENTSECRET=${{ secrets.HXI_AUTH_PROVIDERS_HYLANDEXPERIENCE_CLIENTSECRET }} \
+            --from-literal=HXI_AUTH_PROVIDERS_HYLANDEXPERIENCE_ENVIRONMENTKEY=alfresco-kd-ci-8931ff99-97d8-4c36-a235-ba9269286322 \
+            --from-literal=HXI_CONNECTOR_SOURCEID=984b2de8-528a-488a-94c2-342e84ec8eb0
+
       - name: Checkout acs-deployment sources
         uses: ./.github/actions/acs-deployment
 
