@@ -10,7 +10,8 @@ group "enterprise" {
     "tengines",
     "connectors",
     "adf_apps",
-    "sync"
+    "sync",
+    "content_service_enterprise_from_25"
   ]
 }
 
@@ -28,6 +29,17 @@ group "content_service_enterprise" {
     ],
     [
       "audit_storage"
+    ]
+  )
+}
+group "content_service_enterprise_from_25" {
+  targets = exclude_if_version(
+    ["23", "74", "73"],
+    [
+      "hxinsight_connector_live_ingester",
+    ],
+    [
+      "hxinsight_connector_live_ingester"
     ]
   )
 }
