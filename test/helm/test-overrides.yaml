@@ -8,8 +8,19 @@ config:
 alfresco-repository:
   configuration:
     repository:
-      existingSecret:
+      existingSecrets:
         - name: &hxiSecretName hxi-secrets
+          key: HX_CLIENT_ID
+          purpose: property:hxi.auth.providers.hyland-experience.client-id
+        - name: *hxiSecretName
+          key: HX_CLIENT_SECRET
+          purpose: property:hxi.auth.providers.hyland-experience.client-secret
+        - name: *hxiSecretName
+          key: HX_ENV_KEY
+          purpose: property:hxi.auth.providers.hyland-experience.environment-key
+        - name: *hxiSecretName
+          key: HX_APP_SOURCE_ID
+          purpose: property:hxi.connector.source-id
   image:
     repository: localhost/alfresco/alfresco-content-repository
     tag: latest
@@ -135,11 +146,6 @@ alfresco-knowledge-retrieval:
     hxInsightIngestionUrl: "https://ingestion-api.insight.staging.ncp.hyland.com/v1"
     existingSecret:
       name: *hxiSecretName
-      keys:
-        hxClientId: HXI_AUTH_PROVIDERS_HYLANDEXPERIENCE_CLIENTID
-        hxClientSecret: HXI_AUTH_PROVIDERS_HYLANDEXPERIENCE_CLIENTSECRET
-        hxEnvKey: HXI_AUTH_PROVIDERS_HYLANDEXPERIENCE_ENVIRONMENTKEY
-        hxAppSourceId: HXI_CONNECTOR_SOURCEID
   liveIngester:
     image:
       repository: localhost/alfresco/alfresco-hxinsight-connector-live-ingester
