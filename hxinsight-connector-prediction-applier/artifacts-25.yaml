@@ -4,7 +4,7 @@ updatecli_matrix_version: current
 artifacts:
   alfresco-hxinsight-connector-prediction-applier:
     name: alfresco-hxinsight-connector-prediction-applier
-    version: 2.0.1
+    version: 2.0.2
     classifier: "-app.jar"
     repository: internal
     group: org.alfresco
