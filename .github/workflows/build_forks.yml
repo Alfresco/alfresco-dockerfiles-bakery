@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v8.18.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v8.20.0
 
   build:
     needs: pre-commit
@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.18.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.20.0
 
       - name: Restore packages artifacts
         uses: actions/cache/restore@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
@@ -60,7 +60,7 @@ jobs:
         env:
           ACS_VERSION: 25
           TARGETARCH: linux/amd64
-        uses: docker/bake-action@4ba453fbc2db7735392b93edf935aaf9b1e8f747  # v6.5.0
+        uses: docker/bake-action@76f9fa3a758507623da19f6092dc4089a7e61592  # v6.6.0
         with:
           source: .
           targets: community
@@ -88,7 +88,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Download artifacts
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           path: /tmp
           name: ${{ env.ARTIFACT_NAME }}
@@ -111,7 +111,7 @@ jobs:
 
       - name: Verify docker-compose
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.18.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.20.0
         timeout-minutes: 10
         with:
           postman_path: test/postman/docker-compose
@@ -121,7 +121,7 @@ jobs:
 
       - name: Save containers logs
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.18.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.20.0
         with:
           output-archive-name: compose-logs
 
@@ -134,13 +134,13 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Download artifacts
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           path: /tmp
           name: ${{ env.ARTIFACT_NAME }}
 
       - name: Setup KinD cluster
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v8.18.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v8.20.0
         with:
           ingress-nginx-ref: controller-v1.8.2
           metrics: "true"
@@ -184,7 +184,7 @@ jobs:
             --values test/helm/test-overrides-community.yaml
 
       - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.18.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.20.0
 
       - name: Run helm test
         id: helm_test
