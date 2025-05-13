@@ -37,14 +37,14 @@ Building images requires the following tools:
 - A recent enough Docker installation (with `buildx` support)
 - Credentials to access the Alfresco artifacts (Nexus server), if building
   Enterprise images
-- Some common unix tools: `jq`, `yq`, `wget`, `make`
+- Some common unix tools: `jq`, `yq`, `make`
 - Python 3 with pyyaml (`pip install pyyaml`) for fetching artifacts via the
   `fetch-artifacts.py` script
 
 ### Nexus authentication
 
-Configuring the authentication to Alfresco Nexus server must be done using one
-of the standard `wget` configuration files, like `~/.netrc`.
+Configuring the authentication to Alfresco Nexus server requires setting up
+credentials in the standard `~/.netrc` authentication file.
 
 Using your preferred editor, create `~/.netrc` with the following contents:
 
