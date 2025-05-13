@@ -37,6 +37,10 @@ else
   TOMCAT_FIELD := "tomcat9"
 endif
 
+ifeq ($(shell yq --version),)
+  $(error "yq is not installed. Please install yq to use this Makefile.")
+endif
+
 export TOMCAT_MAJOR := $(shell yq e '.${TOMCAT_FIELD}.major' $(TOMCAT_VERSIONS_FILE))
 export TOMCAT_VERSION := $(shell yq e '.${TOMCAT_FIELD}.version' $(TOMCAT_VERSIONS_FILE))
 export TOMCAT_SHA512 := $(shell yq e '.${TOMCAT_FIELD}.sha512' $(TOMCAT_VERSIONS_FILE))
