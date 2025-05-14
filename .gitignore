@@ -21,3 +21,6 @@ test/helm/community_values.yaml
 alfresco-updatecli
 .idea
 .vscode
+.vagrant
+.venv
+venv

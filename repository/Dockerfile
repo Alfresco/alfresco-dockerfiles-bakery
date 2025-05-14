@@ -41,7 +41,7 @@ RUN if [ -f /tmp/amps/alfresco-aos-module-*.amp ]; then umask 0027; \
    else echo "No AOS module found"; \
    fi
 RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar install \
-    /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -directory -nobackup -force && \
+    /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory -force && \
     java -jar ${DISTDIR}/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/alfresco
 
 COPY simple_modules /tmp/simple_modules
