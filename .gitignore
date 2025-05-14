@@ -22,3 +22,5 @@ alfresco-updatecli
 .idea
 .vscode
 .vagrant
+.venv
+venv
