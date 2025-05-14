@@ -31,7 +31,8 @@ RUN sed -i "s/shared.loader=/shared.loader=\${catalina.base}\/shared\/classes/" 
 RUN chmod +x ${CATALINA_HOME}/shared/classes/alfresco/entrypoint.sh
 
 RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar install \
-    /tmp/amps/ ${CATALINA_HOME}/webapps/share -directory -nobackup -force
+    /tmp/amps/ ${CATALINA_HOME}/webapps/share -directory -nobackup -force && \
+    java -jar ${DISTDIR}/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/share
 
 COPY simple_modules /tmp/simple_modules
 RUN mkdir -m 750 -p ${CATALINA_HOME}/modules/share && \
