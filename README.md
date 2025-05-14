@@ -124,20 +124,23 @@ specific folders:
 
 - Alfresco Module Packages (AMPs) files in the [amps](repository/amps/README.md)
   folder for both Enterprise and Community editions
-  - For Enterprise-only AMPs files in the [amps-enterprise](repository/amps_enterprise/README.md)
-    folder
-  - For Community-only AMPs files in the [amps-community](repository/amps_community/README.md)
-    folder
-- Simple Module (JAR) files in the [simple_modules](repository/simple_modules/README.md)
+  - For Enterprise-only AMPs files in the
+    [amps-enterprise](repository/amps_enterprise/README.md) folder
+  - For Community-only AMPs files in the
+    [amps-community](repository/amps_community/README.md) folder
+- Simple Module (JAR) files in the
+  [simple_modules](repository/simple_modules/README.md) folder
+- Additional JAR files for the JRE in the [libs](repository/libs/README.md)
   folder
-- Additional JAR files for the JRE in the [libs](repository/libs/README.md) folder
 
 ### Customizing the Share image
 
 The Share image can be customized by adding files into specific folders:
 
-- Alfresco Module Packages (AMPs) files in the [amps](share/amps/README.md) folder
-- Share Simple Module (JAR) files in the [simple_modules](share/simple_modules/README.md)
+- Alfresco Module Packages (AMPs) files in the [amps](share/amps/README.md)
+  folder
+- Share Simple Module (JAR) files in the
+  [simple_modules](share/simple_modules/README.md) folder
 
 ## Supported Architectures
 

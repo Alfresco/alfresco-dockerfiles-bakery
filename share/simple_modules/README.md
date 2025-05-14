@@ -1,8 +1,4 @@
 # Alfresco Share Simple Module (JAR)
 
-Full documentation on Simple Module is here:
-https://support.hyland.com/r/Alfresco/Alfresco-Content-Services/23.4/Alfresco-Content-Services/Develop/Extension-Packaging-Modules/Module-Package-Formats/Alfresco-Module-Package-AMP/Using-the-Module-Management-Tool-MMT/Simple-Module-JAR
-
-Copy jar files produced by the [Alfresco
-SDK](https://github.com/Alfresco/alfresco-sdk) into `share/simple_modules` to
-add Simple Module with alfresco-dockerfiles-bakery.
+For more information see the repository [simple_modules
+README](../../repository/simple_modules/README.md).

@@ -10,11 +10,12 @@ The [in-process Alfresco SDK][sdk] provides a way to build well structured AMPs.
 
 > Note that AMPs are not the recommanded way to extend Alfresco. You should
 > prefer using the Alfresco SDK to build your extensions as JARs even better,
-> use the [out-of-process AlfrescoSDK][oop] to
+> use the [out-of-process Alfresco SDK][oop] to
 > build Docker images with your extensions.
 
-By default the `scripts/fetch-artifacts.py` script will fetch only the default
-AMPs, see [artifacts-23.yaml](../artifacts-23.yaml) for additional information.
+By default the `scripts/fetch-artifacts.py` script will fetch some default AMPs,
+see the `artifacts-NN.yaml` for the version you are building for further
+details.
 
 You can replace those, remove them to keep only the ones you need or add more.
 Be careful though as some AMPs may depend on one another (e.g.
