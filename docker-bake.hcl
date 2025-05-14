@@ -56,6 +56,14 @@ group "adf_apps" {
   targets = ["acc", "adw"]
 }
 
+group "hxinsight_connector" {
+  targets = [
+    "hxinsight_connector_bulk_ingester",
+    "hxinsight_connector_live_ingester",
+    "hxinsight_connector_prediction_applier"
+  ]
+}
+
 variable "REGISTRY" {
   default = "localhost"
 }
@@ -851,7 +859,7 @@ variable "HXINSIGHT_USER_ID" {
 }
 
 target "hxinsight_connector_bulk_ingester" {
-  context = "./hxinsight-connector-bulk-ingester"
+  context = "./hxinsight-connector/hxinsight-connector-bulk-ingester"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
@@ -874,7 +882,7 @@ target "hxinsight_connector_bulk_ingester" {
 }
 
 target "hxinsight_connector_live_ingester" {
-  context = "./hxinsight-connector-live-ingester"
+  context = "./hxinsight-connector/hxinsight-connector-live-ingester"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
@@ -897,7 +905,7 @@ target "hxinsight_connector_live_ingester" {
 }
 
 target "hxinsight_connector_prediction_applier" {
-  context = "./hxinsight-connector-prediction-applier"
+  context = "./hxinsight-connector/hxinsight-connector-prediction-applier"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
