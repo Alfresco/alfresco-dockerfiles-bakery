@@ -41,6 +41,10 @@ Building images requires the following tools:
 - Python 3 with pyyaml (`pip install pyyaml`) for fetching artifacts via the
   `fetch-artifacts.py` script
 
+Alternatively, you can use the provided `Vagrantfile` to create a VirtualBox VM
+with all the required tools installed. This is useful if you want to build the
+images without installing the tools on your local machine.
+
 ### Nexus authentication
 
 Configuring the authentication to Alfresco Nexus server requires setting up
