@@ -1,0 +1,4 @@
+ignore:
+  # here we want to focus on base images and not the application code
+  - package:
+      type: java-archive
