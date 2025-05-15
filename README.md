@@ -20,6 +20,7 @@ Bake](https://docs.docker.com/build/bake/).
   - [Getting started quickly](#getting-started-quickly)
   - [Customizing the images](#customizing-the-images)
     - [Customizing the Alfresco Content Repository image](#customizing-the-alfresco-content-repository-image)
+    - [Customizing the Share image](#customizing-the-share-image)
   - [Supported Architectures](#supported-architectures)
     - [Targeting a specific architecture](#targeting-a-specific-architecture)
     - [Multi-arch images](#multi-arch-images)
@@ -118,16 +119,28 @@ make all
 
 ### Customizing the Alfresco Content Repository image
 
-The Alfresco Content Repository image can be customized by adding different
-types of files in the right locations:
+The Alfresco Content Repository image can be customized by adding files into
+specific folders:
 
 - Alfresco Module Packages (AMPs) files in the [amps](repository/amps/README.md)
+  folder for both Enterprise and Community editions
+  - For Enterprise-only AMPs files in the
+    [amps-enterprise](repository/amps_enterprise/README.md) folder
+  - For Community-only AMPs files in the
+    [amps-community](repository/amps_community/README.md) folder
+- Simple Module (JAR) files in the
+  [simple_modules](repository/simple_modules/README.md) folder
+- Additional JAR files for the JRE in the [libs](repository/libs/README.md)
   folder
-  - Enterprise-only AMPs files in the [amps-enterprise](repository/amps_enterprise/README.md)
-    folder
-  - Community-only AMPs files in the [amps-community](repository/amps_community/README.md)
-    folder
-- Additional JAR files for the JRE in the [libs](repository/libs/README.md) folder
+
+### Customizing the Share image
+
+The Share image can be customized by adding files into specific folders:
+
+- Alfresco Module Packages (AMPs) files in the [amps](share/amps/README.md)
+  folder
+- Share Simple Module (JAR) files in the
+  [simple_modules](share/simple_modules/README.md) folder
 
 ## Supported Architectures
 
