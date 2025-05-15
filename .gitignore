@@ -8,10 +8,15 @@ artifacts_cache
 *.gz
 *.tgz
 
-# Files fetched by scripts/fetch_compose.sh
+# Files pulled from acs-deployment to test deployment
+acs-deployment
 test/compose.yaml
 test/community-compose.yaml
-test/7.4.N-compose.yaml
+test/*-compose.yaml
+test/*-overrides.yaml
+test/updatecli-matrix-targets.yaml
+test/README.md
+test/commons/
 # Files fetched by scripts/fetch_helm.sh
 test/helm/enterprise-integration-test-values.yaml
 test/helm/community-integration-test-values.yaml
