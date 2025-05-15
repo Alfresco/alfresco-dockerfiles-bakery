@@ -2,7 +2,7 @@
 # Alfresco Base Tomcat Image
 # see also https://github.com/docker-library/tomcat
 ARG JAVA_MAJOR
-ARG DISTRIB_NAME
+ARG DISTRIB_NAME=nodistro
 ARG DISTRIB_MAJOR
 
 # Tomcat is downloaded and configured on debian as its a binary dist anyway

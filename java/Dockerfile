@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # check=skip=InvalidDefaultArgInFrom
 # kics-scan skip=fd54f200-402c-4333-a5a4-36ef6709af2f
-ARG DISTRIB_NAME
+ARG DISTRIB_NAME=nodistro
 ARG DISTRIB_MAJOR
 ARG IMAGE_BASE_LOCATION
 
