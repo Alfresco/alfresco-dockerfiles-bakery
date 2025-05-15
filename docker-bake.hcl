@@ -125,7 +125,7 @@ variable "JDIST" {
 }
 
 variable "IMAGE_BASE_LOCATION" {
-  default = "docker.io/rockylinux:9"
+  default = "docker.io/rockylinux/rockylinux:9"
 }
 
 variable "JAVA_MAJOR" {
