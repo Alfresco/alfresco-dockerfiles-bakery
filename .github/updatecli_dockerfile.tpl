@@ -1,5 +1,6 @@
 autodiscovery:
   scmid: github
+  actionid: pr
   crawlers:
     dockerfile:
       only:
