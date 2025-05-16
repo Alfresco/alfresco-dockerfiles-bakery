@@ -2,11 +2,8 @@
 # Alfresco Base Tomcat Image
 # see also https://github.com/docker-library/tomcat
 ARG JAVA_MAJOR
-ARG DISTRIB_NAME
+ARG DISTRIB_NAME=nodistro
 ARG DISTRIB_MAJOR
-ARG IMAGE_JAVA_REPO=quay.io/alfresco
-ARG IMAGE_JAVA_NAME=alfresco-base-java
-ARG IMAGE_JAVA_TAG=jre${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}
 
 # Tomcat is downloaded and configured on debian as its a binary dist anyway
 FROM debian:12-slim AS tomcat_dist

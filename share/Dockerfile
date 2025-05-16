@@ -1,4 +1,4 @@
-ARG DISTRIB_NAME
+ARG DISTRIB_NAME=nodistro
 ARG DISTRIB_MAJOR
 FROM tomcat_base AS share_build
 

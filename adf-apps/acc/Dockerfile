@@ -3,12 +3,14 @@ WORKDIR /unpack
 COPY alfresco-control-center-*.zip .
 RUN unzip alfresco-control-center-*.zip && rm alfresco-control-center-*.zip
 
-FROM nginxinc/nginx-unprivileged:alpine3.20
+FROM nginxinc/nginx-unprivileged:1-alpine@sha256:82a240b6d2f12d0154090b4a43425ea49c29f25e77683f36e52bca74da79bf0e
 
 ARG CONFIG_PATH=/etc/nginx/conf.d
 
 USER root
-RUN apk update && apk upgrade
+RUN apk update && \
+    apk upgrade --no-cache && \
+    rm -rf /var/cache/apk/*
 COPY default.conf.template /etc/nginx/templates/
 
 COPY --from=unpack /unpack/ /usr/share/nginx/html/
