@@ -22,6 +22,7 @@ on:
           options:
           - artifacts
           - tomcat
+          - dockerfile
   schedule:
     - cron: '0 6 * * *'
 
@@ -102,6 +103,23 @@ jobs:
             updatecli-tomcat-v1-
 
       - run: updatecli apply -c .github/updatecli_tomcat.tpl
+        env:
+          UPDATECLI_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+          UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME }}
+          UPDATECLI_GITHUB_EMAIL: ${{ vars.BOT_GITHUB_EMAIL }}
+
+  dockerfile:
+    runs-on: ubuntu-latest
+    name: Bump Dockerfile tags
+    if: inputs.update-type == 'dockerfile' || github.event_name == 'schedule'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install Updatecli
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v8.20.0
+
+      - run: updatecli apply -c .github/updatecli_dockerfile.tpl
         env:
           UPDATECLI_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
           UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME }}
