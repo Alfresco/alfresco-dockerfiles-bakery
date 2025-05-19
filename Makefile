@@ -219,12 +219,14 @@ GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix
 
 grype:
 	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation. Aborting."; exit 1; }
+	@command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required but it's not installed"; exit 1; }
 	@echo "Running grype scan"
 	@docker buildx bake $(GRYPE_TARGET) --print | jq '.target[] | select(.output | any(.type == "docker")) | .tags[]' | xargs -I {} grype $(GRYPE_OPTS) {}
 
 ifdef GRYPE_ONBUILD
 define grype_scan
 	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation. Aborting."; exit 1; }
+	@command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required but it's not installed"; exit 1; }
 	@echo "Running grype scan for $(1)"
 	@docker buildx bake $(1) --print | jq '.target[] | select(.output | any(.type == "docker")) | .tags[]' | xargs -I {} grype $(GRYPE_OPTS) {}
 endef
