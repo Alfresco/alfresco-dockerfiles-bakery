@@ -1,3 +1,5 @@
+.DS_Store
+
 artifacts_cache
 *.zip
 *.amp
