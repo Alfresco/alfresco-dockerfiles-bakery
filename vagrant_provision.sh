@@ -15,10 +15,14 @@ aarch64)
     ;;
 esac
 
-echo "Installing yq for architecture: $ARCH"
+echo "Installing yq..."
 wget -q https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_${ARCH} -O /usr/local/bin/yq
 chmod +x /usr/local/bin/yq
 
+echo "Installing Grype..."
+curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+echo "Installing Docker..."
 wget -q https://download.docker.com/linux/ubuntu/gpg -O /etc/apt/keyrings/docker.asc
 chmod a+r /etc/apt/keyrings/docker.asc
 echo \
