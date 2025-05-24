@@ -120,6 +120,9 @@ def do_parse_and_mvn_fetch(file_path):
             if e.code == 401:
                 print("Invalid or missing credentials, skipping...")
                 continue
+            elif e.code == 403:
+                print("Forbidden access, skipping...")
+                continue
             else:
                 # rethrow the exception to exit with failure
                 raise e
