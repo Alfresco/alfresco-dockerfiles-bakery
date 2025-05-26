@@ -208,7 +208,7 @@ sync: docker-bake.hcl prepare_sync setenv
 	$(call grype_scan,$@)
 
 tengines: docker-bake.hcl prepare_tengines setenv
-	@echo "Building Transform Egnine images"
+	@echo "Building Transform Engine images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
@@ -217,17 +217,23 @@ all_ci: adf_apps ats audit_storage connectors hxinsight_connector repo search_en
 
 GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix
 
-grype:
+define _grype_impl
 	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation"; exit 1; }
 	@command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required but it's not installed. See https://jqlang.org/download/"; exit 1; }
-	@echo "Running grype scan"
-	@docker buildx bake $(GRYPE_TARGET) --print | jq '.target[] | select(.output | any(.type == "docker")) | .tags[]' | xargs -I {} grype $(GRYPE_OPTS) {}
+	@docker buildx bake $(1) --print | jq -r '.target[] | select(.output | any(.type == "docker")) | .tags[]' \
+	| while read tag; do \
+		echo "Scanning image $$tag"; \
+		grype $(GRYPE_OPTS) "$$tag"; \
+	done
+endef
+
+grype:
+	@echo "Running grype scan for $(GRYPE_TARGET)"
+	$(call _grype_impl,$(GRYPE_TARGET))
 
 ifdef GRYPE_ONBUILD
 define grype_scan
-	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation"; exit 1; }
-	@command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required but it's not installed. See https://jqlang.org/download/"; exit 1; }
 	@echo "Running grype scan for $(1)"
-	docker buildx bake $(1) --print | jq '.target[] | select(.output | any(.type == "docker")) | .tags[]' | xargs -I {} grype $(GRYPE_OPTS) {}
+	$(call _grype_impl,$(1))
 endef
 endif
