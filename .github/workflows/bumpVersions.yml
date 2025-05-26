@@ -37,7 +37,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Bump artifacts versions
-    if: inputs.update-type == 'artifacts' || github.event_name != 'workflow_dispatch'
+    if: |
+      (inputs.update-type == 'artifacts' || github.event_name != 'workflow_dispatch') &&
+      github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -86,7 +88,9 @@ jobs:
   tomcats:
     runs-on: ubuntu-latest
     name: Bump tomcat versions
-    if: inputs.update-type == 'tomcat' || github.event_name == 'schedule'
+    if: |
+      (inputs.update-type == 'tomcat' || github.event_name == 'schedule') &&
+      github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -111,7 +115,9 @@ jobs:
   dockerfile:
     runs-on: ubuntu-latest
     name: Bump Dockerfile tags
-    if: inputs.update-type == 'dockerfile' || github.event_name == 'schedule'
+    if: |
+      (inputs.update-type == 'dockerfile' || github.event_name == 'schedule') &&
+      github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
