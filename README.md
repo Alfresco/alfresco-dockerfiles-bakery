@@ -16,6 +16,7 @@ Bake](https://docs.docker.com/build/bake/).
 
 - [Alfresco Dockerfiles Bakery 🍞](#alfresco-dockerfiles-bakery-)
   - [Prerequisites](#prerequisites)
+    - [Vagrant alternative](#vagrant-alternative)
     - [Nexus authentication](#nexus-authentication)
   - [Getting started quickly](#getting-started-quickly)
   - [Customizing the images](#customizing-the-images)
@@ -42,9 +43,35 @@ Building images requires the following tools:
 - Python 3 with pyyaml (`pip install pyyaml`) for fetching artifacts via the
   `fetch-artifacts.py` script
 
-Alternatively, you can use the provided `Vagrantfile` to create a VirtualBox VM
-with all the required tools installed. This is useful if you want to build the
-images without installing the tools on your local machine.
+Alternatively, you can use the provided [Vagrantfile](Vagrantfile) to create a
+dedicated VM with all the required tools installed. This is useful if you want
+to build the images without installing the tools on your local machine.
+
+### Vagrant alternative
+
+Vagrant is the command line utility for managing the lifecycle of virtual machines.
+
+To use the provided Vagrantfile, you need to have Vagrant and VirtualBox installed
+on your machine. You can follow the instructions below to install them:
+
+- Install [vagrant](https://developer.hashicorp.com/vagrant/install)
+- Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+
+Then run from the main folder of this project:
+
+```sh
+vagrant up
+```
+
+Vagrant will create an ubuntu 24.04 virtual machine in VirtualBox, fetch all the
+required Bakery dependencies, and then you can enter the environment by running:
+
+```sh
+vagrant ssh
+```
+
+Then you can proceed running the `make` commands as described later in this
+document.
 
 ### Nexus authentication
 
