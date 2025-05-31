@@ -1,4 +1,4 @@
-FROM busybox:stable@sha256:c3ef74e9b647910e409925f2af51a2fc11fe6cbd9df29f9a9f41d953d03bd189 AS unpack
+FROM busybox:stable@sha256:7edf5efe6b86dbf01ccc3c76b32a37a8e23b84e6bad81ce8ae8c221fa456fda8 AS unpack
 WORKDIR /unpack
 COPY alfresco-digital-workspace-*.zip .
 RUN unzip alfresco-digital-workspace-*.zip && rm alfresco-digital-workspace-*.zip
