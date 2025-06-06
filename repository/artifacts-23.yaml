@@ -1,7 +1,7 @@
 ---
 updatecli_self: repository/artifacts-23.yaml
 updatecli_matrix_version: 23.N
-updatecli_amps_release_branch: release/23.4
+updatecli_amps_release_branch: release/23.5
 artifacts:
   postgresql:
     name: postgresql
@@ -13,7 +13,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-share-services:
     name: alfresco-share-services
-    version: 23.4.2.12
+    version: 23.5.0.19
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco
@@ -21,7 +21,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-aos-module:
     name: alfresco-aos-module
-    version: 3.2.0
+    version: 3.3.0
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco.aos-module
@@ -45,7 +45,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-content-services-distribution:
     name: alfresco-content-services-distribution
-    version: 23.4.1
+    version: 23.5.0
     path: repository/distribution
     classifier: ".zip"
     group: org.alfresco
