@@ -46,3 +46,8 @@ artifacts:
     updatecli_matrix_component_key: tengine-pdf
   alfresco-transform-tika:
     updatecli_matrix_component_key: tengine-tika
+
+matrix:
+  7.3.N:
+    acs:
+      version: "7.3.2"
