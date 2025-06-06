@@ -418,7 +418,7 @@ make all GRYPE_ONBUILD=1
   [supported-matrix](https://github.com/Alfresco/alfresco-updatecli/blob/master/deployments/values/supported-matrix.yaml)
   reflects the status of the currently released Alfresco products and update if
   necessary before proceeding.
-- Ensure that in every `artifacts-*.yaml` files for both `repository` and
+- Ensure that in every `artifacts-*.yaml` file for both `repository` and
   `share` images, the `updatecli_amps_release_branch` key refer the latest minor
   version for every major acs version by inspecting the currently available
   release branches in [acs-packaging](https://github.com/Alfresco/acs-packaging)
