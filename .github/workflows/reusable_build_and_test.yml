@@ -398,7 +398,7 @@ jobs:
   aps-helm-test:
     if: ${{ inputs.aps_version != '' }}
     needs: build-matrix
-    runs-on: ubuntu-latest-4-cores
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.aps_helm_matrix_json) }}
