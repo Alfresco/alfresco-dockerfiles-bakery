@@ -42,7 +42,7 @@ jobs:
         with:
           auto-commit: "true"
   CI:
-    name: Build v${{ matrix.version }}
+    name: Build ACS v${{ matrix.acs_version }}${{ matrix.aps_version && format(' and APS v{0}', matrix.aps_version) || '' }}
     needs: pre-commit
     uses: ./.github/workflows/reusable_build_and_test.yml
     strategy:

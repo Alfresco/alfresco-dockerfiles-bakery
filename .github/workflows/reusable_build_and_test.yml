@@ -171,10 +171,10 @@ jobs:
           if [ -n "${{ inputs.aps_version }}" ] && [ "${{ inputs.aps_version }}" != "" ]; then
             case "${{ inputs.aps_version }}" in
               25)
-                echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["25"]}' >> $GITHUB_OUTPUT
+                echo 'aps_helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["25"]}' >> $GITHUB_OUTPUT
                 ;;
               24)
-                echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["24"]}' >> $GITHUB_OUTPUT
+                echo 'aps_helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["24"]}' >> $GITHUB_OUTPUT
                 ;;
             esac
           fi
