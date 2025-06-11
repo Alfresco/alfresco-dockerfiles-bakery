@@ -447,7 +447,7 @@ jobs:
       - name: Create namespace and license secret
         run: |
           kubectl create namespace ${{ env.NAMESPACE }}
-          kubectl -n "$NAMESPACE" create secret generic \
+          kubectl -n ${{ env.NAMESPACE }} create secret generic \
             --from-literal=activiti.lic="${{ secrets.APS_LICENSE }}" aps-license
 
       - name: Checkout aps-deployment sources
