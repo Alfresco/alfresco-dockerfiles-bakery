@@ -1,6 +1,6 @@
 tomcat9:
   major: 9
-  version: 9.0.105
+  version: 9.0.106
   sha512: 0b316af119fd9a69761c20bc7f9959513884002fc60f490af6335380a3a62549777bf35a1e8dd3c448e56da8ddcb9dc2301d3b01bba304537ca40456c650c25a
 tomcat10:
   major: 10
