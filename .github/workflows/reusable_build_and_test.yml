@@ -440,7 +440,7 @@ jobs:
 
       - name: Create registries auth secret
         run: >-
-          kubectl create secret generic regcred
+          kubectl create secret generic quay-registry-secret
           --from-file=.dockerconfigjson=$HOME/.docker/config.json
           --type=kubernetes.io/dockerconfigjson
 
