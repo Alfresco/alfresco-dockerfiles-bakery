@@ -452,6 +452,8 @@ jobs:
 
       - name: Checkout aps-deployment sources
         uses: ./.github/actions/aps-deployment
+        with:
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
 
       - name: Setup helm repository
         working-directory: aps-deployment/helm/alfresco-process-services

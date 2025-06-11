@@ -1,5 +1,9 @@
 name: aps-deployment
 description: Clone aps-deployment sources
+inputs:
+  token:
+    description: "The github token"
+    required: true
 runs:
   using: "composite"
   steps:
@@ -8,4 +12,5 @@ runs:
         with:
           repository: Alfresco/alfresco-process-services-deployment
           ref: v2.1.1
+          token: ${{ inputs.token }}
           path: aps-deployment
