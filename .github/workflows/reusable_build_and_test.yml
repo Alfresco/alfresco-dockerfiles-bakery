@@ -443,12 +443,10 @@ jobs:
           kubectl create secret generic quay-registry-secret
           --from-file=.dockerconfigjson=$HOME/.docker/config.json
           --type=kubernetes.io/dockerconfigjson
-          --namespace ${{ env.NAMESPACE }}
 
-      - name: Create namespace and license secret
+      - name: Create license secret
         run: |
-          kubectl create namespace ${{ env.NAMESPACE }}
-          kubectl -n ${{ env.NAMESPACE }} create secret generic \
+          kubectl create secret generic \
             --from-literal=activiti.lic="${{ secrets.APS_LICENSE }}" aps-license
 
       - name: Checkout aps-deployment sources
@@ -471,13 +469,10 @@ jobs:
             --set alfresco-activiti.license.secretName=aps-license \
             --values ./aps-deployment/helm/alfresco-process-services/values.yaml \
             --values ./aps-deployment/tests/ci-values.yaml \
-            --values test/helm/aps-test-overrides-${{ matrix.edition }}.yaml \
-            --namespace ${{ env.NAMESPACE }}
+            --values test/helm/aps-test-overrides-${{ matrix.edition }}.yaml
 
       - name: Wait for pods to be ready
         uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.22.1
-        with:
-          namespace: ${{ env.NAMESPACE }}
 
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
         with:
