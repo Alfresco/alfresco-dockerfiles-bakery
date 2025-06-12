@@ -465,7 +465,6 @@ jobs:
         run: |
           helm install aps ./aps-deployment/helm/alfresco-process-services \
             --set alfresco-activiti.license.secretName=aps-license \
-            --values ./aps-deployment/helm/alfresco-process-services/values.yaml \
             --values ./aps-deployment/tests/ci-values.yaml \
             --values test/helm/aps-test-overrides-${{ matrix.edition }}.yaml
 
