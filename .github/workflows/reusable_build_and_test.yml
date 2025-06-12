@@ -168,16 +168,14 @@ jobs:
               echo 'helm_matrix_json={"arch": ["amd64"], "edition": ["73"]}' >> $GITHUB_OUTPUT
               ;;
           esac
-          if [ -n "${{ inputs.aps_version }}" ] && [ "${{ inputs.aps_version }}" != "" ]; then
-            case "${{ inputs.aps_version }}" in
-              25)
-                echo 'aps_helm_matrix_json={"arch": ["amd64"], "edition": ["25"]}' >> $GITHUB_OUTPUT
-                ;;
-              24)
-                echo 'aps_helm_matrix_json={"arch": ["amd64"], "edition": ["24"]}' >> $GITHUB_OUTPUT
-                ;;
-            esac
-          fi
+          case "${{ inputs.aps_version }}" in
+            25)
+              echo 'aps_helm_matrix_json={"arch": ["amd64"], "edition": ["25"]}' >> $GITHUB_OUTPUT
+              ;;
+            24)
+              echo 'aps_helm_matrix_json={"arch": ["amd64"], "edition": ["24"]}' >> $GITHUB_OUTPUT
+              ;;
+          esac
 
   acs-compose-test:
     needs: build-matrix
