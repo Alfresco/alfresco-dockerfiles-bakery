@@ -402,8 +402,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.aps_helm_matrix_json) }}
-    env:
-      NAMESPACE: aps
     steps:
       - name: Setup cluster
         uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v8.22.1
@@ -491,3 +489,18 @@ jobs:
           pip install -r requirements.txt
           pytest ./tests/ -k test_process \
           --verbose --configuration=../aps-deployment/dtas.json
+
+      - name: Collect logs from all containers
+        if: always() && steps.helm_install.outcome != 'skipped'
+        run: |
+          mkdir -p logs
+          for pod in $(kubectl get pods -n default -o jsonpath='{.items[*].metadata.name}'); do
+            kubectl logs $pod -n default > logs/${pod}.log
+          done
+
+      - name: Upload logs as artifact
+        if: always() && steps.helm_install.outcome != 'skipped'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #v4.6.2
+        with:
+          name: k8s-aps-logs-${{ matrix.arch }}-${{ matrix.edition }}
+          path: logs
