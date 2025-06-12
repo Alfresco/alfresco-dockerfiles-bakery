@@ -486,7 +486,8 @@ jobs:
           python-version: 3.9
 
       - name: run DTAS minimal tests
+        working-directory: dtas
         run: |
-          pip install -r ./dtas/requirements.txt
-          pytest ./dtas/tests/ -k test_process \
-          --verbose --configuration=./aps-deployment/dtas.json
+          pip install -r requirements.txt
+          pytest ./tests/ -k test_process \
+          --verbose --configuration=../aps-deployment/dtas.json
