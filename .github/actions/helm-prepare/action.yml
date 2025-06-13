@@ -34,6 +34,10 @@ inputs:
   github-actor:
     description: "GitHub actor for authentication"
     required: true
+  k8s-registry-secret-name:
+    description: "Name of the Kubernetes secret for Docker registry authentication"
+    required: false
+    default: "regcred"
 runs:
   using: "composite"
   steps:
@@ -73,6 +77,6 @@ runs:
     - name: Create registries auth secret
       shell: bash
       run: >-
-        kubectl create secret generic regcred
+        kubectl create secret generic ${{ inputs.k8s-registry-secret-name }}
         --from-file=.dockerconfigjson=$HOME/.docker/config.json
         --type=kubernetes.io/dockerconfigjson

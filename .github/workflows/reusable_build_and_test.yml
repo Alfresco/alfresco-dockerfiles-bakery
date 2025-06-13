@@ -389,6 +389,7 @@ jobs:
           github-registry: ${{ env.REGISTRY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-actor: ${{ github.actor }}
+          k8s-registry-secret-name: quay-registry-secret
 
       - name: Create license secret
         run: |
