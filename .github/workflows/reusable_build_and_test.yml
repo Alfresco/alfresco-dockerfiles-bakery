@@ -394,7 +394,7 @@ jobs:
           path: logs
 
   aps-helm-test:
-    if: ${{ inputs.aps_version != '' }}
+    if: inputs.aps_version != ''
     needs: build-matrix
     runs-on: ubuntu-latest
     strategy:
