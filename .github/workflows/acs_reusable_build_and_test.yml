@@ -140,7 +140,6 @@ jobs:
     outputs:
       compose_matrix_json: ${{ steps.set-matrix.outputs.compose_matrix_json }}
       helm_matrix_json: ${{ steps.set-matrix.outputs.helm_matrix_json }}
-      aps_helm_matrix_json: ${{ steps.set-matrix.outputs.aps_helm_matrix_json }}
     steps:
       - name: Set matrix values for Compose and Helm
         id: set-matrix
