@@ -261,9 +261,6 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.helm_matrix_json) }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - name: Prepare for helm installation
         uses: ./.github/actions/helm-prepare
         with:
@@ -376,9 +373,6 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.aps_helm_matrix_json) }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - name: Prepare for helm installation
         uses: ./.github/actions/helm-prepare
         with:
