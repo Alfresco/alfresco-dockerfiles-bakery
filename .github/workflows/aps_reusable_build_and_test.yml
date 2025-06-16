@@ -72,6 +72,7 @@ jobs:
         with:
           pytest_options: "-k test_process"
           test_config_file: test/configs/aps-dtas-${{ inputs.aps_version }}.json
+          pytest_retries: 1
 
       - name: Collect and push logs as artifcact
         if: always() && steps.helm_install.outcome != 'skipped'
