@@ -13,29 +13,8 @@ env:
   REGISTRY_NAMESPACE: alfresco
 
 jobs:
-  build-matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      helm_matrix_json: ${{ steps.set-matrix.outputs.helm_matrix_json }}
-    steps:
-      - name: Set matrix values for Compose and Helm
-        id: set-matrix
-        run: |
-          case "${{ inputs.aps_version }}" in
-            25)
-              echo 'helm_matrix_json={"arch": ["amd64"], "edition": ["25"]}' >> $GITHUB_OUTPUT
-              ;;
-            24)
-              echo 'helm_matrix_json={"arch": ["amd64"], "edition": ["24"]}' >> $GITHUB_OUTPUT
-              ;;
-          esac
-
   aps-helm-test:
-    needs: build-matrix
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.build-matrix.outputs.helm_matrix_json) }}
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -50,7 +29,6 @@ jobs:
           github-registry: ${{ env.REGISTRY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-actor: ${{ github.actor }}
-          k8s-registry-secret-name: quay-registry-secret
 
       - name: Create license secret
         run: |
@@ -75,41 +53,20 @@ jobs:
         run: |
           helm install aps ./aps-deployment/helm/alfresco-process-services \
             --set alfresco-activiti.license.secretName=aps-license \
+            --set global.alfrescoRegistryPullSecrets=regcred \
             --values ./aps-deployment/tests/ci-values.yaml \
-            --values test/helm/aps-test-overrides-${{ matrix.edition }}.yaml
+            --values test/helm/aps-test-overrides-${{ inputs.aps_version }}.yaml
 
       - name: Wait for pods to be ready
         uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.22.1
 
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - name: Test alfresco via DTAS
+        uses: Alfresco/alfresco-deployment-test-automation-scripts@v1.7.2
         with:
-          repository: Alfresco/alfresco-deployment-test-automation-scripts
-          path: dtas
-          token: ${{ secrets.BOT_GITHUB_TOKEN }}
-          ref: v1.5.5
+          test_config_file: test/configs/aps-dtas-${{ inputs.aps_version }}.json
 
-      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
-        with:
-          python-version: 3.9
-
-      - name: run DTAS minimal tests
-        working-directory: dtas
-        run: |
-          pip install -r requirements.txt
-          pytest ./tests/ -k test_process \
-          --verbose --configuration=../aps-deployment/dtas.json
-
-      - name: Collect logs from all containers
+      - name: Collect and push logs as artifcact
         if: always() && steps.helm_install.outcome != 'skipped'
-        run: |
-          mkdir -p logs
-          for pod in $(kubectl get pods -n default -o jsonpath='{.items[*].metadata.name}'); do
-            kubectl logs $pod -n default > logs/${pod}.log
-          done
-
-      - name: Upload logs as artifact
-        if: always() && steps.helm_install.outcome != 'skipped'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #v4.6.2
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@v8.23.3
         with:
-          name: k8s-aps-logs-${{ matrix.arch }}-${{ matrix.edition }}
-          path: logs
+          log_retention: 7
