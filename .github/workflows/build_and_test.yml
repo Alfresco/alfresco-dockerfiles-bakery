@@ -41,10 +41,10 @@ jobs:
       - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v8.22.1
         with:
           auto-commit: "true"
-  CI:
-    name: Build v${{ matrix.version }}
+  ACS_CI:
+    name: Build ACS v${{ matrix.version }}
     needs: pre-commit
-    uses: ./.github/workflows/reusable_build_and_test.yml
+    uses: ./.github/workflows/acs_reusable_build_and_test.yml
     strategy:
       fail-fast: false
       matrix:
@@ -52,4 +52,16 @@ jobs:
     with:
       tag: ${{ github.event_name == 'pull_request' && format('pr-{0}-v{1}', github.event.pull_request.number, matrix.version) || format('{0}-v{1}', github.ref_name, matrix.version) }}
       acs_version: ${{ matrix.version }}
+    secrets: inherit
+
+  APS_CI:
+    name: Build APS v${{ matrix.version }}
+    needs: pre-commit
+    uses: ./.github/workflows/aps_reusable_build_and_test.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [24, 25]
+    with:
+      aps_version: ${{ matrix.version }}
     secrets: inherit

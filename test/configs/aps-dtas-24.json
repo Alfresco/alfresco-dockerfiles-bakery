@@ -1,0 +1,23 @@
+{
+  "config": {
+    "host": "http://localhost",
+    "username": "admin",
+    "password": "admin"
+  },
+  "assertions": {
+    "activiti": {
+      "modules": [
+        {
+         "id": "app",
+         "installed": true,
+         "version": "24.5.0"
+        },
+        {
+         "id": "admin",
+         "installed": true,
+         "version": "24.5.0"
+        }
+      ]
+    }
+  }
+}
