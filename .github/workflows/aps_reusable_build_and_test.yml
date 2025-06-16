@@ -76,7 +76,7 @@ jobs:
 
       - name: Collect and push logs as artifcact
         if: always() && steps.helm_install.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@OPSEXP-3263
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@v8.24.0
         with:
           log_retention: 7
           log_name_identifier: "APS-Version-${{ inputs.aps_version }}"
