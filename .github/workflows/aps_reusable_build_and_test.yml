@@ -79,4 +79,4 @@ jobs:
         uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@OPSEXP-3263
         with:
           log_retention: 7
-          log_name_suffix: "-${{ inputs.aps_version }}"
+          log_name_suffix: "-APS-Version-${{ inputs.aps_version }}"
