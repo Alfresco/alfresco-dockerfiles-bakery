@@ -15,6 +15,7 @@ import tempfile
 import urllib.request
 import hashlib
 import yaml
+import glob
 
 # Custom exceptions
 class ChecksumMismatchError(Exception):
@@ -132,34 +133,31 @@ def do_parse_and_mvn_fetch(file_path):
         shutil.move(artifact_tmp_path, artifact_cache_path)
         shutil.copy(artifact_cache_path, artifact_final_path)
 
-def find_targets_recursively(root_path):
+def check_if_arg_is_path_or_glob(arg):
     """
-    Find all the artifacts yaml files from the root path recursively which match the given pattern
+    Check if the argument is a path or a glob pattern
     """
-    patterns = []
+    if os.path.exists(arg):
+        print(f"Argument '{arg}' is a valid path.")
+        return True  # It's a path
+    elif "*" in arg or "?" in arg:
+        print(f"Argument '{arg}' is a glob pattern.")
+        return False  # It's a glob pattern
+    else:
+        return False  # Not a valid path or glob pattern
 
-    # Add ACS pattern if ACS_VERSION is provided and not empty
-    if ACS_VERSION and ACS_VERSION != "null":
-        acs_pattern = f"artifacts-{ACS_VERSION}.yaml"
-        patterns.append(acs_pattern)
-
-    # Add APS pattern if APS_VERSION is provided and not empty
-    if APS_VERSION and APS_VERSION != "null":
-        aps_pattern = f"artifacts-{APS_VERSION}-aps.yaml"
-        patterns.append(aps_pattern)
-
-    # If no patterns are defined, warn the user
-    if not patterns:
-        print("Warning: Neither ACS_VERSION nor APS_VERSION is provided. No artifacts will be downloaded.")
-        return []
-
-    targets = []
-    for root, _, files in os.walk(root_path):
-        for file in files:
-            if file in patterns:
-                targets.append(os.path.join(root, file))
-
-    return targets
+def find_targets(arg):
+    """
+    Find all the artifacts yaml files from the given argument which can be a path or a glob pattern
+    """
+    if check_if_arg_is_path_or_glob(arg):
+        if os.path.isdir(arg):
+            return glob.glob(os.path.join(arg, f"**/artifacts-{ACS_VERSION}.yaml"), recursive=True)
+        else:
+            return [arg]
+    else:
+        # If it's a glob pattern, use glob to find matching files
+        return glob.glob(arg, recursive=True)
 
 def setup_basic_auth(username, password):
     """
@@ -192,8 +190,12 @@ def main(target_subdir=""):
     """
     Find all the artifacts yaml files and process them
     """
-    targets = find_targets_recursively(os.path.sep.join([REPO_ROOT, target_subdir]))
+    targets = find_targets(os.path.sep.join([REPO_ROOT, target_subdir]))
 
+    for target_file in targets:
+        do_parse_and_mvn_fetch(target_file)
+
+if __name__ == "__main__":
     username, password = get_credentials_from_netrc('nexus.alfresco.com')
     if os.getenv('NEXUS_USERNAME') and os.getenv('NEXUS_PASSWORD'):
         username = os.getenv('NEXUS_USERNAME')
@@ -201,9 +203,11 @@ def main(target_subdir=""):
     if username and password:
         setup_basic_auth(username, password)
 
-    for target_file in targets:
-        do_parse_and_mvn_fetch(target_file)
-
-if __name__ == "__main__":
-    target_directory = sys.argv[1] if len(sys.argv) > 1 else ""
-    main(target_directory)
+    # If no arguments provided, run with empty string (default behavior)
+    if len(sys.argv) == 1:
+        main("")
+    else:
+        # Process each argument separately
+        for target_directory in sys.argv[1:]:
+            print(f"\n--- Processing target: {target_directory} ---")
+            main(target_directory)
