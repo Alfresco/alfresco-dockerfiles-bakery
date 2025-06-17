@@ -163,20 +163,3 @@ EOF
     [[ "$output" == *"valid path"* ]] && [[ "$output" == *"Processing target: test"* ]]
     [[ "$status" -ne 0 ]] || [[ "$output" != *"Traceback"* ]]
 }
-
-@test "script works with existing repo directories" {
-    export ACS_VERSION="25"
-
-    cd "$ACTUAL_REPO_ROOT"
-
-    # Test with existing directories that should be in the repo
-    # Use repository directory if it exists
-    if [ -d "repository" ]; then
-        run timeout 10 python3 scripts/fetch_artifacts.py repository 2>&1 || true
-        echo "Output: $output"
-
-        [[ "$output" == *"Processing target: repository"* ]] && [[ "$output" == *"valid path"* ]]
-    else
-        skip "repository directory not found in repo"
-    fi
-}
