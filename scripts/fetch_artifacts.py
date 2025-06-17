@@ -26,6 +26,7 @@ class ChecksumMismatchError(Exception):
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 TEMP_DIR = tempfile.mkdtemp()
 ACS_VERSION = os.getenv("ACS_VERSION", "25")
+APS_VERSION = os.getenv("APS_VERSION")
 MAVEN_FQDN = os.getenv("MAVEN_FQDN", "nexus.alfresco.com")
 MAVEN_REPO = os.getenv("MAVEN_REPO", f"https://{MAVEN_FQDN}/nexus/repository")
 
@@ -135,12 +136,29 @@ def find_targets_recursively(root_path):
     """
     Find all the artifacts yaml files from the root path recursively which match the given pattern
     """
-    pattern = f"artifacts-{ACS_VERSION}.yaml"
+    patterns = []
+
+    # Add ACS pattern if ACS_VERSION is provided and not empty
+    if ACS_VERSION and ACS_VERSION != "null":
+        acs_pattern = f"artifacts-{ACS_VERSION}.yaml"
+        patterns.append(acs_pattern)
+
+    # Add APS pattern if APS_VERSION is provided and not empty
+    if APS_VERSION and APS_VERSION != "null":
+        aps_pattern = f"artifacts-{APS_VERSION}-aps.yaml"
+        patterns.append(aps_pattern)
+
+    # If no patterns are defined, warn the user
+    if not patterns:
+        print("Warning: Neither ACS_VERSION nor APS_VERSION is provided. No artifacts will be downloaded.")
+        return []
+
     targets = []
     for root, _, files in os.walk(root_path):
         for file in files:
-            if file == pattern:
+            if file in patterns:
                 targets.append(os.path.join(root, file))
+
     return targets
 
 def setup_basic_auth(username, password):
