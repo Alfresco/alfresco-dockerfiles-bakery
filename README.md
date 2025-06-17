@@ -243,6 +243,15 @@ export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=
 docker buildx bake repo --set *.output=type=registry,push=true
 ```
 
+## Building APS only
+
+To build only APS images without any ACS components, set the APS version and
+leave ACS version empty:
+
+```sh
+export ACS_VERSION="" APS_VERSION="25"
+```
+
 ## Building older versions
 
 Versions of artifacts being downloaded specific to the ACS version are defined
