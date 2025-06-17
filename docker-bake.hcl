@@ -40,6 +40,10 @@ group "search_enterprise" {
   targets = ["search_liveindexing", "search_reindexing"]
 }
 
+group "alfresco_process_service" {
+  targets = ["aps-admin"]
+}
+
 group "ats" {
   targets = ["ats_trouter", "ats_sfs"]
 }
@@ -926,3 +930,34 @@ target "hxinsight_connector_prediction_applier" {
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
+
+variable "ALFRESCO_PROCESS_SERVICE_USER_NAME" {
+  default = "alfresco"
+}
+variable "ALFRESCO_PROCESS_SERVICE_USER_ID" {
+  default = "33007"
+}
+
+target "aps-admin" {
+  context = "./aps/admin"
+  dockerfile = "Dockerfile"
+  inherits = ["tomcat_base"]
+  contexts = {
+    tomcat_base = "target:tomcat_base"
+  }
+  args = {
+    APS_ADMIN_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    APS_ADMIN_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    APS_ADMIN_USER_NAME = "${ALFRESCO_PROCESS_SERVICE_USER_NAME}"
+    APS_ADMIN_USER_ID = "${ALFRESCO_PROCESS_SERVICE_USER_ID}"
+  }
+  labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Process Services Admin"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Process Services Admin"
+    "org.opencontainers.image.description" = "Alfresco Process Services Admin Console"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services-admin:${TAG}"]
+  output = ["type=docker"]
+  # APS Admin is not available for ARM64
+  platforms = [ "linux/amd64" ]
+  }
