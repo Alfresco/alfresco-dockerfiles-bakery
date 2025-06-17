@@ -245,11 +245,10 @@ docker buildx bake repo --set *.output=type=registry,push=true
 
 ## Building APS only
 
-To build only APS images without any ACS components, set the APS version and
-leave ACS version empty:
+To build only APS images without any ACS components, set ACS version to empty:
 
 ```sh
-export ACS_VERSION="" APS_VERSION="25"
+export ACS_VERSION=""
 ```
 
 ## Building older versions
