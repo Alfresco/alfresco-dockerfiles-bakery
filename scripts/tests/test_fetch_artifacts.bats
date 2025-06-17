@@ -1,5 +1,4 @@
 #!/usr/bin/env bats
-# filepath: /Users/pawel.maciusiak/Documents/alfresco-dockerfiles/tests/test_fetch_artifacts.bats
 
 setup() {
     export TEST_DIR=$(mktemp -d)
