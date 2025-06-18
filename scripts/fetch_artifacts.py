@@ -134,7 +134,7 @@ def do_parse_and_mvn_fetch(file_path):
 
 def check_if_arg_is_path_or_glob(arg):
     """
-    Check if the argument is a path or a glob pattern
+    Check if the argument is a path (returns True) or a glob pattern (returns False)
     """
     if os.path.exists(arg):
         print(f"Argument '{arg}' is a valid path.")
