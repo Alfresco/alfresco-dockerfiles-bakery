@@ -432,8 +432,10 @@ python3 scripts/fetch_artifacts.py [targets...] [options]
 #### Targets (optional)
 You can specify one or more targets:
 
-- **No arguments**: Processes the entire repository
+- **No arguments**: Processes the entire repository (only files matching
+  `artifacts-*.yaml`)
 - **Directory path**: Searches for artifact files in the specified directory
+  (only files matching `artifacts-*.yaml` in that directory)
 - **File path**: Processes a specific artifact YAML file
 - **Glob pattern**: Uses wildcards to match multiple files/directories
 
