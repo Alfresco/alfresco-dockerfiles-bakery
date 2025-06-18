@@ -30,7 +30,6 @@ teardown() {
 
 @test "script handles no arguments" {
     export ACS_VERSION=""
-    export APS_VERSION=""
 
     cd "$ACTUAL_REPO_ROOT"
     run timeout 5 python3 scripts/fetch_artifacts.py 2>&1 || true

@@ -27,7 +27,6 @@ class ChecksumMismatchError(Exception):
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 TEMP_DIR = tempfile.mkdtemp()
 ACS_VERSION = os.getenv("ACS_VERSION", "25")
-APS_VERSION = os.getenv("APS_VERSION", "25")
 MAVEN_FQDN = os.getenv("MAVEN_FQDN", "nexus.alfresco.com")
 MAVEN_REPO = os.getenv("MAVEN_REPO", f"https://{MAVEN_FQDN}/nexus/repository")
 
