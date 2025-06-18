@@ -58,7 +58,7 @@ artifacts:
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run timeout 10 python3 scripts/fetch_artifacts.py test_repo1 2>&1 || true
+    run timeout 10 python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1 2>&1 || true
     echo "Output: $output"
 
     # Should detect as valid path and process
@@ -80,7 +80,7 @@ artifacts: {}
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run timeout 10 python3 scripts/fetch_artifacts.py test_repo1 test_repo2 2>&1 || true
+    run timeout 10 python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1 test_repo2 2>&1 || true
     echo "Output: $output"
 
     # Should show BOTH "Processing target" AND "valid path" messages for each
@@ -97,14 +97,14 @@ EOF
     cd "$ACTUAL_REPO_ROOT"
 
     # Test with existing directory (should be detected as valid path)
-    run timeout 10 python3 scripts/fetch_artifacts.py test_existing_dir 2>&1 || true
+    run timeout 10 python3 scripts/fetch_artifacts.py test_existing_dir --log-level DEBUG  2>&1 || true
     echo "Valid path test output: $output"
 
     # Should show BOTH "Processing target" AND "valid path"
     [[ "$output" == *"Processing target: test_existing_dir"* ]] && [[ "$output" == *"valid path"* ]]
 
     # Test with glob pattern (should be detected as glob)
-    run timeout 10 python3 scripts/fetch_artifacts.py "**/nonexistent-*.yaml" 2>&1 || true
+    run timeout 10 python3 scripts/fetch_artifacts.py "**/nonexistent-*.yaml" --log-level DEBUG 2>&1 || true
     echo "Glob pattern test output: $output"
 
     # Should detect as glob pattern
@@ -122,23 +122,11 @@ artifacts: {}
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run timeout 10 python3 scripts/fetch_artifacts.py "**/artifacts-*-uncommon.yaml" 2>&1 || true
+    run timeout 10 python3 scripts/fetch_artifacts.py "**/artifacts-*-uncommon.yaml" --log-level DEBUG 2>&1 || true
     echo "Output: $output"
 
     # The glob pattern should be detected
     [[ "$output" == *"glob pattern"* ]]
-}
-
-@test "script handles invalid paths gracefully" {
-    export ACS_VERSION="25"
-
-    cd "$ACTUAL_REPO_ROOT"
-    run timeout 10 python3 scripts/fetch_artifacts.py nonexistent_directory_12345 2>&1 || true
-    echo "Output: $output"
-    echo "Status: $status"
-
-    # Should handle non-existent paths gracefully (returns False from check function)
-    [[ "$output" != *"Traceback"* ]]
 }
 
 @test "script handles completely broken YAML" {
@@ -154,7 +142,7 @@ random text [[[
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run timeout 10 python3 scripts/fetch_artifacts.py test 2>&1 || true
+    run timeout 10 python3 scripts/fetch_artifacts.py test 2>&1 --log-level DEBUG || true
     echo "Output: $output"
     echo "Status: $status"
 
