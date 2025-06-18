@@ -46,17 +46,11 @@ jobs:
           key: ${{ runner.os }}-packages-v2-${{ hashFiles(env.HASH_FILES_NAME) }}-${{ inputs.acs_version }}
           path: artifacts_cache/**
 
-      - name: Fetch artifacts from nexus
+      - name: Fetch artifacts with test from nexus
         env:
           ACS_VERSION: ${{ inputs.acs_version }}
         run: |
-          python3 ./scripts/fetch_artifacts.py
-
-      - name: Fetch artifacts for testing
-        env:
-          ACS_VERSION: "${{ inputs.acs_version }}-test"
-        run: |
-          python3 ./scripts/fetch_artifacts.py
+          python3 ./scripts/fetch_artifacts.py "" "**/artifacts-${{ inputs.acs_version }}-test.yaml"
 
       - name: Save packages artifacts
         if: steps.artifacts-cache.outputs.cache-hit != 'true'
