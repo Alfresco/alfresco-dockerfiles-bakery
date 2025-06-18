@@ -234,7 +234,6 @@ if __name__ == "__main__":
     if username and password:
         setup_basic_auth(username, password)
 
-    # If no arguments provided, run with empty string (default behavior)
     if not args.targets:
         main("")
     else:
