@@ -30,6 +30,7 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with helm](#testing-with-helm)
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
+  - [Fetch artifcats script](#fetch-artifact-script)
   - [Release](#release)
 
 ## Prerequisites
@@ -411,6 +412,56 @@ You can also run grype automatically at the end of the build process by setting
 ```sh
 make all GRYPE_ONBUILD=1
 ```
+
+## Fetch artifact script
+
+A Python script to download artifacts from the Alfresco Nexus repository based
+on YAML configuration files.
+
+> We recommend using `make` for local operations on this repository but if you
+> want to only leverage the fetching script here is the explanation
+
+### Usage
+
+```bash
+python3 scripts/fetch_artifacts.py [targets...] [options]
+```
+
+### Arguments
+
+#### Targets (optional)
+You can specify one or more targets:
+
+- **No arguments**: Processes the entire repository
+- **Directory path**: Searches for artifact files in the specified directory
+- **File path**: Processes a specific artifact YAML file
+- **Glob pattern**: Uses wildcards to match multiple files/directories
+
+#### Options
+
+- `--log-level {DEBUG,INFO,WARNING,ERROR}` - Set logging verbosity (default: INFO)
+- `--log-file FILE` - Write logs to a file (in addition to console output)
+
+### Examples
+
+```bash
+python3 scripts/fetch_artifacts.py
+python3 scripts/fetch_artifacts.py repository
+python3 scripts/fetch_artifacts.py repository share aps
+python3 scripts/fetch_artifacts.py "**/artifacts-*-aps.yaml"
+python3 scripts/fetch_artifacts.py repository --log-level DEBUG
+python3 scripts/fetch_artifacts.py repository --log-file download.log
+```
+
+### Environment Variables
+
+- `ACS_VERSION` - Alfresco Content Services version (default: "25")
+- `NEXUS_USERNAME` - Nexus repository username
+- `NEXUS_PASSWORD` - Nexus repository password
+- `MAVEN_FQDN` - Maven repository FQDN (default: "nexus.alfresco.com")
+- `MAVEN_REPO` - Full Maven repository URL
+
+For authentication check out [nexus authentication](#nexus-authentication)
 
 ## Release
 
