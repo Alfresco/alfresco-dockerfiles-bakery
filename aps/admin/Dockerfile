@@ -39,4 +39,4 @@ RUN chown ${USERNAME}:${USERNAME} -R /usr/local/tomcat
 EXPOSE 8080
 
 USER ${USERNAME}
-CMD ["/home/alfresco/entrypoint.sh"]
+CMD ["/entrypoint.sh"]
