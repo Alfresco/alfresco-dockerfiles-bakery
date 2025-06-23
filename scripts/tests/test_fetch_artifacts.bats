@@ -31,7 +31,7 @@ teardown() {
     export ACS_VERSION=""
 
     cd "$ACTUAL_REPO_ROOT"
-    run python3 scripts/fetch_artifacts.py 2>&1
+    run python3 scripts/fetch_artifacts.py --log-level DEBUG 2>&1
     echo "Output: $output"
 
     # Should not crash
