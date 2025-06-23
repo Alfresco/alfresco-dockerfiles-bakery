@@ -31,7 +31,7 @@ teardown() {
     export ACS_VERSION=""
 
     cd "$ACTUAL_REPO_ROOT"
-    run python3 scripts/fetch_artifacts.py --log-level DEBUG 2>&1
+    run python3 scripts/fetch_artifacts.py --log-level DEBUG
     echo "Output: $output"
 
     # Should not crash
@@ -59,7 +59,7 @@ artifacts:
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1 2>&1
+    run python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1
     echo "Output: $output"
 
     # Should detect as valid path and process
@@ -83,7 +83,7 @@ artifacts: {}
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1 test_repo2 2>&1
+    run python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1 test_repo2
     echo "Output: $output"
 
     # Should show BOTH "Processing target" AND "valid path" messages for each
@@ -102,7 +102,7 @@ EOF
     cd "$ACTUAL_REPO_ROOT"
 
     # Test with existing directory (should be detected as valid path)
-    run python3 scripts/fetch_artifacts.py test_existing_dir --log-level DEBUG  2>&1
+    run python3 scripts/fetch_artifacts.py test_existing_dir --log-level DEBUG
     echo "Valid path test output: $output"
 
     # Should show BOTH "Processing target" AND "valid path"
@@ -111,7 +111,7 @@ EOF
     [[ "$output" != *"ERROR:"* ]]
 
     # Test with glob pattern (should be detected as glob)
-    run python3 scripts/fetch_artifacts.py "**/nonexistent-*.yaml" --log-level DEBUG 2>&1
+    run python3 scripts/fetch_artifacts.py "**/nonexistent-*.yaml" --log-level DEBUG
     echo "Glob pattern test output: $output"
 
     # Should detect as glob pattern
@@ -131,7 +131,7 @@ artifacts: {}
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run python3 scripts/fetch_artifacts.py "**/artifacts-*-uncommon.yaml" --log-level DEBUG 2>&1
+    run python3 scripts/fetch_artifacts.py "**/artifacts-*-uncommon.yaml" --log-level DEBUG
     echo "Output: $output"
 
     # The glob pattern should be detected
@@ -153,7 +153,7 @@ random text [[[
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run python3 scripts/fetch_artifacts.py test 2>&1 --log-level DEBUG
+    run python3 scripts/fetch_artifacts.py test --log-level DEBUG
     echo "Output: $output"
     echo "Status: $status"
 
