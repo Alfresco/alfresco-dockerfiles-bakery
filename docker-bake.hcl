@@ -60,6 +60,10 @@ group "adf_apps" {
   targets = ["acc", "adw"]
 }
 
+group "aps" {
+  targets = ["aps-admin"]
+}
+
 group "hxinsight_connector" {
   targets = [
     "hxinsight_connector_bulk_ingester",
@@ -959,5 +963,5 @@ target "aps-admin" {
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services-admin:${TAG}"]
   output = ["type=docker"]
   # APS Admin is not available for ARM64
-  platforms = [ "linux/amd64" ]
+  platforms = [ "linux/arm64" ]
   }

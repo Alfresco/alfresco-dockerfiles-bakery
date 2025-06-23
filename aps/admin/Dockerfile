@@ -12,7 +12,7 @@ ENV DISTDIR="/tmp/distribution"
 
 COPY distribution/activiti-admin-*.war /tmp/
 
-RUN unzip ${DISTDIR}/activiti-admin-*.war -d ${CATALINA_HOME}/webapps/activiti-admin
+RUN unzip /tmp/activiti-admin-*.war -d ${CATALINA_HOME}/webapps/activiti-admin
 RUN sed -i -e 's/<secure>.*<\/secure>//' ${CATALINA_HOME}/conf/web.xml
 RUN mkdir -p ${CATALINA_HOME}/work/Catalina/localhost/activiti-admin
 
@@ -37,7 +37,7 @@ RUN groupadd -g ${APS_ADMIN_GROUP_ID} ${APS_ADMIN_GROUP_NAME} && \
     yum clean all && rm -rf /var/cache/yum
 
 COPY entrypoint.sh /entrypoint.sh
-COPY set-config.sh /set-config.sh
+COPY set-config.sh /home/alfresco/set-config.sh
 COPY activiti-admin.properties.template ${ACTIVITI_ADMIN_PROPS_TEMPLATE}
 
 FROM aps_admin_rhlike AS aps-admin-rockylinux9
@@ -45,7 +45,6 @@ FROM aps_admin_rhlike AS aps-admin-rockylinux9
 FROM aps-admin-${DISTRIB_NAME}${DISTRIB_MAJOR}
 
 EXPOSE 8080
-VOLUME [ ${ACTIVITI_ADMIN_PROPS} ]
 
 USER ${APS_ADMIN_USER_NAME}
 CMD ["/entrypoint.sh"]

@@ -139,6 +139,10 @@ prepare_tengines: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Transform Engine targets"
 	@python3 ./scripts/fetch_artifacts.py tengine
 
+prepare_aps: scripts/fetch_artifacts.py
+	@echo "Fetching all artifacts for ADF Platform Services targets"
+	@python3 ./scripts/fetch_artifacts.py aps
+
 ## BUILD TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
 
@@ -209,6 +213,11 @@ sync: docker-bake.hcl prepare_sync setenv
 
 tengines: docker-bake.hcl prepare_tengines setenv
 	@echo "Building Transform Engine images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
+aps: docker-bake.hcl prepare_aps setenv
+	@echo "Building ADF Platform Services images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
