@@ -2,11 +2,13 @@
 Process artifacts yml files to download the artifacts from the Alfresco Nexus repository
 
 Run this script with:
-python3 scripts/fetch_artifacts.py [<target_subdir>]
+python3 scripts/fetch_artifacts.py [<target_subdir>] [--log-level LEVEL] [--log-file FILE]
 
 The target_subdir is the subdirectory where the artifacts yaml files are located (optional)
 """
 
+import argparse
+import logging
 import netrc
 import os
 import shutil
@@ -15,6 +17,7 @@ import tempfile
 import urllib.request
 import hashlib
 import yaml
+import glob
 
 # Custom exceptions
 class ChecksumMismatchError(Exception):
@@ -29,6 +32,31 @@ ACS_VERSION = os.getenv("ACS_VERSION", "25")
 MAVEN_FQDN = os.getenv("MAVEN_FQDN", "nexus.alfresco.com")
 MAVEN_REPO = os.getenv("MAVEN_REPO", f"https://{MAVEN_FQDN}/nexus/repository")
 
+logger = logging.getLogger(__name__)
+
+def setup_logging(log_level=logging.INFO, log_file=None):
+    """Setup logging configuration"""
+    log_format_debug = '%(asctime)s - %(levelname)s: %(message)s'
+
+    if log_level is logging.DEBUG:
+        log_format = log_format_debug
+    else:
+        log_format = '%(message)s'
+
+    logger.handlers.clear()
+    logger.setLevel(log_level)
+
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(logging.Formatter(log_format))
+    logger.addHandler(console_handler)
+
+    if log_file:
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(logging.Formatter(log_format_debug))
+        logger.addHandler(file_handler)
+
+    logger.propagate = False
+
 def get_checksums(artifact_checksum, artifact_url, artifact_file_path):
     """
     Get source checksum that must match and the computed checksum
@@ -42,7 +70,7 @@ def get_checksums(artifact_checksum, artifact_url, artifact_file_path):
             with urllib.request.urlopen(f"{artifact_url}.{checksum_type}") as checksum_response:
                 checksum = checksum_response.read().decode("utf-8").strip()
         except urllib.error.HTTPError as e:
-            print(f"Failed to fetch checksum from {artifact_url}.{checksum_type}: {e}")
+            logger.warning(f"Failed to fetch checksum from {artifact_url}.{checksum_type}: {e}")
             return None, None
     else:
         checksum = artifact_checksum.split(":")[1]
@@ -74,34 +102,33 @@ def do_parse_and_mvn_fetch(file_path):
         artifact_final_path = os.path.join(artifact_path, f"{artifact_name}-{artifact_version}{artifact_ext}")
         artifact_url = f"{artifact_baseurl}/{artifact_group.replace('.', '/')}/{artifact_name}/{artifact_version}/{artifact_name}-{artifact_version}{artifact_ext}"
 
-        # Newline for better readability
-        print()
+        logger.info("")
 
         # Check if the artifact is already present
         if os.path.isfile(artifact_final_path):
-            print(f"Artifact {artifact_name}-{artifact_version} already present.")
+            logger.info(f"Artifact {artifact_name}-{artifact_version} already present.")
             src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, artifact_final_path)
             if not src_checksum and not computed_checksum:
-                print('No valid checksum found, skipping verification...')
+                logger.info('No valid checksum found, skipping verification...')
                 continue
             if src_checksum == computed_checksum:
-                print(f"Checksum matched for {artifact_name}-{artifact_version}{artifact_ext}")
+                logger.info(f"Checksum matched for {artifact_name}-{artifact_version}{artifact_ext}")
                 continue
-            print(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
+            logger.info(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
             os.remove(artifact_final_path)
 
         if os.path.isfile(artifact_cache_path):
             src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, artifact_cache_path)
             if src_checksum == computed_checksum:
-                print(f"Artifact {artifact_name}-{artifact_version} already present in cache, copying...")
+                logger.info(f"Artifact {artifact_name}-{artifact_version} already present in cache, copying...")
                 shutil.copy(artifact_cache_path, artifact_final_path)
                 continue
             else:
-                print(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
+                logger.info(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
                 os.remove(artifact_cache_path)
 
         # Download the artifact
-        print(f"Downloading {artifact_group}:{artifact_name} {artifact_version} from {artifact_baseurl}")
+        logger.info(f"Downloading {artifact_group}:{artifact_name} {artifact_version} from {artifact_baseurl}")
         try:
             with urllib.request.urlopen(artifact_url) as response, open(artifact_tmp_path, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
@@ -118,10 +145,10 @@ def do_parse_and_mvn_fetch(file_path):
 
         except urllib.error.HTTPError as e:
             if e.code == 401:
-                print("Invalid or missing credentials, skipping...")
+                logger.warning("Invalid or missing credentials, skipping...")
                 continue
             elif e.code == 403:
-                print("Forbidden access, skipping...")
+                logger.warning("Forbidden access, skipping...")
                 continue
             else:
                 # rethrow the exception to exit with failure
@@ -131,17 +158,30 @@ def do_parse_and_mvn_fetch(file_path):
         shutil.move(artifact_tmp_path, artifact_cache_path)
         shutil.copy(artifact_cache_path, artifact_final_path)
 
-def find_targets_recursively(root_path):
+def arg_is_glob_pattern(arg):
     """
-    Find all the artifacts yaml files from the root path recursively which match the given pattern
+    Check if the argument is a path (returns False) or a glob pattern (returns True)
     """
-    pattern = f"artifacts-{ACS_VERSION}.yaml"
-    targets = []
-    for root, _, files in os.walk(root_path):
-        for file in files:
-            if file == pattern:
-                targets.append(os.path.join(root, file))
-    return targets
+    if os.path.exists(arg):
+        logger.debug(f"Argument '{arg}' is a valid path.")
+        return False
+    elif "*" in arg or "?" in arg:
+        logger.debug(f"Argument '{arg}' is a glob pattern.")
+        return True
+    else:
+        return False
+
+def find_targets(arg):
+    """
+    Find all the artifacts yaml files from the given argument which can be a path or a glob pattern
+    """
+    if arg_is_glob_pattern(arg):
+        return glob.glob(arg, recursive=True)
+    else:
+        if os.path.isdir(arg):
+            return glob.glob(os.path.join(arg, f"**/artifacts-{ACS_VERSION}.yaml"), recursive=True)
+        else:
+            return [arg]
 
 def setup_basic_auth(username, password):
     """
@@ -167,14 +207,30 @@ def get_credentials_from_netrc(machine):
         # Ignore if .netrc file is not found
         pass
     except netrc.NetrcParseError as e:
-        print(f"Error parsing .netrc file: {e}")
+        logger.error(f"Error parsing .netrc file: {e}")
     return None, None
 
 def main(target_subdir=""):
     """
     Find all the artifacts yaml files and process them
     """
-    targets = find_targets_recursively(os.path.sep.join([REPO_ROOT, target_subdir]))
+    targets = find_targets(os.path.sep.join([REPO_ROOT, target_subdir]))
+
+    for target_file in targets:
+        do_parse_and_mvn_fetch(target_file)
+
+def parse_arguments():
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(description="Download artifacts from Alfresco Nexus repository")
+    parser.add_argument('targets', nargs='*', help='Target directories or patterns')
+    parser.add_argument('--log-level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'], default='INFO', help='Set logging level')
+    parser.add_argument('--log-file', help='Log to file')
+    return parser.parse_args()
+
+if __name__ == "__main__":
+    args = parse_arguments()
+    log_level = getattr(logging, args.log_level.upper())
+    setup_logging(log_level, args.log_file)
 
     username, password = get_credentials_from_netrc('nexus.alfresco.com')
     if os.getenv('NEXUS_USERNAME') and os.getenv('NEXUS_PASSWORD'):
@@ -183,9 +239,9 @@ def main(target_subdir=""):
     if username and password:
         setup_basic_auth(username, password)
 
-    for target_file in targets:
-        do_parse_and_mvn_fetch(target_file)
-
-if __name__ == "__main__":
-    target_directory = sys.argv[1] if len(sys.argv) > 1 else ""
-    main(target_directory)
+    if not args.targets:
+        main("")
+    else:
+        for target_directory in args.targets:
+            logger.debug(f"--- Processing target: {target_directory} ---")
+            main(target_directory)
