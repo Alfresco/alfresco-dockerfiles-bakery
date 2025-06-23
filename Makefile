@@ -30,6 +30,7 @@ help:
 	@echo "  help                Display this help message"
 
 ACS_VERSION ?= 25
+APS_VERSION ?= 25
 TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
 
 ifeq ($(filter $(ACS_VERSION),23 25),$(ACS_VERSION))
@@ -141,7 +142,7 @@ prepare_tengines: scripts/fetch_artifacts.py
 
 prepare_aps: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF Platform Services targets"
-	@python3 ./scripts/fetch_artifacts.py aps
+	@python3 ./scripts/fetch_artifacts.py "aps/**/artifacts-${APS_VERSION}-aps.yaml"
 
 ## BUILD TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
