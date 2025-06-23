@@ -1,0 +1,45 @@
+#web server
+server.contextPath=/activiti-admin
+security.rememberme.key=activitis3cr3tk3y
+
+datasource.url=${ACTIVITI_ADMIN_DATASOURCE_URL}
+datasource.driver=${ACTIVITI_ADMIN_DATASOURCE_DRIVER}
+datasource.username=${ACTIVITI_ADMIN_DATASOURCE_USERNAME}
+datasource.password=${ACTIVITI_ADMIN_DATASOURCE_PASSWORD}
+hibernate.dialect=${ACTIVITI_ADMIN_HIBERNATE_DIALECT}
+
+cluster.monitoring.max.inactive.time=600000
+cluster.monitoring.inactive.check.cronexpression=0 0/5 * * * ?
+
+# REST endpoint config
+rest.app.name=Process services app
+rest.app.description=Process services app Rest config
+rest.app.host=${ACTIVITI_ADMIN_REST_APP_HOST}
+rest.app.port=${ACTIVITI_ADMIN_REST_APP_PORT}
+rest.app.contextroot=activiti-app
+rest.app.restroot=api
+rest.app.user=${ACTIVITI_ADMIN_REST_APP_USERNAME}
+rest.app.password=${ACTIVITI_ADMIN_REST_APP_PASSWORD}
+rest.app.authtype=${ACTIVITI_ADMIN_REST_APP_AUTHTYPE}
+
+security.encryption.credentialsIVSpec=j8kdO2hejA9lKmm6
+security.encryption.credentialsSecretSpec=9FGl73ngxcOoJvmL
+
+# BPMN 2.0 Modeler config
+
+modeler.url=https://activiti.alfresco.com/activiti-app/api/
+
+spring.web.resources.cache.period=P1D
+
+management.endpoints.web.exposure.include=health,info
+
+# SSO configuration
+rest.app.sso.enabled=${ACTIVITI_ADMIN_REST_APP_SSO_ENABLED}
+rest.app.sso.auth-server-url=${ACTIVITI_ADMIN_REST_APP_SSO_AUTH_SERVER_URL}
+rest.app.sso.client_id=${ACTIVITI_ADMIN_REST_APP_SSO_CLIENT_ID}
+rest.app.sso.client_secret=${ACTIVITI_ADMIN_REST_APP_SSO_CLIENT_SECRET}
+rest.app.sso.realm=${ACTIVITI_ADMIN_REST_APP_SSO_REALM}
+rest.app.sso.scope=${ACTIVITI_ADMIN_REST_APP_SSO_SCOPE}
+rest.app.sso.auth_uri=${ACTIVITI_ADMIN_REST_APP_SSO_AUTH_URI}
+rest.app.sso.token_uri=${ACTIVITI_ADMIN_REST_APP_SSO_TOKEN_URI}
+rest.app.sso.redirect_uri=${ACTIVITI_ADMIN_REST_APP_SSO_REDIRECT_URI}

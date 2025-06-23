@@ -6,37 +6,41 @@ ARG APS_ADMIN_USER_ID
 FROM tomcat_base AS aps_admin_build
 
 USER root
+RUN yum install -y unzip
 
-RUN set -x \
-   && yum update -y \
-   && yum install -y \
-      unzip \
-      wget \
-      openssl \
-      fontconfig dejavu-sans-fonts
-
+COPY distribution/activiti-admin-*.war /tmp/
+ENV DISTDIR="/tmp/distribution"
 ENV ACTIVITI_ADMIN_PROPS ${CATALINA_HOME}/lib/activiti-admin.properties
 
-# Copy custom entrypoint and properties
-COPY set-activiti-admin-config.sh entrypoint.sh get_from_s3.sh download_assets.sh /home/alfresco/
-COPY docker-activiti-admin.properties ${ACTIVITI_ADMIN_PROPS}
-COPY target/war ${CATALINA_HOME}/webapps/
-RUN sed -i -e 's/<secure>.*<\/secure>//' ${CATALINA_HOME}/conf/web.xml && \
-  /home/alfresco/download_assets.sh && \
-  rm /home/alfresco/download_assets.sh
+RUN unzip ${DISTDIR}/activiti-admin-*.war -d ${CATALINA_HOME}/webapps/activiti-admin
+RUN sed -i -e 's/<secure>.*<\/secure>//' ${CATALINA_HOME}/conf/web.xml
+RUN mkdir -p ${CATALINA_HOME}/work/Catalina/localhost/activiti-admin
 
-RUN yum remove wget -y && \
-    yum autoremove -y && \
-    yum clean all
+COPY libs ${CATALINA_HOME}/lib/
 
-RUN mkdir -p /usr/local/tomcat/work/Catalina/localhost/activiti-admin
+FROM tomcat_base AS aps_admin_rhlike
 
-RUN chown ${USERNAME}:${USERNAME} -R /usr/local/tomcat
+ARG APS_ADMIN_GROUP_ID
+ARG APS_ADMIN_USER_ID
+ARG APS_ADMIN_GROUP_NAME
+ARG APS_ADMIN_USER_NAME§
 
-# Docker layerization is procedural. This means that each directive is a layer, executed in the sequence in which it is presented.
-# If a layer changes, it invalidates all subsequent layers.
-# The EXPOSE, CMD and ENV layers are the ones least likely to change and they normally remain on top to reduce build time.
+COPY --chown=${APS_ADMIN_GROUP_ID} --from=aps_admin_build ${CATALINA_HOME} ${CATALINA_HOME}
+
+USER root
+RUN groupadd -g ${APS_ADMIN_GROUP_ID} ${APS_ADMIN_GROUP_NAME} && \
+    useradd -u ${APS_ADMIN_USER_ID} -g ${APS_ADMIN_GROUP_NAME} ${APS_ADMIN_USER_NAME} -G tomcat && \
+    yum install -y openssl fontconfig dejavu-sans-fonts && \
+    yum clean all && rm -rf /var/cache/yum
+
+COPY entrypoint.sh /entrypoint.sh
+
+FROM aps_admin_rhlike AS aps-admin-rockylinux9
+
+FROM aps-admin-${DISTRIB_NAME}${DISTRIB_MAJOR}
+
 EXPOSE 8080
+VOLUME [ "${ACTIVITI_ADMIN_PROPS}" ]
 
-USER ${USERNAME}
+USER ${APS_ADMIN_USER_NAME}
 CMD ["/entrypoint.sh"]

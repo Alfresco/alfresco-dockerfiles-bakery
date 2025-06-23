@@ -8,7 +8,7 @@ artifacts:
     classifier: ".war"
     group: activiti
     repository: activiti-enterprise-releases
-    path: aps/admin
+    path: aps/admin/distribution
   postgresql:
     name: postgresql
     version: 42.7.2
