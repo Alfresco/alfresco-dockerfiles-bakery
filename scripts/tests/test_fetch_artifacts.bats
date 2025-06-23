@@ -23,8 +23,7 @@ teardown() {
 }
 
 @test "script runs without crashing" {
-    run python3 "$FETCH_SCRIPT" --help 2>/dev/null || true
-    # Should not contain Python traceback
+    run python3 "$FETCH_SCRIPT" --help 2>/dev/null
     [[ "$output" != *"Traceback"* ]]
 }
 
@@ -32,11 +31,13 @@ teardown() {
     export ACS_VERSION=""
 
     cd "$ACTUAL_REPO_ROOT"
-    run timeout 5 python3 scripts/fetch_artifacts.py 2>&1 || true
+    run python3 scripts/fetch_artifacts.py 2>&1
     echo "Output: $output"
 
     # Should not crash
     [[ "$output" != *"Traceback"* ]]
+    [[ "$output" != *"WARNING:"* ]]
+    [[ "$output" != *"ERROR:"* ]]
 }
 
 @test "script detects ACS version from environment" {
@@ -58,11 +59,13 @@ artifacts:
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run timeout 10 python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1 2>&1 || true
+    run python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1 2>&1
     echo "Output: $output"
 
     # Should detect as valid path and process
     [[ "$output" == *"Processing target: test_repo1"* ]] && [[ "$output" == *"valid path"* ]]
+    [[ "$output" != *"WARNING:"* ]]
+    [[ "$output" != *"ERROR:"* ]]
 }
 
 @test "script handles multiple arguments" {
@@ -80,12 +83,14 @@ artifacts: {}
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run timeout 10 python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1 test_repo2 2>&1 || true
+    run python3 scripts/fetch_artifacts.py --log-level DEBUG test_repo1 test_repo2 2>&1
     echo "Output: $output"
 
     # Should show BOTH "Processing target" AND "valid path" messages for each
     [[ "$output" == *"Processing target: test_repo1"* ]] && [[ "$output" == *"valid path"* ]]
     [[ "$output" == *"Processing target: test_repo2"* ]] && [[ "$output" == *"valid path"* ]]
+    [[ "$output" != *"WARNING:"* ]]
+    [[ "$output" != *"ERROR:"* ]]
 }
 
 @test "script detects valid paths vs glob patterns" {
@@ -97,18 +102,22 @@ EOF
     cd "$ACTUAL_REPO_ROOT"
 
     # Test with existing directory (should be detected as valid path)
-    run timeout 10 python3 scripts/fetch_artifacts.py test_existing_dir --log-level DEBUG  2>&1 || true
+    run python3 scripts/fetch_artifacts.py test_existing_dir --log-level DEBUG  2>&1
     echo "Valid path test output: $output"
 
     # Should show BOTH "Processing target" AND "valid path"
     [[ "$output" == *"Processing target: test_existing_dir"* ]] && [[ "$output" == *"valid path"* ]]
+    [[ "$output" != *"WARNING:"* ]]
+    [[ "$output" != *"ERROR:"* ]]
 
     # Test with glob pattern (should be detected as glob)
-    run timeout 10 python3 scripts/fetch_artifacts.py "**/nonexistent-*.yaml" --log-level DEBUG 2>&1 || true
+    run python3 scripts/fetch_artifacts.py "**/nonexistent-*.yaml" --log-level DEBUG 2>&1
     echo "Glob pattern test output: $output"
 
     # Should detect as glob pattern
     [[ "$output" == *"glob pattern"* ]]
+    [[ "$output" != *"WARNING:"* ]]
+    [[ "$output" != *"ERROR:"* ]]
 }
 
 @test "script handles glob patterns" {
@@ -122,11 +131,13 @@ artifacts: {}
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run timeout 10 python3 scripts/fetch_artifacts.py "**/artifacts-*-uncommon.yaml" --log-level DEBUG 2>&1 || true
+    run python3 scripts/fetch_artifacts.py "**/artifacts-*-uncommon.yaml" --log-level DEBUG 2>&1
     echo "Output: $output"
 
     # The glob pattern should be detected
     [[ "$output" == *"glob pattern"* ]]
+    [[ "$output" != *"WARNING:"* ]]
+    [[ "$output" != *"ERROR:"* ]]
 }
 
 @test "script handles completely broken YAML" {
@@ -142,11 +153,13 @@ random text [[[
 EOF
 
     cd "$ACTUAL_REPO_ROOT"
-    run timeout 10 python3 scripts/fetch_artifacts.py test 2>&1 --log-level DEBUG || true
+    run python3 scripts/fetch_artifacts.py test 2>&1 --log-level DEBUG
     echo "Output: $output"
     echo "Status: $status"
 
     # Should detect test as valid path and handle YAML error gracefully
     [[ "$output" == *"valid path"* ]] && [[ "$output" == *"Processing target: test"* ]]
     [[ "$status" -ne 0 ]] || [[ "$output" != *"Traceback"* ]]
+    [[ "$output" != *"WARNING:"* ]]
+    [[ "$output" != *"ERROR:"* ]]
 }

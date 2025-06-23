@@ -36,7 +36,12 @@ logger = logging.getLogger(__name__)
 
 def setup_logging(log_level=logging.INFO, log_file=None):
     """Setup logging configuration"""
-    log_format = '%(message)s'
+    log_format_debug = '%(asctime)s - %(levelname)s: %(message)s'
+
+    if log_level is logging.DEBUG:
+        log_format = log_format_debug
+    else:
+        log_format = '%(message)s'
 
     logger.handlers.clear()
     logger.setLevel(log_level)
@@ -47,7 +52,7 @@ def setup_logging(log_level=logging.INFO, log_file=None):
 
     if log_file:
         file_handler = logging.FileHandler(log_file)
-        file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s: %(message)s'))
+        file_handler.setFormatter(logging.Formatter(log_format_debug))
         logger.addHandler(file_handler)
 
     logger.propagate = False
@@ -155,7 +160,7 @@ def do_parse_and_mvn_fetch(file_path):
 
 def arg_is_glob_pattern(arg):
     """
-    Check if the argument is a path (returns True) or a glob pattern (returns False)
+    Check if the argument is a path (returns False) or a glob pattern (returns True)
     """
     if os.path.exists(arg):
         logger.debug(f"Argument '{arg}' is a valid path.")

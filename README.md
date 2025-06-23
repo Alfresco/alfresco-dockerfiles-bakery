@@ -30,7 +30,7 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with helm](#testing-with-helm)
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
-  - [Fetch artifcats script](#fetch-artifact-script)
+  - [Fetch artifacts script](#fetch-artifacts-script)
   - [Release](#release)
 
 ## Prerequisites
@@ -413,7 +413,7 @@ You can also run grype automatically at the end of the build process by setting
 make all GRYPE_ONBUILD=1
 ```
 
-## Fetch artifact script
+## Fetch artifacts script
 
 A Python script to download artifacts from the Alfresco Nexus repository based
 on YAML configuration files.
