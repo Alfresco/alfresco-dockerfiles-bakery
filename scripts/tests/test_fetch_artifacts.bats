@@ -23,7 +23,7 @@ teardown() {
 }
 
 @test "script runs without crashing" {
-    run python3 "$FETCH_SCRIPT" --help 2>/dev/null
+    run python3 "$FETCH_SCRIPT" --help
     [[ "$output" != *"Traceback"* ]]
 }
 
