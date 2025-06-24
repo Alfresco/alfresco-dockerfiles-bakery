@@ -6,14 +6,3 @@ alfresco-activiti-admin:
   image:
     repository: quay.io/alfresco/alfresco-process-services-admin
     tag: 25.1.1
-  volumeMounts:
-    - name: app-properties
-      mountPath: /usr/local/tomcat/lib/activiti-admin.properties
-      subPath: activiti-admin.properties
-  volumes:
-    - name: app-properties
-      configMap:
-        name: aps-admin-config
-        items:
-          - key: activiti-admin.properties
-            path: activiti-admin.properties

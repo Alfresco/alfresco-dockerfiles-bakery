@@ -58,6 +58,7 @@ jobs:
             --set alfresco-activiti.license.secretName=aps-license \
             --set global.alfrescoRegistryPullSecrets=regcred \
             --values ./aps-deployment/tests/ci-values.yaml \
+            --values test/helm/aps-test-overrides.yaml \
             --values test/helm/aps-test-overrides-${{ inputs.aps_version }}.yaml
 
       - name: Wait for pods to be ready

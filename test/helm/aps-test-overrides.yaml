@@ -1,0 +1,12 @@
+alfresco-activiti-admin:
+  volumeMounts:
+    - name: app-properties
+      mountPath: /usr/local/tomcat/lib/activiti-admin.properties
+      subPath: activiti-admin.properties
+  volumes:
+    - name: app-properties
+      configMap:
+        name: aps-admin-config
+        items:
+          - key: activiti-admin.properties
+            path: activiti-admin.properties
