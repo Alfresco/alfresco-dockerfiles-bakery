@@ -23,7 +23,7 @@ jobs:
     with:
       cache-hash-files-names: '**/artifacts-${{ inputs.acs_version }}*.yaml'
       version: ${{ inputs.acs_version }}
-      acs: true
+      acs: "true"
       bake-targets: default
       tag: ${{ inputs.tag }}
     secrets: inherit

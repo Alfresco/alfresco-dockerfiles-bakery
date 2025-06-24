@@ -14,13 +14,13 @@ on:
       acs:
         description: "Build ACS"
         required: false
-        default: false
-        type: boolean
+        default: "false"
+        type: string
       aps:
         description: "Build APS"
         required: false
-        default: false
-        type: boolean
+        default: "false"
+        type: string
       bake-targets:
         description: "Bake targets to build"
         required: false
