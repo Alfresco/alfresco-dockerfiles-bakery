@@ -1,4 +1,4 @@
 #!/bin/bash
 
-/home/alfresco/set-config.sh
+$ACTIVITI_CONFIG_DIR/set-config.sh
 exec catalina.sh run "$@"
