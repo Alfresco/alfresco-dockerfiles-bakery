@@ -21,11 +21,10 @@ jobs:
   build:
     uses: ./.github/workflows/reusable_bake_build.yml
     with:
-      cache-hash-files-names: '**/artifacts-${{ inputs.acs_version }}*.yaml'
       version: ${{ inputs.acs_version }}
-      acs: "true"
       bake-targets: default
       tag: ${{ inputs.tag }}
+      artifacts-to-fetch: '**/artifacts-${{ inputs.acs_version }}*.yaml'
     secrets: inherit
   build-matrix:
     needs: build

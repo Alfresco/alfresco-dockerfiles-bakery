@@ -3,23 +3,9 @@ name: bake-build
 on:
   workflow_call:
     inputs:
-      cache-hash-files-names:
-        description: "Glob patterns for cache hash files"
-        required: true
-        type: string
       version:
         description: "Version to build"
         required: true
-        type: string
-      acs:
-        description: "Build ACS"
-        required: false
-        default: "false"
-        type: string
-      aps:
-        description: "Build APS"
-        required: false
-        default: "false"
         type: string
       bake-targets:
         description: "Bake targets to build"
@@ -28,6 +14,10 @@ on:
         type: string
       tag:
         description: "Tag to use for the built images"
+        required: true
+        type: string
+      artifacts-to-fetch:
+        description: "List of artifacts to fetch from Nexus"
         required: true
         type: string
 
@@ -60,22 +50,15 @@ jobs:
         uses: actions/cache/restore@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
         id: artifacts-cache
         with:
-          key: ${{ runner.os }}-packages-v2-${{ hashFiles(inputs.cache-hash-files-names) }}-${{ inputs.version }}
+          key: ${{ runner.os }}-packages-v2-${{ hashFiles(inputs.artifacts-to-fetch) }}-${{ inputs.version }}
           path: artifacts_cache/**
 
       - name: Fetch artifacts with test from nexus for ACS
-        if: ${{ inputs.acs == 'true' }}
         shell: bash
         env:
           ACS_VERSION: ${{ inputs.version }}
         run: |
-          python3 ./scripts/fetch_artifacts.py "" "**/artifacts-${{ inputs.version }}-test.yaml"
-
-      - name: Fetch artifacts from nexus for APS
-        if: ${{ inputs.aps == 'true' }}
-        shell: bash
-        run: |
-          python3 ./scripts/fetch_artifacts.py "**/artifacts-${{ inputs.version }}-aps.yaml"
+          python3 ./scripts/fetch_artifacts.py ${{ inputs.artifacts-to-fetch }}
 
       - name: Save packages artifacts
         if: steps.artifacts-cache.outputs.cache-hit != 'true'
@@ -135,7 +118,7 @@ jobs:
         env:
           TOMCAT_VERSIONS_FILE: "tomcat/tomcat_versions.yaml"
         run: |
-          if [[ ${{ inputs.acs }} == 'true' && ${{ inputs.version }} == 7* ]]; then
+          if [[ ${{ inputs.version }} == 7* ]]; then
             tomcat_field="tomcat9"
           else
             tomcat_field="tomcat10"
@@ -147,7 +130,7 @@ jobs:
       - name: Bake Docker images
         env:
           ACS_VERSION: ${{ inputs.version }}
-          TARGETARCH: ${{ inputs.aps == 'true' && 'linux/amd64' || (startsWith(inputs.version, '7') && 'linux/amd64' || 'linux/amd64,linux/arm64') }}
+          TARGETARCH: ${{ startsWith(inputs.version, '7') && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
         uses: docker/bake-action@37816e747588cb137173af99ab33873600c46ea8  # v6.8.0
         with:
           targets: ${{ inputs.bake-targets }}
