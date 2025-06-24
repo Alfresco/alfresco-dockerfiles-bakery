@@ -19,26 +19,14 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Build Docker images
-        uses: ./.github/actions/bake-build
-        with:
-          nexus-username: ${{ secrets.NEXUS_USERNAME }}
-          nexus-password: ${{ secrets.NEXUS_PASSWORD }}
-          cache-hash-files-names: '**/artifacts-${{ inputs.acs_version }}*.yaml'
-          version: ${{ inputs.acs_version }}
-          acs: 'true'
-          quay-password: ${{ secrets.QUAY_PASSWORD }}
-          quay-username: ${{ secrets.QUAY_USERNAME }}
-          registry: ${{ env.REGISTRY }}
-          registry-namespace: ${{ env.REGISTRY_NAMESPACE }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          bake-targets: default
-          tag: ${{ env.TAG }}
+    uses: ./.github/workflows/reusable_bake_build.yml
+    with:
+      cache-hash-files-names: '**/artifacts-${{ inputs.acs_version }}*.yaml'
+      version: ${{ inputs.acs_version }}
+      acs: true
+      bake-targets: default
+      tag: ${{ inputs.tag }}
+    secrets: inherit
   build-matrix:
     needs: build
     runs-on: ubuntu-latest
