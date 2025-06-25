@@ -1,5 +1,5 @@
 ---
-updatecli_self: aps/admin/artifacts-25-aps.yaml
+updatecli_self: aps/admin/artifacts-24-aps.yaml
 updatecli_matrix_version: current
 artifacts:
   alfresco-process-services:

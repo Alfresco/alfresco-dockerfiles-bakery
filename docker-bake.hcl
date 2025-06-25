@@ -962,6 +962,5 @@ target "aps-admin" {
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services-admin:${TAG}"]
   output = ["type=docker"]
-  # APS Admin is not available for ARM64
-  platforms = [ "linux/arm64" ]
+  platforms = split(",", "${TARGETARCH}")
   }
