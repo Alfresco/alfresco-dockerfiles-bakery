@@ -40,10 +40,6 @@ group "search_enterprise" {
   targets = ["search_liveindexing", "search_reindexing"]
 }
 
-group "alfresco_process_services" {
-  targets = ["aps-admin"]
-}
-
 group "ats" {
   targets = ["ats_trouter", "ats_sfs"]
 }

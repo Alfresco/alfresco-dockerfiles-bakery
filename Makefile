@@ -33,10 +33,12 @@ ACS_VERSION ?= 25
 APS_VERSION ?= 25
 TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
 
-ifeq ($(filter $(ACS_VERSION),23 25),$(ACS_VERSION))
-  TOMCAT_FIELD := "tomcat10"
+USES_TOMCAT10 := $(or $(filter $(ACS_VERSION),23 25),$(filter $(APS_VERSION),24 25))
+
+ifneq ($(USES_TOMCAT10),)
+    TOMCAT_FIELD := "tomcat10"
 else
-  TOMCAT_FIELD := "tomcat9"
+    TOMCAT_FIELD := "tomcat9"
 endif
 
 ifeq ($(shell yq --version),)
@@ -142,7 +144,7 @@ prepare_tengines: scripts/fetch_artifacts.py
 
 prepare_aps: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF Platform Services targets"
-	@python3 ./scripts/fetch_artifacts.py "aps/**/artifacts-${APS_VERSION}-aps.yaml"
+	@python3 ./scripts/fetch_artifacts.py "aps/**/artifacts-${APS_VERSION}.yaml"
 
 ## BUILD TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
