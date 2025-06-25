@@ -904,6 +904,7 @@ target "hxinsight_connector_live_ingester" {
   platforms = split(",", "${TARGETARCH}")
 }
 
+
 target "hxinsight_connector_prediction_applier" {
   context = "./hxinsight-connector/hxinsight-connector-prediction-applier"
   dockerfile = "Dockerfile"
