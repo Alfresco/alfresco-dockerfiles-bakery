@@ -25,7 +25,7 @@ jobs:
       version: ${{ inputs.aps_version }}
       bake-targets: aps
       tag: ${{ inputs.tag }}
-      artifacts-to-fetch: 'aps/**/artifacts-${{ inputs.aps_version }}*.yaml'
+      artifacts-to-fetch: 'aps/**/artifacts-${{ inputs.aps_version }}.yaml'
     secrets: inherit
   aps-helm-test:
     needs: build

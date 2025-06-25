@@ -143,6 +143,25 @@ export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=
 make all
 ```
 
+### Building APS
+
+To build the Alfresco Process Services (APS) images, you can run the following command:
+
+```sh
+make aps
+```
+
+Make sure you are not setting `ACS_VERSION` to 74 or 73 this causes the tomcat
+version to be set to 9 while it should be 10 for APS.
+
+Available APS versions are 25 and 24. By default the latest version is built.
+To build a specific version, you can set the `APS_VERSION` environment variable:
+
+```sh
+export APS_VERSION=24
+make aps
+```
+
 ## Customizing the images
 
 ### Customizing the Alfresco Content Repository image

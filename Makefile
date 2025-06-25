@@ -33,9 +33,7 @@ ACS_VERSION ?= 25
 APS_VERSION ?= 25
 TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
 
-USES_TOMCAT10 := $(or $(filter $(ACS_VERSION),23 25),$(filter $(APS_VERSION),24 25))
-
-ifneq ($(USES_TOMCAT10),)
+ifeq ($(filter 74 73,$(ACS_VERSION)),)
     TOMCAT_FIELD := "tomcat10"
 else
     TOMCAT_FIELD := "tomcat9"
