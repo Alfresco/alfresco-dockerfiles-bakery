@@ -1,0 +1,139 @@
+name: bake-build
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "Version to build"
+        required: true
+        type: string
+      bake-targets:
+        description: "Bake targets to build"
+        required: false
+        default: "default"
+        type: string
+      tag:
+        description: "Tag to use for the built images"
+        required: true
+        type: string
+      artifacts-to-fetch:
+        description: "A glob pattern to fetch artifacts from Nexus, also used for caching"
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  REGISTRY_NAMESPACE: alfresco
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.22.1
+
+      - name: Setup nexus authentication
+        shell: bash
+        env:
+          NETRC_PATH: ~/.netrc
+        run: |
+          touch ${{ env.NETRC_PATH }}
+          chmod 600 ${{ env.NETRC_PATH }}
+          echo "machine nexus.alfresco.com" >> ${{ env.NETRC_PATH }}
+          echo "login ${{ secrets.NEXUS_USERNAME }}" >> ${{ env.NETRC_PATH }}
+          echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ${{ env.NETRC_PATH }}
+
+      - name: Restore packages artifacts
+        uses: actions/cache/restore@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        id: artifacts-cache
+        with:
+          key: ${{ runner.os }}-packages-v2-${{ hashFiles(inputs.artifacts-to-fetch) }}-${{ inputs.version }}
+          path: artifacts_cache/**
+
+      - name: Fetch artifacts with test from nexus for ACS
+        shell: bash
+        env:
+          ACS_VERSION: ${{ inputs.version }}
+        run: |
+          python3 ./scripts/fetch_artifacts.py '${{ inputs.artifacts-to-fetch }}'
+
+      - name: Save packages artifacts
+        if: steps.artifacts-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        with:
+          key: ${{ steps.artifacts-cache.outputs.cache-primary-key }}
+          path: artifacts_cache/**
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+
+      - name: Login to Quay.io
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+            registry: ${{ env.REGISTRY }}
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Collect Workflow Telemetry
+        uses: catchpoint/workflow-telemetry-action@94c3c3d9567a0205de6da68a76c428ce4e769af1 # v2.0.0
+        with:
+          comment_on_pr: false
+
+      - name: Enumerate bake targets
+        id: bake-targets
+        env:
+          ACS_VERSION: ${{ inputs.version }}
+        uses: docker/bake-action/subaction/list-targets@37816e747588cb137173af99ab33873600c46ea8  # v6.8.0
+        with:
+          target: ${{ inputs.bake-targets }}
+
+      - name: Enumerate registry cache targets
+        shell: bash
+        id: cache-targets
+        env:
+          CACHE_TARGET: ${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/bakery-cache
+        run: |
+          echo 'cache-set<<EOF' >> $GITHUB_OUTPUT
+          echo '${{ steps.bake-targets.outputs.targets }}' | jq -r '.[] | '\
+          '"\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ inputs.tag }}-\(.)\n'\
+          '\(.).cache-from=type=registry,ref=${{ env.CACHE_TARGET }}:${{ github.event.repository.default_branch }}-v${{ inputs.version }}-\(.)\n'\
+          '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ inputs.tag }}-\(.)"' >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Determine the tomcat version
+        shell: bash
+        env:
+          TOMCAT_VERSIONS_FILE: "tomcat/tomcat_versions.yaml"
+        run: |
+          if [[ ${{ inputs.version }} == 7* ]]; then
+            tomcat_field="tomcat9"
+          else
+            tomcat_field="tomcat10"
+          fi
+          echo "TOMCAT_MAJOR=$(yq e ".${tomcat_field}.major" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
+          echo "TOMCAT_VERSION=$(yq e ".${tomcat_field}.version" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
+          echo "TOMCAT_SHA512=$(yq e ".${tomcat_field}.sha512"  ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
+
+      - name: Bake Docker images
+        env:
+          ACS_VERSION: ${{ inputs.version }}
+          TARGETARCH: ${{ startsWith(inputs.version, '7') && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+        uses: docker/bake-action@37816e747588cb137173af99ab33873600c46ea8  # v6.8.0
+        with:
+          targets: ${{ inputs.bake-targets }}
+          source: .
+          set: |
+            *.output=type=registry,push=true
+            ${{ steps.cache-targets.outputs.cache-set }}
