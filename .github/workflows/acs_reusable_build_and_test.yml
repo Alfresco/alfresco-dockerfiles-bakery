@@ -19,6 +19,7 @@ env:
 
 jobs:
   build:
+    if: github.actor != 'dependabot[bot]'
     uses: ./.github/workflows/reusable_bake_build.yml
     with:
       version: ${{ inputs.acs_version }}

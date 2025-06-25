@@ -17,7 +17,7 @@ on:
         required: true
         type: string
       artifacts-to-fetch:
-        description: "List of artifacts to fetch from Nexus"
+        description: "A glob pattern to fetch artifacts from Nexus, also used for caching"
         required: true
         type: string
 
@@ -28,7 +28,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
