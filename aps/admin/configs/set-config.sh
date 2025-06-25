@@ -1,8 +1,6 @@
 #!/bin/sh
 if [ -f "$ACTIVITI_ADMIN_PROPS" ] && [ -s "$ACTIVITI_ADMIN_PROPS" ]; then
     echo "Properties file already exists and is not empty at $ACTIVITI_ADMIN_PROPS - using mounted configuration"
-    chmod 444 "$ACTIVITI_ADMIN_PROPS"
-    echo "Properties file set to read-only"
     exit 0
 fi
 
@@ -35,8 +33,6 @@ export ACTIVITI_ADMIN_REST_APP_SSO_REDIRECT_URI="${ACTIVITI_ADMIN_REST_APP_SSO_R
 if [ -f "$ACTIVITI_ADMIN_PROPS_TEMPLATE" ]; then
     echo "Processing template: $ACTIVITI_ADMIN_PROPS_TEMPLATE -> $ACTIVITI_ADMIN_PROPS"
     envsubst < "$ACTIVITI_ADMIN_PROPS_TEMPLATE" > "$ACTIVITI_ADMIN_PROPS"
-    chmod 444 "$ACTIVITI_ADMIN_PROPS"
-    echo "Properties file generated successfully and set to read-only"
 else
     echo "ERROR: Template file not found: $ACTIVITI_ADMIN_PROPS_TEMPLATE"
     exit 1

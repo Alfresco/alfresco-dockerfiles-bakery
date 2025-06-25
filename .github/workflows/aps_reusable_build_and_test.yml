@@ -7,10 +7,15 @@ on:
         description: 'Version of APS to build'
         required: true
         type: string
+      tag:
+        description: 'Tag to use for the built images'
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: alfresco
+  TAG: ${{ inputs.tag }}
 
 jobs:
   aps-helm-test:
@@ -50,6 +55,14 @@ jobs:
           helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami/
           helm repo add elastic https://helm.elastic.co
           helm dependency build
+
+      - name: Preprocess aps-test-overrides.yaml
+        env:
+          OVERRIDES_VALUES_FILE: test/helm/aps-test-overrides.yaml
+        run: |
+          sed -i "s|localhost/alfresco/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" ${{ env.OVERRIDES_VALUES_FILE }}
+          sed -i "s|tag: latest|tag: ${TAG}|g" ${{ env.OVERRIDES_VALUES_FILE }}
+          cat ${{ env.OVERRIDES_VALUES_FILE }}
 
       - name: Helm install
         id: helm_install

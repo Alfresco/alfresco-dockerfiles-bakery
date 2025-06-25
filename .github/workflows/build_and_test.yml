@@ -63,5 +63,6 @@ jobs:
       matrix:
         version: [24, 25]
     with:
+      tag: ${{ github.event_name == 'pull_request' && format('pr-{0}-v{1}', github.event.pull_request.number, matrix.version) || format('{0}-v{1}', github.ref_name, matrix.version) }}
       aps_version: ${{ matrix.version }}
     secrets: inherit

@@ -1,4 +1,7 @@
 alfresco-activiti-admin:
+  image:
+    repository: localhost/alfresco/alfresco-process-services-admin
+    tag: latest
   volumeMounts:
     - name: app-properties
       mountPath: /usr/local/tomcat/lib/activiti-admin.properties
