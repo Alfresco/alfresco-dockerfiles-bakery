@@ -1,0 +1,21 @@
+activiti.identity-service.enabled=${IDENTITY_SERVICE_ENABLED}
+activiti.identity-service.realm=${IDENTITY_SERVICE_REALM}
+activiti.identity-service.auth-server-url=${IDENTITY_SERVICE_AUTH}
+activiti.identity-service.resource=${IDENTITY_SERVICE_RESOURCE}
+activiti.identity-service.principal-attribute=${IDENTITY_SERVICE_PRINCIPAL_ATTRIBUTE}
+activiti.identity-service.credentials.secret=${IDENTITY_CREDENTIALS_SECRET}
+
+# Content services Identity service configuration
+alfresco.content.sso.enabled=${IDENTITY_SERVICE_CONTENT_SSO_ENABLED}
+alfresco.content.sso.client_id=${IDENTITY_SERVICE_CONTENT_SSO_CLIENT_ID}
+alfresco.content.sso.client_secret=${IDENTITY_SERVICE_CONTENT_SSO_CLIENT_SECRET}
+alfresco.content.sso.realm=${IDENTITY_SERVICE_CONTENT_SSO_REALM}
+alfresco.content.sso.scope=${IDENTITY_SERVICE_CONTENT_SSO_SCOPE}
+alfresco.content.sso.auth_uri=${IDENTITY_SERVICE_CONTENT_SSO_AUTH_URI}
+alfresco.content.sso.token_uri=${IDENTITY_SERVICE_CONTENT_SSO_TOKEN_URI}
+alfresco.content.sso.redirect_uri=${IDENTITY_SERVICE_CONTENT_SSO_REDIRECT_URI}
+
+activiti.use-browser-based-logout=${IDENTITY_SERVICE_USE_BROWSER_BASED_LOGOUT}
+
+activiti.identity-service.retry.maxAttempts=${IDENTITY_SERVICE_RETRY_MAXATTEMPTS}
+activiti.identity-service.retry.delay=${IDENTITY_SERVICE_RETRY_DELAY}
