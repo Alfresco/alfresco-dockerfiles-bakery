@@ -56,6 +56,10 @@ group "adf_apps" {
   targets = ["acc", "adw"]
 }
 
+group "aps" {
+  targets = ["aps-admin"]
+}
+
 group "hxinsight_connector" {
   targets = [
     "hxinsight_connector_bulk_ingester",
@@ -923,6 +927,36 @@ target "hxinsight_connector_prediction_applier" {
     "org.opencontainers.image.description" = "Alfresco HxInsight Connector Prediction Applier"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-prediction-applier:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
+
+variable "ALFRESCO_PROCESS_SERVICE_USER_NAME" {
+  default = "alfresco"
+}
+variable "ALFRESCO_PROCESS_SERVICE_USER_ID" {
+  default = "33071"
+}
+
+target "aps-admin" {
+  context = "./aps/admin"
+  dockerfile = "Dockerfile"
+  inherits = ["tomcat_base"]
+  contexts = {
+    tomcat_base = "target:tomcat_base"
+  }
+  args = {
+    APS_ADMIN_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    APS_ADMIN_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    APS_ADMIN_USER_NAME = "${ALFRESCO_PROCESS_SERVICE_USER_NAME}"
+    APS_ADMIN_USER_ID = "${ALFRESCO_PROCESS_SERVICE_USER_ID}"
+  }
+  labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Process Services Admin"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Process Services Admin"
+    "org.opencontainers.image.description" = "Alfresco Process Services Admin Console"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services-admin:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }

@@ -9,6 +9,7 @@ artifacts_cache
 *.tgz
 *.gz
 *.tgz
+*.war
 
 # Files pulled from acs-deployment to test deployment
 acs-deployment

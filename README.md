@@ -450,7 +450,7 @@ You can specify one or more targets:
 python3 scripts/fetch_artifacts.py
 python3 scripts/fetch_artifacts.py repository
 python3 scripts/fetch_artifacts.py repository share aps
-python3 scripts/fetch_artifacts.py "**/artifacts-*-aps.yaml"
+python3 scripts/fetch_artifacts.py "**/artifacts-25.yaml"
 python3 scripts/fetch_artifacts.py repository --log-level DEBUG
 python3 scripts/fetch_artifacts.py repository --log-file download.log
 ```

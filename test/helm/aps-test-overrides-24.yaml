@@ -2,7 +2,3 @@ alfresco-activiti:
   image:
     repository: quay.io/alfresco/alfresco-process-services
     tag: 24.5.0
-alfresco-activiti-admin:
-  image:
-    repository: quay.io/alfresco/alfresco-process-services-admin
-    tag: 24.5.0

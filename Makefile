@@ -24,12 +24,14 @@ help:
 	@echo "  share               Build Share images"
 	@echo "  sync                Build Sync Service images"
 	@echo "  tengines            Build Transform Engine images"
+	@echo "  aps                 Build Alfresco Process Services images"
 	@echo "  ========================================================"
 	@echo "  clean               Clean up Nexus artifacts"
 	@echo "  clean_caches        Clean up Docker and artifact caches"
 	@echo "  help                Display this help message"
 
 ACS_VERSION ?= 25
+APS_VERSION ?= 25
 TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
 
 ifeq ($(filter $(ACS_VERSION),23 25),$(ACS_VERSION))
@@ -99,6 +101,10 @@ prepare_adf: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF targets"
 	@python3 ./scripts/fetch_artifacts.py adf-apps
 
+prepare_aps: scripts/fetch_artifacts.py
+	@echo "Fetching all artifacts for Alfresco Process Services targets"
+	@python3 ./scripts/fetch_artifacts.py "aps/**/artifacts-${APS_VERSION}.yaml"
+
 prepare_ats: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ATS targets"
 	@python3 ./scripts/fetch_artifacts.py ats
@@ -162,6 +168,15 @@ adf_apps: docker-bake.hcl prepare_adf setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
+aps: docker-bake.hcl prepare_aps setenv
+	@echo "Building Alfresco Process Services images"
+	@if [ "${TOMCAT_MAJOR}" != "10" ]; then \
+		echo "ERROR: APS target requires Tomcat 10, but Tomcat ${TOMCAT_MAJOR} is configured"; \
+		exit 1; \
+	fi
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
 ats: docker-bake.hcl tengines prepare_ats prepare_tengines setenv
 	@echo "Building Transform Service images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
@@ -212,7 +227,7 @@ tengines: docker-bake.hcl prepare_tengines setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
-all_ci: adf_apps ats audit_storage connectors hxinsight_connector repo search_enterprise search_service share sync tengines all prepare clean clean_caches
+all_ci: adf_apps ats audit_storage connectors hxinsight_connector repo search_enterprise search_service share sync tengines aps all prepare clean clean_caches
 	@echo "Building all targets including cleanup for Continuous Integration"
 
 GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix
