@@ -34,12 +34,10 @@ ACS_VERSION ?= 25
 APS_VERSION ?= 25
 TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
 
-ifeq ($(filter 74 73,$(ACS_VERSION)),)
-    TOMCAT_FIELD := "tomcat10"
-else ifeq ($(MAKECMDGOALS),aps)
-    TOMCAT_FIELD := "tomcat10"
+ifeq ($(filter $(ACS_VERSION),23 25),$(ACS_VERSION))
+  TOMCAT_FIELD := "tomcat10"
 else
-    TOMCAT_FIELD := "tomcat9"
+  TOMCAT_FIELD := "tomcat9"
 endif
 
 ifeq ($(shell yq --version),)
