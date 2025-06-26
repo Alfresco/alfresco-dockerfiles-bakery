@@ -1,3 +1,29 @@
+alfresco-activiti:
+  image:
+    repository: localhost/alfresco/alfresco-process-services
+    tag: latest
+  podSecurityContext:
+    runAsUser: 33070
+  volumeMounts:
+    - name: app-properties
+      mountPath: /usr/local/tomcat/lib/activiti-app.properties
+      subPath: activiti-app.properties
+    - name: identity-properties
+      mountPath: /usr/local/tomcat/lib/activiti-identity-service.properties
+      subPath: activiti-identity.properties
+  volumes:
+    - name: app-properties
+      configMap:
+        name: aps-app-config
+        items:
+          - key: activiti-app.properties
+            path: activiti-app.properties
+    - name: identity-properties
+      configMap:
+        name: aps-app-identity-config
+        items:
+          - key: activiti-identity.properties
+            path: activiti-identity.properties
 alfresco-activiti-admin:
   image:
     repository: localhost/alfresco/alfresco-process-services-admin
