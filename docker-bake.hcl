@@ -959,4 +959,4 @@ target "aps-admin" {
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services-admin:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
-  }
+}
