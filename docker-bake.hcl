@@ -935,7 +935,7 @@ variable "ALFRESCO_PROCESS_SERVICE_USER_NAME" {
   default = "alfresco"
 }
 variable "ALFRESCO_PROCESS_SERVICE_USER_ID" {
-  default = "33005"
+  default = "33071"
 }
 
 target "aps-admin" {

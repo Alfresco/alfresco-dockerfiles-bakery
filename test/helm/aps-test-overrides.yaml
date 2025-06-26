@@ -3,7 +3,7 @@ alfresco-activiti-admin:
     repository: localhost/alfresco/alfresco-process-services-admin
     tag: latest
   podSecurityContext:
-    runAsUser: 33005
+    runAsUser: 33071
   volumeMounts:
     - name: app-properties
       mountPath: /usr/local/tomcat/lib/activiti-admin.properties
