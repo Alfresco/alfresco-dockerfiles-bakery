@@ -35,7 +35,7 @@ COPY --chown=${APS_ADMIN_USER_ID}:${APS_ADMIN_GROUP_ID} /configs/ ${ACTIVITI_CON
 
 USER root
 RUN groupadd -g ${APS_ADMIN_GROUP_ID} ${APS_ADMIN_GROUP_NAME} && \
-    useradd -u ${APS_ADMIN_USER_ID} -g ${APS_ADMIN_GROUP_NAME} ${APS_ADMIN_USER_NAME} -G tomcat && \
+    useradd -lu ${APS_ADMIN_USER_ID} -g ${APS_ADMIN_GROUP_NAME} ${APS_ADMIN_USER_NAME} -G tomcat && \
     yum install -y openssl fontconfig dejavu-sans-fonts gettext && \
     yum clean all && rm -rf /var/cache/yum
 

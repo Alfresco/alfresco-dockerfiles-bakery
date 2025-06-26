@@ -94,4 +94,5 @@ alfresco-activiti-admin:
             path: activiti-admin.properties
 ```
 
-When a properties file is mounted, the environment variable configuration is bypassed and the mounted file is
+When a properties file is mounted, environment variables are ignored and the mounted file is used as-is.
+This is useful if you need to set properties which are not exposed as env vars.
