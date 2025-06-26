@@ -36,6 +36,8 @@ TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
 
 ifeq ($(filter 74 73,$(ACS_VERSION)),)
     TOMCAT_FIELD := "tomcat10"
+else ifeq ($(MAKECMDGOALS),aps)
+    TOMCAT_FIELD := "tomcat10"
 else
     TOMCAT_FIELD := "tomcat9"
 endif
@@ -101,6 +103,10 @@ prepare_adf: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF targets"
 	@python3 ./scripts/fetch_artifacts.py adf-apps
 
+prepare_aps: scripts/fetch_artifacts.py
+	@echo "Fetching all artifacts for Alfresco Process Services targets"
+	@python3 ./scripts/fetch_artifacts.py "aps/**/artifacts-${APS_VERSION}.yaml"
+
 prepare_ats: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ATS targets"
 	@python3 ./scripts/fetch_artifacts.py ats
@@ -141,10 +147,6 @@ prepare_tengines: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Transform Engine targets"
 	@python3 ./scripts/fetch_artifacts.py tengine
 
-prepare_aps: scripts/fetch_artifacts.py
-	@echo "Fetching all artifacts for ADF Platform Services targets"
-	@python3 ./scripts/fetch_artifacts.py "aps/**/artifacts-${APS_VERSION}.yaml"
-
 ## BUILD TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
 
@@ -165,6 +167,11 @@ community: docker-bake.hcl prepare setenv
 
 adf_apps: docker-bake.hcl prepare_adf setenv
 	@echo "Building ADF App images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
+aps: docker-bake.hcl prepare_aps setenv
+	@echo "Building ADF Platform Services images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
@@ -215,11 +222,6 @@ sync: docker-bake.hcl prepare_sync setenv
 
 tengines: docker-bake.hcl prepare_tengines setenv
 	@echo "Building Transform Engine images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
-	$(call grype_scan,$@)
-
-aps: docker-bake.hcl prepare_aps setenv
-	@echo "Building ADF Platform Services images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 

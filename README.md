@@ -285,9 +285,6 @@ a concatenation of the algorithm and optionally the checksum in the format
 try to fetch it from the Nexus repository reusing the computed artifact url and
 appending the `.algorithm` extension to it.
 
-When building APS make sure you are not setting `ACS_VERSION` to 74 or 73 this
-causes the tomcat version to be set to 9 while it should be 10 for APS.
-
 ## Testing locally
 
 Once the images are built, you can test them locally using either Helm or Docker Compose.

@@ -1,6 +1,5 @@
 ---
-updatecli_self: aps/admin/artifacts-24.yaml
-updatecli_matrix_version: current
+# This file is not yet supported by the updatecli
 artifacts:
   alfresco-process-services:
     name: activiti-admin
@@ -9,6 +8,7 @@ artifacts:
     group: com.activiti
     repository: activiti-enterprise-releases
     path: aps/admin/distribution
+    checksum: "sha1:"
   postgresql:
     name: postgresql
     version: 42.6.1
