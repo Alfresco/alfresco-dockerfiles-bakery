@@ -8,7 +8,6 @@ DOCKER_BAKE_ARGS := --progress=plain
 
 help:
 	@echo "Usage: make <target>"
-	@echo ""
 	@echo "Targets:"
 	@echo "  all                 Build all images"
 	@echo "  enterprise          Build enterprise images"
@@ -24,6 +23,7 @@ help:
 	@echo "  share               Build Share images"
 	@echo "  sync                Build Sync Service images"
 	@echo "  tengines            Build Transform Engine images"
+	@echo "  aps                 Build APS images"
 	@echo "  ========================================================"
 	@echo "  clean               Clean up Nexus artifacts"
 	@echo "  clean_caches        Clean up Docker and artifact caches"
