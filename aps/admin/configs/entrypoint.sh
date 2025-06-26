@@ -5,7 +5,6 @@ if [ -f "$ACTIVITI_ADMIN_PROPS" ] && [ -s "$ACTIVITI_ADMIN_PROPS" ]; then
 else
     echo "Generating properties file using environment variables and defaults"
 
-    # Set defaults (only if not already set) and export them for envsubst
     export ACTIVITI_ADMIN_DATASOURCE_URL="${ACTIVITI_ADMIN_DATASOURCE_URL:-jdbc:h2:mem:activiti_admin;DB_CLOSE_DELAY=1000}"
     export ACTIVITI_ADMIN_DATASOURCE_DRIVER="${ACTIVITI_ADMIN_DATASOURCE_DRIVER:-org.h2.Driver}"
     export ACTIVITI_ADMIN_DATASOURCE_USERNAME="${ACTIVITI_ADMIN_DATASOURCE_USERNAME:-alfresco}"
@@ -28,7 +27,6 @@ else
     export ACTIVITI_ADMIN_REST_APP_SSO_TOKEN_URI="${ACTIVITI_ADMIN_REST_APP_SSO_TOKEN_URI:-${ACTIVITI_ADMIN_REST_APP_SSO_AUTH_SERVER_URL}/realms/${ACTIVITI_ADMIN_REST_APP_SSO_REALM}/protocol/openid-connect/token}"
     export ACTIVITI_ADMIN_REST_APP_SSO_REDIRECT_URI="${ACTIVITI_ADMIN_REST_APP_SSO_REDIRECT_URI:-http://localhost:8081/activiti-admin/app/rest/integration/sso/confirm-auth-request}"
 
-    # Process template with envsubst
     if [ -f "$ACTIVITI_ADMIN_PROPS_TEMPLATE" ]; then
         echo "Processing template: $ACTIVITI_ADMIN_PROPS_TEMPLATE -> $ACTIVITI_ADMIN_PROPS"
         envsubst < "$ACTIVITI_ADMIN_PROPS_TEMPLATE" > "$ACTIVITI_ADMIN_PROPS"
