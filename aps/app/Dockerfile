@@ -16,6 +16,7 @@ COPY distribution/activiti-app-*.war ${DISTDIR}
 RUN unzip ${DISTDIR}/activiti-app-*.war -d ${CATALINA_HOME}/webapps/activiti-app
 RUN sed -i -e 's/<secure>.*<\/secure>//' ${CATALINA_HOME}/conf/web.xml
 RUN mkdir -p ${CATALINA_HOME}/work/Catalina/localhost/activiti-app && \
+    mkdir -p ${CATALINA_HOME}/conf/Catalina/localhost && \
     cp ${CATALINA_HOME}/webapps/activiti-app/META-INF/context.xml ${CATALINA_HOME}/conf/Catalina/localhost/activiti-app.xml
 
 COPY libs ${CATALINA_HOME}/lib/
