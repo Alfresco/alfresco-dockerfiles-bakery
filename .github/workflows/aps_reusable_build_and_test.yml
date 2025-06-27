@@ -33,8 +33,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [amd64, arm64]
-        config-type: [env, volume]
+        include:
+          - arch: amd64
+            config-type: env
+          - arch: arm64
+            config-type: volume
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -56,6 +59,7 @@ jobs:
             --from-literal=activiti.lic="${{ secrets.APS_LICENSE }}" aps-license
 
       - name: Create configmaps for aps
+        if: ${{ matrix.config-type == 'volume' }}
         run: |
           kubectl create configmap aps-admin-config --from-file=activiti-admin.properties=test/configs/aps-admin.properties
           kubectl create configmap aps-app-config --from-file=activiti-app.properties=test/configs/aps-app.properties
