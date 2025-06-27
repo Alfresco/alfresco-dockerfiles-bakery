@@ -40,7 +40,7 @@ COPY --chown=${APS_APP_USER_ID}:${APS_APP_GROUP_ID} /configs/ ${ACTIVITI_CONFIG_
 
 USER root
 RUN groupadd -g ${APS_APP_GROUP_ID} ${APS_APP_GROUP_NAME} && \
-    useradd -u ${APS_APP_USER_ID} -g ${APS_APP_GROUP_NAME} ${APS_APP_USER_NAME} -G tomcat && \
+    useradd -lu ${APS_APP_USER_ID} -g ${APS_APP_GROUP_NAME} ${APS_APP_USER_NAME} -G tomcat && \
     yum install -y openssl fontconfig dejavu-sans-fonts gettext && \
     yum clean all && rm -rf /var/cache/yum && \
     mkdir -p ${ACTIVITI_APP_CONTENTSTORAGE_DIR} && \
