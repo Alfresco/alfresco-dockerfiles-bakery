@@ -114,4 +114,4 @@ jobs:
         uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@v8.24.0
         with:
           log_retention: 7
-          log_name_identifier: "APS-Version-${{ inputs.aps_version }}-${{ matrix.arch }}"
+          log_name_identifier: "APS-Version-${{ inputs.aps_version }}-${{ matrix.config-type }}-${{ matrix.arch }}"
