@@ -83,7 +83,7 @@ alfresco-activiti:
 ### Elasticsearch configuration
 | Variable                             | Default | Description                                      |
 |--------------------------------------|---------|--------------------------------------------------|
-| `ACTIVITI_ES_SERVER_TYPE`            | `rest`  | Type of Elasticsearch server to connect to |
+| `ACTIVITI_ES_SERVER_TYPE`            | `none`  | Type of Elasticsearch server to connect to |
 | `ACTIVITI_ES_REST_CLIENT_ADDRESS`    | `localhost` | Address of the Elasticsearch REST client |
 | `ACTIVITI_ES_REST_CLIENT_PORT`         | `9200`  | Port of the Elasticsearch REST client |
 | `ACTIVITI_ES_REST_CLIENT_SCHEMA`         | `http`  | Schema of the Elasticsearch REST client |
