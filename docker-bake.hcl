@@ -57,7 +57,7 @@ group "adf_apps" {
 }
 
 group "aps" {
-  targets = ["aps-admin"]
+  targets = ["aps-admin", "aps-app"]
 }
 
 group "hxinsight_connector" {
@@ -934,7 +934,7 @@ target "hxinsight_connector_prediction_applier" {
 variable "ALFRESCO_PROCESS_SERVICE_USER_NAME" {
   default = "alfresco"
 }
-variable "ALFRESCO_PROCESS_SERVICE_USER_ID" {
+variable "ALFRESCO_PROCESS_SERVICE_ADMIN_USER_ID" {
   default = "33071"
 }
 
@@ -949,7 +949,7 @@ target "aps-admin" {
     APS_ADMIN_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
     APS_ADMIN_GROUP_ID = "${ALFRESCO_GROUP_ID}"
     APS_ADMIN_USER_NAME = "${ALFRESCO_PROCESS_SERVICE_USER_NAME}"
-    APS_ADMIN_USER_ID = "${ALFRESCO_PROCESS_SERVICE_USER_ID}"
+    APS_ADMIN_USER_ID = "${ALFRESCO_PROCESS_SERVICE_ADMIN_USER_ID}"
   }
   labels = {
     "org.label-schema.name" = "${PRODUCT_LINE} Process Services Admin"
@@ -957,6 +957,33 @@ target "aps-admin" {
     "org.opencontainers.image.description" = "Alfresco Process Services Admin Console"
   }
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services-admin:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
+}
+
+variable "ALFRESCO_PROCESS_SERVICE_APP_USER_ID" {
+  default = "33070"
+}
+
+target "aps-app" {
+  context = "./aps/app"
+  dockerfile = "Dockerfile"
+  inherits = ["tomcat_base"]
+  contexts = {
+    tomcat_base = "target:tomcat_base"
+  }
+  args = {
+    APS_APP_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    APS_APP_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    APS_APP_USER_NAME = "${ALFRESCO_PROCESS_SERVICE_USER_NAME}"
+    APS_APP_USER_ID = "${ALFRESCO_PROCESS_SERVICE_APP_USER_ID}"
+  }
+  labels = {
+    "org.label-schema.name" = "${PRODUCT_LINE} Process Services App"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} Process Services App"
+    "org.opencontainers.image.description" = "Alfresco Process Services App"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services:${TAG}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }

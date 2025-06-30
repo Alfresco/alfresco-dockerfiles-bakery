@@ -1,8 +1,8 @@
-# Runtime variables
+# Alfresco Process Services Admin
 
 Sets of variables configurable with your docker image
 
-## Alfresco Process Services Admin
+## Environment variables
 
 ```yaml
 alfresco-activiti-admin:

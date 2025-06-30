@@ -1,0 +1,77 @@
+# Activiti General server settings.
+server.onpremise=true
+server.stencil.custom.allowed=true
+server.contextroot=/activiti-app
+server.servlet.context-path=/activiti-app
+
+# Datasource Information.
+license.multi-tenant=${ACTIVITI_LICENSE_MULTI_TENANT}
+datasource.username=${ACTIVITI_DATASOURCE_USERNAME}
+datasource.password=${ACTIVITI_DATASOURCE_PASSWORD}
+datasource.driver=${ACTIVITI_DATASOURCE_DRIVER}
+datasource.url=${ACTIVITI_DATASOURCE_URL}
+hibernate.dialect=${ACTIVITI_HIBERNATE_DIALECT}
+
+# ElasticSearch configuration.
+elastic-search.server.type=${ACTIVITI_ES_SERVER_TYPE}
+elastic-search.rest-client.address=${ACTIVITI_ES_REST_CLIENT_ADDRESS}
+elastic-search.rest-client.port=${ACTIVITI_ES_REST_CLIENT_PORT}
+elastic-search.rest-client.schema=${ACTIVITI_ES_REST_CLIENT_SCHEMA}
+elastic-search.rest-client.auth.enabled=${ACTIVITI_ES_REST_CLIENT_AUTH_ENABLED}
+elastic-search.rest-client.username=${ACTIVITI_ES_REST_CLIENT_USERNAME}
+elastic-search.rest-client.password=${ACTIVITI_ES_REST_CLIENT_PASSWORD}
+elastic-search.rest-client.keystore=${ACTIVITI_ES_REST_CLIENT_KEYSTORE}
+elastic-search.rest-client.keystore.type=${ACTIVITI_ES_REST_CLIENT_KEYSTORE_TYPE}
+elastic-search.rest-client.keystore.password=${ACTIVITI_ES_REST_CLIENT_KEYSTORE_PASSWORD}
+
+event.generation.enabled=false
+event.processing.enabled=false
+
+# Admin user informations
+admin.email=${ACTIVITI_ADMIN_EMAIL}
+admin.passwordHash=${ACTIVITI_ADMIN_PASSWORD_HASH}
+admin.lastname=Administrator
+admin.group=Administrators
+
+# ContentStorage
+contentstorage.fs.rootFolder=/usr/local/data/
+contentstorage.fs.createRoot=true
+contentstorage.fs.depth=4
+contentstorage.fs.blockSize=1024
+
+# Security settings
+security.csrf.disabled=${ACTIVITI_CSRF_DISABLED}
+security.password.constraints.min-length=8
+security.password.constraints.reg-exp=^(?=.*[a-z])(?=.*[A-Z]).+$
+security.cookie.max-age=2678400
+security.cookie.database-removal.cronExpression=0 0/10 * * * ?
+
+# DISABLE SCRIPTING
+validator.editor.bpmn.disable.scripttask=true
+validator.editor.bpmn.disable.scripttask.groovy=true
+
+# Beans whitelisting
+beans.whitelisting.enabled=true
+
+# EL whitelisting
+el.whitelisting.enabled=true
+
+# CORS settings
+cors.enabled=${ACTIVITI_CORS_ENABLED}
+cors.allowed.origins=${ACTIVITI_CORS_ALLOWED_ORIGINS}
+cors.allowed.origin.patterns=${ACTIVITI_CORS_ALLOWED_ORIGIN_PATTERNS}
+cors.allowed.methods=${ACTIVITI_CORS_ALLOWED_METHODS}
+cors.allowed.headers=${ACTIVITI_CORS_ALLOWED_HEADERS}
+cors.exposed.headers=Access-Control-Allow-Origin,Access-Control-Allow-Credentials
+cors.support.credentials=true
+cors.preflight.maxage=10
+
+# Email template settings
+spring.freemarker.template-loader-path=classpath:/email-templates
+spring.web.resources.cache.period=P1D
+spring.jpa.open-in-view=true
+spring.groovy.template.check-template-location=false
+
+management.health.elasticsearch.enabled=false
+management.health.ldap.enabled=${ldap.authentication.enabled}
+management.endpoints.web.exposure.include=health,info

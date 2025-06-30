@@ -1,7 +1,7 @@
 ---
 # This file is not yet supported by the updatecli
 artifacts:
-  alfresco-process-services:
+  alfresco-process-services-admin:
     name: activiti-admin
     version: 24.5.0
     classifier: ".war"

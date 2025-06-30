@@ -1,13 +1,13 @@
 ---
 # This file is not yet supported by the updatecli
 artifacts:
-  alfresco-process-services-admin:
-    name: activiti-admin
-    version: 25.1.1
+  alfresco-process-services-app:
+    name: activiti-app
+    version: 24.5.0
     classifier: ".war"
     group: com.activiti
     repository: activiti-enterprise-releases
-    path: aps/admin/distribution
+    path: aps/app/distribution
     checksum: "sha1:"
   postgresql:
     name: postgresql
@@ -15,5 +15,5 @@ artifacts:
     classifier: ".jar"
     group: org.postgresql
     repository: public
-    path: aps/admin/libs
+    path: aps/app/libs
     checksum: "sha1:"
