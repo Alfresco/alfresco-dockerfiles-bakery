@@ -118,7 +118,7 @@ jobs:
 
       - name: Verify docker-compose (${{ matrix.edition }})
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.22.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v8.24.1
         timeout-minutes: 10
         with:
           postman_path: test/postman/docker-compose
@@ -129,7 +129,7 @@ jobs:
 
       - name: Save containers logs (${{ matrix.edition }})
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.22.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v8.24.1
         with:
           output-archive-name: compose-${{ matrix.edition }}-logs-${{ inputs.acs_version }}
 
@@ -217,7 +217,7 @@ jobs:
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
       - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.22.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.24.1
 
       - name: Run helm test
         id: helm_test
