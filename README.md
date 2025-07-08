@@ -471,9 +471,7 @@ For authentication check out [nexus authentication](#nexus-authentication)
 - When building `all` target with `make`, which is meant to build only `acs`, the
   fetching script will also try to download the artifacts related to `aps`.
   Build will proceed as it will use the `default` bake target which points to
-  `enterprise` and `community` targets. To workaround this issue you can change
-  the filenames of artifacts files in the `aps` folder to anything else than
-  `artifacts-*.yaml`.
+  `enterprise` and `community` targets.
 
 ## Release
 
