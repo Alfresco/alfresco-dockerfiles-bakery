@@ -468,7 +468,7 @@ For authentication check out [nexus authentication](#nexus-authentication)
 
 ## Known issues
 
-- While buliding `all` target with `make`, which is meant to build the `acs` the
+- While building `all` target with `make`, which is meant to build the `acs` the
   fetching script will also try to download the artifacts meant for the `aps`.
   Build will proceed as it will use the `default` bake target which points to
   `enterprise` and `community` targets. To workaround this issue you can change
