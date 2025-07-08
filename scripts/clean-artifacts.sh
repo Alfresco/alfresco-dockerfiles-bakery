@@ -27,7 +27,7 @@ fi
 files=$(
   find $FIND_MAC_OPTS "$REPO_ROOT" $FIND_OPTS \
     ! -path '*/artifacts_cache/*' \
-    -regex ".*-.*\.(jar|zip|amp|tgz|gz|rpm|deb)"
+    -regex ".*-.*\.(jar|zip|amp|tgz|gz|rpm|deb|war)"
 )
 
 if [ -z "$files" ]; then
