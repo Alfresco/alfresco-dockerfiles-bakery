@@ -122,7 +122,7 @@ RUN mkdir -m 770 logs temp work && chgrp tomcat . logs temp work; \
   chmod ug+rx bin/*.sh; \
   # verify Tomcat Native is working properly
   nativeLines="$(catalina.sh configtest 2>&1 | grep -c 'Loaded Apache Tomcat Native library')" && \
-  test $nativeLines -ge 1 || exit 1
+  test $nativeLines -ge 1 || { echo "Tomcat Native library not found or not working properly"; exit 1; }
 USER tomcat
 EXPOSE 8080
 # Starting tomcat with Security Manager
