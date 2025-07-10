@@ -31,6 +31,7 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
   - [Fetch artifacts script](#fetch-artifacts-script)
+  - [Known issues](#known-issues)
   - [Release](#release)
 
 ## Prerequisites
@@ -464,6 +465,13 @@ python3 scripts/fetch_artifacts.py repository --log-file download.log
 - `MAVEN_REPO` - Full Maven repository URL
 
 For authentication check out [nexus authentication](#nexus-authentication)
+
+## Known issues
+
+- When building `all` target with `make`, which is meant to build only `acs`, the
+  fetching script will also try to download the artifacts related to `aps`.
+  Build will proceed as it will use the `default` bake target which points to
+  `enterprise` and `community` targets.
 
 ## Release
 
