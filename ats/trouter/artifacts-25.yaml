@@ -4,7 +4,7 @@ updatecli_matrix_version: current
 artifacts:
   alfresco-transform-router:
     name: alfresco-transform-router
-    version: 4.1.7
+    version: 4.2.0
     classifier: ".jar"
     repository: enterprise-releases
     group: org.alfresco
