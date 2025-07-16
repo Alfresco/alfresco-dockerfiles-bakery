@@ -3,10 +3,10 @@ dtas:
     assertions:
       acs:
         edition: Enterprise
-        version: 25.1.1
+        version: 25.2.0
         modules:
           - id: alfresco-aos-module
-            version: 3.2.0
+            version: 3.3.0
             installed: true
           - id: org.alfresco.integrations.google.docs
             version: 4.1.0
