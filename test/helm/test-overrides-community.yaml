@@ -10,10 +10,10 @@ dtas:
     assertions:
       acs:
         edition: Community
-        version: 25.1.0
+        version: 25.2.0
         modules:
           - id: alfresco-aos-module
-            version: 3.2.0
+            version: 3.3.0
             installed: true
       adw: null
       aas: null
