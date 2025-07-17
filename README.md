@@ -487,6 +487,7 @@ For authentication check out [nexus authentication](#nexus-authentication)
 - Run the [updatecli
   workflow](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/bumpVersions.yml)
   and review the changes.
+- Review and manually update the `aps` images as they are not yet supported in updatecli workflow
 - Agree on a name for the release and make sure to add it to the release notes.
 
 Once everything has been merged to master, you can proceed to create a release with:
