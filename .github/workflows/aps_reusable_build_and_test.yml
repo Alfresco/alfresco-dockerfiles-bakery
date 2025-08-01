@@ -97,7 +97,7 @@ jobs:
             ${{ matrix.config-type == 'volume' && '--values test/helm/aps-test-overrides-volume.yaml' || '' }}
 
       - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.26.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.28.1
 
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
         with:
@@ -115,7 +115,7 @@ jobs:
 
       - name: Collect and push logs as artifcact
         if: always() && steps.helm_install.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@v8.26.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@v8.28.1
         with:
           log_retention: 7
           log_name_identifier: "APS-Version-${{ inputs.aps_version }}-${{ matrix.config-type }}-${{ matrix.arch }}"
