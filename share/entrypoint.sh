@@ -18,6 +18,7 @@ echo "Replace 'REPO_HOST' with '$REPO_HOST' and 'REPO_PORT' with '$REPO_PORT'"
 xmlstarlet ed --inplace \
 -u "//config[@evaluator='string-compare' and @condition='DocumentLibrary']//repository-url" -v "http://"$REPO_HOST:$REPO_PORT"/alfresco" \
 -u "//config[@evaluator='string-compare' and @condition='Remote']//remote//endpoint//endpoint-url" -v "http://"$REPO_HOST:$REPO_PORT"/alfresco/s" \
+-u "//config[@evaluator='string-compare' and @condition='Remote']//remote//endpoint[id='alfresco-api']//endpoint-url" -v "http://"$REPO_HOST:$REPO_PORT"/alfresco/api" \
 "$CATALINA_HOME"/shared/classes/alfresco/web-extension/share-config-custom.xml
 
 echo "NEW -csrf.filter.referer is '$CSRF_FILTER_REFERER'"
