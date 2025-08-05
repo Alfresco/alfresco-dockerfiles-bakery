@@ -15,16 +15,15 @@ COPY entrypoint.sh ${CATALINA_HOME}/shared/classes/alfresco
 ARG ALFRESCO_SHARE_ARTIFACT
 
 COPY distribution/${ALFRESCO_SHARE_ARTIFACT}-*.zip /tmp/
-COPY distribution/share-config-custom.xml /tmp/
 COPY amps /tmp/amps
 
 ENV DISTDIR="/tmp/distribution"
 
 RUN unzip /tmp/*.zip -d ${DISTDIR}
+RUN find ${DISTDIR} -type f -name share-config-custom.xml -exec cp {} ${CATALINA_HOME}/shared/classes/alfresco/web-extension/ \;
 RUN if ls ${DISTDIR}/alfresco* > /dev/null 2>&1; then mv ${DISTDIR}/alfresco*/* ${DISTDIR}/; fi
 RUN unzip ${DISTDIR}/web-server/webapps/share.war -d ${CATALINA_HOME}/webapps/share
 RUN cp -r ${DISTDIR}/amps/ /tmp/amps/
-RUN cp /tmp/share-config-custom.xml ${CATALINA_HOME}/shared/classes/alfresco/web-extension
 RUN cp ${DISTDIR}/web-server/conf/Catalina/localhost/share.xml ${CATALINA_HOME}/conf/Catalina/localhost
 RUN sed -i 's|../modules/share|modules/share|' ${CATALINA_HOME}/conf/Catalina/localhost/share.xml
 RUN sed -i "s/shared.loader=/shared.loader=\${catalina.base}\/shared\/classes/" ${CATALINA_HOME}/conf/catalina.properties
