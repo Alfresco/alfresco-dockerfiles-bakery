@@ -1,9 +1,9 @@
-FROM busybox:stable@sha256:31f3955f475e40c62c6d4209f09fd9738cf6cadfc0f4aa76ba2d4d86f061c5b5 AS unpack
+FROM busybox:stable@sha256:303337d3d52898b33018796d760d3a01c2dcc87973dd66ec22fe78ae1e8429c9 AS unpack
 WORKDIR /unpack
 COPY alfresco-control-center-*.zip .
 RUN unzip alfresco-control-center-*.zip && rm alfresco-control-center-*.zip
 
-FROM nginxinc/nginx-unprivileged:1-alpine@sha256:094aa5b178bb09e30761325e37ff053aa4382e1e372a2a5dcd73b24170483b70
+FROM nginxinc/nginx-unprivileged:1-alpine@sha256:82dcf28da5a8cd97d43e8f8a64de766658b0c5fb9072368c5f0a9048c417a934
 
 ARG CONFIG_PATH=/etc/nginx/conf.d
 
