@@ -11,7 +11,7 @@ artifacts:
     group: org.libreoffice
   alfresco-transform-libreoffice:
     name: alfresco-transform-libreoffice
-    version: 5.2.0
+    version: 5.2.1
     path: tengine/libreoffice
     classifier: ".jar"
     repository: releases
