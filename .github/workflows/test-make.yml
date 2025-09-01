@@ -23,7 +23,7 @@ jobs:
   make-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.30.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.33.0
 
       - name: Setup nexus authentication
         if: '! github.event.pull_request.head.repo.fork'
