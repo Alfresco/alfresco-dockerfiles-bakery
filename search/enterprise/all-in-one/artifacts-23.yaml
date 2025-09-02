@@ -4,7 +4,7 @@ updatecli_matrix_version: 23.N
 artifacts:
   alfresco-elasticsearch-live-indexing:
     name: alfresco-elasticsearch-live-indexing
-    version: 5.1.1
+    version: 5.1.1.1
     classifier: "-app.jar"
     repository: enterprise-releases
     group: org.alfresco
