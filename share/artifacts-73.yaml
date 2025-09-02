@@ -5,7 +5,7 @@ updatecli_amps_release_branch: release/7.3.2
 artifacts:
   alfresco-content-services-share-distribution:
     name: alfresco-content-services-share-distribution
-    version: 7.3.2.3
+    version: 7.3.0.9
     classifier: ".zip"
     group: org.alfresco
     repository: enterprise-releases
