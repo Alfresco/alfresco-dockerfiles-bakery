@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.30.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.33.0
 
       - name: Setup nexus authentication
         shell: bash
@@ -96,7 +96,7 @@ jobs:
         id: bake-targets
         env:
           ACS_VERSION: ${{ inputs.version }}
-        uses: docker/bake-action/subaction/list-targets@37816e747588cb137173af99ab33873600c46ea8  # v6.8.0
+        uses: docker/bake-action/subaction/list-targets@3acf805d94d93a86cce4ca44798a76464a75b88c  # v6.9.0
         with:
           target: ${{ inputs.bake-targets }}
 
@@ -131,7 +131,7 @@ jobs:
         env:
           ACS_VERSION: ${{ inputs.version }}
           TARGETARCH: ${{ startsWith(inputs.version, '7') && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
-        uses: docker/bake-action@37816e747588cb137173af99ab33873600c46ea8  # v6.8.0
+        uses: docker/bake-action@3acf805d94d93a86cce4ca44798a76464a75b88c  # v6.9.0
         with:
           targets: ${{ inputs.bake-targets }}
           source: .
