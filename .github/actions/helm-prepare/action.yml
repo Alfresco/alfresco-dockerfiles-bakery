@@ -38,7 +38,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup cluster
-      uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v8.33.0
+      uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v8.33.1
       with:
         ingress-nginx-ref: ${{ inputs.ingress-nginx-ref }}
         metrics: ${{ inputs.metrics }}
