@@ -15,7 +15,7 @@ ARG TCNATIVE_SHA512
 ENV APACHE_MIRRORS="https://archive.apache.org/dist https://dlcdn.apache.org https://downloads.apache.org"
 ENV DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
-RUN apt-get -y update && apt-get -y install --no-install-recommends ca-certificates xmlstarlet curl gpg && apt-get clean && rm -rf /var/lib/apt/lists/*; \
+RUN apt-get -y update && apt-get -y install --no-install-recommends ca-certificates gnupg xmlstarlet curl gpg && apt-get clean && rm -rf /var/lib/apt/lists/*; \
   mkdir -p /build/{tcnative,tomcat}; \
   active_mirror=; \
   for mirror in $APACHE_MIRRORS; do \
