@@ -15,7 +15,7 @@ ARG TCNATIVE_SHA512
 ENV APACHE_MIRRORS="https://archive.apache.org/dist https://dlcdn.apache.org https://downloads.apache.org"
 ENV DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
-RUN apt-get -y update && apt-get -y install xmlstarlet curl gpg; \
+RUN apt-get -y update && apt-get -y install --no-install-recommends ca-certificates gnupg xmlstarlet curl gpg && apt-get clean && rm -rf /var/lib/apt/lists/*; \
   mkdir -p /build/{tcnative,tomcat}; \
   active_mirror=; \
   for mirror in $APACHE_MIRRORS; do \
@@ -29,7 +29,7 @@ RUN apt-get -y update && apt-get -y install xmlstarlet curl gpg; \
   echo "Using mirror ${active_mirror}/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}"; \
   for filetype in '.tar.gz' '.tar.gz.asc'; do \
     curl -fsSLo tomcat${filetype} ${active_mirror}/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}${filetype}; \
-    curl -fsSLo tcnative${filetype}  ${active_mirror}/tomcat/tomcat-connectors/native/${TCNATIVE_VERSION}/source/tomcat-native-${TCNATIVE_VERSION}-src${filetype}; \
+    curl -fsSLo tcnative${filetype} ${active_mirror}/tomcat/tomcat-connectors/native/${TCNATIVE_VERSION}/source/tomcat-native-${TCNATIVE_VERSION}-src${filetype}; \
   done; \
   \
   echo "$TOMCAT_SHA512 *tomcat.tar.gz" | sha512sum -c - || (echo "Checksum did't match: $(sha512sum *tomcat.tar.gz)" && exit 1); \
