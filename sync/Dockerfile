@@ -1,3 +1,4 @@
+# kics-scan disable=0008c003-79aa-42d8-95b8-1c2fe37dbfe6 # Cant use one copy for local and multi stage build
 FROM busybox AS unpack
 WORKDIR /unpack
 COPY ./distribution/*zip /
@@ -27,8 +28,8 @@ RUN groupadd -g ${ALFRESCO_SYNC_GROUP_ID} ${ALFRESCO_SYNC_GROUP_NAME} && \
 
 USER ${ALFRESCO_SYNC_USER_NAME}
 
-RUN source ${SYNC_SERVICE_FOLDER}/update-syncservice.sh ${SYNC_SERVICE_FOLDER}
-RUN source ${SYNC_SERVICE_FOLDER}/update-config-yml.sh ${SYNC_SERVICE_FOLDER}/config.yml
+RUN source ${SYNC_SERVICE_FOLDER}/update-syncservice.sh ${SYNC_SERVICE_FOLDER} && \
+    source ${SYNC_SERVICE_FOLDER}/update-config-yml.sh ${SYNC_SERVICE_FOLDER}/config.yml
 
 WORKDIR ${SYNC_SERVICE_FOLDER}
 
