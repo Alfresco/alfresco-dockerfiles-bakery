@@ -230,7 +230,7 @@ jobs:
           wait-condition: "'{.status.readyReplicas}'=1"
 
       - name: Wait for jobs to be completed
-        if: matrix.edition != '73' && matrix.edition != '74'
+        if: matrix.edition != '73' && matrix.edition != '74' && matrix.edition != 'community'
         uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
         with:
           wait-resource: "jobs"
