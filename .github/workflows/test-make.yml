@@ -23,7 +23,7 @@ jobs:
   make-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v8.33.1
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v9.0.1
 
       - name: Setup nexus authentication
         if: '! github.event.pull_request.head.repo.fork'
@@ -50,7 +50,7 @@ jobs:
           docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco || { echo "No Alfresco image found"; exit 1; }
 
       - name: Install Grype
-        uses: anchore/scan-action/download-grype@1638637db639e0ade3258b51db49a9a137574c3e # v6.5.1
+        uses: anchore/scan-action/download-grype@f6601287cdb1efc985d6b765bbf99cb4c0ac29d8 # v7.0.0
         id: grype-install
 
       - name: Add Grype to PATH
