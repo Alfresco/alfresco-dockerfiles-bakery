@@ -96,8 +96,18 @@ jobs:
             --values test/helm/aps-test-overrides.yaml \
             ${{ matrix.config-type == 'volume' && '--values test/helm/aps-test-overrides-volume.yaml' || '' }}
 
-      - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.33.1
+      - name: Wait for deployments to be ready
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
+        with:
+          wait-resource: "deployments"
+          wait-condition: "Available"
+
+      - name: Wait for statefulsets to be ready
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
+        with:
+          wait-resource: "sts"
+          wait-for-what: "jsonpath"
+          wait-condition: "'{.status.readyReplicas}'=1"
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
         with:

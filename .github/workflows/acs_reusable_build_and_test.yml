@@ -216,8 +216,25 @@ jobs:
             --values test/helm/test-overrides.yaml \
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
-      - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v8.33.1
+      - name: Wait for deployments to be ready
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
+        with:
+          wait-resource: "deployments"
+          wait-condition: "Available"
+
+      - name: Wait for statefulsets to be ready
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
+        with:
+          wait-resource: "sts"
+          wait-for-what: "jsonpath"
+          wait-condition: "'{.status.readyReplicas}'=1"
+
+      - name: Wait for jobs to be completed
+        if: matrix.edition != '73' && matrix.edition != '74' && matrix.edition != 'community'
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
+        with:
+          wait-resource: "jobs"
+          wait-condition: "complete"
 
       - name: Run helm test
         id: helm_test

@@ -475,6 +475,9 @@ For authentication check out [nexus authentication](#nexus-authentication)
 
 ## Release
 
+- Check if acs and aps charts need to be updated in
+  `.github/actions/acs-deployment` and `.github/actions/aps-deployment`  
+  respectively.
 - Ensure that the
   [supported-matrix](https://github.com/Alfresco/alfresco-updatecli/blob/master/deployments/values/supported-matrix.yaml)
   reflects the status of the currently released Alfresco products and update if
