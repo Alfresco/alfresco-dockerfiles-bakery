@@ -4,7 +4,7 @@ updatecli_matrix_version: 7.4.N
 artifacts:
   alfresco-transform-misc:
     name: alfresco-transform-misc
-    version: 5.2.1
+    version: 5.2.2
     classifier: ".jar"
     repository: releases
     group: org.alfresco
