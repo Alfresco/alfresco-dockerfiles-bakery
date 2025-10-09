@@ -47,7 +47,7 @@ jobs:
           token: ${{ secrets.BOT_GITHUB_TOKEN || github.token }}
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.0.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.2.0
 
       - name: Checkout updatecli configs
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -95,7 +95,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.0.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.2.0
 
       - name: Updatecli scm cache
         uses: actions/cache@v4
@@ -122,7 +122,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.0.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.2.0
 
       - run: updatecli apply -c .github/updatecli_dockerfile.tpl
         env:
