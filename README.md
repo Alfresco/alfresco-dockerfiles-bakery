@@ -253,7 +253,6 @@ in `artifacts-XX.yaml` files for each component.
 To build older version pass `ACS_VERSION` env to make command.
 - ACS 23  - `ACS_VERSION=23` - Will use `artifacts-23.yaml` files
 - ACS 7.4 - `ACS_VERSION=74` - Will use `artifacts-74.yaml` files
-- ACS 7.3 - `ACS_VERSION=73` - Will use `artifacts-73.yaml` files
 
 ```sh
 make enterprise ACS_VERSION=74

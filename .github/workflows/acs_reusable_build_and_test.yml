@@ -50,10 +50,6 @@ jobs:
               echo 'compose_matrix_json={"edition": ["74"]}' >> $GITHUB_OUTPUT
               echo 'helm_matrix_json={"arch": ["amd64"], "edition": ["74"]}' >> $GITHUB_OUTPUT
               ;;
-            73)
-              echo 'compose_matrix_json={"edition": ["73"]}' >> $GITHUB_OUTPUT
-              echo 'helm_matrix_json={"arch": ["amd64"], "edition": ["73"]}' >> $GITHUB_OUTPUT
-              ;;
           esac
 
   compose-test:
@@ -98,10 +94,6 @@ jobs:
               ;;
             74)
               echo "UPSTREAM_COMPOSE_PATH=7.4.N-compose.yaml" >> $GITHUB_ENV
-              echo "OVERRIDE_COMPOSE_PATH=solr-search-override.yaml" >> $GITHUB_ENV
-              ;;
-            73)
-              echo "UPSTREAM_COMPOSE_PATH=7.3.N-compose.yaml" >> $GITHUB_ENV
               echo "OVERRIDE_COMPOSE_PATH=solr-search-override.yaml" >> $GITHUB_ENV
               ;;
             community)
@@ -198,9 +190,6 @@ jobs:
             74)
               echo "UPSTREAM_HELM_VALUES=7.4.N_values.yaml" >> $GITHUB_ENV
               ;;
-            73)
-              echo "UPSTREAM_HELM_VALUES=7.3.N_values.yaml" >> $GITHUB_ENV
-              ;;
             community)
               echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
               ;;
@@ -230,7 +219,7 @@ jobs:
           wait-condition: "'{.status.readyReplicas}'=1"
 
       - name: Wait for jobs to be completed
-        if: matrix.edition != '73' && matrix.edition != '74' && matrix.edition != 'community'
+        if: matrix.edition != '74' && matrix.edition != 'community'
         uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
         with:
           wait-resource: "jobs"
