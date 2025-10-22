@@ -20,7 +20,7 @@ group "community" {
 
 group "content_service_enterprise" {
   targets = exclude_if_version(
-    ["74", "73"],
+    ["74"],
     [
       "repository_enterprise",
       "share_enterprise",
