@@ -1,9 +1,9 @@
-FROM busybox:stable@sha256:4b8407fadd8100c61b097d63efe992b2c033e7d371c9117f7a9462fe87e31176 AS unpack
+FROM busybox:stable@sha256:1fcf5df59121b92d61e066df1788e8df0cc35623f5d62d9679a41e163b6a0cdb AS unpack
 WORKDIR /unpack
 COPY alfresco-digital-workspace-*.zip .
 RUN unzip alfresco-digital-workspace-*.zip && rm alfresco-digital-workspace-*.zip
 
-FROM nginxinc/nginx-unprivileged:1-alpine@sha256:3ab4d1737fc180da0c107f3429f083d10ec82b9c5861e22021d2d35c6565959a
+FROM nginxinc/nginx-unprivileged:1-alpine@sha256:20c59c7bf3602ebcc0b6866f900698ba2e6c6cb195ec6f36907eb192cd5a1ece
 
 ARG CONFIG_PATH=/etc/nginx/conf.d
 
