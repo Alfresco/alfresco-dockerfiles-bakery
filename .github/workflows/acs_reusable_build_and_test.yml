@@ -206,7 +206,7 @@ jobs:
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
       - name: Wait for deployments to be ready
-        timeout-minutes: 15    
+        timeout-minutes: 15
         uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
         with:
           wait-resource: "deployments"
