@@ -1,7 +1,7 @@
 ---
 updatecli_self: share/artifacts-23.yaml
 updatecli_matrix_version: 23.N
-updatecli_amps_release_branch: release/23.5
+updatecli_amps_release_branch: release/23.6
 artifacts:
   alfresco-content-services-share-distribution:
     name: alfresco-content-services-share-distribution
