@@ -3,7 +3,7 @@
 artifacts:
   alfresco-process-services-admin:
     name: activiti-admin
-    version: 24.5.0
+    version: 24.6.0
     classifier: ".war"
     group: com.activiti
     repository: activiti-enterprise-releases

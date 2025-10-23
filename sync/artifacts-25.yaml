@@ -4,7 +4,7 @@ updatecli_matrix_version: current
 artifacts:
   sync-distribution:
     name: sync-dist-6.x
-    version: 5.2.0
+    version: 5.3.0
     classifier: ".zip"
     group: org.alfresco.services.sync
     repository: enterprise-releases
