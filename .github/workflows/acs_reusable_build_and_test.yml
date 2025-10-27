@@ -110,7 +110,7 @@ jobs:
 
       - name: Verify docker-compose (${{ matrix.edition }})
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v9.0.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v9.3.2
         timeout-minutes: 10
         with:
           postman_path: test/postman/docker-compose
@@ -121,7 +121,7 @@ jobs:
 
       - name: Save containers logs (${{ matrix.edition }})
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v9.0.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v9.3.2
         with:
           output-archive-name: compose-${{ matrix.edition }}-logs-${{ inputs.acs_version }}
 
@@ -206,14 +206,14 @@ jobs:
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
       - name: Wait for deployments to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.3.2
         with:
           wait-resource: "deployments"
           wait-condition: "Available"
           timeout: "15m"
 
       - name: Wait for statefulsets to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.3.2
         with:
           wait-resource: "sts"
           wait-for-what: "jsonpath"
@@ -221,7 +221,7 @@ jobs:
 
       - name: Wait for jobs to be completed
         if: matrix.edition != '74' && matrix.edition != 'community'
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.0.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.3.2
         with:
           wait-resource: "jobs"
           wait-condition: "complete"
@@ -249,7 +249,7 @@ jobs:
 
       - name: Upload logs as artifact
         if: always() && steps.helm_install.outcome != 'skipped'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 #v5.0.0
         with:
           name: k8s-logs-${{ matrix.arch }}-${{ matrix.edition }}
           path: logs
