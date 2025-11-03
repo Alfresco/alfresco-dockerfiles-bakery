@@ -3,7 +3,7 @@ WORKDIR /unpack
 COPY alfresco-digital-workspace-*.zip .
 RUN unzip alfresco-digital-workspace-*.zip && rm alfresco-digital-workspace-*.zip
 
-FROM nginxinc/nginx-unprivileged:1-alpine@sha256:80606e030e8a47635ab303bb9cf8cac1988b1f71cea462c980544b3096e68564
+FROM nginxinc/nginx-unprivileged:1-alpine@sha256:fb089229c0b27470aef1384985c4f073c19f6e1529a9cfc9676cf7d9869a36f4
 
 ARG CONFIG_PATH=/etc/nginx/conf.d
 
