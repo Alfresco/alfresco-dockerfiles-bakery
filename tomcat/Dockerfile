@@ -126,4 +126,4 @@ RUN mkdir -m 770 logs temp work && chgrp tomcat . logs temp work; \
 USER tomcat
 EXPOSE 8080
 # Starting tomcat with Security Manager
-CMD ["catalina.sh", "run", "-security"]
+CMD ["catalina.sh", "run"]
