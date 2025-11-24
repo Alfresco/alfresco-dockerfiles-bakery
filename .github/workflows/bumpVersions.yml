@@ -42,15 +42,15 @@ jobs:
       github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           token: ${{ secrets.BOT_GITHUB_TOKEN || github.token }}
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.3.2
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.5.0
 
       - name: Checkout updatecli configs
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           repository: alfresco/alfresco-updatecli
           ref: ${{ inputs.alfresco-updatecli-ref || 'master' }}
@@ -92,10 +92,10 @@ jobs:
       github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.3.2
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.5.0
 
       - name: Updatecli scm cache
         uses: actions/cache@v4
@@ -119,10 +119,10 @@ jobs:
       github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.3.2
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v9.5.0
 
       - run: updatecli apply -c .github/updatecli_dockerfile.tpl
         env:

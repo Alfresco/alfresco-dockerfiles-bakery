@@ -62,7 +62,7 @@ jobs:
       MERGED_COMPOSE_PATH: test/merged-compose.yaml
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Login to Docker Hub
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef  # v3.6.0
@@ -110,7 +110,7 @@ jobs:
 
       - name: Verify docker-compose (${{ matrix.edition }})
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v9.3.2
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v9.5.0
         timeout-minutes: 10
         with:
           postman_path: test/postman/docker-compose
@@ -121,7 +121,7 @@ jobs:
 
       - name: Save containers logs (${{ matrix.edition }})
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v9.3.2
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v9.5.0
         with:
           output-archive-name: compose-${{ matrix.edition }}-logs-${{ inputs.acs_version }}
 
@@ -133,7 +133,7 @@ jobs:
       matrix: ${{ fromJson(needs.build-matrix.outputs.helm_matrix_json) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Prepare for helm installation
         uses: ./.github/actions/helm-prepare
@@ -206,14 +206,14 @@ jobs:
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
       - name: Wait for deployments to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.3.2
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.5.0
         with:
           wait-resource: "deployments"
           wait-condition: "Available"
           timeout: "15m"
 
       - name: Wait for statefulsets to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.3.2
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.5.0
         with:
           wait-resource: "sts"
           wait-for-what: "jsonpath"
@@ -221,7 +221,7 @@ jobs:
 
       - name: Wait for jobs to be completed
         if: matrix.edition != '74' && matrix.edition != 'community'
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.3.2
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v9.5.0
         with:
           wait-resource: "jobs"
           wait-condition: "complete"
