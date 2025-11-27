@@ -64,4 +64,6 @@ jobs:
           docker image ls --format '{{.Repository}}:{{.Tag}}' \
             | grep alfresco \
             | xargs -I{} sh -c 'echo "Running scan for {}..." \
-            && grype -f high --only-fixed --ignore-states wont-fix {}'
+            && grype -f critical --only-fixed --ignore-states wont-fix {}'
+
+# using critical until rockylinux 9.7 is released (see OPSEXP-3691)
