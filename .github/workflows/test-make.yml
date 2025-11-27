@@ -61,4 +61,7 @@ jobs:
 
       - name: Grype scan
         run: |
-          docker image ls --format '{{.Repository}}:{{.Tag}}' | grep alfresco | xargs -I{} sh -c 'echo "Running scan for {}..." && grype {}'
+          docker image ls --format '{{.Repository}}:{{.Tag}}' \
+            | grep alfresco \
+            | xargs -I{} sh -c 'echo "Running scan for {}..." \
+            && grype -f high --only-fixed --ignore-states wont-fix {}'
