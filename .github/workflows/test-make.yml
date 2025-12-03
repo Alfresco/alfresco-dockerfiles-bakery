@@ -22,7 +22,7 @@ jobs:
       matrix:
         target: ${{ fromJSON(
             github.event.pull_request.head.repo.fork
-              && '["content_service_community","search_service","tengines","acc"]'
+              && '["community","search_service","tengines","acc"]'
               || '["adf_apps","ats","audit_storage","connectors","hxinsight_connector","repo","search_enterprise","search_service","share","sync","tengines","aps"]'
           ) }}
     runs-on: ubuntu-latest
