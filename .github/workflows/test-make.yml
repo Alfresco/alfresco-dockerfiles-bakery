@@ -23,7 +23,7 @@ jobs:
         target: ${{ fromJSON(
             github.event.pull_request.head.repo.fork
               && '["community"]'
-              || '["adf_apps","ats","audit_storage","connectors","hxinsight_connector","repo","search_enterprise","search_service","share","sync","tengines","aps"]'
+              || '["community", "adf_apps","ats","audit_storage","connectors","hxinsight_connector","repo","search_enterprise","search_service","share","sync","tengines","aps"]'
           ) }}
     runs-on: ubuntu-latest
     steps:
