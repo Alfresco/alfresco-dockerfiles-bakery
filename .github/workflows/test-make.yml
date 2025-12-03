@@ -15,12 +15,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
-env:
-  MAKE_TARGET: ${{ github.event.pull_request.head.repo.fork && 'community' || 'all_ci' }}
-  BAKE_TARGET: ${{ github.event.pull_request.head.repo.fork && 'community' || 'enterprise' }}
-
 jobs:
   make-test:
+    strategy:
+      matrix:
+        target: ${{ fromJSON(
+            github.event.pull_request.head.repo.fork
+              && '["community"]'
+              || '["community", "adf_apps","ats","audit_storage","connectors","hxinsight_connector","repo","search_enterprise","search_service","share","sync","tengines","aps"]'
+          ) }}
     runs-on: ubuntu-latest
     steps:
       - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v9.3.2
@@ -42,7 +45,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - run: make ${{ env.MAKE_TARGET }}
+      - run: make ${{ matrix.target }}
 
       - name: Check Images are loaded
         run: |
@@ -56,6 +59,10 @@ jobs:
       - name: Add Grype to PATH
         run: echo "$(dirname ${{ steps.grype-install.outputs.cmd }})" >> $GITHUB_PATH
 
+      # using critical until rockylinux 9.7 is released (see OPSEXP-3691)
       - name: Grype scan
         run: |
-          make grype GRYPE_TARGET="${{ env.BAKE_TARGET }}" GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
+          docker image ls --format '{{.Repository}}:{{.Tag}}' \
+            | grep alfresco \
+            | xargs -I{} sh -c 'echo "Running scan for {}..." \
+            && grype -f critical --only-fixed --ignore-states wont-fix {}'
