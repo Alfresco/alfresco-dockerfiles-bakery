@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Run KICS Scan
-        uses: checkmarx/kics-github-action@86775e425429260b2044a0611f3031e0a0f71b0b # v2.1.15
+        uses: checkmarx/kics-github-action@6b6fc1162a0f06704e4cca6e5f8e008ab20fabe5 # v2.1.16
         with:
           path: './'
           ignore_on_exit: results
