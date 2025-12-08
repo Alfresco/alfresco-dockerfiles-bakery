@@ -3,7 +3,7 @@ WORKDIR /unpack
 COPY alfresco-control-center-*.zip .
 RUN unzip alfresco-control-center-*.zip && rm alfresco-control-center-*.zip
 
-FROM nginxinc/nginx-unprivileged:1-alpine@sha256:031d8c8ab79d2d171a2a383aa50a06f527791c05ba1aeae9ca05d7b9779caf8e
+FROM nginxinc/nginx-unprivileged:1-alpine@sha256:9bf2484108733e4c1c72280f83ba30d772d291d44049403bd6d592f216137771
 
 ARG CONFIG_PATH=/etc/nginx/conf.d
 
