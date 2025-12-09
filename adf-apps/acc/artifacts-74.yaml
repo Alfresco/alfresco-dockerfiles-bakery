@@ -4,7 +4,7 @@ updatecli_matrix_version: 7.4.N
 artifacts:
   alfresco-control-center:
     name: alfresco-control-center
-    version: 8.3.0
+    version: 8.4.1
     classifier: ".zip"
     group: org.alfresco
     repository: releases
