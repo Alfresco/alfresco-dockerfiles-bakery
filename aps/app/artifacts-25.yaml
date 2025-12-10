@@ -3,7 +3,7 @@
 artifacts:
   alfresco-process-services-app:
     name: activiti-app
-    version: 25.2.0
+    version: 25.3.0
     classifier: ".war"
     group: com.activiti
     repository: activiti-enterprise-releases
