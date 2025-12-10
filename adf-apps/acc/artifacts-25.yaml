@@ -4,7 +4,7 @@ updatecli_matrix_version: current
 artifacts:
   alfresco-control-center:
     name: alfresco-control-center
-    version: 10.1.0
+    version: 10.2.0
     classifier: ".zip"
     group: org.alfresco
     repository: releases
