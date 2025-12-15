@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v10.1.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v11.0.1
 
       - name: Setup nexus authentication
         shell: bash
@@ -47,7 +47,7 @@ jobs:
           echo "password ${{ secrets.NEXUS_PASSWORD }}" >> ${{ env.NETRC_PATH }}
 
       - name: Restore packages artifacts
-        uses: actions/cache/restore@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        uses: actions/cache/restore@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         id: artifacts-cache
         with:
           key: ${{ runner.os }}-packages-v2-${{ hashFiles(inputs.artifacts-to-fetch) }}-${{ inputs.version }}
@@ -62,7 +62,7 @@ jobs:
 
       - name: Save packages artifacts
         if: steps.artifacts-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        uses: actions/cache/save@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
           key: ${{ steps.artifacts-cache.outputs.cache-primary-key }}
           path: artifacts_cache/**
