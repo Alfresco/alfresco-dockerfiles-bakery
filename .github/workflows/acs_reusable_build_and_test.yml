@@ -210,7 +210,7 @@ jobs:
         with:
           wait-resource: "deployments"
           wait-condition: "Available"
-          timeout: "15m"
+          wait-timeout: "15m"
 
       - name: Wait for statefulsets to be ready
         uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v10.1.0
