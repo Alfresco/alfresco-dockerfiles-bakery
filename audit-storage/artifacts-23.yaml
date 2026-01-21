@@ -1,4 +1,5 @@
 ---
+updatecli_self: audit-storage/artifacts-23.yaml
 artifacts:
   alfresco-audit-storage-app:
     name: alfresco-audit-storage-app

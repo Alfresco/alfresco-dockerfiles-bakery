@@ -46,3 +46,9 @@ artifacts:
     updatecli_matrix_component_key: tengine-pdf
   alfresco-transform-tika:
     updatecli_matrix_component_key: tengine-tika
+  alfresco-process-services-admin:
+    updatecli_matrix_component_key: activiti-admin
+  alfresco-process-services-app:
+    updatecli_matrix_component_key: activiti
+  alfresco-audit-storage-app:
+    updatecli_matrix_component_key: audit-storage
