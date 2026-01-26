@@ -42,15 +42,15 @@ jobs:
       github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           token: ${{ secrets.BOT_GITHUB_TOKEN || github.token }}
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v10.1.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v12.7.0
 
       - name: Checkout updatecli configs
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: alfresco/alfresco-updatecli
           ref: ${{ inputs.alfresco-updatecli-ref || 'master' }}
@@ -75,7 +75,7 @@ jobs:
 
       - name: Git Auto Commit
         if: github.actor != 'dependabot[bot]'
-        uses: stefanzweifel/git-auto-commit-action@28e16e81777b558cc906c8750092100bbb34c5e3 # v7.0.0
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
           commit_message: |
             🛠 Updatecli pipeline artifacts bump
@@ -92,13 +92,13 @@ jobs:
       github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v10.1.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v12.7.0
 
       - name: Updatecli scm cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /tmp/updatecli
           key: updatecli-tomcat-v1-${{ hashFiles('.github/updatecli_tomcat.tpl') }}
@@ -119,10 +119,10 @@ jobs:
       github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v10.1.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v12.7.0
 
       - run: updatecli apply -c .github/updatecli_dockerfile.tpl
         env:
