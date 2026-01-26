@@ -1,4 +1,4 @@
-FROM busybox:stable@sha256:355b3a1bf5609da364166913878a8508d4ba30572d02020a97028c75477e24ff AS unpack
+FROM busybox:stable@sha256:851281100cc5f93d8a8f8e1a8976a57ec40a9bc9edd66ad3a621e4aa63326915 AS unpack
 WORKDIR /unpack
 COPY alfresco-control-center-*.zip .
 RUN unzip alfresco-control-center-*.zip && rm alfresco-control-center-*.zip
