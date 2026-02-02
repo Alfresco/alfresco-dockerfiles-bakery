@@ -38,11 +38,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v10.1.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v12.9.0
         with:
           auto-commit: "true"
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/dependabot-missing-actions-check@v10.1.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/dependabot-missing-actions-check@v12.9.0
   ACS_CI:
     name: Build ACS v${{ matrix.version }}
     needs: pre-commit
