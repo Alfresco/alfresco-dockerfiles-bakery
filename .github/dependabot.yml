@@ -1,34 +1,9 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    groups:
-      github-actions:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/.github/actions/helm-prepare"
-    schedule:
-      interval: "weekly"
-    groups:
-      github-actions:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/.github/actions/aps-deployment"
-    schedule:
-      interval: "weekly"
-    groups:
-      github-actions:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/.github/actions/acs-deployment"
+    directories:
+      - "/"
+      - "/.github/actions/**/*"
     schedule:
       interval: "weekly"
     groups:
