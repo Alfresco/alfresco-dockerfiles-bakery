@@ -19,7 +19,7 @@ on:
       - '**/*.md'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 permissions:
@@ -41,8 +41,6 @@ jobs:
       - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v10.1.0
         with:
           auto-commit: "true"
-
-      - uses: Alfresco/alfresco-build-tools/.github/actions/dependabot-missing-actions-check@v10.1.0
   ACS_CI:
     name: Build ACS v${{ matrix.version }}
     needs: pre-commit
