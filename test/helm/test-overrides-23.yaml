@@ -1,13 +1,1 @@
-dtas:
-  config:
-    assertions:
-      acs:
-        edition: Enterprise
-        version: 23.6.0
-        modules:
-          - id: alfresco-aos-module
-            version: 3.4.0
-            installed: true
-          - id: org.alfresco.integrations.google.docs
-            version: 4.1.0
-            installed: true
+# dtas versions should come from upstream chart
