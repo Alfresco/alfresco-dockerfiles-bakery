@@ -203,6 +203,7 @@ jobs:
             --values ./acs-deployment/helm/alfresco-content-services/${{ env.UPSTREAM_HELM_VALUES }} \
             --values ./acs-deployment/test/${{ matrix.edition == 'community' && 'community' || 'enterprise' }}-integration-test-values.yaml \
             --values test/helm/test-overrides.yaml \
+            --values test/helm/test-overrides-${{ matrix.arch }}.yaml \
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
 
       - name: Wait for deployments to be ready

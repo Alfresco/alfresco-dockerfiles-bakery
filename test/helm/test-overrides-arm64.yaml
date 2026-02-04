@@ -1,0 +1,5 @@
+alfresco-repository:
+  resources:
+    limits:
+      cpu: "2"
+      memory: "2.5Gi"
