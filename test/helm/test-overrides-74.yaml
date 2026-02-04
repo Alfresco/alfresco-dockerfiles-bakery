@@ -1,3 +1,20 @@
+# dtas versions could come from upstream chart but sometimes the versions we set
+# here are not the same of the upstream docker images
+dtas:
+  config:
+    assertions:
+      acs:
+        version: 7.4.2
+        modules:
+        - id: org_alfresco_device_sync_repo
+          version: 3.11.3
+          installed: true
+        - id: org.alfresco.integrations.google.docs
+          version: 3.4.2
+          installed: true
+        - id: alfresco-aos-module
+          version: 1.6.2
+          installed: true
 alfresco-search:
   enabled: true
 alfresco-search-enterprise:
