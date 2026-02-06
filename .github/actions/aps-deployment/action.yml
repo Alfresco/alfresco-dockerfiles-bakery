@@ -11,6 +11,6 @@ runs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: Alfresco/alfresco-process-services-deployment
-          ref: v3.0.1
+          ref: v3.1.0
           token: ${{ inputs.token }}
           path: aps-deployment

@@ -31,6 +31,12 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
   - [Fetch artifacts script](#fetch-artifacts-script)
+    - [Usage](#usage)
+    - [Arguments](#arguments)
+      - [Targets (optional)](#targets-optional)
+      - [Options](#options)
+    - [Examples](#examples)
+    - [Environment Variables](#environment-variables)
   - [Known issues](#known-issues)
   - [Release](#release)
 
@@ -251,6 +257,7 @@ Versions of artifacts being downloaded specific to the ACS version are defined
 in `artifacts-XX.yaml` files for each component.
 
 To build older version pass `ACS_VERSION` env to make command.
+
 - ACS 23  - `ACS_VERSION=23` - Will use `artifacts-23.yaml` files
 - ACS 7.4 - `ACS_VERSION=74` - Will use `artifacts-74.yaml` files
 
@@ -430,6 +437,7 @@ python3 scripts/fetch_artifacts.py [targets...] [options]
 ### Arguments
 
 #### Targets (optional)
+
 You can specify one or more targets:
 
 - **No arguments**: Processes the entire repository (only files matching
@@ -491,6 +499,8 @@ For authentication check out [nexus authentication](#nexus-authentication)
   and review the changes.
 - Review and manually update the `aps` images as they are not yet supported in updatecli workflow
 - Review and manually update the `adf` images as they are not yet supported in updatecli workflow
+- Merge all the eventual dependabot and updatecli PRs (for nginx and tomcat base
+  images)
 - Agree on a name for the release and make sure to add it to the release notes.
 
 Once everything has been merged to master, you can proceed to create a release with:
