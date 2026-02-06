@@ -13,7 +13,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-share-services:
     name: alfresco-share-services
-    version: 23.6.0.33
+    version: 23.6.1.2
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco
@@ -45,7 +45,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-content-services-distribution:
     name: alfresco-content-services-distribution
-    version: 23.6.0
+    version: 23.6.1
     path: repository/distribution
     classifier: ".zip"
     group: org.alfresco
