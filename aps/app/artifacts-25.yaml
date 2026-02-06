@@ -1,5 +1,6 @@
 ---
-# This file is not yet supported by the updatecli
+updatecli_self: aps/app/artifacts-25.yaml
+updatecli_matrix_version: current
 artifacts:
   alfresco-process-services-app:
     name: activiti-app
