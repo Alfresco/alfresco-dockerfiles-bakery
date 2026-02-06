@@ -1,5 +1,4 @@
 ---
-updatecli_matrix_file: supported-matrix-aps.yaml
 updatecli_self: aps/admin/artifacts-25.yaml
 updatecli_matrix_version: current
 artifacts:
