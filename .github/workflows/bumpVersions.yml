@@ -11,7 +11,7 @@ on:
       - .github/updatecli_amps.tpl
       - .github/updatecli_amps_values.yaml
     tags-ignore:
-      - **
+      - "**"
   workflow_dispatch:
     inputs:
       alfresco-updatecli-ref:
