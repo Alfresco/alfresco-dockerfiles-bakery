@@ -18,3 +18,4 @@ artifacts:
     repository: public
     path: aps/admin/libs
     checksum: "sha1:"
+aps_supported_matrix: supported-matrix-aps.yaml

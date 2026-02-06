@@ -63,7 +63,15 @@ jobs:
         run: |
           set -x
           find . -type f -name 'artifacts-*.yaml' | while read -r i; do
-             updatecli apply -c .github/updatecli.tpl      -v ${i} -v .github/updatecli_values.yaml -v alfresco-updatecli/deployments/values/supported-matrix.yaml
+
+            EXTRA_MATRIX_ARGS=""
+
+            if yq -e '.aps_supported_matrix' "${i}" > /dev/null; then
+              MATRIX_FILE=$(yq -r '.aps_supported_matrix' "${i}")
+              EXTRA_MATRIX_ARGS="-v alfresco-updatecli/deployments/values/${MATRIX_FILE}"
+            fi
+
+            updatecli apply -c .github/updatecli.tpl -v "${i}" -v .github/updatecli_values.yaml -v alfresco-updatecli/deployments/values/supported-matrix.yaml ${EXTRA_MATRIX_ARGS}
 
             if yq -e '.updatecli_amps_release_branch' ${i} > /dev/null; then
               updatecli apply -c .github/updatecli_amps.tpl -v ${i} -v .github/updatecli_amps_values.yaml
