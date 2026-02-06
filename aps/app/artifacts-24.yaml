@@ -1,4 +1,5 @@
 ---
+updatecli_matrix_file: supported-matrix-aps.yaml
 updatecli_self: aps/app/artifacts-24.yaml
 updatecli_matrix_version: 23.N
 artifacts:
@@ -18,4 +19,3 @@ artifacts:
     repository: public
     path: aps/app/libs
     checksum: "sha1:"
-aps_supported_matrix: supported-matrix-aps.yaml
