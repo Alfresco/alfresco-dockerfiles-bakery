@@ -4,7 +4,7 @@ updatecli_matrix_version: 23.N
 artifacts:
   alfresco-process-services-app:
     name: activiti-app
-    version: 24.5.0
+    version: 24.6.0
     classifier: ".war"
     group: com.activiti
     repository: activiti-enterprise-releases
