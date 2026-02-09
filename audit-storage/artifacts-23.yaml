@@ -1,5 +1,6 @@
 ---
 updatecli_self: audit-storage/artifacts-23.yaml
+updatecli_matrix_version: 23.N
 artifacts:
   alfresco-audit-storage-app:
     name: alfresco-audit-storage-app
@@ -8,4 +9,3 @@ artifacts:
     repository: enterprise-releases
     group: org.alfresco
     path: audit-storage
-updatecli_matrix_version: 23.N
