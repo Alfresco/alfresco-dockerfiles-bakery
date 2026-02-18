@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v12.10.3
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v14.1.1
 
   build:
     needs: pre-commit
@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v12.10.3
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v14.1.1
 
       - name: Restore packages artifacts
         uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
@@ -120,7 +120,7 @@ jobs:
 
       - name: Verify docker-compose
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v12.10.3
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v14.1.1
         timeout-minutes: 10
         with:
           postman_path: test/postman/docker-compose
@@ -130,7 +130,7 @@ jobs:
 
       - name: Save containers logs
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v12.10.3
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v14.1.1
         with:
           output-archive-name: compose-logs
 
@@ -149,7 +149,7 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
 
       - name: Setup KinD cluster
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v12.10.3
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v14.1.1
         with:
           ingress-nginx-ref: controller-v1.8.2
           metrics: "true"
@@ -193,7 +193,7 @@ jobs:
             --values test/helm/test-overrides-community.yaml
 
       - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v12.10.3
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v14.1.1
 
       - name: Run helm test
         id: helm_test
