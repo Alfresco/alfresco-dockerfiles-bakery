@@ -34,15 +34,15 @@ ACS_VERSION ?= 25
 APS_VERSION ?= 25
 TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
 
-ifeq ($(ACS_VERSION),26)
-  TOMCAT_FIELD := "tomcat11"
-  JAVA_MAJOR := 21
-else ifeq ($(filter $(ACS_VERSION),23 25),$(ACS_VERSION))
+ifeq ($(filter 7%,$(ACS_VERSION)),$(ACS_VERSION))
+  TOMCAT_FIELD := "tomcat9"
+  JAVA_MAJOR := 17
+else ifeq ($(filter 23% 25%,$(ACS_VERSION)),$(ACS_VERSION))
   TOMCAT_FIELD := "tomcat10"
   JAVA_MAJOR := 17
 else
-  TOMCAT_FIELD := "tomcat9"
-  JAVA_MAJOR := 17
+  TOMCAT_FIELD := "tomcat11"
+  JAVA_MAJOR := 21
 endif
 
 ifeq ($(shell yq --version),)
