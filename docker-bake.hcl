@@ -132,9 +132,7 @@ variable "IMAGE_BASE_LOCATION" {
   default = "docker.io/rockylinux/rockylinux:9"
 }
 
-variable "JAVA_MAJOR" {
-  default = "17"
-}
+variable "JAVA_MAJOR" { }
 
 variable "LIVEINDEXING" {
   default = "metadata"

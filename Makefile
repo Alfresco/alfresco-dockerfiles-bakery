@@ -34,10 +34,15 @@ ACS_VERSION ?= 25
 APS_VERSION ?= 25
 TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
 
-ifeq ($(filter $(ACS_VERSION),23 25),$(ACS_VERSION))
+ifeq ($(ACS_VERSION),26)
+  TOMCAT_FIELD := "tomcat11"
+  JAVA_MAJOR := 21
+else ifeq ($(filter $(ACS_VERSION),23 25),$(ACS_VERSION))
   TOMCAT_FIELD := "tomcat10"
+  JAVA_MAJOR := 17
 else
   TOMCAT_FIELD := "tomcat9"
+  JAVA_MAJOR := 17
 endif
 
 ifeq ($(shell yq --version),)
@@ -47,6 +52,7 @@ endif
 export TOMCAT_MAJOR := $(shell yq e '.${TOMCAT_FIELD}.major' $(TOMCAT_VERSIONS_FILE))
 export TOMCAT_VERSION := $(shell yq e '.${TOMCAT_FIELD}.version' $(TOMCAT_VERSIONS_FILE))
 export TOMCAT_SHA512 := $(shell yq e '.${TOMCAT_FIELD}.sha512' $(TOMCAT_VERSIONS_FILE))
+export JAVA_MAJOR
 
 setenv: auth
 ifdef BAKE_NO_CACHE
