@@ -113,7 +113,7 @@ jobs:
           '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ inputs.tag }}-\(.)"' >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
-      - name: Determine the tomcat version
+      - name: Determine the java/tomcat versions
         shell: bash
         env:
           TOMCAT_VERSIONS_FILE: "tomcat/tomcat_versions.yaml"
