@@ -32,27 +32,6 @@ help:
 
 ACS_VERSION ?= 74
 APS_VERSION ?= 25
-#TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
-#
-#ifeq ($(filter 7%,$(ACS_VERSION)),$(ACS_VERSION))
-#  TOMCAT_FIELD := "tomcat9"
-#  JAVA_MAJOR := 17
-#else ifeq ($(filter 23% 25%,$(ACS_VERSION)),$(ACS_VERSION))
-#  TOMCAT_FIELD := "tomcat10"
-#  JAVA_MAJOR := 17
-#else
-#  TOMCAT_FIELD := "tomcat11"
-#  JAVA_MAJOR := 21
-#endif
-#
-#ifeq ($(shell yq --version),)
-#  $(error "yq is not installed. Please install yq to use this Makefile.")
-#endif
-#
-#export TOMCAT_MAJOR := $(shell yq e '.${TOMCAT_FIELD}.major' $(TOMCAT_VERSIONS_FILE))
-#export TOMCAT_VERSION := $(shell yq e '.${TOMCAT_FIELD}.version' $(TOMCAT_VERSIONS_FILE))
-#export TOMCAT_SHA512 := $(shell yq e '.${TOMCAT_FIELD}.sha512' $(TOMCAT_VERSIONS_FILE))
-#export JAVA_MAJOR
 export ACS_VERSION
 
 setenv: auth
