@@ -1,6 +1,6 @@
 name: Bump tomcat versions
 
-{{ $tomcatMajors := list "10" "9" }}
+{{ $tomcatMajors := list "11" "10" "9" }}
 
 sources:
 {{ range $tomcatMajor := $tomcatMajors }}
@@ -38,24 +38,27 @@ conditions:
         verb: HEAD
 {{ end }}
 
+
 targets:
 {{ range $tomcatMajor := $tomcatMajors }}
-  tomcat{{ $tomcatMajor }}Config:
-    name: Update tomcat version in config
-    kind: yaml
+  tomcat{{ $tomcatMajor }}VersionHCL:
+    name: Update tomcat {{ $tomcatMajor }} version in docker-bake.hcl
+    kind: hcl
     scmid: github
     sourceid: tomcat{{ $tomcatMajor }}Version
     spec:
-      file: tomcat/tomcat_versions.yaml
-      key: '$.tomcat{{ $tomcatMajor }}.version'
-  tomcat{{ $tomcatMajor }}Checksum:
-    name: Update tomcat checksum in config
-    kind: yaml
+      file: docker-bake.hcl
+      # variable "TOMCAT_VERSIONS" { default = { tomcatXX = { version = "..."} } }
+      path: variable.TOMCAT_VERSIONS.default.tomcat{{ $tomcatMajor }}.version
+
+  tomcat{{ $tomcatMajor }}ShaHCL:
+    name: Update tomcat {{ $tomcatMajor }} sha512 in docker-bake.hcl
+    kind: hcl
     scmid: github
     sourceid: tomcat{{ $tomcatMajor }}Checksum
     spec:
-      file: tomcat/tomcat_versions.yaml
-      key: '$.tomcat{{ $tomcatMajor }}.sha512'
+      file: docker-bake.hcl
+      path: variable.TOMCAT_VERSIONS.default.tomcat{{ $tomcatMajor }}.sha512
 {{ end }}
 
 actions:

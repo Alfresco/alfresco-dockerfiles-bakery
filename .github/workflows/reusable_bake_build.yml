@@ -113,20 +113,6 @@ jobs:
           '\(.).cache-to=type=registry,ref=${{ env.CACHE_TARGET }}:${{ inputs.tag }}-\(.)"' >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
-      - name: Determine the tomcat version
-        shell: bash
-        env:
-          TOMCAT_VERSIONS_FILE: "tomcat/tomcat_versions.yaml"
-        run: |
-          if [[ ${{ inputs.version }} == 7* ]]; then
-            tomcat_field="tomcat9"
-          else
-            tomcat_field="tomcat10"
-          fi
-          echo "TOMCAT_MAJOR=$(yq e ".${tomcat_field}.major" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
-          echo "TOMCAT_VERSION=$(yq e ".${tomcat_field}.version" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
-          echo "TOMCAT_SHA512=$(yq e ".${tomcat_field}.sha512"  ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
-
       - name: Bake Docker images
         env:
           ACS_VERSION: ${{ inputs.version }}

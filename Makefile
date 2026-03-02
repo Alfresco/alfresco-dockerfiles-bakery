@@ -32,21 +32,7 @@ help:
 
 ACS_VERSION ?= 25
 APS_VERSION ?= 25
-TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
-
-ifeq ($(filter $(ACS_VERSION),23 25),$(ACS_VERSION))
-  TOMCAT_FIELD := "tomcat10"
-else
-  TOMCAT_FIELD := "tomcat9"
-endif
-
-ifeq ($(shell yq --version),)
-  $(error "yq is not installed. Please install yq to use this Makefile.")
-endif
-
-export TOMCAT_MAJOR := $(shell yq e '.${TOMCAT_FIELD}.major' $(TOMCAT_VERSIONS_FILE))
-export TOMCAT_VERSION := $(shell yq e '.${TOMCAT_FIELD}.version' $(TOMCAT_VERSIONS_FILE))
-export TOMCAT_SHA512 := $(shell yq e '.${TOMCAT_FIELD}.sha512' $(TOMCAT_VERSIONS_FILE))
+export ACS_VERSION
 
 setenv: auth
 ifdef BAKE_NO_CACHE
@@ -170,10 +156,6 @@ adf_apps: docker-bake.hcl prepare_adf setenv
 
 aps: docker-bake.hcl prepare_aps setenv
 	@echo "Building Alfresco Process Services images"
-	@if [ "${TOMCAT_MAJOR}" != "10" ]; then \
-		echo "ERROR: APS target requires Tomcat 10, but Tomcat ${TOMCAT_MAJOR} is configured"; \
-		exit 1; \
-	fi
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
