@@ -32,3 +32,4 @@ alfresco-updatecli
 .vagrant
 .venv
 venv
+mise.toml

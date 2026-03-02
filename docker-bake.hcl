@@ -132,8 +132,6 @@ variable "IMAGE_BASE_LOCATION" {
   default = "docker.io/rockylinux/rockylinux:9"
 }
 
-variable "JAVA_MAJOR" { }
-
 variable "LIVEINDEXING" {
   default = "metadata"
 }
@@ -146,7 +144,61 @@ variable "ALFRESCO_GROUP_NAME" {
   default = "alfresco"
 }
 
-variable "ACS_VERSION" {
+variable "ACS_VERSION" {}
+
+function "select_java_version" {
+  params = [acs_version]
+
+  # Map ACS versions to the desired Java major.
+  # - regex() raises an error if there's no match
+  # - can(expr) converts that error into false
+  result = (
+    can(regex("^7", acs_version)) ? "17" :
+    can(regex("^(23|25)", acs_version)) ? "17" :
+    "21"
+  )
+}
+
+variable "JAVA_MAJOR" {
+  default = select_java_version(ACS_VERSION)
+}
+
+variable "TOMCAT_VERSIONS" {
+  default = {
+    tomcat9 = {
+      major   = 9
+      version = "9.0.115"
+      sha512  = "8e6fa92883c161523269560a7dc9e8d58fd1199b29c630f681aa3ec2975b59d94674d2881331076b55f5ee0439748931d87c099c79d7bcea909303739e612e4b"
+    }
+
+    tomcat10 = {
+      major   = 10
+      version = "10.1.52"
+      sha512  = "241183fe5dec15936205ec495b65e04218117affc10e90c5fbc56bce0b4f031ee944d468c128f0ae484fd1d5bd9bec22b65a95a8cfd94cb7fc1f12c7ef434d99"
+    }
+
+    tomcat11 = {
+      major   = 11
+      version = "11.0.18"
+      sha512  = "e428203454e57962296e6e95705e46a1406d15569f67ea0cbd417f38fcad85e81de6fa1be62cfa660ec746312aefb87c39127eef7348e6f78cb57e9afb862ed4"
+    }
+  }
+}
+
+function "select_tomcat_field" {
+  params = [acs_version]
+
+  # Decide the tomcat* key based on the ACS version prefix.
+  # - Use can(regex(...)) because regex() errors on no match.
+  result = (
+    can(regex("^7", acs_version)) ? "tomcat9" :
+    can(regex("^(23|25)", acs_version)) ? "tomcat10" :
+    "tomcat11"
+  )
+}
+
+variable "TOMCAT_FIELD" {
+  default = select_tomcat_field(ACS_VERSION)
 }
 
 function "exclude_if_version" {
@@ -191,9 +243,15 @@ target "java_base" {
 }
 
 # Tomcat variables are set by makefile using tomcat/tomcat_versions.yaml
-variable "TOMCAT_MAJOR" {}
-variable "TOMCAT_VERSION" {}
-variable "TOMCAT_SHA512" {}
+variable "TOMCAT_MAJOR" {
+  default = TOMCAT_VERSIONS[TOMCAT_FIELD].major
+}
+variable "TOMCAT_VERSION" {
+  default = TOMCAT_VERSIONS[TOMCAT_FIELD].version
+}
+variable "TOMCAT_SHA512" {
+  default = TOMCAT_VERSIONS[TOMCAT_FIELD].sha512
+}
 
 variable "TCNATIVE_VERSION" {
   default = "2.0.12"

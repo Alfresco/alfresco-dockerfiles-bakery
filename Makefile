@@ -30,29 +30,30 @@ help:
 	@echo "  clean_caches        Clean up Docker and artifact caches"
 	@echo "  help                Display this help message"
 
-ACS_VERSION ?= 25
+ACS_VERSION ?= 74
 APS_VERSION ?= 25
-TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
-
-ifeq ($(filter 7%,$(ACS_VERSION)),$(ACS_VERSION))
-  TOMCAT_FIELD := "tomcat9"
-  JAVA_MAJOR := 17
-else ifeq ($(filter 23% 25%,$(ACS_VERSION)),$(ACS_VERSION))
-  TOMCAT_FIELD := "tomcat10"
-  JAVA_MAJOR := 17
-else
-  TOMCAT_FIELD := "tomcat11"
-  JAVA_MAJOR := 21
-endif
-
-ifeq ($(shell yq --version),)
-  $(error "yq is not installed. Please install yq to use this Makefile.")
-endif
-
-export TOMCAT_MAJOR := $(shell yq e '.${TOMCAT_FIELD}.major' $(TOMCAT_VERSIONS_FILE))
-export TOMCAT_VERSION := $(shell yq e '.${TOMCAT_FIELD}.version' $(TOMCAT_VERSIONS_FILE))
-export TOMCAT_SHA512 := $(shell yq e '.${TOMCAT_FIELD}.sha512' $(TOMCAT_VERSIONS_FILE))
-export JAVA_MAJOR
+#TOMCAT_VERSIONS_FILE := tomcat/tomcat_versions.yaml
+#
+#ifeq ($(filter 7%,$(ACS_VERSION)),$(ACS_VERSION))
+#  TOMCAT_FIELD := "tomcat9"
+#  JAVA_MAJOR := 17
+#else ifeq ($(filter 23% 25%,$(ACS_VERSION)),$(ACS_VERSION))
+#  TOMCAT_FIELD := "tomcat10"
+#  JAVA_MAJOR := 17
+#else
+#  TOMCAT_FIELD := "tomcat11"
+#  JAVA_MAJOR := 21
+#endif
+#
+#ifeq ($(shell yq --version),)
+#  $(error "yq is not installed. Please install yq to use this Makefile.")
+#endif
+#
+#export TOMCAT_MAJOR := $(shell yq e '.${TOMCAT_FIELD}.major' $(TOMCAT_VERSIONS_FILE))
+#export TOMCAT_VERSION := $(shell yq e '.${TOMCAT_FIELD}.version' $(TOMCAT_VERSIONS_FILE))
+#export TOMCAT_SHA512 := $(shell yq e '.${TOMCAT_FIELD}.sha512' $(TOMCAT_VERSIONS_FILE))
+#export JAVA_MAJOR
+export ACS_VERSION
 
 setenv: auth
 ifdef BAKE_NO_CACHE
@@ -161,17 +162,17 @@ all: docker-bake.hcl prepare setenv
 
 enterprise: docker-bake.hcl prepare setenv
 	@echo "Building all Enterprise images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 community: docker-bake.hcl prepare setenv
 	@echo "Building all Community images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 adf_apps: docker-bake.hcl prepare_adf setenv
 	@echo "Building ADF App images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 aps: docker-bake.hcl prepare_aps setenv
@@ -180,27 +181,27 @@ aps: docker-bake.hcl prepare_aps setenv
 		echo "ERROR: APS target requires Tomcat 10, but Tomcat ${TOMCAT_MAJOR} is configured"; \
 		exit 1; \
 	fi
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 ats: docker-bake.hcl tengines prepare_ats prepare_tengines setenv
 	@echo "Building Transform Service images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 audit_storage: docker-bake.hcl prepare_audit_storage setenv
 	@echo "Building Audit Storage images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 connectors: docker-bake.hcl prepare_connectors setenv
 	@echo "Building Connector images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 hxinsight_connector: docker-bake.hcl prepare_hxinsight_connector setenv
 	@echo "Building HxInsight Connector components"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 repo: docker-bake.hcl prepare_repo setenv
@@ -210,27 +211,27 @@ repo: docker-bake.hcl prepare_repo setenv
 
 search_enterprise: docker-bake.hcl prepare_search_enterprise setenv
 	@echo "Building Search Enterprise images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 search_service: docker-bake.hcl prepare_search_service setenv
 	@echo "Building Search Service images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 share: docker-bake.hcl prepare_share setenv
 	@echo "Building Share images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 sync: docker-bake.hcl prepare_sync setenv
 	@echo "Building Sync Service images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 tengines: docker-bake.hcl prepare_tengines setenv
 	@echo "Building Transform Engine images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@ --print
 	$(call grype_scan,$@)
 
 GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix
