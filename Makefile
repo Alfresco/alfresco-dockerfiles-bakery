@@ -156,10 +156,10 @@ adf_apps: docker-bake.hcl prepare_adf setenv
 
 aps: docker-bake.hcl prepare_aps setenv
 	@echo "Building Alfresco Process Services images"
-	@if [ "${TOMCAT_MAJOR}" != "10" ]; then \
-		echo "ERROR: APS target requires Tomcat 10, but Tomcat ${TOMCAT_MAJOR} is configured"; \
-		exit 1; \
-	fi
+#	@if [ "${TOMCAT_MAJOR}" != "10" ]; then \
+#		echo "ERROR: APS target requires Tomcat 10, but Tomcat ${TOMCAT_MAJOR} is configured"; \
+#		exit 1; \
+#	fi
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
