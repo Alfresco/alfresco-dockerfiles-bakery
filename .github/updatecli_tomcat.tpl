@@ -82,7 +82,7 @@ scms:
     spec:
       owner: Alfresco
       repository: alfresco-dockerfiles-bakery
-      branch: main
+      branch: OPSEXP-3878-fix-updatecli
       token: {{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}
       username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
       user: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
