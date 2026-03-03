@@ -50,7 +50,7 @@ targets:
     sourceid: {{ $versionSource }}
     spec:
       file: docker-bake.hcl
-      matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[^}]*version\s*=\s*")[^"]+(")'
+      matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[\s\S]*?version\s*=\s*")[^"]+(")'
       replacepattern: '${1}{{ source $versionSource }}${2}'
 
   tomcat{{ $tomcatMajor }}ShaHCL:
@@ -60,7 +60,7 @@ targets:
     sourceid: {{ $checksumSource }}
     spec:
       file: docker-bake.hcl
-      matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[^}]*sha512\s*=\s*")[^"]+(")'
+      matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[\s\S]*?sha512\s*=\s*")[^"]+(")'
       replacepattern: '${1}{{ source $checksumSource }}${2}'
 
 {{ end }}
