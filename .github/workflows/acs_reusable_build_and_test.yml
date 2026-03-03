@@ -187,6 +187,9 @@ jobs:
           case "${{ matrix.edition }}" in
             enterprise)
               echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
+              ;;\
+            25)
+              echo "UPSTREAM_HELM_VALUES=25.N_values.yaml" >> $GITHUB_ENV
               ;;
             23)
               echo "UPSTREAM_HELM_VALUES=23.N_values.yaml" >> $GITHUB_ENV
