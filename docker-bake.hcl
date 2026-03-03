@@ -167,7 +167,7 @@ variable "TOMCAT_VERSIONS" {
   default = {
     tomcat9 = {
       major   = 9
-      version = "9.0.115"
+      version = "9.0.114"
       sha512  = "8e6fa92883c161523269560a7dc9e8d58fd1199b29c630f681aa3ec2975b59d94674d2881331076b55f5ee0439748931d87c099c79d7bcea909303739e612e4b"
     }
 
