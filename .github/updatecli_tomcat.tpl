@@ -49,7 +49,7 @@ targets:
     spec:
       file: docker-bake.hcl
       # variable "TOMCAT_VERSIONS" { default = { tomcatXX = { version = "..."} } }
-      path: variable.TOMCAT_VERSIONS.default.tomcat{{ $tomcatMajor }}.version
+      path: variable.TOMCAT_VERSIONS.0.default.tomcat{{ $tomcatMajor }}.version
 
   tomcat{{ $tomcatMajor }}ShaHCL:
     name: Update tomcat {{ $tomcatMajor }} sha512 in docker-bake.hcl
@@ -58,7 +58,7 @@ targets:
     sourceid: tomcat{{ $tomcatMajor }}Checksum
     spec:
       file: docker-bake.hcl
-      path: variable.TOMCAT_VERSIONS.default.tomcat{{ $tomcatMajor }}.sha512
+      path: variable.TOMCAT_VERSIONS.0.default.tomcat{{ $tomcatMajor }}.sha512
 {{ end }}
 
 actions:
