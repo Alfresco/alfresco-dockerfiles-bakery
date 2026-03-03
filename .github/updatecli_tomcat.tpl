@@ -49,7 +49,7 @@ targets:
     spec:
       file: docker-bake.hcl
       matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[^}]*version\s*=\s*")[^"]+(")'
-      replacepattern: '${1}{{ source "tomcat{{ $tomcatMajor }}Version" }}${2}'
+      replacepattern: '${1}{{ .Source }}${2}'
 
   tomcat{{ $tomcatMajor }}ShaHCL:
     name: Update tomcat {{ $tomcatMajor }} sha512 in docker-bake.hcl
@@ -59,7 +59,7 @@ targets:
     spec:
       file: docker-bake.hcl
       matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[^}]*sha512\s*=\s*")[^"]+(")'
-      replacepattern: '${1}{{ source "tomcat{{ $tomcatMajor }}Checksum" }}${2}'
+      replacepattern: '${1}{{ .Source }}${2}'
 
 {{ end }}
 
