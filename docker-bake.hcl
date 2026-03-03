@@ -167,7 +167,7 @@ variable "TOMCAT_VERSIONS" {
   default = {
     tomcat9 = {
       major   = 9
-      version = "9.0.114"
+      version = "9.0.115"
       sha512  = "8e6fa92883c161523269560a7dc9e8d58fd1199b29c630f681aa3ec2975b59d94674d2881331076b55f5ee0439748931d87c099c79d7bcea909303739e612e4b"
     }
 
@@ -180,7 +180,7 @@ variable "TOMCAT_VERSIONS" {
     tomcat11 = {
       major   = 11
       version = "11.0.18"
-      sha512  = "123"
+      sha512  = "e428203454e57962296e6e95705e46a1406d15569f67ea0cbd417f38fcad85e81de6fa1be62cfa660ec746312aefb87c39127eef7348e6f78cb57e9afb862ed4"
     }
   }
 }
