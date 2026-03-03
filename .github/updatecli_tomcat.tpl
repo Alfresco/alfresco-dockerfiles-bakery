@@ -38,27 +38,31 @@ conditions:
         verb: HEAD
 {{ end }}
 
-
 targets:
 {{ range $tomcatMajor := $tomcatMajors }}
+  {{ $versionSource := printf "tomcat%sVersion" $tomcatMajor }}
+  {{ $checksumSource := printf "tomcat%sChecksum" $tomcatMajor }}
+
   tomcat{{ $tomcatMajor }}VersionHCL:
     name: Update tomcat {{ $tomcatMajor }} version in docker-bake.hcl
-    kind: hcl
+    kind: file
     scmid: github
-    sourceid: tomcat{{ $tomcatMajor }}Version
+    sourceid: {{ $versionSource }}
     spec:
       file: docker-bake.hcl
-      # variable "TOMCAT_VERSIONS" { default = { tomcatXX = { version = "..."} } }
-      path: variable.TOMCAT_VERSIONS.default.tomcat{{ $tomcatMajor }}.version
+      matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[\s\S]*?version\s*=\s*")[^"]+(")'
+      replacepattern: '${1}{{ source $versionSource }}${2}'
 
   tomcat{{ $tomcatMajor }}ShaHCL:
     name: Update tomcat {{ $tomcatMajor }} sha512 in docker-bake.hcl
-    kind: hcl
+    kind: file
     scmid: github
-    sourceid: tomcat{{ $tomcatMajor }}Checksum
+    sourceid: {{ $checksumSource }}
     spec:
       file: docker-bake.hcl
-      path: variable.TOMCAT_VERSIONS.default.tomcat{{ $tomcatMajor }}.sha512
+      matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[\s\S]*?sha512\s*=\s*")[^"]+(")'
+      replacepattern: '${1}{{ source $checksumSource }}${2}'
+
 {{ end }}
 
 actions:
