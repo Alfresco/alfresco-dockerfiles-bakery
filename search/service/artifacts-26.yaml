@@ -1,6 +1,6 @@
 ---
-updatecli_self: search/service/artifacts-25.yaml
-updatecli_matrix_version: 25.N
+updatecli_self: search/service/artifacts-26.yaml
+updatecli_matrix_version: current
 artifacts:
   alfresco-search-services:
     name: alfresco-search-services

@@ -1,6 +1,6 @@
 ---
-updatecli_self: tengine/tika/artifacts-25.yaml
-updatecli_matrix_version: 25.N
+updatecli_self: tengine/tika/artifacts-26.yaml
+updatecli_matrix_version: current
 artifacts:
   alfresco-transform-tika:
     name: alfresco-transform-tika

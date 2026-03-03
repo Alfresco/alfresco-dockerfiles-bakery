@@ -1,6 +1,6 @@
 ---
-updatecli_self: tengine/libreoffice/artifacts-25.yaml
-updatecli_matrix_version: 25.N
+updatecli_self: tengine/libreoffice/artifacts-26.yaml
+updatecli_matrix_version: current
 artifacts:
   libreoffice-dist:
     name: libreoffice-dist
