@@ -40,26 +40,28 @@ conditions:
 
 targets:
 {{ range $tomcatMajor := $tomcatMajors }}
+  {{ $versionSource := printf "tomcat%sVersion" $tomcatMajor }}
+  {{ $checksumSource := printf "tomcat%sChecksum" $tomcatMajor }}
 
   tomcat{{ $tomcatMajor }}VersionHCL:
     name: Update tomcat {{ $tomcatMajor }} version in docker-bake.hcl
     kind: file
     scmid: github
-    sourceid: tomcat{{ $tomcatMajor }}Version
+    sourceid: {{ $versionSource }}
     spec:
       file: docker-bake.hcl
       matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[^}]*version\s*=\s*")[^"]+(")'
-      replacepattern: '${1}{{ source }}${2}'
+      replacepattern: '${1}{{ source $versionSource }}${2}'
 
   tomcat{{ $tomcatMajor }}ShaHCL:
     name: Update tomcat {{ $tomcatMajor }} sha512 in docker-bake.hcl
     kind: file
     scmid: github
-    sourceid: tomcat{{ $tomcatMajor }}Checksum
+    sourceid: {{ $checksumSource }}
     spec:
       file: docker-bake.hcl
       matchpattern: '(tomcat{{ $tomcatMajor }}\s*=\s*{[^}]*sha512\s*=\s*")[^"]+(")'
-      replacepattern: '${1}{{ source }}${2}'
+      replacepattern: '${1}{{ source $checksumSource }}${2}'
 
 {{ end }}
 
