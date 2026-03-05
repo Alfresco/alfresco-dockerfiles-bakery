@@ -192,6 +192,9 @@ jobs:
             enterprise)
               echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
               ;;\
+            26)
+              echo "UPSTREAM_HELM_VALUES=pre-release_values.yaml" >> $GITHUB_ENV
+              ;;
             25)
               echo "UPSTREAM_HELM_VALUES=25.N_values.yaml" >> $GITHUB_ENV
               ;;
