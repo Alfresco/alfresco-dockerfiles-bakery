@@ -39,12 +39,12 @@ jobs:
         run: |
           case "${{ inputs.acs_version }}" in
             26)
-              echo 'compose_matrix_json={"edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
-              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
+              echo 'compose_matrix_json={"edition": ["enterprise", "community", "26"]}' >> $GITHUB_OUTPUT
+              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community", "26"]}' >> $GITHUB_OUTPUT
               ;;
             25)
-              echo 'compose_matrix_json={"edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
-              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
+              echo 'compose_matrix_json={"edition": ["enterprise", "community", "25"]}' >> $GITHUB_OUTPUT
+              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community", "25"]}' >> $GITHUB_OUTPUT
               ;;
             23)
               echo 'compose_matrix_json={"edition": ["23"]}' >> $GITHUB_OUTPUT
@@ -89,6 +89,10 @@ jobs:
         run: |
           case "${{ matrix.edition }}" in
             enterprise)
+              echo "UPSTREAM_COMPOSE_PATH=compose.yaml" >> $GITHUB_ENV
+              echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
+              ;;
+            26)
               echo "UPSTREAM_COMPOSE_PATH=compose.yaml" >> $GITHUB_ENV
               echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
               ;;
@@ -191,7 +195,7 @@ jobs:
           case "${{ matrix.edition }}" in
             enterprise)
               echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
-              ;;\
+              ;;
             26)
               echo "UPSTREAM_HELM_VALUES=pre-release_values.yaml" >> $GITHUB_ENV
               ;;
