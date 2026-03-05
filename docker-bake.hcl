@@ -154,7 +154,7 @@ function "select_java_version" {
   # - can(expr) converts that error into false
   result = (
     can(regex("^7", acs_version)) ? "17" :
-    can(regex("^(23|25|26)", acs_version)) ? "17" :
+    can(regex("^(23|25)", acs_version)) ? "17" :
     "21"
   )
 }
@@ -192,7 +192,7 @@ function "select_tomcat_field" {
   # - Use can(regex(...)) because regex() errors on no match.
   result = (
     can(regex("^7", acs_version)) ? "tomcat9" :
-    can(regex("^(23|25|26)", acs_version)) ? "tomcat10" :
+    can(regex("^(23|25)", acs_version)) ? "tomcat10" :
     "tomcat11"
   )
 }
