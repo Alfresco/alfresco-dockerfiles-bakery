@@ -92,10 +92,6 @@ jobs:
               echo "UPSTREAM_COMPOSE_PATH=compose.yaml" >> $GITHUB_ENV
               echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
               ;;
-            25)
-              echo "UPSTREAM_COMPOSE_PATH=25.N-compose.yaml" >> $GITHUB_ENV
-              echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
-              ;;
             23)
               echo "UPSTREAM_COMPOSE_PATH=23.N-compose.yaml" >> $GITHUB_ENV
               echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
