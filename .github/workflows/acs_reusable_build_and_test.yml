@@ -92,8 +92,8 @@ jobs:
               echo "UPSTREAM_COMPOSE_PATH=compose.yaml" >> $GITHUB_ENV
               echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
               ;;
-            26)
-              echo "UPSTREAM_COMPOSE_PATH=compose.yaml" >> $GITHUB_ENV
+            25)
+              echo "UPSTREAM_COMPOSE_PATH=25.N-compose.yaml" >> $GITHUB_ENV
               echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
               ;;
             23)
@@ -188,26 +188,24 @@ jobs:
       - name: Set path to compose files
         id: set-helm-values
         run: |
-          case "${{ matrix.edition }}" in
-            enterprise)
-              echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
-              ;;
-            25)
-              echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
-              ;;
-            26)
-              echo "UPSTREAM_HELM_VALUES=pre-release_values.yaml" >> $GITHUB_ENV
-              ;;
-            23)
-              echo "UPSTREAM_HELM_VALUES=23.N_values.yaml" >> $GITHUB_ENV
-              ;;
-            74)
-              echo "UPSTREAM_HELM_VALUES=7.4.N_values.yaml" >> $GITHUB_ENV
-              ;;
-            community)
-              echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
-              ;;
-          esac
+          if [ "${{ inputs.acs_version }}" = "26" ]; then
+            echo "UPSTREAM_HELM_VALUES=pre-release_values.yaml" >> $GITHUB_ENV
+          else
+            case "${{ matrix.edition }}" in
+              enterprise)
+                echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
+                ;;
+              23)
+                echo "UPSTREAM_HELM_VALUES=23.N_values.yaml" >> $GITHUB_ENV
+                ;;
+              74)
+                echo "UPSTREAM_HELM_VALUES=7.4.N_values.yaml" >> $GITHUB_ENV
+                ;;
+              community)
+                echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
+                ;;
+            esac
+          fi
 
       - name: Helm install
         id: helm_install
