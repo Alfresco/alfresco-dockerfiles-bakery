@@ -43,8 +43,8 @@ jobs:
               echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
               ;;
             25)
-              echo 'compose_matrix_json={"edition": ["25"]}' >> $GITHUB_OUTPUT
-              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["25"]}' >> $GITHUB_OUTPUT
+              echo 'compose_matrix_json={"edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
+              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
               ;;
             23)
               echo 'compose_matrix_json={"edition": ["23"]}' >> $GITHUB_OUTPUT
@@ -93,7 +93,7 @@ jobs:
               echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
               ;;
             25)
-              echo "UPSTREAM_COMPOSE_PATH=25.N-compose.yaml" >> $GITHUB_ENV
+              echo "UPSTREAM_COMPOSE_PATH=compose.yaml" >> $GITHUB_ENV
               echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
               ;;
             23)
