@@ -10,7 +10,7 @@ dtas:
     assertions:
       acs:
         edition: Community
-        version: 26.1.0-A.11
+        version: 26.1.0
         modules:
           - id: alfresco-aos-module
             version: 3.4.1
