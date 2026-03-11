@@ -184,39 +184,33 @@ jobs:
       - name: Set path to compose files
         id: set-helm-values
         run: |
-          if [ "${{ inputs.acs_version }}" = "26" ]; then
-            case "${{ matrix.edition }}" in
-              community)
-                echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
-                ;;
-              enterprise)
-                echo "UPSTREAM_HELM_VALUES=pre-release_values.yaml" >> $GITHUB_ENV
-                ;;
-            esac
-          else
-            case "${{ matrix.edition }}" in
-              enterprise)
-                echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
-                ;;
-              23)
-                echo "UPSTREAM_HELM_VALUES=23.N_values.yaml" >> $GITHUB_ENV
-                ;;
-              74)
-                echo "UPSTREAM_HELM_VALUES=7.4.N_values.yaml" >> $GITHUB_ENV
-                ;;
-              community)
-                echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
-                ;;
-            esac
-          fi
+          case "${{ matrix.edition }}" in
+            enterprise)
+              echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
+              ;;
+            25)
+              echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
+              ;;
+            23)
+              echo "UPSTREAM_HELM_VALUES=23.N_values.yaml" >> $GITHUB_ENV
+              ;;
+            74)
+              echo "UPSTREAM_HELM_VALUES=7.4.N_values.yaml" >> $GITHUB_ENV
+              ;;
+            community)
+              echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
+              ;;
+          esac
 
       - name: Helm install
         id: helm_install
         run: |
-          # Build additional values files based on version and edition
+          # Temporary logic for ACS 26 pre-release.Remove this once ACS 26 GA is released.
           ADDITIONAL_VALUES=""
           if [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "community" ]; then
             ADDITIONAL_VALUES="--values test/helm/test-overrides-v26-community.yaml"
+          elif [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "enterprise" ]; then
+            UPSTREAM_HELM_VALUES="pre-release_values.yaml"
           fi
 
           helm install acs ./acs-deployment/helm/alfresco-content-services \

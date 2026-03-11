@@ -1,5 +1,5 @@
 ---
-updatecli_self: ats/trouter/artifacts-25.yaml
+updatecli_self: ats/trouter/artifacts-26.yaml
 updatecli_matrix_version: current
 artifacts:
   alfresco-transform-router:
