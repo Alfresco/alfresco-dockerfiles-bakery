@@ -241,8 +241,7 @@ jobs:
         with:
           wait-resource: "jobs"
           wait-condition: "complete"
-      - name: Print ConfigMap
-        run: kubectl describe configmap acs-alfresco-opts
+
       - name: Run helm test
         id: helm_test
         env:
