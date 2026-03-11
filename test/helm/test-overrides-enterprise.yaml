@@ -1,5 +1,10 @@
 # dtas versions could come from upstream chart but sometimes the versions we set
 # here are not the same of the upstream docker images
+audit-storage:
+  messageBroker:
+    url: failover:(tcp://activemq:61616)
+    username: admin
+    password: admin
 dtas:
   config:
     assertions:
