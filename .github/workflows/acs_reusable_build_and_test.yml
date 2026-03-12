@@ -258,73 +258,46 @@ jobs:
       - name: debug ActiveMQ connectivity from audit-storage perspective
         if: always()
         run: |
-          echo "=== ActiveMQ Connectivity Diagnostics ==="
+          echo "=== Audit Storage + ActiveMQ Diagnostics ==="
 
-          echo "1. Checking Camel ActiveMQ components in audit-storage image"
-          kubectl run jar-check \
-            --restart=Never \
-            --image=quay.io/alfresco/alfresco-audit-storage:1.3.0 \
-            --command -- sh -c "
-              echo 'Analyzing JAR contents for ActiveMQ dependencies:';
-              echo '--- Camel ActiveMQ components ---';
-              jar tf /opt/app.jar | grep -E 'camel.*activemq|activemq.*camel' | head -10 || echo '❌ No Camel-ActiveMQ integration found';
-              echo '--- General ActiveMQ classes ---';
-              jar tf /opt/app.jar | grep -i activemq | head -10 || echo '❌ No ActiveMQ classes found';
-              echo '--- Camel core components ---';
-              jar tf /opt/app.jar | grep -E 'camel.core|camel.spring' | head -5 || echo '❌ No Camel core found';
-            "
+          # Find the actual audit-storage pod deployed by Helm
+          AUDIT_POD=$(kubectl get pods -l app.kubernetes.io/component=alfresco-audit-storage -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
 
-          # Wait for pod completion, not readiness (these are job-like pods)
-          kubectl wait --for=condition=Complete pod/jar-check --timeout=180s || {
-            echo "jar-check pod failed or timed out. Pod status:";
-            kubectl describe pod jar-check 2>/dev/null || echo "Failed to describe jar-check pod";
-          }
+          if [ -n "$AUDIT_POD" ]; then
+            echo "1. Found audit-storage pod: $AUDIT_POD"
 
-          echo "JAR analysis results:"
-          kubectl logs jar-check 2>/dev/null || echo "Failed to get jar-check logs"
-          kubectl delete pod jar-check --ignore-not-found
+            echo "1a. Pod status and events:"
+            kubectl describe pod $AUDIT_POD | head -50
 
-          echo "2. Testing ActiveMQ service connectivity"
+            echo "1b. Recent logs from audit-storage pod:"
+            kubectl logs $AUDIT_POD --tail=50 2>/dev/null || echo "Failed to get audit-storage logs"
 
-          # Test web console (HTTP)
-          kubectl run amq-web-test \
-            --restart=Never \
-            --image=curlimages/curl \
-            --command -- sh -c "
-              echo 'Testing ActiveMQ web console at http://activemq:8161';
-              curl -u admin:admin --connect-timeout 10 --max-time 15 http://activemq:8161/admin/ || echo '❌ Web console test failed';
-            "
+            echo "1c. Checking JAR contents in deployed audit-storage pod for Camel ActiveMQ:"
+            kubectl exec $AUDIT_POD -- sh -c "
+              echo 'Searching for ActiveMQ/Camel dependencies in deployed JAR:';
+              jar tf /opt/app.jar | grep -i activemq | head -20 || echo '❌ No ActiveMQ classes found in JAR';
+              echo '--- Checking for Camel core components ---';
+              jar tf /opt/app.jar | grep -E 'camel.*core|org/apache/camel' | head -5 || echo '❌ No Camel core found';
+            " 2>/dev/null || echo "❌ Failed to exec into audit-storage pod (pod may not be running)"
 
-          kubectl wait --for=condition=Complete pod/amq-web-test --timeout=60s || {
-            echo "amq-web-test pod failed or timed out. Pod status:";
-            kubectl describe pod amq-web-test 2>/dev/null || echo "Failed to describe amq-web-test pod";
-          }
+          else
+            echo "❌ No audit-storage pod found. Looking for any alfresco-audit-storage related pods:"
+            kubectl get pods | grep -i audit || echo "No audit-related pods found"
+          fi
 
-          echo "Web console test results:"
-          kubectl logs amq-web-test 2>/dev/null || echo "Failed to get amq-web-test logs"
-          kubectl delete pod amq-web-test --ignore-not-found
+          echo "2. Checking ActiveMQ service and connectivity"
 
-          # Test messaging port (TCP)
-          kubectl run amq-tcp-test \
-            --restart=Never \
-            --image=busybox:1.35 \
-            --command -- sh -c "
-              echo 'Testing ActiveMQ messaging port at activemq:61616';
-              nc -zv activemq 61616 && echo '✅ ActiveMQ messaging port reachable' || echo '❌ ActiveMQ messaging port unreachable';
-            "
-
-          kubectl wait --for=condition=Complete pod/amq-tcp-test --timeout=30s || {
-            echo "amq-tcp-test pod failed or timed out. Pod status:";
-            kubectl describe pod amq-tcp-test 2>/dev/null || echo "Failed to describe amq-tcp-test pod";
-          }
-
-          echo "Messaging port test results:"
-          kubectl logs amq-tcp-test 2>/dev/null || echo "Failed to get amq-tcp-test logs"
-          kubectl delete pod amq-tcp-test --ignore-not-found
-
-          echo "3. Checking ActiveMQ service status in cluster"
+          echo "2a. ActiveMQ service status:"
           kubectl get services | grep activemq || echo "❌ ActiveMQ service not found"
+
+          echo "2b. ActiveMQ pods:"
           kubectl get pods | grep activemq || echo "❌ ActiveMQ pods not found"
+
+          # Check if we can reach ActiveMQ from within the cluster
+          echo "2c. Testing ActiveMQ connectivity from cluster:"
+          kubectl run amq-test --restart=Never --image=curlimages/curl --rm -i --command -- \
+            sh -c "curl -u admin:admin --connect-timeout 5 --max-time 10 http://activemq:8161/admin/ && echo '✅ ActiveMQ web console reachable' || echo '❌ ActiveMQ web console unreachable'" \
+            2>/dev/null || echo "❌ Failed to test ActiveMQ connectivity"
 
       - name: Collect logs from all containers
         if: always() && steps.helm_install.outcome != 'skipped'
