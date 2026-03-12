@@ -149,9 +149,10 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
 
       - name: Setup KinD cluster
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v12.10.3
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v15.7.1
         with:
-          ingress-nginx-ref: controller-v1.8.2
+          traefik-enabled: 'true'
+          cloud-provider-kind-enabled: 'true'
           metrics: "true"
 
       - name: Load Docker images
