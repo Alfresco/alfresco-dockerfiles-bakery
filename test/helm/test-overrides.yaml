@@ -108,7 +108,7 @@ alfresco-audit-storage:
 dtas:
   additionalArgs:
     - --tb=short
-    - -k
+    - k=not test_sync # traefik missing rewrite-target support
     - not test_api_explorer_reachability
   config:
     config:
