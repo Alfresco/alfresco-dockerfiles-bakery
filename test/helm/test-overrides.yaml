@@ -105,6 +105,10 @@ alfresco-audit-storage:
   image:
     repository: localhost/alfresco/alfresco-audit-storage
     tag: latest
+  messageBroker:
+    url: failover:(tcp://activemq:61616)
+    username: admin
+    password: admin
 dtas:
   additionalArgs:
     - --tb=short

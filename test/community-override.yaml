@@ -2,11 +2,6 @@
 services:
   alfresco:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository-community:${TAG}
-  audit-storage:
-    messageBroker:
-      url: failover:(tcp://activemq:61616)
-      username: admin
-      password: admin
   transform-core-aio:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-core-aio:${TAG}
   share:

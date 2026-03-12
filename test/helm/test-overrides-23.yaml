@@ -16,7 +16,7 @@ dtas:
         - id: alfresco-aos-module
           version: 3.4.1
           installed: true
-audit-storage:
+alfresco-audit-storage:
   messageBroker:
     url: failover:(tcp://activemq:61616)
     username: admin

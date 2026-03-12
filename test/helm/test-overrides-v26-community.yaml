@@ -5,7 +5,7 @@ alfresco-sync-service:
   enabled: false
 postgresql-sync:
   enabled: false
-audit-storage:
+alfresco-audit-storage:
   messageBroker:
     url: failover:(tcp://activemq:61616)
     username: admin

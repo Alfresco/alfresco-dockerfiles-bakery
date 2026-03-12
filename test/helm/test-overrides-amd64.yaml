@@ -9,7 +9,7 @@ elasticsearch:
         memory: "1Gi"
       limits:
         memory: "1.5Gi"
-audit-storage:
+alfresco-audit-storage:
   messageBroker:
     url: failover:(tcp://activemq:61616)
     username: admin
