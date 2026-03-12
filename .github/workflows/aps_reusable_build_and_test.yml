@@ -43,6 +43,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Prepare for helm installation
+        id: helm-prepare
         uses: ./.github/actions/helm-prepare
         with:
           docker-username: ${{ secrets.DOCKER_USERNAME }}
@@ -90,6 +91,7 @@ jobs:
         id: helm_install
         run: |
           helm install aps ./aps-deployment/helm/alfresco-process-services \
+            --set global.known_urls=http://${{ steps.helm-prepare.outputs.ingress-endpoint }} \
             --set alfresco-activiti.license.secretName=aps-license \
             --set global.alfrescoRegistryPullSecrets=regcred \
             --values ./aps-deployment/tests/ci-values.yaml \

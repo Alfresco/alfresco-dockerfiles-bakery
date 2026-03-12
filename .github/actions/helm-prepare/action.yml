@@ -34,10 +34,19 @@ inputs:
   github-actor:
     description: "GitHub actor for authentication"
     required: true
+
+outputs:
+  ingress-endpoint:
+    description: |
+      The endpoint (hostname:port) of the ingress controller (if installed) and
+      cloud-provider-kind is enabled
+    value: ${{ steps.setup-kind.outputs.endpoint }}
+
 runs:
   using: "composite"
   steps:
     - name: Setup cluster
+      id: setup-kind
       uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v15.7.1
       with:
         traefik-enabled: 'true'
