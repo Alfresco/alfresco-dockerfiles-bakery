@@ -269,7 +269,10 @@ jobs:
             echo "1a. Pod status and events:"
             kubectl describe pod $AUDIT_POD | head -50
 
-            echo "1b. Recent logs from audit-storage pod:"
+            echo "1b. Complete pod configuration (YAML):"
+            kubectl get pod $AUDIT_POD -o yaml
+
+            echo "1c. Recent logs from audit-storage pod:"
             kubectl logs $AUDIT_POD --tail=50 2>/dev/null || echo "Failed to get audit-storage logs"
 
             echo "1c. Checking JAR contents in deployed audit-storage pod for Camel ActiveMQ:"
