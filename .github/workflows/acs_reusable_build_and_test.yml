@@ -274,7 +274,12 @@ jobs:
               jar tf /opt/app.jar | grep -E 'camel.core|camel.spring' | head -5 || echo '❌ No Camel core found';
             "
 
-          kubectl wait --for=condition=Ready pod/jar-check --timeout=120s || true
+          # Wait for pod completion, not readiness (these are job-like pods)
+          kubectl wait --for=condition=Complete pod/jar-check --timeout=180s || {
+            echo "jar-check pod failed or timed out. Pod status:";
+            kubectl describe pod jar-check 2>/dev/null || echo "Failed to describe jar-check pod";
+          }
+
           echo "JAR analysis results:"
           kubectl logs jar-check 2>/dev/null || echo "Failed to get jar-check logs"
           kubectl delete pod jar-check --ignore-not-found
@@ -287,10 +292,14 @@ jobs:
             --image=curlimages/curl \
             --command -- sh -c "
               echo 'Testing ActiveMQ web console at http://activemq:8161';
-              curl -v -u admin:admin --connect-timeout 10 --max-time 30 http://activemq:8161/admin/ 2>&1 || echo '❌ Web console test failed';
+              curl -u admin:admin --connect-timeout 10 --max-time 15 http://activemq:8161/admin/ || echo '❌ Web console test failed';
             "
 
-          kubectl wait --for=condition=Ready pod/amq-web-test --timeout=120s || true
+          kubectl wait --for=condition=Complete pod/amq-web-test --timeout=60s || {
+            echo "amq-web-test pod failed or timed out. Pod status:";
+            kubectl describe pod amq-web-test 2>/dev/null || echo "Failed to describe amq-web-test pod";
+          }
+
           echo "Web console test results:"
           kubectl logs amq-web-test 2>/dev/null || echo "Failed to get amq-web-test logs"
           kubectl delete pod amq-web-test --ignore-not-found
@@ -301,10 +310,14 @@ jobs:
             --image=busybox:1.35 \
             --command -- sh -c "
               echo 'Testing ActiveMQ messaging port at activemq:61616';
-              timeout 10 nc -zv activemq 61616 && echo '✅ ActiveMQ messaging port reachable' || echo '❌ ActiveMQ messaging port unreachable';
+              nc -zv activemq 61616 && echo '✅ ActiveMQ messaging port reachable' || echo '❌ ActiveMQ messaging port unreachable';
             "
 
-          kubectl wait --for=condition=Ready pod/amq-tcp-test --timeout=120s || true
+          kubectl wait --for=condition=Complete pod/amq-tcp-test --timeout=30s || {
+            echo "amq-tcp-test pod failed or timed out. Pod status:";
+            kubectl describe pod amq-tcp-test 2>/dev/null || echo "Failed to describe amq-tcp-test pod";
+          }
+
           echo "Messaging port test results:"
           kubectl logs amq-tcp-test 2>/dev/null || echo "Failed to get amq-tcp-test logs"
           kubectl delete pod amq-tcp-test --ignore-not-found
