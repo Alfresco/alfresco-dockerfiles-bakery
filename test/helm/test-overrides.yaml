@@ -109,6 +109,9 @@ alfresco-audit-storage:
     url: failover:(tcp://activemq:61616)
     username: admin
     password: admin
+  environment:
+    AUDIT_EVENTINGESTION_URI: "activemq:topic:alfresco.repo.event2"
+    SPRING_PROFILES_ACTIVE: "virtual-topics"
 dtas:
   additionalArgs:
     - --tb=short
