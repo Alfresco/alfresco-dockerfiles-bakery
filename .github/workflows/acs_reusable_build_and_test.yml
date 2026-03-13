@@ -212,10 +212,12 @@ jobs:
       - name: Helm install
         id: helm_install
         run: |
-          # Temporary logic for ACS 26 community. Remove this once ACS 26 GA is released.
+          # Temporary logic for ACS 26 pre-release. Remove this once ACS 26 GA is released.
           ADDITIONAL_VALUES=""
           if [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "community" ]; then
             ADDITIONAL_VALUES="--values test/helm/test-overrides-v26-community.yaml"
+          elif [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "enterprise" ]; then
+            ADDITIONAL_VALUES="--values test/helm/test-overrides-v26-enterprise.yaml"
           fi
 
           helm install acs ./acs-deployment/helm/alfresco-content-services \
