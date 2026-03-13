@@ -43,8 +43,8 @@ jobs:
               echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
               ;;
             25)
-              echo 'compose_matrix_json={"edition": ["25"]}' >> $GITHUB_OUTPUT
-              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["25"]}' >> $GITHUB_OUTPUT
+              echo 'compose_matrix_json={"edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
+              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
               ;;
             23)
               echo 'compose_matrix_json={"edition": ["23"]}' >> $GITHUB_OUTPUT
@@ -212,12 +212,10 @@ jobs:
       - name: Helm install
         id: helm_install
         run: |
-          # Temporary logic for ACS 26 pre-release. Remove this once ACS 26 GA is released.
+          # Temporary logic for ACS 26 community. Remove this once ACS 26 GA is released.
           ADDITIONAL_VALUES=""
           if [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "community" ]; then
             ADDITIONAL_VALUES="--values test/helm/test-overrides-v26-community.yaml"
-          elif [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "enterprise" ]; then
-            ADDITIONAL_VALUES="--values test/helm/test-overrides-v26-enterprise.yaml"
           fi
 
           helm install acs ./acs-deployment/helm/alfresco-content-services \
