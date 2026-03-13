@@ -43,8 +43,8 @@ jobs:
               echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
               ;;
             25)
-              echo 'compose_matrix_json={"edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
-              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
+              echo 'compose_matrix_json={"edition": ["25"]}' >> $GITHUB_OUTPUT
+              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["25"]}' >> $GITHUB_OUTPUT
               ;;
             23)
               echo 'compose_matrix_json={"edition": ["23"]}' >> $GITHUB_OUTPUT
