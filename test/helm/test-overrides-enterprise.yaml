@@ -1,13 +1,5 @@
 # dtas versions could come from upstream chart but sometimes the versions we set
 # here are not the same of the upstream docker images
-alfresco-audit-storage:
-  messageBroker:
-    url: failover:(tcp://activemq:61616)
-    username: admin
-    password: admin
-  environment:
-    AUDIT_EVENTINGESTION_URI: "activemq:topic:alfresco.repo.event2"
-    SPRING_PROFILES_ACTIVE: "virtual-topics"
 dtas:
   config:
     assertions:

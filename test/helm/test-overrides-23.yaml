@@ -16,11 +16,3 @@ dtas:
         - id: alfresco-aos-module
           version: 3.4.1
           installed: true
-alfresco-audit-storage:
-  messageBroker:
-    url: failover:(tcp://activemq:61616)
-    username: admin
-    password: admin
-  environment:
-    AUDIT_EVENTINGESTION_URI: "activemq:topic:alfresco.repo.event2"
-    SPRING_PROFILES_ACTIVE: "virtual-topics"
