@@ -201,7 +201,7 @@ jobs:
               echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
               ;;
           esac
-      # Temporary logic for ACS 26 enterprise. Remove this once ACS 26 GA is released.    
+      # Temporary logic for ACS 26 enterprise. Remove this once ACS 26 GA is released.
       - name: Override helm values for ACS 26 pre-release
         run: |
           # Temporary logic for ACS 26 pre-release. Remove this entire step once ACS 26 GA is released.
