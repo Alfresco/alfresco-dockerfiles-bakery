@@ -201,16 +201,21 @@ jobs:
               echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
               ;;
           esac
+      # Temporary logic for ACS 26 enterprise. Remove this once ACS 26 GA is released.    
+      - name: Override helm values for ACS 26 pre-release
+        run: |
+          # Temporary logic for ACS 26 pre-release. Remove this entire step once ACS 26 GA is released.
+          if [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "enterprise" ]; then
+            echo "UPSTREAM_HELM_VALUES=pre-release_values.yaml" >> $GITHUB_ENV
+          fi
 
       - name: Helm install
         id: helm_install
         run: |
-          # Temporary logic for ACS 26 pre-release.Remove this once ACS 26 GA is released.
+          # Temporary logic for ACS 26 community. Remove this once ACS 26 GA is released.
           ADDITIONAL_VALUES=""
           if [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "community" ]; then
             ADDITIONAL_VALUES="--values test/helm/test-overrides-v26-community.yaml"
-          elif [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "enterprise" ]; then
-            echo "UPSTREAM_HELM_VALUES=pre-release_values.yaml" >> $GITHUB_ENV
           fi
 
           helm install acs ./acs-deployment/helm/alfresco-content-services \
