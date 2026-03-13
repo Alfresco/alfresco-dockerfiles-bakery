@@ -4,7 +4,7 @@ updatecli_matrix_version: current
 artifacts:
   alfresco-process-services-admin:
     name: activiti-admin
-    version: 25.3.0
+    version: 26.1.0
     classifier: ".war"
     group: com.activiti
     repository: activiti-enterprise-releases
