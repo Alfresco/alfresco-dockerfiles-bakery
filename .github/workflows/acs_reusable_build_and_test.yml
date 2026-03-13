@@ -210,7 +210,7 @@ jobs:
           if [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "community" ]; then
             ADDITIONAL_VALUES="--values test/helm/test-overrides-v26-community.yaml"
           elif [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "enterprise" ]; then
-            UPSTREAM_HELM_VALUES="pre-release_values.yaml"
+            echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
           fi
 
           helm install acs ./acs-deployment/helm/alfresco-content-services \
