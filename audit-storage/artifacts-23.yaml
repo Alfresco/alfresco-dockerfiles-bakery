@@ -4,7 +4,7 @@ updatecli_matrix_version: 23.N
 artifacts:
   alfresco-audit-storage-app:
     name: alfresco-audit-storage-app
-    # Temporarily pinned to 1.2.0 to keep the build green.This will be bumped once acs-deployment 10.3.0 is released.
+    # Temporarily pinned to 1.2.0 to keep the build green. This will be bumped once acs-deployment 10.3.0 is released.
     version: 1.2.0
     classifier: ".jar"
     repository: enterprise-releases
