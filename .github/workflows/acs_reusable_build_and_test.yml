@@ -43,8 +43,8 @@ jobs:
               echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
               ;;
             25)
-              echo 'compose_matrix_json={"edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
-              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["enterprise", "community"]}' >> $GITHUB_OUTPUT
+              echo 'compose_matrix_json={"edition": ["25"]}' >> $GITHUB_OUTPUT
+              echo 'helm_matrix_json={"arch": ["arm64", "amd64"], "edition": ["25"]}' >> $GITHUB_OUTPUT
               ;;
             23)
               echo 'compose_matrix_json={"edition": ["23"]}' >> $GITHUB_OUTPUT
@@ -189,7 +189,7 @@ jobs:
               echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
               ;;
             25)
-              echo "UPSTREAM_HELM_VALUES=values.yaml" >> $GITHUB_ENV
+              echo "UPSTREAM_HELM_VALUES=25.N_values.yaml" >> $GITHUB_ENV
               ;;
             23)
               echo "UPSTREAM_HELM_VALUES=23.N_values.yaml" >> $GITHUB_ENV
@@ -201,24 +201,10 @@ jobs:
               echo "UPSTREAM_HELM_VALUES=community_values.yaml" >> $GITHUB_ENV
               ;;
           esac
-      # Temporary logic for ACS 26 enterprise. Remove this once ACS 26 GA is released.
-      - name: Override helm values for ACS 26 pre-release
-        run: |
-          # Temporary logic for ACS 26 pre-release. Remove this entire step once ACS 26 GA is released.
-          if [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "enterprise" ]; then
-            echo "UPSTREAM_HELM_VALUES=pre-release_values.yaml" >> $GITHUB_ENV
-          fi
 
       - name: Helm install
         id: helm_install
         run: |
-          # Temporary logic for ACS 26 pre-release. Remove this once ACS 26 GA is released.
-          ADDITIONAL_VALUES=""
-          if [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "community" ]; then
-            ADDITIONAL_VALUES="--values test/helm/test-overrides-v26-community.yaml"
-          elif [ "${{ inputs.acs_version }}" = "26" ] && [ "${{ matrix.edition }}" = "enterprise" ]; then
-            ADDITIONAL_VALUES="--values test/helm/test-overrides-v26-enterprise.yaml"
-          fi
 
           helm install acs ./acs-deployment/helm/alfresco-content-services \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
@@ -226,8 +212,8 @@ jobs:
             --values ./acs-deployment/test/${{ matrix.edition == 'community' && 'community' || 'enterprise' }}-integration-test-values.yaml \
             --values test/helm/test-overrides.yaml \
             --values test/helm/test-overrides-${{ matrix.arch }}.yaml \
-            --values test/helm/test-overrides-${{ matrix.edition }}.yaml \
-            $ADDITIONAL_VALUES
+            --values test/helm/test-overrides-${{ matrix.edition }}.yaml
+
       - name: Wait for deployments to be ready
         uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v12.10.3
         with:
