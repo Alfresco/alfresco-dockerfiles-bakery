@@ -108,6 +108,7 @@ alfresco-audit-storage:
 dtas:
   additionalArgs:
     - --tb=short
+    - -k
     - not test_api_explorer_reachability
     - -k
     - not test_sync # disable sync tests until OPSEXP-3943 is resolved
