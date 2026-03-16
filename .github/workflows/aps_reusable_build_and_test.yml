@@ -92,6 +92,7 @@ jobs:
         run: |
           helm install aps ./aps-deployment/helm/alfresco-process-services \
             --set global.known_urls[0]=http://${{ steps.helm-prepare.outputs.ingress-endpoint }} \
+            --set global.known_urls[1]=https://${{ steps.helm-prepare.outputs.ingress-endpoint }} \
             --set alfresco-activiti.license.secretName=aps-license \
             --set global.alfrescoRegistryPullSecrets=regcred \
             --values ./aps-deployment/tests/ci-values.yaml \
