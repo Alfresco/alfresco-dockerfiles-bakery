@@ -40,7 +40,7 @@ outputs:
     description: |
       The endpoint (hostname:port) of the ingress controller (if installed) and
       cloud-provider-kind is enabled
-    value: ${{ steps.setup-kind.outputs.endpoint }}
+    value: ${{ steps.setup-kind.outputs.ingress-endpoint }}
 
 runs:
   using: "composite"
