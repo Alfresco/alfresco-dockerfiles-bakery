@@ -123,7 +123,7 @@ jobs:
         run: >-
           sed -i
           "s/localhost/${{ steps.helm-prepare.outputs.ingress-endpoint }}/g"
-          dtas.json
+          test/configs/aps-dtas-${{ inputs.aps_version }}.json
 
       - name: Test alfresco via DTAS
         uses: ./dtas
