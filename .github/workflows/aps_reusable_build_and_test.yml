@@ -119,6 +119,12 @@ jobs:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           ref: v1.7.2
 
+      - name: Prepare DTAS config file
+        run: >-
+          sed -i
+          "s/localhost/${{ steps.helm-prepare.outputs.ingress-endpoint }}/g"
+          dtas.json
+
       - name: Test alfresco via DTAS
         uses: ./dtas
         with:
