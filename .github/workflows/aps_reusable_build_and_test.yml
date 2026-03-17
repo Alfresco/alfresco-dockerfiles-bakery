@@ -125,6 +125,12 @@ jobs:
           "s/localhost/${{ steps.helm-prepare.outputs.ingress-endpoint }}/g"
           test/configs/aps-dtas-${{ inputs.aps_version }}.json
 
+      - name: Disable IPv6 to avoid connection refused when connecting to traefik on localhost
+        run: |
+          sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+          sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+          sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
+
       - name: Test alfresco via DTAS
         uses: ./dtas
         with:
