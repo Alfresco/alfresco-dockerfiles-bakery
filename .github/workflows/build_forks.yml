@@ -152,6 +152,7 @@ jobs:
         uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v15.12.0
         with:
           traefik-enabled: 'true'
+          traefik-chart-version: v40.0.0-ea.1
           cloud-provider-kind-enabled: 'true'
           metrics: "true"
 
