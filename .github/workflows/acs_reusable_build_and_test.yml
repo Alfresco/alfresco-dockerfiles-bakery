@@ -162,7 +162,7 @@ jobs:
           helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami/
           helm repo add elastic https://helm.elastic.co
           helm dependency build
-
+# hello there
       - name: Preprocess test-overrides.yaml
         env:
           OVERRIDES_VALUES_FILE: test/helm/test-overrides.yaml
