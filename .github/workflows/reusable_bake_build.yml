@@ -94,11 +94,11 @@ jobs:
 
       - name: Enumerate bake targets
         id: bake-targets
+        shell: bash
         env:
           ACS_VERSION: ${{ inputs.version }}
-        uses: docker/bake-action/subaction/list-targets@82490499d2e5613fcead7e128237ef0b0ea210f7  # v7.0.0
-        with:
-          target: ${{ inputs.bake-targets }}
+        run: |
+          echo "targets=$(docker buildx bake --print ${{ inputs.bake-targets }} | jq -c '.target | keys')" >> $GITHUB_OUTPUT
 
       - name: Enumerate registry cache targets
         shell: bash
