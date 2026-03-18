@@ -92,15 +92,7 @@ jobs:
         with:
           comment_on_pr: false
 
-#      - name: Enumerate bake targets
-#        id: bake-targets
-#        env:
-#          ACS_VERSION: ${{ inputs.version }}
-#        uses: docker/bake-action/subaction/list-targets@5be5f02ff8819ecd3092ea6b2e6261c31774f2b4  # v6.10.0
-#        with:
-#          target: ${{ inputs.bake-targets }}
-
-      - name: Compute bake targets
+      - name: Enumerate bake targets
         id: bake-targets
         shell: bash
         env:
