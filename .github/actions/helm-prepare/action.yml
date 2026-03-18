@@ -1,10 +1,6 @@
 name: helm-prepare
 description: Prepare for helm installation
 inputs:
-  ingress-nginx-ref:
-    description: "The ingress-nginx controller reference"
-    required: false
-    default: "controller-v1.8.2"
   metrics:
     description: "Enable metrics for ingress-nginx"
     required: false
@@ -37,9 +33,7 @@ inputs:
 
 outputs:
   ingress-endpoint:
-    description: |
-      The endpoint (hostname:port) of the ingress controller (if installed) and
-      cloud-provider-kind is enabled
+    description: The endpoint (hostname:port) of the ingress controller, available when cloud-provider-kind is enabled
     value: ${{ steps.setup-kind.outputs.ingress-endpoint }}
 
 runs:
