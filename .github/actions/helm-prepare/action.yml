@@ -1,10 +1,6 @@
 name: helm-prepare
 description: Prepare for helm installation
 inputs:
-  ingress-nginx-ref:
-    description: "The ingress-nginx controller reference"
-    required: false
-    default: "controller-v1.8.2"
   metrics:
     description: "Enable metrics for ingress-nginx"
     required: false
@@ -34,13 +30,22 @@ inputs:
   github-actor:
     description: "GitHub actor for authentication"
     required: true
+
+outputs:
+  ingress-endpoint:
+    description: The endpoint (hostname:port) of the ingress controller, available when cloud-provider-kind is enabled
+    value: ${{ steps.setup-kind.outputs.ingress-endpoint }}
+
 runs:
   using: "composite"
   steps:
     - name: Setup cluster
-      uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v12.10.3
+      id: setup-kind
+      uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v15.12.0
       with:
-        ingress-nginx-ref: ${{ inputs.ingress-nginx-ref }}
+        traefik-enabled: 'true'
+        traefik-chart-version: v40.0.0-ea.1
+        cloud-provider-kind-enabled: 'true'
         metrics: ${{ inputs.metrics }}
 
     - name: Checkout

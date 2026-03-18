@@ -43,6 +43,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Prepare for helm installation
+        id: helm-prepare
         uses: ./.github/actions/helm-prepare
         with:
           docker-username: ${{ secrets.DOCKER_USERNAME }}
@@ -90,6 +91,8 @@ jobs:
         id: helm_install
         run: |
           helm install aps ./aps-deployment/helm/alfresco-process-services \
+            --set global.known_urls[0]=http://${{ steps.helm-prepare.outputs.ingress-endpoint }} \
+            --set global.known_urls[1]=https://${{ steps.helm-prepare.outputs.ingress-endpoint }} \
             --set alfresco-activiti.license.secretName=aps-license \
             --set global.alfrescoRegistryPullSecrets=regcred \
             --values ./aps-deployment/tests/ci-values.yaml \
@@ -115,6 +118,18 @@ jobs:
           path: dtas
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           ref: v1.7.2
+
+      - name: Prepare DTAS config file
+        run: >-
+          sed -i
+          "s/localhost/${{ steps.helm-prepare.outputs.ingress-endpoint }}/g"
+          test/configs/aps-dtas-${{ inputs.aps_version }}.json
+
+      - name: Disable IPv6 to avoid connection refused when connecting to traefik on localhost
+        run: |
+          sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+          sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+          sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
 
       - name: Test alfresco via DTAS
         uses: ./dtas

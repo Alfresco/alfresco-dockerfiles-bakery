@@ -56,15 +56,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
-      - name: Determine the tomcat version
-        env:
-          TOMCAT_VERSIONS_FILE: "tomcat/tomcat_versions.yaml"
-          TOMCAT_FIELD: "tomcat10"
-        run: |
-          echo "TOMCAT_MAJOR=$(yq e ".${TOMCAT_FIELD}.major" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
-          echo "TOMCAT_VERSION=$(yq e ".${TOMCAT_FIELD}.version" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
-          echo "TOMCAT_SHA512=$(yq e ".${TOMCAT_FIELD}.sha512"  ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
-
       - name: Bake Docker images
         env:
           ACS_VERSION: 25
@@ -149,9 +140,12 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
 
       - name: Setup KinD cluster
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v12.10.3
+        id: setup-kind
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v15.12.0
         with:
-          ingress-nginx-ref: controller-v1.8.2
+          traefik-enabled: 'true'
+          traefik-chart-version: v40.0.0-ea.1
+          cloud-provider-kind-enabled: 'true'
           metrics: "true"
 
       - name: Load Docker images
@@ -184,7 +178,7 @@ jobs:
         run: |
           helm install acs ./acs-deployment/helm/alfresco-content-services \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
-            --set global.known_urls=http://localhost \
+            --set global.known_urls=http://${{ steps.setup-kind.outputs.ingress-endpoint }} \
             --set alfresco-repository.image.repository=localhost/alfresco/alfresco-content-repository-community \
             --set share.image.repository=localhost/alfresco/alfresco-share-community \
             --values ./acs-deployment/helm/alfresco-content-services/community_values.yaml \
