@@ -178,8 +178,7 @@ jobs:
         run: |
           helm install acs ./acs-deployment/helm/alfresco-content-services \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
-            --set global.known_urls[0]=http://${{ steps.setup-kind.outputs.ingress-endpoint }} \
-            --set global.known_urls[1]=https://${{ steps.setup-kind.outputs.ingress-endpoint }} \
+            --set global.known_urls=http://${{ steps.setup-kind.outputs.ingress-endpoint }} \
             --set alfresco-repository.image.repository=localhost/alfresco/alfresco-content-repository-community \
             --set share.image.repository=localhost/alfresco/alfresco-share-community \
             --values ./acs-deployment/helm/alfresco-content-services/community_values.yaml \
