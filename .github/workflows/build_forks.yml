@@ -56,15 +56,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
-      - name: Determine the tomcat version
-        env:
-          TOMCAT_VERSIONS_FILE: "tomcat/tomcat_versions.yaml"
-          TOMCAT_FIELD: "tomcat10"
-        run: |
-          echo "TOMCAT_MAJOR=$(yq e ".${TOMCAT_FIELD}.major" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
-          echo "TOMCAT_VERSION=$(yq e ".${TOMCAT_FIELD}.version" ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
-          echo "TOMCAT_SHA512=$(yq e ".${TOMCAT_FIELD}.sha512"  ${{ env.TOMCAT_VERSIONS_FILE }})" >> $GITHUB_ENV
-
       - name: Bake Docker images
         env:
           ACS_VERSION: 25
