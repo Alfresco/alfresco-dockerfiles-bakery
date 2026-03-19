@@ -265,4 +265,3 @@ jobs:
         with:
           name: k8s-logs-${{ matrix.arch }}-${{ matrix.edition }}
           path: logs
-          overwrite: true

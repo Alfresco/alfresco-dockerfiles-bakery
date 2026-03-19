@@ -11,7 +11,7 @@ artifacts:
     path: sync/distribution
   postgresql:
     name: postgresql
-    version: 42.6.1
+    version: 42.7.9
     classifier: ".jar"
     group: org.postgresql
     repository: public

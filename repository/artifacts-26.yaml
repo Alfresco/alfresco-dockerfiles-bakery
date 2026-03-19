@@ -5,7 +5,7 @@ updatecli_amps_release_branch: release/26.1
 artifacts:
   postgresql:
     name: postgresql
-    version: 42.6.1
+    version: 42.7.9
     classifier: ".jar"
     group: org.postgresql
     repository: public
