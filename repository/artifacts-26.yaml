@@ -5,10 +5,10 @@ updatecli_amps_release_branch: release/26.1
 artifacts:
   postgresql:
     name: postgresql
-    version: 42.7.9
+    version: 42.7.10
     classifier: ".jar"
     group: org.postgresql
-    repository: public
+    repository: central
     path: repository/libs
     checksum: "sha1:"
   alfresco-share-services:
