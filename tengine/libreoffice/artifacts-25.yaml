@@ -1,6 +1,6 @@
 ---
 updatecli_self: tengine/libreoffice/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   libreoffice-dist:
     name: libreoffice-dist
@@ -11,7 +11,7 @@ artifacts:
     path: tengine/libreoffice
   alfresco-transform-libreoffice:
     name: alfresco-transform-libreoffice
-    version: 5.3.0
+    version: 5.4.0
     classifier: ".jar"
     repository: releases
     group: org.alfresco

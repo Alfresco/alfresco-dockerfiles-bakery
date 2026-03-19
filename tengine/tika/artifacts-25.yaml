@@ -1,10 +1,10 @@
 ---
 updatecli_self: tengine/tika/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   alfresco-transform-tika:
     name: alfresco-transform-tika
-    version: 5.3.0
+    version: 5.4.0
     classifier: ".jar"
     repository: releases
     group: org.alfresco

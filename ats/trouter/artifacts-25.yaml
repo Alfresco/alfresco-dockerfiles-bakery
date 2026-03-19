@@ -1,10 +1,10 @@
 ---
 updatecli_self: ats/trouter/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   alfresco-transform-router:
     name: alfresco-transform-router
-    version: 4.3.0
+    version: 4.4.0
     classifier: ".jar"
     repository: enterprise-releases
     group: org.alfresco

@@ -30,7 +30,7 @@ help:
 	@echo "  clean_caches        Clean up Docker and artifact caches"
 	@echo "  help                Display this help message"
 
-ACS_VERSION ?= 25
+ACS_VERSION ?= 26
 APS_VERSION ?= 25
 export ACS_VERSION
 

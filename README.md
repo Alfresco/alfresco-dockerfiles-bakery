@@ -251,13 +251,15 @@ export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=
 docker buildx bake repo --set *.output=type=registry,push=true
 ```
 
-## Building older versions
+## Building specific ACS versions
 
 Versions of artifacts being downloaded specific to the ACS version are defined
 in `artifacts-XX.yaml` files for each component.
 
-To build older version pass `ACS_VERSION` env to make command.
+To build a specific ACS version, pass the `ACS_VERSION` env to the make command.
 
+- ACS 26 (current default) - `ACS_VERSION=26` - Will use `artifacts-26.yaml` files
+- ACS 25  - `ACS_VERSION=25` - Will use `artifacts-25.yaml` files
 - ACS 23  - `ACS_VERSION=23` - Will use `artifacts-23.yaml` files
 - ACS 7.4 - `ACS_VERSION=74` - Will use `artifacts-74.yaml` files
 
@@ -458,14 +460,14 @@ You can specify one or more targets:
 python3 scripts/fetch_artifacts.py
 python3 scripts/fetch_artifacts.py repository
 python3 scripts/fetch_artifacts.py repository share aps
-python3 scripts/fetch_artifacts.py "**/artifacts-25.yaml"
+python3 scripts/fetch_artifacts.py "**/artifacts-26.yaml"
 python3 scripts/fetch_artifacts.py repository --log-level DEBUG
 python3 scripts/fetch_artifacts.py repository --log-file download.log
 ```
 
 ### Environment Variables
 
-- `ACS_VERSION` - Alfresco Content Services version (default: "25")
+- `ACS_VERSION` - Alfresco Content Services version (default: "26")
 - `NEXUS_USERNAME` - Nexus repository username
 - `NEXUS_PASSWORD` - Nexus repository password
 - `MAVEN_FQDN` - Maven repository FQDN (default: "nexus.alfresco.com")

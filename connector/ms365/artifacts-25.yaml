@@ -1,10 +1,10 @@
 ---
 updatecli_self: connector/ms365/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   onedrive-springboot:
     name: onedrive-springboot
-    version: 2.0.8
+    version: 2.1.0
     classifier: ".jar"
     repository: enterprise-releases
     group: org.alfresco

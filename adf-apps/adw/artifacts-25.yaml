@@ -1,10 +1,10 @@
 ---
 updatecli_self: adf-apps/adw/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   alfresco-digital-workspace:
     name: alfresco-digital-workspace
-    version: 7.2.0
+    version: 7.3.0
     classifier: ".zip"
     group: org.alfresco
     repository: enterprise-releases

@@ -1,10 +1,10 @@
 ---
 updatecli_self: search/service/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   alfresco-search-services:
     name: alfresco-search-services
-    version: 2.0.17
+    version: 2.0.18
     classifier: ".zip"
     repository: releases
     group: org.alfresco

@@ -1,10 +1,10 @@
 ---
 updatecli_self: adf-apps/acc/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   alfresco-control-center:
     name: alfresco-control-center
-    version: 10.2.0
+    version: 10.3.0
     classifier: ".zip"
     group: org.alfresco
     repository: releases

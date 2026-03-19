@@ -1,6 +1,6 @@
 ---
 updatecli_self: hxinsight-connector/hxinsight-connector-bulk-ingester/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   alfresco-hxinsight-connector-bulk-ingester:
     name: alfresco-hxinsight-connector-bulk-ingester

@@ -1,6 +1,6 @@
 ---
 updatecli_self: hxinsight-connector/hxinsight-connector-prediction-applier/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   alfresco-hxinsight-connector-prediction-applier:
     name: alfresco-hxinsight-connector-prediction-applier

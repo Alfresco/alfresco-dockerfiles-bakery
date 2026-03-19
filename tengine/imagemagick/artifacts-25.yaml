@@ -1,6 +1,6 @@
 ---
 updatecli_self: tengine/imagemagick/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   imagemagick-distribution-el9-libs:
     name: imagemagick-distribution
@@ -32,7 +32,7 @@ artifacts:
     path: tengine/imagemagick
   alfresco-transform-imagemagick:
     name: alfresco-transform-imagemagick
-    version: 5.3.0
+    version: 5.4.0
     classifier: ".jar"
     repository: releases
     group: org.alfresco
