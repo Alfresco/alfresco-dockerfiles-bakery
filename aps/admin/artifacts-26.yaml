@@ -1,14 +1,14 @@
 ---
-updatecli_self: aps/app/artifacts-25.yaml
-updatecli_matrix_version: 25.N
+updatecli_self: aps/admin/artifacts-26.yaml
+updatecli_matrix_version: current
 artifacts:
-  alfresco-process-services-app:
-    name: activiti-app
+  alfresco-process-services-admin:
+    name: activiti-admin
     version: 25.3.0
     classifier: ".war"
     group: com.activiti
     repository: activiti-enterprise-releases
-    path: aps/app/distribution
+    path: aps/admin/distribution
     checksum: "sha1:"
   postgresql:
     name: postgresql
@@ -16,5 +16,5 @@ artifacts:
     classifier: ".jar"
     group: org.postgresql
     repository: public
-    path: aps/app/libs
+    path: aps/admin/libs
     checksum: "sha1:"

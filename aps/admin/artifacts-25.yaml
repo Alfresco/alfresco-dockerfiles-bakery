@@ -1,6 +1,6 @@
 ---
 updatecli_self: aps/admin/artifacts-25.yaml
-updatecli_matrix_version: current
+updatecli_matrix_version: 25.N
 artifacts:
   alfresco-process-services-admin:
     name: activiti-admin
