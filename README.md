@@ -251,14 +251,14 @@ export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=
 docker buildx bake repo --set *.output=type=registry,push=true
 ```
 
-## Building older versions
+## Building specific ACS versions
 
 Versions of artifacts being downloaded specific to the ACS version are defined
 in `artifacts-XX.yaml` files for each component.
 
-To build older version pass `ACS_VERSION` env to make command.
+To build a specific ACS version, pass the `ACS_VERSION` env to the make command.
 
-- ACS 26  - `ACS_VERSION=26` - Will use `artifacts-26.yaml` files
+- ACS 26 (current default) - `ACS_VERSION=26` - Will use `artifacts-26.yaml` files
 - ACS 25  - `ACS_VERSION=25` - Will use `artifacts-25.yaml` files
 - ACS 23  - `ACS_VERSION=23` - Will use `artifacts-23.yaml` files
 - ACS 7.4 - `ACS_VERSION=74` - Will use `artifacts-74.yaml` files
