@@ -1,5 +1,5 @@
 # dtas versions could come from upstream chart but sometimes the versions we set
-# here are not the same of the upstream docker images
+# here are not the same as the upstream docker images
 dtas:
   config:
     assertions:
