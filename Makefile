@@ -31,7 +31,7 @@ help:
 	@echo "  help                Display this help message"
 
 ACS_VERSION ?= 26
-APS_VERSION ?= 25
+APS_VERSION ?= 26
 export ACS_VERSION
 
 setenv: auth

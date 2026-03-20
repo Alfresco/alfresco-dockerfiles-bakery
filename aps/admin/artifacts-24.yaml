@@ -12,7 +12,7 @@ artifacts:
     checksum: "sha1:"
   postgresql:
     name: postgresql
-    version: 42.6.1
+    version: 42.5.6
     classifier: ".jar"
     group: org.postgresql
     repository: public
