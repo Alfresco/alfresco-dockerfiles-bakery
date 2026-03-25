@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - name: Propagate GitHub release to JIRA
-        uses: Alfresco/alfresco-build-tools/.github/actions/jira-propagate-release@v15.12.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/jira-propagate-release@v15.12.1
         with:
           jira-url: ${{ vars.JIRA_URL }}
           jira-project-key: "OPSEXP"
