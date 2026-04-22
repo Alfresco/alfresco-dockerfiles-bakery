@@ -8,7 +8,6 @@ on:
 
 permissions:
   security-events: write
-  contents: write
 
 jobs:
   kics:
@@ -21,7 +20,7 @@ jobs:
           path: './'
           ignore_on_exit: results
           output_path: report-dir/
-          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           enable_jobs_summary: true
           platform_type: dockerfile
           disable_secrets: true
