@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v15.12.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v17.6.0
 
   build:
     needs: pre-commit
@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v15.12.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v17.6.0
 
       - name: Restore packages artifacts
         uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
@@ -60,7 +60,7 @@ jobs:
         env:
           ACS_VERSION: 26
           TARGETARCH: linux/amd64
-        uses: docker/bake-action@82490499d2e5613fcead7e128237ef0b0ea210f7  # v7.0.0
+        uses: docker/bake-action@a66e1c87e2eca0503c343edf1d208c716d54b8a8  # v7.1.0
         with:
           source: .
           targets: community
@@ -70,7 +70,7 @@ jobs:
           docker save -o /tmp/${{ env.ARTIFACT_NAME }}.tar $(docker images --format "{{.Repository}}:{{.Tag}}" | grep alfresco)
 
       - name: Upload images as artifact
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: /tmp/${{ env.ARTIFACT_NAME }}.tar
@@ -111,7 +111,7 @@ jobs:
 
       - name: Verify docker-compose
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v15.12.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v17.6.0
         timeout-minutes: 10
         with:
           postman_path: test/postman/docker-compose
@@ -121,7 +121,7 @@ jobs:
 
       - name: Save containers logs
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v15.12.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v17.6.0
         with:
           output-archive-name: compose-logs
 
@@ -141,7 +141,7 @@ jobs:
 
       - name: Setup KinD cluster
         id: setup-kind
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v15.12.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v17.6.0
         with:
           traefik-enabled: 'true'
           traefik-chart-version: v40.0.0-ea.1
@@ -152,7 +152,7 @@ jobs:
         run: |
           kind load image-archive -n chart-testing /tmp/${{ env.ARTIFACT_NAME }}.tar
 
-      - uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+      - uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
         with:
           version: "3.15.2"
 
@@ -187,7 +187,7 @@ jobs:
             --values test/helm/test-overrides-community.yaml
 
       - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v15.12.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v17.6.0
 
       - name: Run helm test
         id: helm_test
@@ -210,7 +210,7 @@ jobs:
 
       - name: Upload logs as artifact
         if: always() && steps.helm_install.outcome != 'skipped'
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f #v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a #v7.0.1
         with:
           name: k8s-logs
           path: logs
