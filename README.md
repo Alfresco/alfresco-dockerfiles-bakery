@@ -499,8 +499,7 @@ For authentication check out [nexus authentication](#nexus-authentication)
 - Run the [updatecli
   workflow](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/bumpVersions.yml)
   and review the changes.
-- Review and manually update the `aps` images as they are not yet supported in updatecli workflow
-- Review and manually update the `adf` images as they are not yet supported in updatecli workflow
+- Review and manually update the `adf` [images](adf-apps) as they are not yet supported in updatecli workflow
 - Merge all the eventual dependabot and updatecli PRs (for nginx and tomcat base
   images)
 - Agree on a name for the release and make sure to add it to the release notes.
