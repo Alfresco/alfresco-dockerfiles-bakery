@@ -41,7 +41,7 @@ runs:
   steps:
     - name: Setup cluster
       id: setup-kind
-      uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v17.6.0
+      uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v17.6.1
       with:
         traefik-enabled: 'true'
         traefik-chart-version: v40.0.0-ea.1

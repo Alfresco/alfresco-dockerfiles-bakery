@@ -38,7 +38,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v17.6.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v17.6.1
         with:
           auto-commit: "true"
   ACS_CI:
