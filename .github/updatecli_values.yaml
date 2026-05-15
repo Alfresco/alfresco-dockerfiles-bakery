@@ -44,6 +44,10 @@ artifacts:
     updatecli_matrix_component_key: tengine-misc
   alfresco-pdf-renderer-jar:
     updatecli_matrix_component_key: tengine-pdf
+  alfresco-pdf-renderer-x64:
+    updatecli_matrix_component_key: pdf-renderer
+  alfresco-pdf-renderer-arm:
+    updatecli_matrix_component_key: pdf-renderer
   alfresco-transform-tika:
     updatecli_matrix_component_key: tengine-tika
   alfresco-process-services-admin:
