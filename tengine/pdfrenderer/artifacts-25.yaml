@@ -4,14 +4,14 @@ updatecli_matrix_version: 25.N
 artifacts:
   alfresco-pdf-renderer-x64:
     name: alfresco-pdf-renderer
-    version: '1.2'
+    version: 1.3.0-76
     path: tengine/pdfrenderer
     classifier: "-linux.tgz"
     repository: releases
     group: org.alfresco
   alfresco-pdf-renderer-arm:
     name: alfresco-pdf-renderer
-    version: '1.2'
+    version: 1.3.0-76
     path: tengine/pdfrenderer
     classifier: "-linux-arm.tgz"
     repository: releases
