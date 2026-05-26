@@ -84,6 +84,31 @@ variable "TAG" {
   default = "latest"
 }
 
+variable "TAG_REPOSITORY" { default = "${TAG}" }
+variable "TAG_ADW" { default = "${TAG}" }
+variable "TAG_ACC" { default = "${TAG}" }
+variable "TAG_SHARE" { default = "${TAG}" }
+variable "TAG_SYNC" { default = "${TAG}" }
+variable "TAG_ATS_TROUTER" { default = "${TAG}" }
+variable "TAG_ATS_SFS" { default = "${TAG}" }
+variable "TAG_TENGINE_IMAGEMAGICK" { default = "${TAG}" }
+variable "TAG_TENGINE_LIBREOFFICE" { default = "${TAG}" }
+variable "TAG_TENGINE_MISC" { default = "${TAG}" }
+variable "TAG_TENGINE_TIKA" { default = "${TAG}" }
+variable "TAG_TENGINE_PDFRENDERER" { default = "${TAG}" }
+variable "TAG_TENGINE_AIO" { default = "${TAG}" }
+variable "TAG_CONNECTOR_MSTEAMS" { default = "${TAG}" }
+variable "TAG_CONNECTOR_MS365" { default = "${TAG}" }
+variable "TAG_SEARCH_SERVICE" { default = "${TAG}" }
+variable "TAG_SEARCH_LIVEINDEXING" { default = "${TAG}" }
+variable "TAG_SEARCH_REINDEXING" { default = "${TAG}" }
+variable "TAG_AUDIT_STORAGE" { default = "${TAG}" }
+variable "TAG_HXINSIGHT_BULK" { default = "${TAG}" }
+variable "TAG_HXINSIGHT_LIVE" { default = "${TAG}" }
+variable "TAG_HXINSIGHT_PREDICTION" { default = "${TAG}" }
+variable "TAG_APS_ADMIN" { default = "${TAG}" }
+variable "TAG_APS_APP" { default = "${TAG}" }
+
 variable "LABEL_VENDOR" {
   default = "Hyland Software, Inc."
 }
@@ -312,7 +337,7 @@ target "repository" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Content Repository (${repository_editions.name})"
     "org.opencontainers.image.description" = "Alfresco Content Services Repository ${repository_editions.name} edition"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${repository_editions.image_name}:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${repository_editions.image_name}:${TAG_REPOSITORY}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 
@@ -391,7 +416,7 @@ target "search_liveindexing" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name}"
     "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - ${liveindexing.name} live indexing"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${liveindexing.artifact}:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${liveindexing.artifact}:${TAG_SEARCH_LIVEINDEXING}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -422,7 +447,7 @@ target "search_reindexing" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Enterprise Search - reindexing"
     "org.opencontainers.image.description" = "${PRODUCT_LINE} Enterprise Search - reindexing component"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-reindexing:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-reindexing:${TAG_SEARCH_REINDEXING}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -453,7 +478,7 @@ target "ats_trouter" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} ATS Trouter"
     "org.opencontainers.image.description" = "Alfresco Transform Service Trouter"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-router:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-router:${TAG_ATS_TROUTER}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -484,7 +509,7 @@ target "ats_sfs" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} ATS Shared File Store"
     "org.opencontainers.image.description" = "Alfresco Transform Service ATS Shared File Store"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-shared-file-store:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-shared-file-store:${TAG_ATS_SFS}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -515,7 +540,7 @@ target "tengine_imagemagick" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Imagemagick"
     "org.opencontainers.image.description" = "Alfresco Transform Engine Imagemagick"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-imagemagick:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-imagemagick:${TAG_TENGINE_IMAGEMAGICK}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -546,7 +571,7 @@ target "tengine_libreoffice" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine LibreOffice"
     "org.opencontainers.image.description" = "Alfresco Transform Engine LibreOffice"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-libreoffice:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-libreoffice:${TAG_TENGINE_LIBREOFFICE}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -577,7 +602,7 @@ target "tengine_misc" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Misc"
     "org.opencontainers.image.description" = "Alfresco Transform Engine Misc"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-misc:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-misc:${TAG_TENGINE_MISC}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -608,7 +633,7 @@ target "tengine_tika" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine Tika"
     "org.opencontainers.image.description" = "Alfresco Transform Engine Tika"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-tika:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-tika:${TAG_TENGINE_TIKA}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -639,7 +664,7 @@ target "tengine_pdfrenderer" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine PDF Renderer"
     "org.opencontainers.image.description" = "Alfresco Transform Engine PDF Renderer"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-pdf-renderer:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-pdf-renderer:${TAG_TENGINE_PDFRENDERER}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -670,7 +695,7 @@ target "tengine_aio" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Transform Engine All In One"
     "org.opencontainers.image.description" = "Alfresco Transform Engine All In One"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-core-aio:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-core-aio:${TAG_TENGINE_AIO}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -701,7 +726,7 @@ target "connector_msteams" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Connector Microsoft Teams"
     "org.opencontainers.image.description" = "Alfresco Connector Microsoft Teams"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-ms-teams-service:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-ms-teams-service:${TAG_CONNECTOR_MSTEAMS}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -732,7 +757,7 @@ target "connector_ms365" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Microsoft 365 Connector"
     "org.opencontainers.image.description" = "Alfresco Microsoft 365 Connector"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-ooi-service:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-ooi-service:${TAG_CONNECTOR_MS365}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -764,7 +789,7 @@ target "share" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Share"
     "org.opencontainers.image.description" = "Alfresco Share"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${share_editions.image_name}:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/${share_editions.image_name}:${TAG_SHARE}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 
@@ -817,7 +842,7 @@ target "search_service" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Search Service (Solr)"
     "org.opencontainers.image.description" = "Alfresco Search Service (Solr)"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-search-service:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-search-service:${TAG_SEARCH_SERVICE}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -830,7 +855,7 @@ target "acc" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Control Center"
     "org.opencontainers.image.description" = "Alfresco Control Center"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG_ACC}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -843,7 +868,7 @@ target "adw" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Digital Workspace"
     "org.opencontainers.image.description" = "Alfresco Digital Workspace"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-digital-workspace:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-digital-workspace:${TAG_ADW}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -874,7 +899,7 @@ target "sync" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Sync Service"
     "org.opencontainers.image.description" = "Alfresco Sync Service"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-sync-service:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-sync-service:${TAG_SYNC}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -905,7 +930,7 @@ target "audit_storage" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's Audit Storage"
     "org.opencontainers.image.description" = "Alfresco Audit Storage for repository events"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-audit-storage:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-audit-storage:${TAG_AUDIT_STORAGE}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -936,7 +961,7 @@ target "hxinsight_connector_bulk_ingester" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector Bulk Ingester"
     "org.opencontainers.image.description" = "Alfresco HxInsight Connector Bulk Ingester"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-bulk-ingester:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-bulk-ingester:${TAG_HXINSIGHT_BULK}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -959,7 +984,7 @@ target "hxinsight_connector_live_ingester" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector Live Ingester"
     "org.opencontainers.image.description" = "Alfresco HxInsight Connector Live Ingester"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-live-ingester:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-live-ingester:${TAG_HXINSIGHT_LIVE}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -982,7 +1007,7 @@ target "hxinsight_connector_prediction_applier" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector Prediction Applier"
     "org.opencontainers.image.description" = "Alfresco HxInsight Connector Prediction Applier"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-prediction-applier:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-prediction-applier:${TAG_HXINSIGHT_PREDICTION}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -1012,7 +1037,7 @@ target "aps-admin" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Process Services Admin"
     "org.opencontainers.image.description" = "Alfresco Process Services Admin Console"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services-admin:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services-admin:${TAG_APS_ADMIN}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
@@ -1039,7 +1064,7 @@ target "aps-app" {
     "org.opencontainers.image.title" = "${PRODUCT_LINE} Process Services App"
     "org.opencontainers.image.description" = "Alfresco Process Services App"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services:${TAG}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-process-services:${TAG_APS_APP}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
