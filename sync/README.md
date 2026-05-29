@@ -43,4 +43,4 @@ docker run -e JAVA_OPTS="-Drepo.hostname=alfresco" \
 > chart, you can use other [higher level means of
 > configuration](https://github.com/Alfresco/alfresco-helm-charts/blob/main/charts/alfresco-sync-service/README.md).
 
-[sync]: https://docs.hyland.com/r/Alfresco/Alfresco-Sync-Service/5.1/Alfresco-Sync-Service/Configure/Overview/Required-properties
+[sync]: https://docs.hyland.com/r/Alfresco/Alfresco-Sync-Service/5.3/Alfresco-Sync-Service/Configure/Overview/Required-properties
