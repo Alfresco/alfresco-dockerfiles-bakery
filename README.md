@@ -5,7 +5,7 @@
 [![CI from forks](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_forks.yml/badge.svg)](https://github.com/Alfresco/alfresco-dockerfiles-bakery/actions/workflows/build_forks.yml)
 
 As outlined in the [Hyland Alfresco support
-policy](https://docs.alfresco.com/support/latest/policies/deployment/),
+policy](https://docs.hyland.com/r/Alfresco/Alfresco-Content-Services/23.7/Alfresco-Content-Services/Install/Overview/Install-and-deploy-methods),
 pre-built container images are intended as reference for creating your own
 customized images, incorporating deployment guidelines, security best practices,
 and any necessary custom extensions. While this policy remains unchanged, we are

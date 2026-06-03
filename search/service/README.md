@@ -100,7 +100,7 @@ files to the final destination volume.
 ### Cross locale search
 
 Cross locale search
-[configuration](https://docs.alfresco.com/insight-engine/latest/config/indexing/#cross-locale)
+[configuration](https://docs.hyland.com/r/Alfresco/Alfresco-Search-and-Insight-Engine/2.0/Alfresco-Search-and-Insight-Engine/Configure/Indexing-recommendations/Cross-Locale)
 should be done in the `$SOLR_HOME/shared.properties` file.
 
 ### Fingerprint configuration
@@ -108,14 +108,14 @@ should be done in the `$SOLR_HOME/shared.properties` file.
 Toggling also requires using a volume for the `solrhome` directory. For
 furthter information, please refer to the
 [official
-documentation](https://docs.alfresco.com/insight-engine/latest/config/performance/#disable-document-fingerprint)
+documentation](https://docs.hyland.com/r/Alfresco/Alfresco-Search-and-Insight-Engine/2.0/Alfresco-Search-and-Insight-Engine/Configure/Performance-Recommendations/Disable-document-FINGERPRINT)
 
 ### Solr Caches configuration
 
 The Solr caches configuration can be done in the `solrcore.properties` file
 and so requires a volume for the `solrhome` directory. For further information,
 please refer to the [cache configuration
-documentation](https://docs.alfresco.com/insight-engine/latest/config/performance/#disable-solr-document-cache)
+documentation](https://docs.hyland.com/r/Alfresco/Alfresco-Search-and-Insight-Engine/2.0/Alfresco-Search-and-Insight-Engine/Configure/Performance-Recommendations/Disable-SOLR-Document-Cache)
 
 ### Merging configuration
 
@@ -123,7 +123,7 @@ Index merging is a command and often sensitive operation. You may want to
 configure it to your needs. Solr again, do not expose environment variables for
 this, so you need to use a volume for the `solrhome` directory. For further
 information, please refer to the [Merging Parameters
-documentation](https://docs.alfresco.com/insight-engine/latest/config/performance/#merging-parameters)
+documentation](https://docs.hyland.com/r/Alfresco/Alfresco-Search-and-Insight-Engine/2.0/Alfresco-Search-and-Insight-Engine/Configure/Performance-Recommendations/Merging-parameters)
 
 ## Solr replication
 
