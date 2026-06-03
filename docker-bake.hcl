@@ -19,17 +19,11 @@ group "community" {
 }
 
 group "content_service_enterprise" {
-  targets = exclude_if_version(
-    ["74"],
-    [
-      "repository_enterprise",
-      "share_enterprise",
-      "audit_storage"
-    ],
-    [
-      "audit_storage"
-    ]
-  )
+  targets = [
+    "repository_enterprise",
+    "share_enterprise",
+    "audit_storage"
+  ]
 }
 
 group "content_service_community" {
@@ -153,7 +147,6 @@ function "select_java_version" {
   # - regex() raises an error if there's no match
   # - can(expr) converts that error into false
   result = (
-    can(regex("^7", acs_version)) ? "17" :
     can(regex("^(23|25)", acs_version)) ? "17" :
     "21"
   )
@@ -165,12 +158,6 @@ variable "JAVA_MAJOR" {
 
 variable "TOMCAT_VERSIONS" {
   default = {
-    tomcat9 = {
-      major   = 9
-      version = "9.0.117"
-      sha512  = "82b15278a7bfa2685c80e07963c43246df4fd742d574b608a68f5ce67c6ffde0eff3e224cc9809925cc6bf7002a190c3bf420f50c0e4052467d3e665efc84a54"
-    }
-
     tomcat10 = {
       major   = 10
       version = "10.1.54"
@@ -191,7 +178,6 @@ function "select_tomcat_field" {
   # Decide the tomcat* key based on the ACS version prefix.
   # - Use can(regex(...)) because regex() errors on no match.
   result = (
-    can(regex("^7", acs_version)) ? "tomcat9" :
     can(regex("^(23|25)", acs_version)) ? "tomcat10" :
     "tomcat11"
   )
