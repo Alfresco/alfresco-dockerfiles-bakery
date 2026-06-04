@@ -187,15 +187,6 @@ variable "TOMCAT_FIELD" {
   default = select_tomcat_field(ACS_VERSION)
 }
 
-function "exclude_if_version" {
-  params = [
-    versions,  # list of string versions
-    inputlist, # list of string targets
-    excludees  # list of string targets to exclude
-    ]
-  result = sethaselement(versions,"${ACS_VERSION}") ? setsubtract(inputlist, excludees) : inputlist
-}
-
 target "java_base" {
   context = "./java"
   dockerfile = "Dockerfile"
