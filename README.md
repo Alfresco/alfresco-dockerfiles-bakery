@@ -263,9 +263,7 @@ or `docker buildx bake`.
 - ACS 25  - `ACS_VERSION=25` - Will use `artifacts-25.yaml` files
 - ACS 23  - `ACS_VERSION=23` - Will use `artifacts-23.yaml` files
 
-```sh
-make enterprise ACS_VERSION=23
-```
+
 
 ```sh
 ACS_VERSION=23 docker buildx bake enterprise
