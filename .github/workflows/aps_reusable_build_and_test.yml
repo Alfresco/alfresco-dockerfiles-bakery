@@ -40,7 +40,7 @@ jobs:
             config-type: volume
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: Prepare for helm installation
         id: helm-prepare
@@ -100,19 +100,19 @@ jobs:
             ${{ matrix.config-type == 'volume' && '--values test/helm/aps-test-overrides-volume.yaml' || '' }}
 
       - name: Wait for deployments to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v17.6.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v18.7.0
         with:
           wait-resource: "deployments"
           wait-condition: "Available"
 
       - name: Wait for statefulsets to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v17.6.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v18.7.0
         with:
           wait-resource: "sts"
           wait-for-what: "jsonpath"
           wait-condition: "'{.status.readyReplicas}'=1"
 
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
         with:
           repository: Alfresco/alfresco-deployment-test-automation-scripts
           path: dtas
@@ -140,7 +140,7 @@ jobs:
 
       - name: Collect and push logs as artifcact
         if: always() && steps.helm_install.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@v17.6.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-keep-nslogs@v18.7.0
         with:
           log_retention: 7
           log_name_identifier: "APS-Version-${{ inputs.aps_version }}-${{ matrix.config-type }}-${{ matrix.arch }}"
