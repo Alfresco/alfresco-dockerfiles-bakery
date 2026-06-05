@@ -256,35 +256,29 @@ docker buildx bake repo --set *.output=type=registry,push=true
 Versions of artifacts being downloaded specific to the ACS version are defined
 in `artifacts-XX.yaml` files for each component.
 
-To build a specific ACS version, pass the `ACS_VERSION` env to the make command.
+To build a specific ACS version, pass the `ACS_VERSION` env to either `make`
+or `docker buildx bake`.
 
 - ACS 26 (current default) - `ACS_VERSION=26` - Will use `artifacts-26.yaml` files
 - ACS 25  - `ACS_VERSION=25` - Will use `artifacts-25.yaml` files
 - ACS 23  - `ACS_VERSION=23` - Will use `artifacts-23.yaml` files
-- ACS 7.4 - `ACS_VERSION=74` - Will use `artifacts-74.yaml` files
+
+
 
 ```sh
-make enterprise ACS_VERSION=74
+ACS_VERSION=23 docker buildx bake enterprise
 ```
 
-When using `make`, it sets the correct version of Tomcat based on the ACS version.
-If you want to build older version of images using `docker buildx bake` it is
-required to set the Tomcat versions manually in bake file or using env
-variables.
+Tomcat values are selected automatically from `docker-bake.hcl` based on
+`ACS_VERSION`.
 
-```sh
-export TOMCAT_VERSIONS_FILE=tomcat/tomcat_versions.yaml
-export TOMCAT_MAJOR=$(yq e '.tomcat9.major' $TOMCAT_VERSIONS_FILE)
-export TOMCAT_VERSION=$(yq e '.tomcat9.version' $TOMCAT_VERSIONS_FILE)
-export TOMCAT_SHA512=$(yq e '.tomcat9.sha512' $TOMCAT_VERSIONS_FILE)
-docker buildx bake tomcat_base
-```
+If needed, you can still override Tomcat values explicitly using `--set`.
 
 Before switching build to other version clean the artifacts using `make clean`
 then fetch correct version with e.g.:
 
 ```sh
-make clean prepare ACS_VERSION=74
+make clean prepare ACS_VERSION=23
 ```
 
 Artifacts set in the artifacts file are fetched from the Nexus repository and
