@@ -38,6 +38,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: SSH debug
+        uses: mxschmitt/action-tmate@v3
+        env:
+          QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+          QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
       - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v17.6.0
         with:
           auto-commit: "true"
