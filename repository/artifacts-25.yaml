@@ -1,7 +1,7 @@
 ---
 updatecli_self: repository/artifacts-25.yaml
 updatecli_matrix_version: 25.N
-updatecli_amps_release_branch: release/25.3
+updatecli_amps_release_branch: release/25.4
 artifacts:
   postgresql:
     name: postgresql
