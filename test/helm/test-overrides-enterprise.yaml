@@ -14,7 +14,7 @@ dtas:
             version: 4.1.0
             installed: true
           - id: alfresco-aos-module
-            version: 3.4.1
+            version: 3.4.0
             installed: true
           - id: alfresco-hxinsight-connector-hxinsight-extension
             version: 2.0.2
