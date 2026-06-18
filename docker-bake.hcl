@@ -15,7 +15,7 @@ group "enterprise" {
 }
 
 group "community" {
-  targets = ["content_service_community", "search_service", "tengines", "acc"]
+  targets = can(regex("^(23|25)", ACS_VERSION)) ? ["content_service_community", "search_service", "tengines", "acc"] : ["content_service_community", "tengines", "acc"]
 }
 
 group "content_service_enterprise" {
