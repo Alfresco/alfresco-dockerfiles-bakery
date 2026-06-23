@@ -1,6 +1,6 @@
 name: Bump tomcat versions
 
-{{ $tomcatMajors := list "11" "10" "9" }}
+{{ $tomcatMajors := list "11" "10" }}
 
 sources:
 {{ range $tomcatMajor := $tomcatMajors }}
