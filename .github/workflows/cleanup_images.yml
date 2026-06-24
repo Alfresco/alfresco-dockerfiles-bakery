@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Get package names from bake definition
         env:
@@ -62,7 +62,7 @@ jobs:
           fi
 
       - name: Remove tags after PR is closed
-        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
+        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         if: github.event_name == 'pull_request'
         env:
           PR_TAGS: ${{ format('pr-{0}*', github.event.pull_request.number) }}
@@ -75,7 +75,7 @@ jobs:
           dry-run: false
 
       - name: Remove every repo tags older than ${{ env.PERIOD }}
-        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
+        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         if: inputs.cleanup-old-tags || github.event_name == 'schedule'
         env:
           PERIOD: ${{ inputs.cleanup-old-tags-period || '2 weeks' }}
@@ -90,7 +90,7 @@ jobs:
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'false' }}
 
       - name: Remove images when requested
-        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
+        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
           token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
