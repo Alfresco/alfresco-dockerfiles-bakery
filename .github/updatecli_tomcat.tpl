@@ -7,12 +7,11 @@ sources:
 
   tomcat{{ $tomcatMajor }}Version:
     name: Get latest tomcat {{ $tomcatMajor }} version
-    kind: gittag
-    scmid: tomcat
+    kind: shell
     spec:
-      versionfilter:
-        kind: semver
-        pattern: ~{{ $tomcatMajor }}
+      command: .github/get-tomcat-version.sh {{ $tomcatMajor }}
+      environments:
+        - name: PATH
   {{ $tomcatSourceRef := printf "tomcat%sVersion" $tomcatMajor }}
   tomcat{{ $tomcatMajor }}Checksum:
     name: Get tomcat {{ $tomcatMajor }} archive checksum
@@ -87,8 +86,3 @@ scms:
       username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
       user: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
       email: {{ requiredEnv "UPDATECLI_GITHUB_EMAIL" }}
-  tomcat:
-    kind: git
-    spec:
-      url: https://github.com/apache/tomcat.git
-      branch: main
