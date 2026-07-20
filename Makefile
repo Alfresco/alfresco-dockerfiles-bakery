@@ -20,12 +20,12 @@ help:
 	@echo "  hxinsight_connector Build HxInsight Connector images"
 	@echo "  repository          Build Repository image"
 	@echo "  search_enterprise   Build Search Enterprise images"
+	@echo "  search_batch_indexing Build Search Community Batch Indexing image"
 	@echo "  search_service      Build Search Service images"
 	@echo "  share               Build Share images"
 	@echo "  sync                Build Sync Service images"
 	@echo "  tengines            Build Transform Engine images"
 	@echo "  aps                 Build Alfresco Process Services images"
-	@echo "  ========================================================"
 	@echo "  clean               Clean up Nexus artifacts"
 	@echo "  clean_caches        Clean up Docker and artifact caches"
 	@echo "  help                Display this help message"
@@ -114,6 +114,10 @@ prepare_repo: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Repository target"
 	@python3 ./scripts/fetch_artifacts.py repository
 
+prepare_search_community: scripts/fetch_artifacts.py
+	@echo "Fetching all artifacts for Search Community (Batch Indexing) target"
+	@python3 ./scripts/fetch_artifacts.py search/community
+
 prepare_search_enterprise: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Search Enterprise targets"
 	@python3 ./scripts/fetch_artifacts.py search/enterprise
@@ -184,6 +188,11 @@ hxinsight_connector: docker-bake.hcl prepare_hxinsight_connector setenv
 
 repository: docker-bake.hcl prepare_repo setenv
 	@echo "Building Repository images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
+search_batch_indexing: docker-bake.hcl prepare_search_community setenv
+	@echo "Building Search Community Batch Indexing image"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 

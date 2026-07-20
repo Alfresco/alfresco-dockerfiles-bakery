@@ -15,7 +15,7 @@ group "enterprise" {
 }
 
 group "community" {
-  targets = ["content_service_community", "search_service", "tengines", "acc"]
+  targets = ["content_service_community", "search_service", "search_batch_indexing", "tengines", "acc"]
 }
 
 group "content_service_enterprise" {
@@ -774,6 +774,37 @@ target "share" {
 
 variable "ALFRESCO_SOLR_DIST_DIR" {
   default = "/opt/alfresco-search-services"
+}
+
+variable "ALFRESCO_BATCHINDEXER_USER_NAME" {
+  default = "batchindexer"
+}
+
+variable "ALFRESCO_BATCHINDEXER_USER_ID" {
+  default = "33072"
+}
+
+target "search_batch_indexing" {
+  context = "./search/community"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_BATCHINDEXER_GROUP_ID   = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_BATCHINDEXER_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_BATCHINDEXER_USER_ID    = "${ALFRESCO_BATCHINDEXER_USER_ID}"
+    ALFRESCO_BATCHINDEXER_USER_NAME  = "${ALFRESCO_BATCHINDEXER_USER_NAME}"
+  }
+  labels = {
+    "org.label-schema.name"              = "${PRODUCT_LINE} Community Search - Batch Indexing"
+    "org.opencontainers.image.title"     = "${PRODUCT_LINE} Community Search - Batch Indexing"
+    "org.opencontainers.image.description" = "Alfresco Elasticsearch Community batch indexing connector"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-batch-indexing:${TAG}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_SOLR_USER_NAME" {

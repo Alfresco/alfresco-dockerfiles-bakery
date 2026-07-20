@@ -22,6 +22,7 @@ Bake](https://docs.docker.com/build/bake/).
   - [Customizing the images](#customizing-the-images)
     - [Customizing the Alfresco Content Repository image](#customizing-the-alfresco-content-repository-image)
     - [Customizing the Share image](#customizing-the-share-image)
+    - [Customizing the Community Batch Indexing image](#customizing-the-community-batch-indexing-image)
   - [Supported Architectures](#supported-architectures)
     - [Targeting a specific architecture](#targeting-a-specific-architecture)
     - [Multi-arch images](#multi-arch-images)
@@ -176,6 +177,34 @@ The Share image can be customized by adding files into specific folders:
   folder
 - Share Simple Module (JAR) files in the
   [simple_modules](share/simple_modules/README.md) folder
+
+### Customizing the Community Batch Indexing image
+
+The Community Batch Indexing image (`search_batch_indexing`) packages the
+Alfresco Elasticsearch community connector, enabling Elasticsearch-based search
+for Community Edition deployments.
+
+Build the image:
+
+```sh
+docker buildx bake search_batch_indexing
+```
+
+or together with all other community images:
+
+```sh
+make community
+```
+
+For a specific ACS version:
+
+```sh
+ACS_VERSION=25 docker buildx bake search_batch_indexing
+```
+
+Runtime behaviour is controlled entirely via environment variables passed to the
+container. See [search/community/README.md](search/community/README.md) for the
+full list of supported variables and customization options.
 
 ## Supported Architectures
 
