@@ -202,9 +202,9 @@ For a specific ACS version:
 ACS_VERSION=25 docker buildx bake search_batch_indexing
 ```
 
-Runtime behaviour is controlled entirely via environment variables passed to the
-container. See [search/community/README.md](search/community/README.md) for the
-full list of supported variables and customization options.
+Runtime behaviour can be controlled via environment variables passed to the
+container and via standard Spring externalized configuration (e.g. mounted config
+files). See [search/community/README.md](search/community/README.md) for the full list of supported variables and customization options.
 
 ## Supported Architectures
 
