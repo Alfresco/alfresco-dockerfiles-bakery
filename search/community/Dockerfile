@@ -11,6 +11,8 @@ EXPOSE 8080
 COPY *-app.jar /opt/app.jar
 COPY entrypoint.sh /entrypoint.sh
 
+WORKDIR /opt/app/logs
+
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 --start-period=1m \
   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
