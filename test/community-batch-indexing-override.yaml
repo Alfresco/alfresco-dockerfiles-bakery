@@ -13,8 +13,12 @@ services:
       SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
       SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
       ALFRESCO_ACCEPTED_CONTENT_MEDIA_TYPES_CACHE_ENABLED: "true"
-      # disable file logging to avoid permission issues with shared volumes
+      # Spring Boot logging configuration - log to stdout and isolated volume only
+      LOGGING_LEVEL_ROOT: INFO
       LOGGING_LEVEL_ORG_ALFRESCO: INFO
+      LOGGING_FILE: /opt/app/logs/batch-indexing.log
+      LOGGING_FILE_MAX_SIZE: 10MB
+      LOGGING_FILE_MAX_HISTORY: 10
     volumes:
       - batch-indexing-logs:/opt/app/logs
   control-center:
