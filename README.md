@@ -417,7 +417,7 @@ You can use Docker Compose to test the built images locally as follows:
 
     ```sh
     export REGISTRY=localhost REGISTRY_NAMESPACE=alfresco TAG=latest
-    docker compose -f test/community-compose.yaml -f test/community-override.yaml up -d
+    docker compose -f test/community-compose.yaml -f test/community-batch-indexing-override.yaml up -d
     ```
 
 ## Security scanning

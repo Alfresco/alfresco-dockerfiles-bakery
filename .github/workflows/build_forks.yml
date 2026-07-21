@@ -104,7 +104,7 @@ jobs:
       - name: Merge Docker Compose files
         env:
           UPSTREAM_COMPOSE_PATH: community-compose.yaml
-          OVERRIDE_COMPOSE_PATH: community-override.yaml
+          OVERRIDE_COMPOSE_PATH: community-batch-indexing-override.yaml
         run: |
           cp -r acs-deployment/docker-compose/* test/
           docker compose -f test/${{ env.UPSTREAM_COMPOSE_PATH }} -f test/${{ env.OVERRIDE_COMPOSE_PATH }} config > ${{ env.MERGED_COMPOSE_PATH }}
