@@ -1,32 +1,18 @@
 # Do not move this file to a folder that is not a first level folder
+# Note: alfresco-content-repository-community is intentionally NOT overridden here.
+# The bakery community repository image is built from the stable alfresco-content-services-community-distribution
+# which does not include the Elasticsearch subsystem. The pre-release-community-compose.yaml base
+# image (26.2.0-A.x) bundles Elasticsearch support and is used as-is.
 services:
-  alfresco:
-    image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-content-repository-community:${TAG}
   transform-core-aio:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-transform-core-aio:${TAG}
   share:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share-community:${TAG}
   batch-indexing:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-batch-indexing:${TAG}
-    environment:
-      # variables specific to image produced by bakery
-      SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
-      SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
-      ALFRESCO_ACCEPTED_CONTENT_MEDIA_TYPES_CACHE_ENABLED: "true"
-      # Spring Boot logging configuration - log to stdout and isolated volume only
-      LOGGING_LEVEL_ROOT: INFO
-      LOGGING_LEVEL_ORG_ALFRESCO: INFO
-      LOGGING_FILE: /opt/app/logs/batch-indexing.log
-      LOGGING_FILE_MAX_SIZE: 10MB
-      LOGGING_FILE_MAX_HISTORY: 10
-    volumes:
-      - batch-indexing-logs:/opt/app/logs
   control-center:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
     environment:
       BASE_PATH: /
     volumes:
       - ./configs/acc.json:/usr/share/nginx/html/app.config.json
-
-volumes:
-  batch-indexing-logs:
