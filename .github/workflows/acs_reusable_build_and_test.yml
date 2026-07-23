@@ -97,7 +97,7 @@ jobs:
               echo "OVERRIDE_COMPOSE_PATH=enterprise-override.yaml" >> $GITHUB_ENV
               ;;
             community)
-              echo "UPSTREAM_COMPOSE_PATH=community-compose.yaml" >> $GITHUB_ENV
+              echo "UPSTREAM_COMPOSE_PATH=pre-release-community-compose.yaml" >> $GITHUB_ENV
               echo "OVERRIDE_COMPOSE_PATH=community-batch-indexing-override.yaml" >> $GITHUB_ENV
               ;;
           esac
