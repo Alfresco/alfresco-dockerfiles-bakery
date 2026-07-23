@@ -11,15 +11,11 @@ EXPOSE 8080
 COPY *-app.jar /opt/app.jar
 COPY entrypoint.sh /entrypoint.sh
 
-WORKDIR /opt/app/logs
-
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 --start-period=1m \
   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
 RUN groupadd -g ${ALFRESCO_BATCHINDEXER_GROUP_ID} ${ALFRESCO_BATCHINDEXER_GROUP_NAME} && \
-    useradd -lu ${ALFRESCO_BATCHINDEXER_USER_ID} -g ${ALFRESCO_BATCHINDEXER_GROUP_NAME} ${ALFRESCO_BATCHINDEXER_USER_NAME} && \
-    mkdir -p /opt/app/logs && \
-    chown -R ${ALFRESCO_BATCHINDEXER_USER_NAME}:${ALFRESCO_BATCHINDEXER_GROUP_NAME} /opt/app/logs
+    useradd -lu ${ALFRESCO_BATCHINDEXER_USER_ID} -g ${ALFRESCO_BATCHINDEXER_GROUP_NAME} ${ALFRESCO_BATCHINDEXER_USER_NAME}
 
 USER ${ALFRESCO_BATCHINDEXER_USER_NAME}
 
