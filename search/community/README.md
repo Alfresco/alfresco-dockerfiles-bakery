@@ -30,12 +30,6 @@ Then build the image from the root of this repository:
 docker buildx bake search_batch_indexing
 ```
 
-To build for a specific ACS version (default is 26):
-
-```bash
-ACS_VERSION=25 docker buildx bake search_batch_indexing
-```
-
 ## Runtime variables
 
 The following environment variables can be passed at container start-up to
@@ -45,8 +39,7 @@ configure the batch indexer:
 |---|---|---|
 | `JAVA_OPTS` | Additional JVM options (heap, GC, etc.) | _(empty)_ |
 | `SPRING_ELASTICSEARCH_REST_URIS` | Comma-separated list of Elasticsearch REST endpoints | `http://elasticsearch:9200` |
-| `SPRING_ACTIVEMQ_BROKERURL` | ActiveMQ broker URL | `nio://activemq:61616` |
-| `ALFRESCO_ACCEPTED_CONTENT_MEDIA_TYPES_CACHE_ENABLED` | Enable/disable media-types cache | `true` |
+| `ALFRESCO_ACCEPTEDCONTENTMEDIATYPESCACHE_ENABLED` | Enable/disable the accepted content media types cache. Requires a single ATS all-in-one endpoint; set to `true` only when deploying with the AIO transformer. | `false` |
 
 Example Docker Compose snippet:
 
@@ -55,19 +48,12 @@ batch-indexer:
   image: localhost/alfresco/alfresco-elasticsearch-batch-indexing:latest
   environment:
     SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
-    SPRING_ACTIVEMQ_BROKERURL: nio://activemq:61616
 ```
 
 ## Customizing the image
 
-The batch indexing image can be customized by extending it or by bind-mounting
-configuration files. The Spring Boot application reads its configuration from
-the standard Spring externalized configuration locations, so you can override
-any property by:
-
-1. **Environment variables** — set `SPRING_*` or `ALFRESCO_*` env vars.
-2. **Mounted config file** — mount a custom `application.properties` or
-   `application.yaml` to `/opt/app-config/`.
+Runtime configuration is managed entirely via environment variables.
+Set `SPRING_*` or `ALFRESCO_*` env vars to override any Spring Boot property.
 
 ## Artifacts
 
@@ -77,8 +63,8 @@ The artifact fetched for this component is:
 |---|---|---|
 | `alfresco-elasticsearch-batch-indexing-<version>-app.jar` | `releases` | `org.alfresco` |
 
-Version mappings per ACS line are defined in the `artifacts-*.yaml` files in
-this directory and are kept up to date by the `updatecli` pipeline.
+This component only supports **ACS 26.2 and later**. A single `artifacts-26.yaml`
+file defines the artifact version and is kept up to date by the `updatecli` pipeline.
 
 ## Helm chart
 

@@ -199,7 +199,7 @@ make community
 For a specific ACS version:
 
 ```sh
-ACS_VERSION=25 docker buildx bake search_batch_indexing
+ACS_VERSION=26 docker buildx bake search_batch_indexing
 ```
 
 Runtime behaviour can be controlled via environment variables passed to the

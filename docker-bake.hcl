@@ -14,8 +14,21 @@ group "enterprise" {
   ]
 }
 
+function "select_community_search" {
+  params = [acs_version]
+
+  # Batch indexing (Elasticsearch) is only supported from ACS 26.2 onward.
+  # ACS 23, 25, 26.0 and 26.1 use SOLR via search_service.
+  # - regex() raises an error if there's no match
+  # - can(expr) converts that error into false
+  result = (
+    can(regex("^(23|25|26\\.0|26\\.1)", acs_version)) ? "search_service" :
+    "search_batch_indexing"
+  )
+}
+
 group "community" {
-  targets = ["content_service_community", "search_service", "search_batch_indexing", "tengines", "acc"]
+  targets = ["content_service_community", select_community_search(ACS_VERSION), "tengines", "acc"]
 }
 
 group "content_service_enterprise" {
