@@ -5,7 +5,6 @@ on:
     types: [closed]
   schedule:
     - cron: '0 19 */3 * *'  # Every 3 days after 7 PM
-    - cron: '0 4 * * 1'  # Weekly on Monday, to force a java_base cache refresh
   workflow_dispatch:
     inputs:
       dry-run:
@@ -90,18 +89,6 @@ jobs:
           older-than: ${{ env.PERIOD }}
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'false' }}
 
-      - name: Expire java_base cache tags weekly to pick up latest OS package updates
-        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
-        if: github.event.schedule == '0 4 * * 1'
-        with:
-          token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
-          owner: ${{ env.ORG }}
-          repository: ${{ env.REPO }}
-          packages: ${{ env.CACHE_REPO }}
-          delete-tags: '.*-java_base$'
-          use-regex: true
-          dry-run: false
-
       - name: Remove images when requested
         uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
@@ -112,5 +99,20 @@ jobs:
           packages: ${{ env.PACKAGE_NAMES }},${{ env.CACHE_REPO }}
           delete-untagged: ${{ github.event_name == 'schedule' || inputs.untagged }}
           delete-tags: ${{ github.event.inputs.tags }}
+          use-regex: true
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'false' }}
+
+  expire-java-base-cache:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Expire java_base cache tags to pick up latest OS package updates
+        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        with:
+          token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
+          owner: ${{ env.ORG }}
+          repository: ${{ env.REPO }}
+          packages: ${{ env.CACHE_REPO }}
+          delete-tags: '.*-java_base$'
           use-regex: true
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'false' }}
