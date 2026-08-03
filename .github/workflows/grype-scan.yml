@@ -62,6 +62,27 @@ jobs:
             rm "$f"
           done
 
+      - name: Summarize results
+        run: |
+          {
+            echo "## Grype scan: ${{ matrix.target }}"
+            for f in sarif/*.sarif; do
+              echo "### $(basename "$f" .sarif)"
+              jq -r '
+                .runs[0].tool.driver.rules // [] as $rules |
+                if ($rules | length) == 0 then
+                  "_No vulnerabilities found._"
+                else
+                  (["| Severity | Package | Version | Fix Version | Type | Location | Data Namespace | Link |",
+                    "| --- | --- | --- | --- | --- | --- | --- | --- |"]
+                    + [$rules[] | (.help.markdown | split("\n")[3])])
+                  | join("\n")
+                end
+              ' "$f"
+              echo
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload SARIF to GitHub code scanning
         uses: github/codeql-action/upload-sarif@ea14db8afdef5d462e69d78c4ca45002d4522418 # v4.37.4
         with:
