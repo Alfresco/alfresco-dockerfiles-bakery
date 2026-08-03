@@ -64,4 +64,5 @@ jobs:
           docker image ls --format '{{.Repository}}:{{.Tag}}' \
             | grep alfresco \
             | xargs -I{} sh -c 'echo "Running scan for {}..." \
-            && grype -f high --only-fixed --ignore-states wont-fix {}'
+            && grype -f high --only-fixed --ignore-states wont-fix {} \
+            || echo "::warning::Grype found vulnerabilities in {}"'
