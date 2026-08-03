@@ -51,7 +51,7 @@ jobs:
 
       - name: Scan built images
         run: |
-          make grype GRYPE_TARGET=${{ matrix.target }} GRYPE_OUTPUT_DIR=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix -o sarif"
+          make grype GRYPE_TARGET=${{ matrix.target }} GRYPE_OUTPUT_DIR=sarif GRYPE_OUTPUT_FORMAT=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
           # Code scanning requires a unique category per run: give each image its own,
           # via automationDetails.id (takes precedence over the upload-sarif `category` input).
           # https://github.blog/changelog/2025-07-21-code-scanning-will-stop-combining-multiple-sarif-runs-uploaded-in-the-same-sarif-file/

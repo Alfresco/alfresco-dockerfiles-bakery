@@ -415,10 +415,11 @@ found and is filtering out known issues for which a fix is not available (yet or
 ever).
 
 Set `GRYPE_OUTPUT_DIR` to write each image's scan output to a file in that directory
-instead of printing it to stdout, e.g. to collect SARIF reports for upload elsewhere:
+instead of printing it to stdout, and `GRYPE_OUTPUT_FORMAT` to pick the format (see
+Grype's `-o`/`--output` flag), e.g. to collect SARIF reports for upload elsewhere:
 
 ```sh
-make grype GRYPE_TARGET=repository GRYPE_OPTS="--only-fixed --ignore-states wont-fix -o sarif" GRYPE_OUTPUT_DIR=sarif
+make grype GRYPE_TARGET=repository GRYPE_OPTS="--only-fixed --ignore-states wont-fix" GRYPE_OUTPUT_DIR=sarif GRYPE_OUTPUT_FORMAT=sarif
 ```
 
 You can also run grype automatically at the end of the build process by setting

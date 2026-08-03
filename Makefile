@@ -210,6 +210,7 @@ tengines: docker-bake.hcl prepare_tengines setenv
 	$(call grype_scan,$@)
 
 GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix
+GRYPE_OUTPUT_FORMAT ?=
 
 define _grype_impl
 	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation"; exit 1; }
@@ -219,9 +220,9 @@ define _grype_impl
 	| while read tag; do \
 		echo "Scanning image $$tag"; \
 		if [ -n "$(GRYPE_OUTPUT_DIR)" ]; then \
-			grype $(GRYPE_OPTS) "$$tag" > "$(GRYPE_OUTPUT_DIR)/$$(echo "$$tag" | tr -c '[:alnum:]_.-' '_').out"; \
+			grype $(GRYPE_OPTS) $(if $(GRYPE_OUTPUT_FORMAT),-o $(GRYPE_OUTPUT_FORMAT)) "$$tag" > "$(GRYPE_OUTPUT_DIR)/$$(echo "$$tag" | tr -c '[:alnum:]_.-' '_').out"; \
 		else \
-			grype $(GRYPE_OPTS) "$$tag"; \
+			grype $(GRYPE_OPTS) $(if $(GRYPE_OUTPUT_FORMAT),-o $(GRYPE_OUTPUT_FORMAT)) "$$tag"; \
 		fi; \
 	done
 endef
