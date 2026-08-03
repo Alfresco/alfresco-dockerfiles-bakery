@@ -13,7 +13,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-share-services:
     name: alfresco-share-services
-    version: 26.1.0.61
+    version: 26.2.1.1
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco
@@ -29,7 +29,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-device-sync-repo:
     name: alfresco-device-sync-repo
-    version: 5.3.1
+    version: 5.3.5
     path: repository/amps_enterprise
     classifier: ".amp"
     group: org.alfresco.services.sync
