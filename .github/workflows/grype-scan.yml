@@ -52,7 +52,6 @@ jobs:
         run: echo "$(dirname ${{ steps.grype-install.outputs.cmd }})" >> "$GITHUB_PATH"
 
       - name: Scan built images
-        continue-on-error: true
         run: |
           make grype GRYPE_TARGET=${{ matrix.target }} GRYPE_OUTPUT_DIR=sarif GRYPE_OUTPUT_FORMAT=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
 
