@@ -217,7 +217,6 @@ target "java_base" {
   tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-base-java:${JDIST}${JAVA_MAJOR}-${DISTRIB_NAME}${DISTRIB_MAJOR}"]
   output = ["type=cacheonly"]
   platforms = split(",", "${TARGETARCH}")
-  no-cache-filter = ["rhlike"]
 }
 
 # Tomcat variables are set by makefile using tomcat/tomcat_versions.yaml
