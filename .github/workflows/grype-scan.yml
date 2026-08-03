@@ -19,7 +19,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [community, adf_apps, ats, audit_storage, connectors, hxinsight_connector, repository, search_enterprise, search_service, share, sync, tengines, aps]
+        # "community" and "enterprise" are aggregate bake groups: every image they build is
+        # already covered by one of the more granular targets below, so scanning them here
+        # would just rebuild and rescan the same images under a second, redundant category.
+        target: [adf_apps, ats, audit_storage, connectors, hxinsight_connector, repository, search_enterprise, search_service, share, sync, tengines, aps]
     runs-on: ubuntu-latest
     steps:
       - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v17.6.0
