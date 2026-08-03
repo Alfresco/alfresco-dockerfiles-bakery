@@ -1,7 +1,6 @@
 name: Grype vulnerability scan
 
 on:
-  push:  # TODO: remove, temporary trigger to test this workflow once
   schedule:
     - cron: '30 4 * * 1'  # Weekly, Monday 04:30 UTC
   workflow_dispatch: {}
