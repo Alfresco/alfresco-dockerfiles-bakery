@@ -70,15 +70,13 @@ jobs:
           {
             echo "## Grype scan: ${{ matrix.target }}"
             for f in sarif/*.sarif; do
-              echo "### $(basename "$f" .sarif)"
+              echo "### $(basename "$f" .sarif | sed -E 's/^localhost_alfresco_//; s/_latest_?$//')"
               jq -r '
                 .runs[0].tool.driver.rules // [] as $rules |
                 if ($rules | length) == 0 then
                   "_No vulnerabilities found._"
                 else
-                  (["| Severity | Package | Version | Fix Version | Type | Location | Data Namespace | Link |",
-                    "| --- | --- | --- | --- | --- | --- | --- | --- |"]
-                    + [$rules[] | (.help.markdown | split("\n")[3])])
+                  [$rules[] | "- **" + (.properties["security-severity"] // "?") + "** " + (.shortDescription.text // .id)]
                   | join("\n")
                 end
               ' "$f"
