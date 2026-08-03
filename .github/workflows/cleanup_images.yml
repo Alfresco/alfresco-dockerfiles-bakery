@@ -113,11 +113,13 @@ jobs:
   expire-java-base-cache:
     if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.job != 'cleanup')
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - name: Expire java_base cache tags to pick up latest OS package updates
         uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         with:
-          token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.CACHE_REPO }}
