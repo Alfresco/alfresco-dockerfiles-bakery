@@ -24,7 +24,7 @@ jobs:
         target: [adf_apps, ats, audit_storage, connectors, hxinsight_connector, repository, search_enterprise, search_service, share, sync, tengines, aps]
     runs-on: ubuntu-latest
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v17.6.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v18.21.1
 
       - name: Setup nexus authentication
         env:
@@ -37,10 +37,10 @@ jobs:
           echo "password ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
 
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - run: make ${{ matrix.target }}
 
@@ -52,11 +52,19 @@ jobs:
         run: echo "$(dirname ${{ steps.grype-install.outputs.cmd }})" >> "$GITHUB_PATH"
 
       - name: Scan built images
+        continue-on-error: true
         run: |
           make grype GRYPE_TARGET=${{ matrix.target }} GRYPE_OUTPUT_DIR=sarif GRYPE_OUTPUT_FORMAT=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
+
+      # Runs even if the scan step above failed partway, so whatever SARIF was
+      # produced before the failure still gets uploaded instead of discarded.
+      - name: Prepare SARIF for code scanning
+        if: always()
+        run: |
           # Code scanning requires a unique category per run: give each image its own,
           # via automationDetails.id (takes precedence over the upload-sarif `category` input).
           # https://github.blog/changelog/2025-07-21-code-scanning-will-stop-combining-multiple-sarif-runs-uploaded-in-the-same-sarif-file/
+          shopt -s nullglob
           for f in sarif/*.out; do
             name=$(basename "$f" .out)
             id="${{ matrix.target }}/$(echo "$name" | sed -E 's/^localhost_alfresco_//; s/_latest_?$//')/"
@@ -65,6 +73,7 @@ jobs:
           done
 
       - name: Upload SARIF to GitHub code scanning
+        if: always()
         uses: github/codeql-action/upload-sarif@ea14db8afdef5d462e69d78c4ca45002d4522418 # v4.37.4
         with:
           sarif_file: sarif
