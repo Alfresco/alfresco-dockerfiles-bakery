@@ -12,7 +12,8 @@ artifacts_cache
 *.war
 
 # Files pulled from acs-deployment to test deployment
-acs-deployment
+/acs-deployment
+/aps-deployment
 test/compose.yaml
 test/community-compose.yaml
 test/*-compose.yaml
@@ -26,7 +27,7 @@ test/helm/community-integration-test-values.yaml
 test/helm/community_values.yaml
 
 # CI/CD
-alfresco-updatecli
+/alfresco-updatecli
 .idea
 .vscode
 .vagrant
