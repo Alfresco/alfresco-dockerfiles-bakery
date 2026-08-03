@@ -48,6 +48,8 @@ jobs:
   cleanup:
     if: github.actor != 'dependabot[bot]' && ! github.event.pull_request.head.repo.fork && (github.event_name != 'workflow_dispatch' || inputs.job != 'expire-java-base-cache')
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -75,7 +77,7 @@ jobs:
         env:
           PR_TAGS: ${{ format('pr-{0}*', github.event.pull_request.number) }}
         with:
-          token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }}
@@ -88,7 +90,7 @@ jobs:
         env:
           PERIOD: ${{ inputs.cleanup-old-tags-period || '2 weeks' }}
         with:
-          token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }},${{ env.CACHE_REPO }}
@@ -101,7 +103,7 @@ jobs:
         uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
-          token: ${{ secrets.DELETE_PACKAGES_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ env.ORG }}
           repository: ${{ env.REPO }}
           packages: ${{ env.PACKAGE_NAMES }},${{ env.CACHE_REPO }}
