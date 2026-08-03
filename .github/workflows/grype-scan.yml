@@ -55,11 +55,17 @@ jobs:
           GRYPE_TARGET=${{ matrix.target }}
           [ "$GRYPE_TARGET" = "repo" ] && GRYPE_TARGET=repository
           make grype GRYPE_TARGET="$GRYPE_TARGET" GRYPE_OUTPUT_DIR=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix -o sarif"
-          # Merge into a single multi-run SARIF file: one image = one run, one file = one code-scanning upload.
-          jq -s '{"$schema": .[0]["$schema"], version: .[0].version, runs: (map(.runs) | add)}' sarif/*.out > combined.sarif
+          # Code scanning requires a unique category per run: give each image its own,
+          # via automationDetails.id (takes precedence over the upload-sarif `category` input).
+          # https://github.blog/changelog/2025-07-21-code-scanning-will-stop-combining-multiple-sarif-runs-uploaded-in-the-same-sarif-file/
+          for f in sarif/*.out; do
+            name=$(basename "$f" .out)
+            id="${{ matrix.target }}/$(echo "$name" | sed -E 's/^localhost_alfresco_//; s/_latest_?$//')/"
+            jq --arg id "$id" '.runs[0].automationDetails.id = $id' "$f" > "sarif/$name.sarif"
+            rm "$f"
+          done
 
       - name: Upload SARIF to GitHub code scanning
         uses: github/codeql-action/upload-sarif@ea14db8afdef5d462e69d78c4ca45002d4522418 # v4.37.4
         with:
-          sarif_file: combined.sarif
-          category: ${{ matrix.target }}
+          sarif_file: sarif
