@@ -239,7 +239,7 @@ The `make` wrapper would handle the authentication part for you:
 
 ```sh
 export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=linux/amd64,linux/arm64
-make repo
+make repository
 ```
 
 You can also run bake directly but you need to be sure to have done the
@@ -248,7 +248,7 @@ additional argument to tell the tool to push the images to the registry:
 
 ```sh
 export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=linux/amd64,linux/arm64
-docker buildx bake repo --set *.output=type=registry,push=true
+docker buildx bake repository --set *.output=type=registry,push=true
 ```
 
 ## Building specific ACS versions

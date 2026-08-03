@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [community, adf_apps, ats, audit_storage, connectors, hxinsight_connector, repo, search_enterprise, search_service, share, sync, tengines, aps]
+        target: [community, adf_apps, ats, audit_storage, connectors, hxinsight_connector, repository, search_enterprise, search_service, share, sync, tengines, aps]
     runs-on: ubuntu-latest
     steps:
       - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v17.6.0
@@ -50,10 +50,7 @@ jobs:
 
       - name: Scan built images
         run: |
-          # docker-bake.hcl's target/group is named "repository", unlike the Makefile's "repo" build target.
-          GRYPE_TARGET=${{ matrix.target }}
-          [ "$GRYPE_TARGET" = "repo" ] && GRYPE_TARGET=repository
-          make grype GRYPE_TARGET="$GRYPE_TARGET" GRYPE_OUTPUT_DIR=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix -o sarif"
+          make grype GRYPE_TARGET=${{ matrix.target }} GRYPE_OUTPUT_DIR=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix -o sarif"
           # Code scanning requires a unique category per run: give each image its own,
           # via automationDetails.id (takes precedence over the upload-sarif `category` input).
           # https://github.blog/changelog/2025-07-21-code-scanning-will-stop-combining-multiple-sarif-runs-uploaded-in-the-same-sarif-file/

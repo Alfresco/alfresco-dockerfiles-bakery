@@ -18,7 +18,7 @@ help:
 	@echo "  audit_storage       Build Audit Storage images"
 	@echo "  connectors          Build MS365/Teams Connectors images"
 	@echo "  hxinsight_connector Build HxInsight Connector images"
-	@echo "  repo                Build Repository image"
+	@echo "  repository          Build Repository image"
 	@echo "  search_enterprise   Build Search Enterprise images"
 	@echo "  search_service      Build Search Service images"
 	@echo "  share               Build Share images"
@@ -179,10 +179,10 @@ hxinsight_connector: docker-bake.hcl prepare_hxinsight_connector setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
-repo: docker-bake.hcl prepare_repo setenv
+repository: docker-bake.hcl prepare_repo setenv
 	@echo "Building Repository images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} repository
-	$(call grype_scan,repository)
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
 search_enterprise: docker-bake.hcl prepare_search_enterprise setenv
 	@echo "Building Search Enterprise images"
