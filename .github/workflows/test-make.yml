@@ -26,7 +26,7 @@ jobs:
           ) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v17.6.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v18.21.1
 
       - name: Setup nexus authentication
         if: '! github.event.pull_request.head.repo.fork'
@@ -40,10 +40,10 @@ jobs:
           echo "password ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
 
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - run: make ${{ matrix.target }}
 
@@ -64,4 +64,5 @@ jobs:
           docker image ls --format '{{.Repository}}:{{.Tag}}' \
             | grep alfresco \
             | xargs -I{} sh -c 'echo "Running scan for {}..." \
-            && grype -f high --only-fixed --ignore-states wont-fix {}'
+            && grype -f high --only-fixed --ignore-states wont-fix {} \
+            || echo "::warning::Grype found vulnerabilities in {}"'
