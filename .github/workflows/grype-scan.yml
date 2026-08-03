@@ -1,12 +1,13 @@
 name: Grype vulnerability scan
 
 on:
+  push:  # TODO: remove, temporary trigger to test this workflow once
   schedule:
     - cron: '30 4 * * 1'  # Weekly, Monday 04:30 UTC
   workflow_dispatch: {}
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
 permissions:
@@ -45,22 +46,17 @@ jobs:
         uses: anchore/scan-action/download-grype@e1165082ffb1fe366ebaf02d8526e7c4989ea9d2 # v7.4.0
         id: grype-install
 
+      - name: Add Grype to PATH
+        run: echo "$(dirname ${{ steps.grype-install.outputs.cmd }})" >> "$GITHUB_PATH"
+
       - name: Scan built images
         run: |
-          mkdir -p sarif
-          images=$(docker image ls --format '{{.Repository}}:{{.Tag}}' | grep alfresco)
-          if [ -z "$images" ]; then
-            echo "No Alfresco image found" >&2
-            exit 1
-          fi
-          i=0
-          while IFS= read -r image; do
-            i=$((i + 1))
-            echo "Scanning $image"
-            ${{ steps.grype-install.outputs.cmd }} "$image" --only-fixed --ignore-states wont-fix -o sarif > "sarif/$i.sarif"
-          done <<< "$images"
+          # docker-bake.hcl's target/group is named "repository", unlike the Makefile's "repo" build target.
+          GRYPE_TARGET=${{ matrix.target }}
+          [ "$GRYPE_TARGET" = "repo" ] && GRYPE_TARGET=repository
+          make grype GRYPE_TARGET="$GRYPE_TARGET" GRYPE_OUTPUT_DIR=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix -o sarif"
           # Merge into a single multi-run SARIF file: one image = one run, one file = one code-scanning upload.
-          jq -s '{"$schema": .[0]["$schema"], version: .[0].version, runs: (map(.runs) | add)}' sarif/*.sarif > combined.sarif
+          jq -s '{"$schema": .[0]["$schema"], version: .[0].version, runs: (map(.runs) | add)}' sarif/*.out > combined.sarif
 
       - name: Upload SARIF to GitHub code scanning
         uses: github/codeql-action/upload-sarif@ea14db8afdef5d462e69d78c4ca45002d4522418 # v4.37.4

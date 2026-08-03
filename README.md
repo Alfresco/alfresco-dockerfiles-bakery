@@ -403,13 +403,23 @@ if the `grype` binary is available in the PATH.
 If you want to run the security scan manually, you can use the following command:
 
 ```sh
-make grype GRYPE_TARGET=repo GRYPE_OPTS="-f high --only-fixed --ignore-states wont-fix"
+make grype GRYPE_TARGET=repository GRYPE_OPTS="-f high --only-fixed --ignore-states wont-fix"
 ```
+
+`GRYPE_TARGET` accepts any `docker-bake.hcl` target or group name (e.g. `repository`,
+`share`, `community`, `enterprise`).
 
 You can pass `GRYPE_OPTS` to override the default options passed to Grype, which
 by default exit with a non-zero status if any vulnerability greater than high is
 found and is filtering out known issues for which a fix is not available (yet or
 ever).
+
+Set `GRYPE_OUTPUT_DIR` to write each image's scan output to a file in that directory
+instead of printing it to stdout, e.g. to collect SARIF reports for upload elsewhere:
+
+```sh
+make grype GRYPE_TARGET=repository GRYPE_OPTS="--only-fixed --ignore-states wont-fix -o sarif" GRYPE_OUTPUT_DIR=sarif
+```
 
 You can also run grype automatically at the end of the build process by setting
 `GRYPE_ONBUILD`:

@@ -214,10 +214,15 @@ GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix
 define _grype_impl
 	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation"; exit 1; }
 	@command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required but it's not installed. See https://jqlang.org/download/"; exit 1; }
+	@if [ -n "$(GRYPE_OUTPUT_DIR)" ]; then mkdir -p "$(GRYPE_OUTPUT_DIR)"; fi
 	@docker buildx bake $(1) --print | jq -r '.target[] | select(.output | any(.type == "docker")) | .tags[]' \
 	| while read tag; do \
 		echo "Scanning image $$tag"; \
-		grype $(GRYPE_OPTS) "$$tag"; \
+		if [ -n "$(GRYPE_OUTPUT_DIR)" ]; then \
+			grype $(GRYPE_OPTS) "$$tag" > "$(GRYPE_OUTPUT_DIR)/$$(echo "$$tag" | tr -c '[:alnum:]_.-' '_').out"; \
+		else \
+			grype $(GRYPE_OPTS) "$$tag"; \
+		fi; \
 	done
 endef
 
