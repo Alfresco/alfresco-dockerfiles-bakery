@@ -7,6 +7,14 @@ on:
     - cron: '0 19 */3 * *'  # Every 3 days after 7 PM
   workflow_dispatch:
     inputs:
+      job:
+        description: Which job to run (schedule always runs both)
+        type: choice
+        options:
+          - both
+          - cleanup
+          - expire-java-base-cache
+        default: both
       dry-run:
         description: Dry run (do not delete images)
         type: boolean
@@ -38,7 +46,7 @@ concurrency:
 
 jobs:
   cleanup:
-    if: github.actor != 'dependabot[bot]' && ! github.event.pull_request.head.repo.fork
+    if: github.actor != 'dependabot[bot]' && ! github.event.pull_request.head.repo.fork && (github.event_name != 'workflow_dispatch' || inputs.job != 'expire-java-base-cache')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -103,7 +111,7 @@ jobs:
           dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'false' }}
 
   expire-java-base-cache:
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.job != 'cleanup')
     runs-on: ubuntu-latest
     steps:
       - name: Expire java_base cache tags to pick up latest OS package updates
