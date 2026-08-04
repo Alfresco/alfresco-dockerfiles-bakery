@@ -33,6 +33,8 @@ help:
 ACS_VERSION ?= 26
 APS_VERSION ?= 26
 export ACS_VERSION
+export APS_VERSION
+export ARTIFACT_VERSIONS := $(shell python3 ./scripts/print_artifact_versions.py)
 
 setenv: auth
 ifdef BAKE_NO_CACHE
@@ -41,6 +43,7 @@ endif
 ifdef BAKE_NO_PROVENANCE
 DOCKER_BAKE_ARGS += --provenance=false
 endif
+	@echo "REGISTRY=$(if $(REGISTRY),$(REGISTRY),localhost) REGISTRY_NAMESPACE=$(if $(REGISTRY_NAMESPACE),$(REGISTRY_NAMESPACE),alfresco) TAG=$(if $(TAG),$(TAG),<none, tags come from artifact versions>)"
 
 auth:
 ifeq ($(REGISTRY),localhost)
@@ -74,7 +77,7 @@ clean_caches:
 	@echo "Cleaning up Docker cache"
 	docker builder prune -f
 	@echo "Cleaning up Artifacts cache"
-	find artifacts_cache/ ! -name .gitkeep -mindepth 1 -delete
+	find artifacts_cache/ -mindepth 1 ! -name .gitkeep -delete
 
 ## PREPARE TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
