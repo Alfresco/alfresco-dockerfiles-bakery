@@ -11,6 +11,7 @@ import argparse
 import logging
 import netrc
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -28,6 +29,7 @@ class ChecksumMismatchError(Exception):
 # Constants
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 TEMP_DIR = tempfile.mkdtemp()
+FETCHED_ARTIFACTS = set()
 ACS_VERSION = os.getenv("ACS_VERSION", "26")
 MAVEN_FQDN = os.getenv("MAVEN_FQDN", "nexus.alfresco.com")
 MAVEN_REPO = os.getenv("MAVEN_REPO", f"https://{MAVEN_FQDN}/nexus/repository")
@@ -79,6 +81,113 @@ def get_checksums(artifact_checksum, artifact_url, artifact_file_path):
     return checksum, computed_checksum
 
 
+def artifact_filename(artifact_details):
+    """
+    Build the versioned file name for an artifact, e.g. postgresql-42.7.10.jar
+    """
+    artifact_name = artifact_details.get("name")
+    artifact_version = artifact_details.get("version")
+    artifact_ext = artifact_details.get("classifier", "")
+    return f"{artifact_name}-{artifact_version}{artifact_ext}"
+
+def prune_stale_artifacts(artifact_details, current_final_path):
+    """
+    Remove previously downloaded versions of this artifact from its target folder
+    """
+    artifact_dir = artifact_details.get("path")
+    if not os.path.isdir(artifact_dir):
+        return
+
+    artifact_name = artifact_details.get("name")
+    artifact_ext = artifact_details.get("classifier", "")
+    current_basename = os.path.basename(current_final_path)
+    # the version segment must start with a digit, so name prefixes like
+    # alfresco-elasticsearch-live-indexing vs -content/-metadata/... don't collide
+    pattern = re.compile(re.escape(artifact_name) + r"-\d[^" + re.escape(os.sep) + r"]*" + re.escape(artifact_ext))
+
+    for entry in os.listdir(artifact_dir):
+        entry_path = os.path.join(artifact_dir, entry)
+        if entry == current_basename or entry_path in FETCHED_ARTIFACTS:
+            continue
+        if os.path.isfile(entry_path) and pattern.fullmatch(entry):
+            os.remove(entry_path)
+            logger.info(f"Removing stale artifact {entry_path} (superseded by {current_basename})")
+
+def fetch_artifact(artifact_details):
+    """
+    Download a single artifact from the Alfresco Nexus repository, using the cache when possible.
+    Returns True if the wanted version ends up at its final path, False if the fetch was skipped.
+    """
+    artifact_repo = artifact_details.get("repository")
+    artifact_name = artifact_details.get("name")
+    artifact_version = artifact_details.get("version")
+    artifact_ext = artifact_details.get("classifier", "")
+    artifact_checksum = artifact_details.get("checksum")
+    artifact_group = artifact_details.get("group")
+    artifact_path = artifact_details.get("path")
+
+    artifact_basename = artifact_filename(artifact_details)
+    artifact_baseurl = f"{MAVEN_REPO}/{artifact_repo}"
+    artifact_tmp_path = os.path.join(TEMP_DIR, artifact_basename)
+    artifact_cache_path = os.path.join(REPO_ROOT, "artifacts_cache", artifact_basename)
+    artifact_final_path = os.path.join(artifact_path, artifact_basename)
+    artifact_url = f"{artifact_baseurl}/{artifact_group.replace('.', '/')}/{artifact_name}/{artifact_version}/{artifact_basename}"
+
+    # Check if the artifact is already present
+    if os.path.isfile(artifact_final_path):
+        logger.info(f"Artifact {artifact_name}-{artifact_version} already present.")
+        src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, artifact_final_path)
+        if not src_checksum and not computed_checksum:
+            logger.info('No valid checksum found, skipping verification...')
+            return True
+        if src_checksum == computed_checksum:
+            logger.info(f"Checksum matched for {artifact_basename}")
+            return True
+        logger.info(f"Checksum mismatch for {artifact_basename}. Re-downloading...")
+        os.remove(artifact_final_path)
+
+    if os.path.isfile(artifact_cache_path):
+        src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, artifact_cache_path)
+        if src_checksum == computed_checksum:
+            logger.info(f"Artifact {artifact_name}-{artifact_version} already present in cache, copying...")
+            shutil.copy(artifact_cache_path, artifact_final_path)
+            return True
+        else:
+            logger.info(f"Checksum mismatch for {artifact_basename}. Re-downloading...")
+            os.remove(artifact_cache_path)
+
+    # Download the artifact
+    logger.info(f"Downloading {artifact_group}:{artifact_name} {artifact_version} from {artifact_baseurl}")
+    try:
+        with urllib.request.urlopen(artifact_url) as response, open(artifact_tmp_path, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
+
+        checksums = get_checksums(
+            artifact_checksum, artifact_url,
+            artifact_tmp_path
+        )
+        if checksums[0] != checksums[1]:
+            raise ChecksumMismatchError(
+                f"Checksum mismatch for {artifact_basename}."
+                f"Expected: {checksums[0]}, Computed: {checksums[1]}"
+            )
+
+    except urllib.error.HTTPError as e:
+        if e.code == 401:
+            logger.warning("Invalid or missing credentials, skipping...")
+            return False
+        elif e.code == 403:
+            logger.warning("Forbidden access, skipping...")
+            return False
+        else:
+            # rethrow the exception to exit with failure
+            raise e
+
+    # Move to cache and copy to final path
+    shutil.move(artifact_tmp_path, artifact_cache_path)
+    shutil.copy(artifact_cache_path, artifact_final_path)
+    return True
+
 def do_parse_and_mvn_fetch(file_path):
     """
     Parse the artifacts yaml file and download the artifacts from the Alfresco Nexus repository
@@ -87,76 +196,12 @@ def do_parse_and_mvn_fetch(file_path):
         data = yaml.safe_load(yaml_file)
         artifacts = data.get("artifacts", {})
 
-    for artifact_name, artifact_details in artifacts.items():
-        artifact_repo = artifact_details.get("repository")
-        artifact_name = artifact_details.get("name")
-        artifact_version = artifact_details.get("version")
-        artifact_ext = artifact_details.get("classifier", "")
-        artifact_checksum = artifact_details.get("checksum")
-        artifact_group = artifact_details.get("group")
-        artifact_path = artifact_details.get("path")
-
-        artifact_baseurl = f"{MAVEN_REPO}/{artifact_repo}"
-        artifact_tmp_path = os.path.join(TEMP_DIR, f"{artifact_name}-{artifact_version}{artifact_ext}")
-        artifact_cache_path = os.path.join(REPO_ROOT, "artifacts_cache", f"{artifact_name}-{artifact_version}{artifact_ext}")
-        artifact_final_path = os.path.join(artifact_path, f"{artifact_name}-{artifact_version}{artifact_ext}")
-        artifact_url = f"{artifact_baseurl}/{artifact_group.replace('.', '/')}/{artifact_name}/{artifact_version}/{artifact_name}-{artifact_version}{artifact_ext}"
-
+    for artifact_details in artifacts.values():
         logger.info("")
-
-        # Check if the artifact is already present
-        if os.path.isfile(artifact_final_path):
-            logger.info(f"Artifact {artifact_name}-{artifact_version} already present.")
-            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, artifact_final_path)
-            if not src_checksum and not computed_checksum:
-                logger.info('No valid checksum found, skipping verification...')
-                continue
-            if src_checksum == computed_checksum:
-                logger.info(f"Checksum matched for {artifact_name}-{artifact_version}{artifact_ext}")
-                continue
-            logger.info(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
-            os.remove(artifact_final_path)
-
-        if os.path.isfile(artifact_cache_path):
-            src_checksum, computed_checksum = get_checksums(artifact_checksum, artifact_url, artifact_cache_path)
-            if src_checksum == computed_checksum:
-                logger.info(f"Artifact {artifact_name}-{artifact_version} already present in cache, copying...")
-                shutil.copy(artifact_cache_path, artifact_final_path)
-                continue
-            else:
-                logger.info(f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}. Re-downloading...")
-                os.remove(artifact_cache_path)
-
-        # Download the artifact
-        logger.info(f"Downloading {artifact_group}:{artifact_name} {artifact_version} from {artifact_baseurl}")
-        try:
-            with urllib.request.urlopen(artifact_url) as response, open(artifact_tmp_path, 'wb') as out_file:
-                shutil.copyfileobj(response, out_file)
-
-            checksums = get_checksums(
-                artifact_checksum, artifact_url,
-                artifact_tmp_path
-            )
-            if checksums[0] != checksums[1]:
-                raise ChecksumMismatchError(
-                    f"Checksum mismatch for {artifact_name}-{artifact_version}{artifact_ext}."
-                    f"Expected: {checksums[0]}, Computed: {checksums[1]}"
-                )
-
-        except urllib.error.HTTPError as e:
-            if e.code == 401:
-                logger.warning("Invalid or missing credentials, skipping...")
-                continue
-            elif e.code == 403:
-                logger.warning("Forbidden access, skipping...")
-                continue
-            else:
-                # rethrow the exception to exit with failure
-                raise e
-
-        # Move to cache and copy to final path
-        shutil.move(artifact_tmp_path, artifact_cache_path)
-        shutil.copy(artifact_cache_path, artifact_final_path)
+        if fetch_artifact(artifact_details):
+            artifact_final_path = os.path.join(artifact_details.get("path"), artifact_filename(artifact_details))
+            prune_stale_artifacts(artifact_details, artifact_final_path)
+            FETCHED_ARTIFACTS.add(artifact_final_path)
 
 def arg_is_glob_pattern(arg):
     """

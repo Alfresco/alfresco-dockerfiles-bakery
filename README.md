@@ -283,6 +283,11 @@ then fetch correct version with e.g.:
 make clean prepare ACS_VERSION=23
 ```
 
+Superseded versions of an artifact are also pruned automatically from its
+target folder as soon as the new version is fetched, so re-running with a
+different `ACS_VERSION` (or after bumping a version in an `artifacts-XX.yaml`
+file) without `make clean` first will not leave stale files behind.
+
 Artifacts set in the artifacts file are fetched from the Nexus repository and
 their checksum is verified, provided the artifact has a checksum value which is
 a concatenation of the algorithm and optionally the checksum in the format
