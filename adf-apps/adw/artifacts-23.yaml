@@ -4,7 +4,7 @@ updatecli_matrix_version: 23.N
 artifacts:
   alfresco-digital-workspace:
     name: alfresco-digital-workspace
-    version: 7.5.0
+    version: 8.0.0
     classifier: ".zip"
     group: org.alfresco
     repository: enterprise-releases

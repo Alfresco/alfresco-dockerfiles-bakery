@@ -5,5 +5,7 @@ alfresco-repository:
 elasticsearch:
   elasticsearch:
     resources:
+      requests:
+        memory: "1Gi"
       limits:
         memory: "1.5Gi"
