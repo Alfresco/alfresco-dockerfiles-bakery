@@ -1,0 +1,78 @@
+name: Grype vulnerability scan
+
+on:
+  schedule:
+    - cron: '30 4 * * 1'  # Weekly, Monday 04:30 UTC
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        # "community" and "enterprise" are aggregate bake groups: every image they build is
+        # already covered by one of the more granular targets below, so scanning them here
+        # would just rebuild and rescan the same images under a second, redundant category.
+        target: [adf_apps, ats, audit_storage, connectors, hxinsight_connector, repository, search_enterprise, search_service, share, sync, tengines, aps]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v18.21.1
+
+      - name: Setup nexus authentication
+        env:
+          NETRC_PATH: ~/.netrc
+        run: |
+          touch ${{ env.NETRC_PATH }}
+          chmod 600 ${{ env.NETRC_PATH }}
+          echo "machine nexus.alfresco.com" >> ${{ env.NETRC_PATH }}
+          echo "login ${{ secrets.NEXUS_USERNAME_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
+          echo "password ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - run: make ${{ matrix.target }}
+
+      - name: Install Grype
+        uses: anchore/scan-action/download-grype@e1165082ffb1fe366ebaf02d8526e7c4989ea9d2 # v7.4.0
+        id: grype-install
+
+      - name: Add Grype to PATH
+        run: echo "$(dirname ${{ steps.grype-install.outputs.cmd }})" >> "$GITHUB_PATH"
+
+      - name: Scan built images
+        run: |
+          make grype GRYPE_TARGET=${{ matrix.target }} GRYPE_OUTPUT_DIR=sarif GRYPE_OUTPUT_FORMAT=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
+
+      # Runs even if the scan step above failed partway, so whatever SARIF was
+      # produced before the failure still gets uploaded instead of discarded.
+      - name: Prepare SARIF for code scanning
+        if: always()
+        run: |
+          # Code scanning requires a unique category per run: give each image its own,
+          # via automationDetails.id (takes precedence over the upload-sarif `category` input).
+          # https://github.blog/changelog/2025-07-21-code-scanning-will-stop-combining-multiple-sarif-runs-uploaded-in-the-same-sarif-file/
+          shopt -s nullglob
+          for f in sarif/*.out; do
+            name=$(basename "$f" .out)
+            id="${{ matrix.target }}/$(echo "$name" | sed -E 's/^localhost_alfresco_//; s/_latest_?$//')/"
+            jq --arg id "$id" '.runs[0].automationDetails.id = $id' "$f" > "sarif/$name.sarif"
+            rm "$f"
+          done
+
+      - name: Upload SARIF to GitHub code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@ea14db8afdef5d462e69d78c4ca45002d4522418 # v4.37.4
+        with:
+          sarif_file: sarif

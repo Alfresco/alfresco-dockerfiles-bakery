@@ -18,7 +18,7 @@ help:
 	@echo "  audit_storage       Build Audit Storage images"
 	@echo "  connectors          Build MS365/Teams Connectors images"
 	@echo "  hxinsight_connector Build HxInsight Connector images"
-	@echo "  repo                Build Repository image"
+	@echo "  repository          Build Repository image"
 	@echo "  search_enterprise   Build Search Enterprise images"
 	@echo "  search_service      Build Search Service images"
 	@echo "  share               Build Share images"
@@ -179,10 +179,10 @@ hxinsight_connector: docker-bake.hcl prepare_hxinsight_connector setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
-repo: docker-bake.hcl prepare_repo setenv
+repository: docker-bake.hcl prepare_repo setenv
 	@echo "Building Repository images"
-	docker buildx bake ${DOCKER_BAKE_ARGS} repository
-	$(call grype_scan,repository)
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
 
 search_enterprise: docker-bake.hcl prepare_search_enterprise setenv
 	@echo "Building Search Enterprise images"
@@ -214,10 +214,13 @@ GRYPE_OPTS := -f high --only-fixed --ignore-states wont-fix
 define _grype_impl
 	@command -v grype >/dev/null 2>&1 || { echo >&2 "grype is required but it's not installed. See https://github.com/anchore/grype/blob/main/README.md#installation"; exit 1; }
 	@command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required but it's not installed. See https://jqlang.org/download/"; exit 1; }
+	@if [ -n "$(GRYPE_OUTPUT_DIR)" ]; then mkdir -p "$(GRYPE_OUTPUT_DIR)"; fi
 	@docker buildx bake $(1) --print | jq -r '.target[] | select(.output | any(.type == "docker")) | .tags[]' \
 	| while read tag; do \
 		echo "Scanning image $$tag"; \
-		grype $(GRYPE_OPTS) "$$tag"; \
+		out=/dev/stdout; \
+		if [ -n "$(GRYPE_OUTPUT_DIR)" ]; then out="$(GRYPE_OUTPUT_DIR)/$$(echo "$$tag" | tr -c '[:alnum:]_.-' '_').out"; fi; \
+		grype $(GRYPE_OPTS) $(if $(GRYPE_OUTPUT_FORMAT),-o $(GRYPE_OUTPUT_FORMAT)) "$$tag" > "$$out"; \
 	done
 endef
 
