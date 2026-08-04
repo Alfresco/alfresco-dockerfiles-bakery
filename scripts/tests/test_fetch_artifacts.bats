@@ -163,3 +163,81 @@ EOF
     [[ "$output" != *"WARNING:"* ]]
     [[ "$output" != *"ERROR:"* ]]
 }
+
+@test "script removes stale version of an artifact after fetching the current one" {
+    export ACS_VERSION="25"
+
+    mkdir -p "$ACTUAL_REPO_ROOT/bats_test"
+    touch "$ACTUAL_REPO_ROOT/bats_test/test-artifact-1.0.0.jar"
+    touch "$ACTUAL_REPO_ROOT/bats_test/test-artifact-2.0.0.jar"
+
+    cat > "$ACTUAL_REPO_ROOT/bats_test/artifacts-25.yaml" << 'EOF'
+artifacts:
+  test-artifact:
+    name: test-artifact
+    version: 2.0.0
+    classifier: .jar
+    repository: public
+    group: com.test
+    path: bats_test
+EOF
+
+    cd "$ACTUAL_REPO_ROOT"
+    run python3 scripts/fetch_artifacts.py bats_test --log-level DEBUG
+    echo "Output: $output"
+
+    [[ "$output" == *"Removing stale artifact"* ]] && [[ "$output" == *"test-artifact-1.0.0.jar"* ]]
+    [ ! -f "$ACTUAL_REPO_ROOT/bats_test/test-artifact-1.0.0.jar" ]
+    [ -f "$ACTUAL_REPO_ROOT/bats_test/test-artifact-2.0.0.jar" ]
+}
+
+@test "script does not remove a differently-named artifact sharing a name prefix" {
+    export ACS_VERSION="25"
+
+    mkdir -p "$ACTUAL_REPO_ROOT/bats_test"
+    touch "$ACTUAL_REPO_ROOT/bats_test/test-artifact-1.0.0.jar"
+    touch "$ACTUAL_REPO_ROOT/bats_test/test-artifact-2.0.0.jar"
+    touch "$ACTUAL_REPO_ROOT/bats_test/test-artifact-extra-1.0.0.jar"
+
+    cat > "$ACTUAL_REPO_ROOT/bats_test/artifacts-25.yaml" << 'EOF'
+artifacts:
+  test-artifact:
+    name: test-artifact
+    version: 2.0.0
+    classifier: .jar
+    repository: public
+    group: com.test
+    path: bats_test
+EOF
+
+    cd "$ACTUAL_REPO_ROOT"
+    run python3 scripts/fetch_artifacts.py bats_test --log-level DEBUG
+    echo "Output: $output"
+
+    [ -f "$ACTUAL_REPO_ROOT/bats_test/test-artifact-extra-1.0.0.jar" ]
+}
+
+@test "script does not log a removal when no stale version is present" {
+    export ACS_VERSION="25"
+
+    mkdir -p "$ACTUAL_REPO_ROOT/bats_test"
+    touch "$ACTUAL_REPO_ROOT/bats_test/test-artifact-2.0.0.jar"
+
+    cat > "$ACTUAL_REPO_ROOT/bats_test/artifacts-25.yaml" << 'EOF'
+artifacts:
+  test-artifact:
+    name: test-artifact
+    version: 2.0.0
+    classifier: .jar
+    repository: public
+    group: com.test
+    path: bats_test
+EOF
+
+    cd "$ACTUAL_REPO_ROOT"
+    run python3 scripts/fetch_artifacts.py bats_test --log-level DEBUG
+    echo "Output: $output"
+
+    [[ "$output" != *"Removing stale artifact"* ]]
+    [ -f "$ACTUAL_REPO_ROOT/bats_test/test-artifact-2.0.0.jar" ]
+}
