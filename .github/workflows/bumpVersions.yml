@@ -63,10 +63,10 @@ jobs:
         run: |
           set -x
           find . -type f -name 'artifacts-*.yaml' | while read -r i; do
-             updatecli apply -c .github/updatecli.tpl      -v ${i} -v .github/updatecli_values.yaml -v alfresco-updatecli/deployments/values/supported-matrix.yaml
+             updatecli pipeline apply -c .github/updatecli.tpl      -v ${i} -v .github/updatecli_values.yaml -v alfresco-updatecli/deployments/values/supported-matrix.yaml
 
             if yq -e '.updatecli_amps_release_branch' ${i} > /dev/null; then
-              updatecli apply -c .github/updatecli_amps.tpl -v ${i} -v .github/updatecli_amps_values.yaml
+              updatecli pipeline apply -c .github/updatecli_amps.tpl -v ${i} -v .github/updatecli_amps_values.yaml
             fi
           done
         env:
@@ -108,7 +108,7 @@ jobs:
           restore-keys: |
             updatecli-tomcat-v1-
 
-      - run: updatecli apply -c .github/updatecli_tomcat.tpl
+      - run: updatecli pipeline apply -c .github/updatecli_tomcat.tpl
         env:
           UPDATECLI_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
           UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME }}
@@ -127,7 +127,7 @@ jobs:
       - name: Install Updatecli
         uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v18.21.1
 
-      - run: updatecli apply -c .github/updatecli_dockerfile.tpl
+      - run: updatecli pipeline apply -c .github/updatecli_dockerfile.tpl
         env:
           UPDATECLI_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
           UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME }}
