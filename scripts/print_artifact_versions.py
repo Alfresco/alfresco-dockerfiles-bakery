@@ -23,14 +23,16 @@ def main():
 
     versions = {}
     for pattern in patterns:
-        for file_path in glob.glob(pattern, recursive=True):
+        for file_path in sorted(glob.glob(pattern, recursive=True)):
             with open(file_path, "r", encoding="utf-8") as yaml_file:
                 data = yaml.safe_load(yaml_file)
             artifacts = data.get("artifacts", {})
             for name, details in artifacts.items():
-                versions[name] = details.get("version")
+                version = details.get("version")
+                if version is not None:
+                    versions[name] = version
 
-    print(json.dumps(versions))
+    print(json.dumps(versions, sort_keys=True))
 
 if __name__ == "__main__":
     main()

@@ -33,6 +33,7 @@ help:
 ACS_VERSION ?= 26
 APS_VERSION ?= 26
 export ACS_VERSION
+export APS_VERSION
 export ARTIFACT_VERSIONS := $(shell python3 ./scripts/print_artifact_versions.py)
 
 setenv: auth
