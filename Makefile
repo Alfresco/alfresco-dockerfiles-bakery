@@ -43,6 +43,7 @@ endif
 ifdef BAKE_NO_PROVENANCE
 DOCKER_BAKE_ARGS += --provenance=false
 endif
+	@echo "REGISTRY=$(if $(REGISTRY),$(REGISTRY),localhost) REGISTRY_NAMESPACE=$(if $(REGISTRY_NAMESPACE),$(REGISTRY_NAMESPACE),alfresco) TAG=$(if $(TAG),$(TAG),<none, tags come from artifact versions>)"
 
 auth:
 ifeq ($(REGISTRY),localhost)
