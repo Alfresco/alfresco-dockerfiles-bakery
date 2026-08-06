@@ -87,6 +87,7 @@ scms:
       username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
       user: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
       email: {{ requiredEnv "UPDATECLI_GITHUB_EMAIL" }}
+      commitusingapi: true
   tomcat:
     kind: git
     spec:

@@ -9,6 +9,7 @@ scms:
       branch: {{ .updatecli_amps_release_branch }}
       token: {{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}
       username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
+      commitusingapi: true
   acsEntRepo:
     kind: github
     spec:
@@ -17,6 +18,7 @@ scms:
       branch: {{ .updatecli_amps_release_branch }}
       token: {{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}
       username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
+      commitusingapi: true
   acsComRepo:
     kind: github
     spec:
@@ -25,6 +27,7 @@ scms:
       branch: {{ .updatecli_amps_release_branch }}
       token: {{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}
       username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
+      commitusingapi: true
 
 sources:
 {{- range $key, $artifact := .artifacts }}
