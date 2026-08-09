@@ -815,7 +815,7 @@ target "search_batch_indexing" {
     "org.opencontainers.image.title"     = "${PRODUCT_LINE} Community Search - Batch Indexing"
     "org.opencontainers.image.description" = "Alfresco Elasticsearch Community batch indexing connector"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-batch-indexing:${image_tag(\"alfresco-elasticsearch-batch-indexing\")}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-batch-indexing:${image_tag("alfresco-elasticsearch-batch-indexing")}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
