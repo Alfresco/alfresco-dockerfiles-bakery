@@ -35,6 +35,8 @@ services:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-share-community:${TAG}
   batch-indexing:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-batch-indexing:${TAG}
+    deploy:
+      replicas: 0
   control-center:
     image: ${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-control-center:${TAG}
     environment:
@@ -48,8 +50,5 @@ services:
     deploy:
       replicas: 0
   kibana:
-    deploy:
-      replicas: 0
-  batch-indexing:
     deploy:
       replicas: 0

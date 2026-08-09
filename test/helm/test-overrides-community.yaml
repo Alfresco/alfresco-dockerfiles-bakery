@@ -30,9 +30,6 @@ dtas:
       adw: null
       aas: null
 alfresco-repository:
-  configuration:
-    search:
-      flavor: elasticsearch
   startupProbe:
     initialDelaySeconds: 120
   configuration:
