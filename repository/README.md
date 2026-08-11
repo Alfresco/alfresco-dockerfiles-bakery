@@ -36,3 +36,9 @@ docker run -e JAVA_OPTS="-Ddb.url=jdbc:postgresql://postgres.domain.tld:5432/alf
 > If the image is meant to be used with the Alfresco Content Services Helm
 > chart, you can use other [higher level means of
 > configuration](https://github.com/Alfresco/alfresco-helm-charts/blob/main/charts/alfresco-repository/docs/repository-properties.md).
+
+### Tomcat configuration
+
+This image is built on the Alfresco base Tomcat image, so the servlet container
+itself is configured with the `TOMCAT_*` environment variables documented in
+[tomcat/README.md](../tomcat/README.md).
