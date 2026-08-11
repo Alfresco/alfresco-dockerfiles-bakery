@@ -78,6 +78,67 @@ git repository.
 > leaves you reconciling conflicts on every upgrade. Prefer repointing the
 > contexts above.
 
+## Extending the image
+
+Repointing a context covers what the image is built *from*. Anything else, such
+as an OS package, an internal CA certificate or an extra configuration file, is
+added by building an image of your own on top of the one this repository
+produces, in the same bake invocation.
+
+Reference the target you want to extend as a named context, from a target of
+your own:
+
+```hcl
+target "repository_acme" {
+  context = "cwd://custom/repository"
+  contexts = {
+    bakery = "target:repository_enterprise"
+  }
+  tags = ["myregistry.domain.tld/alfresco-content-repository:26.2.1-acme1"]
+  labels = {
+    "org.opencontainers.image.title" = "Acme Alfresco Content Repository"
+    "org.opencontainers.image.vendor" = "Acme Corp"
+    "org.opencontainers.image.source" = "https://github.com/acme/my-alfresco-images"
+  }
+}
+```
+
+Then write your own Dockerfile in `custom/repository`, starting from that
+context:
+
+```dockerfile
+FROM bakery
+
+USER root
+RUN yum install -y acme-agent && yum clean all && rm -rf /var/cache/yum
+COPY acme-ca.crt /etc/pki/ca-trust/source/anchors/
+RUN update-ca-trust extract
+USER alfresco
+```
+
+Build it by naming your own target:
+
+```bash
+docker buildx bake \
+  "https://github.com/Alfresco/alfresco-dockerfiles-bakery.git#v0.14.0" \
+  -f cwd://docker-bake.hcl repository_acme
+```
+
+Three things to keep in mind:
+
+- The image runs as the unprivileged `alfresco` user. Switch to `root` for the
+  steps that need it and switch back at the end, or your image starts as root.
+- Labels are inherited from the base image, so without the `labels` block above
+  your image reports Hyland as its vendor and this repository as its source.
+  Override them so that your image describes itself.
+- Files you add belong to `root` and miss the ownership pass applied while the
+  base image is assembled. Give them the `alfresco` group when the repository
+  has to read them.
+
+Because this adds a layer on top of a finished image, it cannot change what the
+image already contains: a file removed this way still ships in the layer
+underneath, where image scanners will not report it.
+
 ## Running the image
 
 ### Alfresco repository configuration
