@@ -284,6 +284,13 @@ target "repository" {
   inherits = ["tomcat_base"]
   contexts = {
     tomcat_base = "target:tomcat_base"
+    # Build inputs are named contexts so they can be repointed at a local
+    # directory (cwd://...) without forking this repository.
+    repo_distribution   = "./repository/distribution"
+    repo_amps           = "./repository/amps"
+    repo_amps_edition   = "./repository/amps_${repository_editions.name}"
+    repo_libs           = "./repository/libs"
+    repo_simple_modules = "./repository/simple_modules"
   }
   args = {
     ALFRESCO_REPO_GROUP_ID = "${ALFRESCO_GROUP_ID}"
@@ -291,7 +298,6 @@ target "repository" {
     ALFRESCO_REPO_USER_ID = "${ALFRESCO_REPO_USER_ID}"
     ALFRESCO_REPO_USER_NAME = "${ALFRESCO_REPO_USER_NAME}"
     ALFRESCO_REPO_ARTIFACT = "${repository_editions.artifact}"
-    ALFRESCO_REPO_EDITION = "${repository_editions.name}"
   }
   labels = {
     "org.label-schema.name" = "${PRODUCT_LINE} Content Repository (${repository_editions.name})"
