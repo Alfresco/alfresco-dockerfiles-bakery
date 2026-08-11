@@ -154,19 +154,23 @@ make all
 
 ### Customizing the Alfresco Content Repository image
 
-The Alfresco Content Repository image can be customized by adding files into
-specific folders:
+The Alfresco Content Repository image reads its build inputs from named build
+contexts, each defaulting to a folder of this repository:
 
-- Alfresco Module Packages (AMPs) files in the [amps](repository/amps/README.md)
-  folder for both Enterprise and Community editions
-  - For Enterprise-only AMPs files in the
-    [amps-enterprise](repository/amps_enterprise/README.md) folder
-  - For Community-only AMPs files in the
-    [amps-community](repository/amps_community/README.md) folder
-- Simple Module (JAR) files in the
-  [simple_modules](repository/simple_modules/README.md) folder
-- Additional JAR files for the JRE in the [libs](repository/libs/README.md)
-  folder
+| Context | Default | Holds |
+| --- | --- | --- |
+| `repo_distribution` | `repository/distribution` | ACS distribution zip |
+| `repo_amps` | `repository/amps` | AMPs for both editions |
+| `repo_amps_edition` | `repository/amps_<edition>` | Edition specific AMPs |
+| `repo_libs` | `repository/libs` | JARs added to the Tomcat lib directory |
+| `repo_simple_modules` | `repository/simple_modules` | Simple module JARs |
+
+Customizing the image is a matter of repointing the contexts you care about at
+directories of your own, from a git repository of your own. Your AMPs, simple
+modules and extra JARs then live outside of this repository, which is consumed
+straight from git, so upgrading to a newer Bakery release never involves
+reconciling a merge. See the [repository
+README](repository/README.md#customizing-the-image) for the full procedure.
 
 ### Customizing the Share image
 
