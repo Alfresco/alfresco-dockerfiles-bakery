@@ -1,4 +1,4 @@
-# hadolint global ignore=DL3033,DL3008
+# hadolint global ignore=DL3033,DL3008,SC2016
 # Alfresco Base Tomcat Image
 # see also https://github.com/docker-library/tomcat
 ARG JAVA_MAJOR
@@ -47,30 +47,48 @@ RUN find ./bin/ -name '*.sh' -exec sed -ri 's|^#!/bin/sh$|#!/usr/bin/env bash|' 
 WORKDIR /build/tomcat/lib/org/apache/catalina/util
 RUN printf "server.info=Alfresco servlet container/$TOMCAT_MAJOR\nserver.number=$TOMCAT_MAJOR" > ServerInfo.properties
 WORKDIR /build/tomcat
-RUN xmlstarlet ed -L \
+# Enable environment variable substitution in Tomcat XML configs
+RUN echo 'org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource' >> conf/catalina.properties
+RUN connector='/Server/Service[@name="Catalina"]/Connector[@protocol="HTTP/1.1"]'; \
+  host='/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]'; \
+  version_logger='/Server/Listener[@className="org.apache.catalina.startup.VersionLoggerListener"]'; \
+  xmlstarlet ed -L \
   # Remove comments
   -d '//comment()' \
   # Disable shutdown port
-  -d '/Server/@shutdown' -u '/Server/@port' -v -1 \
+  -d '/Server/@shutdown' -u '/Server/@port' -v '${TOMCAT_SHUTDOWN_PORT:--1}' \
   # Remove server banner
-  -u '/Server/Service[@name="Catalina"]/Connector[@port=8080]/@Server' -v "" \
-  # Disable auto deployment of webapps
-  -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]' -t attr -n deployXML -v false \
-  -u '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/@autoDeploy' -v false \
-  -u '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/@unpackWARs' -v false \
+  -u "$connector/@Server" -v "" \
+  # HTTP connector sizing and timeouts
+  -u "$connector/@port" -v '${TOMCAT_HTTP_PORT:-8080}' \
+  -u "$connector/@connectionTimeout" -v '${TOMCAT_HTTP_CONNECTION_TIMEOUT:-20000}' \
+  -a "$connector" -t attr -n maxThreads -v '${TOMCAT_HTTP_MAX_THREADS:-200}' \
+  -a "$connector" -t attr -n minSpareThreads -v '${TOMCAT_HTTP_MIN_SPARE_THREADS:-10}' \
+  -a "$connector" -t attr -n acceptCount -v '${TOMCAT_HTTP_ACCEPT_COUNT:-100}' \
+  -a "$connector" -t attr -n maxConnections -v '${TOMCAT_HTTP_MAX_CONNECTIONS:-8192}' \
+  -a "$connector" -t attr -n maxHttpHeaderSize -v '${TOMCAT_HTTP_MAX_HTTP_HEADER_SIZE:-8192}' \
+  -a "$connector" -t attr -n maxPostSize -v '${TOMCAT_HTTP_MAX_POST_SIZE:-2097152}' \
+  # Disable auto deployment of webapps (overridable via env vars at runtime)
+  -a "$host" -t attr -n deployXML -v '${TOMCAT_DEPLOY_XML:-false}' \
+  -u "$host/@autoDeploy" -v '${TOMCAT_AUTO_DEPLOY:-false}' \
+  -u "$host/@unpackWARs" -v '${TOMCAT_UNPACK_WARS:-false}' \
   # Enable RemoteIP valve for better handling when behind reverse proxy
-  -s '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]' -t elem -n 'Valve' \
-  -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/Valve[last()]' -t attr -n className -v org.apache.catalina.valves.RemoteIpValve \
-  -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/Valve[last()]' -t attr -n portHeader -v X-Forwarded-Port \
+  -s "$host" -t elem -n 'Valve' \
+  -a "$host/Valve[last()]" -t attr -n className -v org.apache.catalina.valves.RemoteIpValve \
+  -a "$host/Valve[last()]" -t attr -n portHeader -v '${TOMCAT_REMOTE_IP_PORT_HEADER:-X-Forwarded-Port}' \
+  -a "$host/Valve[last()]" -t attr -n remoteIpHeader -v '${TOMCAT_REMOTE_IP_HEADER:-X-Forwarded-For}' \
+  -a "$host/Valve[last()]" -t attr -n protocolHeader -v '${TOMCAT_REMOTE_IP_PROTOCOL_HEADER:-X-Forwarded-Proto}' \
+  -a "$host/Valve[last()]" -t attr -n internalProxies -v '${TOMCAT_REMOTE_IP_INTERNAL_PROXIES}' \
+  -a "$host/Valve[last()]" -t attr -n trustedProxies -v '${TOMCAT_REMOTE_IP_TRUSTED_PROXIES:-}' \
   # Do not leak server info within error pages
-  -s '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]' -t elem -n 'Valve' \
-  -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/Valve[last()]' -t attr -n className -v org.apache.catalina.valves.ErrorReportValve \
-  -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/Valve[last()]' -t attr -n showServerInfo -v false \
-  -a '/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]/Valve[last()]' -t attr -n showReport -v false \
+  -s "$host" -t elem -n 'Valve' \
+  -a "$host/Valve[last()]" -t attr -n className -v org.apache.catalina.valves.ErrorReportValve \
+  -a "$host/Valve[last()]" -t attr -n showServerInfo -v '${TOMCAT_ERROR_REPORT_SHOW_SERVER_INFO:-false}' \
+  -a "$host/Valve[last()]" -t attr -n showReport -v '${TOMCAT_ERROR_REPORT_SHOW_REPORT:-false}' \
   # Do not leak runtime arguments and variables in logs
-  -a '/Server/Listener[@className="org.apache.catalina.startup.VersionLoggerListener"]' -t attr -n logArgs -v false \
-  -a '/Server/Listener[@className="org.apache.catalina.startup.VersionLoggerListener"]' -t attr -n logEnv -v false \
-  -a '/Server/Listener[@className="org.apache.catalina.startup.VersionLoggerListener"]' -t attr -n logProps -v false \
+  -a "$version_logger" -t attr -n logArgs -v '${TOMCAT_VERSION_LOGGER_LOG_ARGS:-false}' \
+  -a "$version_logger" -t attr -n logEnv -v '${TOMCAT_VERSION_LOGGER_LOG_ENV:-false}' \
+  -a "$version_logger" -t attr -n logProps -v '${TOMCAT_VERSION_LOGGER_LOG_PROPS:-false}' \
   conf/server.xml
 # Remove unwanted files from distribution
 RUN rm -fr webapps/* *.txt *.md RELEASE-NOTES logs/ temp/ work/ bin/*.bat
@@ -109,6 +127,11 @@ ENV CATALINA_HOME=/usr/local/tomcat
 ENV TOMCAT_NATIVE_LIBDIR=$CATALINA_HOME/native-jni-lib
 ENV LD_LIBRARY_PATH=$TOMCAT_NATIVE_LIBDIR
 ENV PATH=$CATALINA_HOME/bin:$PATH
+
+# The only TOMCAT_* default not inlined in server.xml: Tomcat ends a ${...:-default}
+# at the first '}', which this regex contains. Quoting keeps the backslashes.
+ENV TOMCAT_REMOTE_IP_INTERNAL_PROXIES="10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|100\.6[4-9]{1}\.\d{1,3}\.\d{1,3}|100\.[7-9]{1}\d{1}\.\d{1,3}\.\d{1,3}|100\.1[0-1]{1}\d{1}\.\d{1,3}\.\d{1,3}|100\.12[0-7]{1}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1|fe[89ab]\p{XDigit}:.*|f[cd]\p{XDigit}{2}+:.*"
+
 WORKDIR $CATALINA_HOME
 # fix permissions (especially for running as non-root)
 # https://github.com/docker-library/tomcat/issues/35
