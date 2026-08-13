@@ -181,26 +181,24 @@ The Share image can be customized by adding files into specific folders:
 ### Customizing the Community Batch Indexing image
 
 The Community Batch Indexing image (`search_batch_indexing`) packages the
-Alfresco Elasticsearch community connector, enabling Elasticsearch-based search
-for Community Edition deployments.
+Alfresco Elasticsearch community connector for Elasticsearch-based Community
+Edition deployments. Batch indexing is currently available for ACS 26.
 
-Build the image:
-
-```sh
-docker buildx bake search_batch_indexing
-```
-
-or together with all other community images:
-
-```sh
-make community
-```
-
-For a specific ACS version:
+Set `ACS_VERSION` to select the ACS version when building directly. For example,
+build the batch indexing image for ACS 26:
 
 ```sh
 ACS_VERSION=26 docker buildx bake search_batch_indexing
 ```
+
+To build all Community Edition images for a selected ACS version, use:
+
+```sh
+make community ACS_VERSION=26
+```
+
+For ACS 23 and ACS 25, the `community` group builds the Solr-based Search
+Service instead of batch indexing.
 
 Runtime behaviour can be controlled via environment variables passed to the
 container and via standard Spring externalized configuration (e.g. mounted config

@@ -1,16 +1,13 @@
 ---
-# Upstream community_values.yaml now defaults to the batch-indexing/Elasticsearch
-# search backend; these overrides restore Solr until batch-indexing is supported here.
-# https://alfresco.github.io/acs-deployment/docs/helm/examples/search-services.html
 global:
   search:
-    flavor: solr6
+    flavor: elasticsearch
 elasticsearch:
-  enabled: false
-alfresco-search:
   enabled: true
-alfresco-search-community:
+alfresco-search:
   enabled: false
+alfresco-search-community:
+  enabled: true
 alfresco-digital-workspace:
   enabled: false
 alfresco-sync-service:
@@ -34,7 +31,7 @@ alfresco-repository:
     initialDelaySeconds: 120
   configuration:
     search:
-      flavor: solr6
+      flavor: elasticsearch
 alfresco-transform-service:
   pdfrenderer:
     livenessProbe:
