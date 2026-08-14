@@ -29,9 +29,6 @@ dtas:
 alfresco-repository:
   startupProbe:
     initialDelaySeconds: 120
-  configuration:
-    search:
-      flavor: elasticsearch
 alfresco-transform-service:
   pdfrenderer:
     livenessProbe:

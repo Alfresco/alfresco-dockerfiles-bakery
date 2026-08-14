@@ -26,6 +26,7 @@ help:
 	@echo "  sync                Build Sync Service images"
 	@echo "  tengines            Build Transform Engine images"
 	@echo "  aps                 Build Alfresco Process Services images"
+	@echo "  ========================================================"
 	@echo "  clean               Clean up Nexus artifacts"
 	@echo "  clean_caches        Clean up Docker and artifact caches"
 	@echo "  help                Display this help message"

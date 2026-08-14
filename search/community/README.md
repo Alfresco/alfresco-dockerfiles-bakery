@@ -38,8 +38,18 @@ configure the batch indexer:
 | Variable | Description | Default |
 |---|---|---|
 | `JAVA_OPTS` | Additional JVM options (heap, GC, etc.) | _(empty)_ |
+| `SPRING_DATASOURCE_URL` | JDBC URL for the Alfresco database | _(empty)_ |
+| `SPRING_DATASOURCE_USERNAME` | Alfresco database username | _(empty)_ |
+| `SPRING_DATASOURCE_PASSWORD` | Alfresco database password | _(empty)_ |
 | `SPRING_ELASTICSEARCH_REST_URIS` | Comma-separated list of Elasticsearch REST endpoints | `http://elasticsearch:9200` |
+| `ALFRESCO_ACCEPTEDCONTENTMEDIATYPESCACHE_BASEURL` | ATS endpoint used to retrieve accepted content media types | _(empty)_ |
 | `ALFRESCO_ACCEPTEDCONTENTMEDIATYPESCACHE_ENABLED` | Enable or disable the accepted content media types cache. Set to `true` when using ATS AIO; leave it `false` when using specialized transform engines. | `false` |
+| `ALFRESCO_ACS_URL` | Alfresco Content Repository URL | _(empty)_ |
+| `ALFRESCO_CONTENT_TRANSFORM_SHAREDSECRET` | Shared secret used for content transformation communication | _(empty)_ |
+| `ALFRESCO_REINDEX_CONTINUOUS_POLLINGINTERVAL` | Interval between continuous reindexing polls | _(empty)_ |
+| `ALFRESCO_REINDEX_CONTINUOUS_CATCHUPPOLLINGINTERVAL` | Interval between catch-up polls | _(empty)_ |
+| `ALFRESCO_REINDEX_CONTINUOUS_MAXWINDOW` | Maximum continuous reindexing window | _(empty)_ |
+| `ALFRESCO_REINDEX_CONTINUOUS_OVERLAP` | Overlap between continuous reindexing windows | _(empty)_ |
 
 Example Docker Compose snippet:
 
@@ -47,7 +57,18 @@ Example Docker Compose snippet:
 batch-indexer:
   image: localhost/alfresco/alfresco-elasticsearch-batch-indexing:latest
   environment:
+    JAVA_OPTS: -Xms256m -Xmx768m
+    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/alfresco
+    SPRING_DATASOURCE_USERNAME: alfresco
+    SPRING_DATASOURCE_PASSWORD: alfresco
     SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
+    ALFRESCO_ACCEPTEDCONTENTMEDIATYPESCACHE_BASEURL: http://transform-core-aio:8090/transform/config
+    ALFRESCO_ACS_URL: http://alfresco:8080
+    ALFRESCO_CONTENT_TRANSFORM_SHAREDSECRET: secret
+    ALFRESCO_REINDEX_CONTINUOUS_POLLINGINTERVAL: 15s
+    ALFRESCO_REINDEX_CONTINUOUS_CATCHUPPOLLINGINTERVAL: 1s
+    ALFRESCO_REINDEX_CONTINUOUS_MAXWINDOW: 30m
+    ALFRESCO_REINDEX_CONTINUOUS_OVERLAP: 10m
 ```
 
 ## Artifacts
