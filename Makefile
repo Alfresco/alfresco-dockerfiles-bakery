@@ -8,7 +8,6 @@ DOCKER_BAKE_ARGS := --progress=plain
 
 help:
 	@echo "Usage: make <target>"
-	@echo ""
 	@echo "Targets:"
 	@echo "  all                 Build all images"
 	@echo "  enterprise          Build enterprise images"
