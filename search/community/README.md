@@ -27,7 +27,7 @@ make prepare_search_community
 Then build the image from the root of this repository:
 
 ```bash
-docker buildx bake search_batch_indexing
+ACS_VERSION=26 docker buildx bake search_batch_indexing
 ```
 
 ## Runtime variables
@@ -39,7 +39,7 @@ configure the batch indexer:
 |---|---|---|
 | `JAVA_OPTS` | Additional JVM options (heap, GC, etc.) | _(empty)_ |
 | `SPRING_ELASTICSEARCH_REST_URIS` | Comma-separated list of Elasticsearch REST endpoints | `http://elasticsearch:9200` |
-| `ALFRESCO_ACCEPTEDCONTENTMEDIATYPESCACHE_ENABLED` | Enable/disable the accepted content media types cache. Requires a single ATS all-in-one endpoint; set to `true` only when deploying with the AIO transformer. | `false` |
+| `ALFRESCO_ACCEPTEDCONTENTMEDIATYPESCACHE_ENABLED` | Enable or disable the accepted content media types cache. Set to `true` when using ATS AIO; leave it `false` when using specialized transform engines. | `false` |
 
 Example Docker Compose snippet:
 
@@ -49,11 +49,6 @@ batch-indexer:
   environment:
     SPRING_ELASTICSEARCH_REST_URIS: http://elasticsearch:9200
 ```
-
-## Customizing the image
-
-Runtime configuration is managed entirely via environment variables.
-Set `SPRING_*` or `ALFRESCO_*` env vars to override any Spring Boot property.
 
 ## Artifacts
 
