@@ -14,8 +14,21 @@ group "enterprise" {
   ]
 }
 
+function "select_community_search" {
+  params = [acs_version]
+
+  # Batch indexing (Elasticsearch) is only supported from ACS 26.2 onward.
+  # ACS 23, 25, 26.0 and 26.1 use SOLR via search_service.
+  # - regex() raises an error if there's no match
+  # - can(expr) converts that error into false
+  result = (
+    can(regex("^(23|25|26\\.0|26\\.1)", acs_version)) ? "search_service" :
+    "search_batch_indexing"
+  )
+}
+
 group "community" {
-  targets = ["content_service_community", "search_service", "tengines", "acc"]
+  targets = ["content_service_community", select_community_search(ACS_VERSION), "tengines", "acc"]
 }
 
 group "content_service_enterprise" {
@@ -774,6 +787,37 @@ target "share" {
 
 variable "ALFRESCO_SOLR_DIST_DIR" {
   default = "/opt/alfresco-search-services"
+}
+
+variable "ALFRESCO_BATCHINDEXER_USER_NAME" {
+  default = "batchindexer"
+}
+
+variable "ALFRESCO_BATCHINDEXER_USER_ID" {
+  default = "33072"
+}
+
+target "search_batch_indexing" {
+  context = "./search/community"
+  dockerfile = "Dockerfile"
+  inherits = ["java_base"]
+  contexts = {
+    java_base = "target:java_base"
+  }
+  args = {
+    ALFRESCO_BATCHINDEXER_GROUP_ID   = "${ALFRESCO_GROUP_ID}"
+    ALFRESCO_BATCHINDEXER_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    ALFRESCO_BATCHINDEXER_USER_ID    = "${ALFRESCO_BATCHINDEXER_USER_ID}"
+    ALFRESCO_BATCHINDEXER_USER_NAME  = "${ALFRESCO_BATCHINDEXER_USER_NAME}"
+  }
+  labels = {
+    "org.label-schema.name"              = "${PRODUCT_LINE} Community Search - Batch Indexing"
+    "org.opencontainers.image.title"     = "${PRODUCT_LINE} Community Search - Batch Indexing"
+    "org.opencontainers.image.description" = "Alfresco Elasticsearch Community batch indexing connector"
+  }
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-elasticsearch-batch-indexing:${image_tag("alfresco-elasticsearch-batch-indexing")}"]
+  output = ["type=docker"]
+  platforms = split(",", "${TARGETARCH}")
 }
 
 variable "ALFRESCO_SOLR_USER_NAME" {
