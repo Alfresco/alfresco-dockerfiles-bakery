@@ -151,6 +151,31 @@ jobs:
           kubectl create configmap acc-config --from-file=app.config.json=test/configs/acc.json
           kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
 
+      - name: Create CIC test configuration
+        if: matrix.edition == 'enterprise'
+        run: |
+          kubectl create configmap cic-config \
+            --from-literal=HX_AUTH_TOKEN_URL=https://cic-test.invalid/oauth/token \
+            --from-literal=HX_INSIGHT_INGESTION_URL=https://cic-test.invalid/insights/ingest \
+            --from-literal=NUCLEUS_BASE_URL=https://cic-test.invalid/nucleus \
+            --from-literal=NUCLEUS_IDP_BASE_URL=https://cic-test.invalid/nucleus-idp \
+            --from-literal=NUCLEUS_SYSTEM_ID=test-nucleus-system-id \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          kubectl create secret generic cic-secrets \
+            --from-literal=HX_CLIENT_ID=test-hx-client-id \
+            --from-literal=HX_CLIENT_SECRET=test-hx-client-secret \
+            --from-literal=HX_ENV_KEY=test-hx-environment-key \
+            --from-literal=HX_APP_SOURCE_ID=00000000-0000-0000-0000-000000000000 \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          kubectl create secret generic repository-admin-secret \
+            --from-literal=REPOSITORY_USERNAME=admin \
+            --from-literal=REPOSITORY_PASSWORD=admin \
+            --from-literal=REPOSITORY_CLIENT_ID=test-repository-client-id \
+            --from-literal=REPOSITORY_CLIENT_SECRET=test-repository-client-secret \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Checkout acs-deployment sources
         uses: ./.github/actions/acs-deployment
 
@@ -175,6 +200,9 @@ jobs:
             sed -i "s|/alfresco-share|/alfresco-share-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
           fi
 
+          sed -i "s|localhost/alfresco/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" test/helm/test-overrides-${{ matrix.edition }}.yaml
+          sed -i "s|tag: latest|tag: ${TAG}|g" test/helm/test-overrides-${{ matrix.edition }}.yaml
+
           cat ${{ env.OVERRIDES_VALUES_FILE }}
 
       - name: Set path to compose files
@@ -198,16 +226,10 @@ jobs:
       - name: Helm install
         id: helm_install
         run: |
-          CIC_VALUES_FILE=""
-          if [ "${{ matrix.edition }}" = "enterprise" ]; then
-            CIC_VALUES_FILE="--values ./acs-deployment/docs/helm/values/with-cic_values.yaml"
-          fi
-
           helm install acs ./acs-deployment/helm/alfresco-content-services \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
             --values ./acs-deployment/helm/alfresco-content-services/${{ env.UPSTREAM_HELM_VALUES }} \
             --values ./acs-deployment/test/${{ matrix.edition == 'community' && 'community' || 'enterprise' }}-integration-test-values.yaml \
-            ${CIC_VALUES_FILE} \
             --values test/helm/test-overrides.yaml \
             --values test/helm/test-overrides-${{ matrix.arch }}.yaml \
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml

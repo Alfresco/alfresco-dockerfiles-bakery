@@ -16,3 +16,56 @@ dtas:
           - id: alfresco-aos-module
             version: 3.4.1
             installed: true
+alfresco-connector-cic:
+  enabled: true
+  liveIngester:
+    image:
+      repository: localhost/alfresco/alfresco-cic-connector-live-ingester
+      tag: latest
+  bulkIngester:
+    image:
+      repository: localhost/alfresco/alfresco-cic-connector-bulk-ingester
+      tag: latest
+  cic:
+    existingConfigMap:
+      name: cic-config
+      keys:
+        hxAuthTokenUrl: HX_AUTH_TOKEN_URL
+        hxInsightIngestionUrl: HX_INSIGHT_INGESTION_URL
+        nucleusBaseUrl: NUCLEUS_BASE_URL
+        nucleusIdpBaseUrl: NUCLEUS_IDP_BASE_URL
+        nucleusSystemId: NUCLEUS_SYSTEM_ID
+    existingSecret:
+      name: cic-secrets
+      keys:
+        hxClientId: HX_CLIENT_ID
+        hxClientSecret: HX_CLIENT_SECRET
+        hxEnvKey: HX_ENV_KEY
+        hxAppSourceId: HX_APP_SOURCE_ID
+  repository:
+    url: http://alfresco:8080/alfresco
+    versionOverride: 26.2.1
+    authType: basic
+    existingSecret:
+      name: repository-admin-secret
+      keys:
+        username: REPOSITORY_USERNAME
+        password: REPOSITORY_PASSWORD
+        clientId: REPOSITORY_CLIENT_ID
+        clientSecret: REPOSITORY_CLIENT_SECRET
+  nucleusSync:
+    enabled: true
+    image:
+      repository: localhost/alfresco/alfresco-cic-connector-nucleus-sync
+      tag: latest
+alfresco-repository:
+  config:
+    repository:
+      additionalGlobalProperties:
+        hxi.discovery.base-url: https://cic-test.invalid/discovery
+        hxi.auth.providers.hyland-experience.token-uri: https://cic-test.invalid/oauth/token
+        hxi.auth.providers.hyland-experience.environment-key: test-hx-environment-key
+        hxi.auth.providers.hyland-experience.client-id: test-hx-client-id
+        hxi.auth.providers.hyland-experience.client-secret: test-hx-client-secret
+        hxi.knowledge-retrieval.url: https://cic-test.invalid/discovery/agents
+        hxi.connector.source-id: 00000000-0000-0000-0000-000000000000
