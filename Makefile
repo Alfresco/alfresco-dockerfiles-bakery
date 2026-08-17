@@ -16,7 +16,7 @@ help:
 	@echo "  ats                 Build Transform Service images"
 	@echo "  audit_storage       Build Audit Storage images"
 	@echo "  connectors          Build MS365/Teams Connectors images"
-	@echo "  hxinsight_connector Build HxInsight Connector images"
+	@echo "  cic_connector       Build CIC Connector images"
 	@echo "  repository          Build Repository image"
 	@echo "  search_enterprise   Build Search Enterprise images"
 	@echo "  search_batch_indexing Build Search Community Batch Indexing image"
@@ -106,9 +106,9 @@ prepare_connectors: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Connector targets"
 	@python3 ./scripts/fetch_artifacts.py connector
 
-prepare_hxinsight_connector: scripts/fetch_artifacts.py
-	@echo "Fetching all artifacts for HxInsight Connector targets"
-	@python3 ./scripts/fetch_artifacts.py hxinsight-connector
+prepare_cic_connector: scripts/fetch_artifacts.py
+	@echo "Fetching all artifacts for CIC Connector targets"
+	@python3 ./scripts/fetch_artifacts.py cic-connector
 
 prepare_repo: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Repository target"
@@ -181,8 +181,8 @@ connectors: docker-bake.hcl prepare_connectors setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
-hxinsight_connector: docker-bake.hcl prepare_hxinsight_connector setenv
-	@echo "Building HxInsight Connector components"
+cic_connector: docker-bake.hcl prepare_cic_connector setenv
+	@echo "Building CIC Connector components"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 

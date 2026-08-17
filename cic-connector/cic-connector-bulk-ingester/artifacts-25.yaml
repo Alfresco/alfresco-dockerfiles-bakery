@@ -1,0 +1,12 @@
+---
+updatecli_self: cic-connector/cic-connector-bulk-ingester/artifacts-25.yaml
+updatecli_matrix_version: 25.N
+artifacts:
+  alfresco-cic-connector-bulk-ingester:
+    name: alfresco-cic-connector-bulk-ingester
+    version: 1.0.0
+    classifier: "-app.jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: cic-connector/cic-connector-bulk-ingester
+    checksum: "sha1:"

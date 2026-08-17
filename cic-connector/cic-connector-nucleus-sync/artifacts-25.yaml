@@ -1,0 +1,12 @@
+---
+updatecli_self: cic-connector/cic-connector-nucleus-sync/artifacts-25.yaml
+updatecli_matrix_version: 25.N
+artifacts:
+  alfresco-cic-connector-nucleus-sync:
+    name: alfresco-cic-connector-nucleus-sync
+    version: 1.0.0
+    classifier: "-app.jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: cic-connector/cic-connector-nucleus-sync
+    checksum: "sha1:"
