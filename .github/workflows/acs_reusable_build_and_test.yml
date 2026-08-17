@@ -198,10 +198,16 @@ jobs:
       - name: Helm install
         id: helm_install
         run: |
+          CIC_VALUES_FILE=""
+          if [ "${{ matrix.edition }}" = "enterprise" ]; then
+            CIC_VALUES_FILE="--values ./acs-deployment/test/with-cic_values.yaml"
+          fi
+
           helm install acs ./acs-deployment/helm/alfresco-content-services \
             --set global.search.sharedSecret="$(openssl rand -hex 24)" \
             --values ./acs-deployment/helm/alfresco-content-services/${{ env.UPSTREAM_HELM_VALUES }} \
             --values ./acs-deployment/test/${{ matrix.edition == 'community' && 'community' || 'enterprise' }}-integration-test-values.yaml \
+            ${CIC_VALUES_FILE} \
             --values test/helm/test-overrides.yaml \
             --values test/helm/test-overrides-${{ matrix.arch }}.yaml \
             --values test/helm/test-overrides-${{ matrix.edition }}.yaml
