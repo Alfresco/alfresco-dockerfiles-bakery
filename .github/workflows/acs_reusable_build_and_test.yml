@@ -200,7 +200,7 @@ jobs:
         run: |
           CIC_VALUES_FILE=""
           if [ "${{ matrix.edition }}" = "enterprise" ]; then
-            CIC_VALUES_FILE="--values ./acs-deployment/test/with-cic_values.yaml"
+            CIC_VALUES_FILE="--values ./acs-deployment/docs/helm/values/with-cic_values.yaml"
           fi
 
           helm install acs ./acs-deployment/helm/alfresco-content-services \
