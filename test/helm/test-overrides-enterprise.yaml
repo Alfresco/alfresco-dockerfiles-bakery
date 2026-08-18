@@ -42,10 +42,29 @@ alfresco-connector-cic:
         hxClientSecret: HX_CLIENT_SECRET
         hxEnvKey: HX_ENV_KEY
         hxAppSourceId: HX_APP_SOURCE_ID
+  messageBroker:
+    existingConfigMap:
+      name: cic-config
+      keys:
+        url: BROKER_URL
+    existingSecret:
+      name: cic-secrets
+      keys:
+        username: BROKER_USERNAME
+        password: BROKER_PASSWORD
+  ats:
+    existingConfigMap:
+      name: cic-config
+      keys:
+        sfsUrl: SFS_URL
   repository:
-    url: http://alfresco:8080/alfresco
-    versionOverride: 26.2.1
     authType: basic
+    existingConfigMap:
+      name: cic-config
+      keys:
+        url: REPOSITORY_URL
+        apiUrl: REPOSITORY_API_BASE_URL
+        versionOverride: REPOSITORY_VERSION_OVERRIDE
     existingSecret:
       name: repository-admin-secret
       keys:

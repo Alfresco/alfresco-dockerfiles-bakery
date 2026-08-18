@@ -160,6 +160,11 @@ jobs:
             --from-literal=NUCLEUS_BASE_URL=https://cic-test.invalid/nucleus \
             --from-literal=NUCLEUS_IDP_BASE_URL=https://cic-test.invalid/nucleus-idp \
             --from-literal=NUCLEUS_SYSTEM_ID=test-nucleus-system-id \
+            --from-literal=BROKER_URL=failover:\(nio://activemq:61616\)?timeout=3000 \
+            --from-literal=SFS_URL=http://shared-file-store:8099/alfresco/api/-default-/private/sfs/versions/1/file \
+            --from-literal=REPOSITORY_URL=http://alfresco:8080/alfresco \
+            --from-literal=REPOSITORY_API_BASE_URL=http://alfresco:8080/alfresco/api/-default-/public/alfresco/versions/1 \
+            --from-literal=REPOSITORY_VERSION_OVERRIDE=26.2.1 \
             --dry-run=client -o yaml | kubectl apply -f -
 
           kubectl create secret generic cic-secrets \
@@ -167,6 +172,8 @@ jobs:
             --from-literal=HX_CLIENT_SECRET=test-hx-client-secret \
             --from-literal=HX_ENV_KEY=test-hx-environment-key \
             --from-literal=HX_APP_SOURCE_ID=00000000-0000-0000-0000-000000000000 \
+            --from-literal=BROKER_USERNAME=admin \
+            --from-literal=BROKER_PASSWORD=admin \
             --dry-run=client -o yaml | kubectl apply -f -
 
           kubectl create secret generic repository-admin-secret \
