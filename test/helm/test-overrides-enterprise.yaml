@@ -77,14 +77,3 @@ alfresco-connector-cic:
     image:
       repository: localhost/alfresco/alfresco-cic-connector-nucleus-sync
       tag: latest
-alfresco-repository:
-  config:
-    repository:
-      additionalGlobalProperties:
-        hxi.discovery.base-url: https://cic-test.invalid/discovery
-        hxi.auth.providers.hyland-experience.token-uri: https://cic-test.invalid/oauth/token
-        hxi.auth.providers.hyland-experience.environment-key: test-hx-environment-key
-        hxi.auth.providers.hyland-experience.client-id: test-hx-client-id
-        hxi.auth.providers.hyland-experience.client-secret: test-hx-client-secret
-        hxi.knowledge-retrieval.url: https://cic-test.invalid/discovery/agents
-        hxi.connector.source-id: 00000000-0000-0000-0000-000000000000
