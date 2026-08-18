@@ -162,8 +162,8 @@ jobs:
             --from-literal=NUCLEUS_SYSTEM_ID=test-nucleus-system-id \
             --from-literal=BROKER_URL=failover:\(nio://activemq:61616\)?timeout=3000 \
             --from-literal=SFS_URL=http://shared-file-store:8099/alfresco/api/-default-/private/sfs/versions/1/file \
-            --from-literal=REPOSITORY_URL=http://alfresco:8080/alfresco \
-            --from-literal=REPOSITORY_API_BASE_URL=http://alfresco:8080/alfresco/api/-default-/public/alfresco/versions/1 \
+            --from-literal=REPOSITORY_URL=http://acs-alfresco-repository/alfresco \
+            --from-literal=REPOSITORY_API_BASE_URL=http://acs-alfresco-repository/alfresco/api/-default-/public/alfresco/versions/1 \
             --from-literal=REPOSITORY_VERSION_OVERRIDE=26.2.1 \
             --dry-run=client -o yaml | kubectl apply -f -
 
