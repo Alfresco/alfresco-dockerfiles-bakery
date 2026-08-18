@@ -10,7 +10,8 @@ group "enterprise" {
     "tengines",
     "connectors",
     "adf_apps",
-    "sync"
+    "sync",
+    "cic_connector"
   ]
 }
 
