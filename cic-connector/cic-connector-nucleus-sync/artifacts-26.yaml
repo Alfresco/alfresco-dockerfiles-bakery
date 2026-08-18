@@ -4,7 +4,7 @@ updatecli_matrix_version: current
 artifacts:
   alfresco-cic-connector-nucleus-sync:
     name: alfresco-cic-connector-nucleus-sync
-    version: 1.0.0
+    version: 1.0.1
     classifier: "-app.jar"
     repository: enterprise-releases
     group: org.alfresco

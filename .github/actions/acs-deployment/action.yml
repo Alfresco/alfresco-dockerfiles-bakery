@@ -7,5 +7,5 @@ runs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: Alfresco/acs-deployment
-          ref: master
+          ref: a6081ff8c4de6ad0e8d7cef18718aea2a50489f2
           path: acs-deployment
