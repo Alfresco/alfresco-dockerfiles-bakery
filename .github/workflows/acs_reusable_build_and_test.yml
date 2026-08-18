@@ -23,7 +23,7 @@ jobs:
     uses: ./.github/workflows/reusable_bake_build.yml
     with:
       version: ${{ inputs.acs_version }}
-      bake-targets: default
+      bake-targets: default cic_connector
       tag: ${{ inputs.tag }}
       artifacts-to-fetch: '**/artifacts-${{ inputs.acs_version }}*.yaml'
     secrets: inherit
