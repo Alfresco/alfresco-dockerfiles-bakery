@@ -56,3 +56,9 @@ artifacts:
     updatecli_matrix_component_key: activiti
   alfresco-audit-storage-app:
     updatecli_matrix_component_key: audit-storage
+  alfresco-cic-connector-live-ingester:
+    updatecli_matrix_component_key: cic-connector
+  alfresco-cic-connector-bulk-ingester:
+    updatecli_matrix_component_key: cic-connector
+  alfresco-cic-connector-nucleus-sync:
+    updatecli_matrix_component_key: cic-connector

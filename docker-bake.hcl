@@ -10,7 +10,8 @@ group "enterprise" {
     "tengines",
     "connectors",
     "adf_apps",
-    "sync"
+    "sync",
+    "cic_connector"
   ]
 }
 
@@ -67,11 +68,11 @@ group "aps" {
   targets = ["aps-admin", "aps-app"]
 }
 
-group "hxinsight_connector" {
+group "cic_connector" {
   targets = [
-    "hxinsight_connector_bulk_ingester",
-    "hxinsight_connector_live_ingester",
-    "hxinsight_connector_prediction_applier"
+    "cic_connector_bulk_ingester",
+    "cic_connector_live_ingester",
+    "cic_connector_nucleus_sync"
   ]
 }
 
@@ -940,79 +941,79 @@ target "audit_storage" {
   platforms = split(",", "${TARGETARCH}")
 }
 
-variable "HXINSIGHT_USER_NAME" {
-  default = "hsinsight"
+variable "CIC_CONNECTOR_USER_NAME" {
+  default = "cic-connector"
 }
 
-variable "HXINSIGHT_USER_ID" {
+variable "CIC_CONNECTOR_USER_ID" {
   default = "33009"
 }
 
-target "hxinsight_connector_bulk_ingester" {
-  context = "./hxinsight-connector/hxinsight-connector-bulk-ingester"
+target "cic_connector_bulk_ingester" {
+  context = "./cic-connector/cic-connector-bulk-ingester"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
   }
   args = {
-    HXINSIGHT_CONNECTOR_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
-    HXINSIGHT_CONNECTOR_GROUP_ID = "${ALFRESCO_GROUP_ID}"
-    HXINSIGHT_CONNECTOR_USER_NAME = "${HXINSIGHT_USER_NAME}"
-    HXINSIGHT_CONNECTOR_USER_ID = "${HXINSIGHT_USER_ID}"
+    CIC_CONNECTOR_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    CIC_CONNECTOR_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    CIC_CONNECTOR_USER_NAME = "${CIC_CONNECTOR_USER_NAME}"
+    CIC_CONNECTOR_USER_ID = "${CIC_CONNECTOR_USER_ID}"
   }
   labels = {
-    "org.label-schema.name" = "${PRODUCT_LINE} HxInsight Connector Bulk Ingester"
-    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector Bulk Ingester"
-    "org.opencontainers.image.description" = "Alfresco HxInsight Connector Bulk Ingester"
+    "org.label-schema.name" = "${PRODUCT_LINE} CIC Connector Bulk Ingester"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's CIC Connector Bulk Ingester"
+    "org.opencontainers.image.description" = "Alfresco CIC Connector Bulk Ingester"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-bulk-ingester:${image_tag("alfresco-hxinsight-connector-bulk-ingester")}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-cic-connector-bulk-ingester:${image_tag("alfresco-cic-connector-bulk-ingester")}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
 
-target "hxinsight_connector_live_ingester" {
-  context = "./hxinsight-connector/hxinsight-connector-live-ingester"
+target "cic_connector_live_ingester" {
+  context = "./cic-connector/cic-connector-live-ingester"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
   }
   args = {
-    HXINSIGHT_CONNECTOR_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
-    HXINSIGHT_CONNECTOR_GROUP_ID = "${ALFRESCO_GROUP_ID}"
-    HXINSIGHT_CONNECTOR_USER_NAME = "${HXINSIGHT_USER_NAME}"
-    HXINSIGHT_CONNECTOR_USER_ID = "${HXINSIGHT_USER_ID}"
+    CIC_CONNECTOR_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    CIC_CONNECTOR_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    CIC_CONNECTOR_USER_NAME = "${CIC_CONNECTOR_USER_NAME}"
+    CIC_CONNECTOR_USER_ID = "${CIC_CONNECTOR_USER_ID}"
   }
   labels = {
-    "org.label-schema.name" = "${PRODUCT_LINE} HxInsight Connector Live Ingester"
-    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector Live Ingester"
-    "org.opencontainers.image.description" = "Alfresco HxInsight Connector Live Ingester"
+    "org.label-schema.name" = "${PRODUCT_LINE} CIC Connector Live Ingester"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's CIC Connector Live Ingester"
+    "org.opencontainers.image.description" = "Alfresco CIC Connector Live Ingester"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-live-ingester:${image_tag("alfresco-hxinsight-connector-live-ingester")}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-cic-connector-live-ingester:${image_tag("alfresco-cic-connector-live-ingester")}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }
 
-target "hxinsight_connector_prediction_applier" {
-  context = "./hxinsight-connector/hxinsight-connector-prediction-applier"
+target "cic_connector_nucleus_sync" {
+  context = "./cic-connector/cic-connector-nucleus-sync"
   dockerfile = "Dockerfile"
   inherits = ["java_base"]
   contexts = {
     java_base = "target:java_base"
   }
   args = {
-    HXINSIGHT_CONNECTOR_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
-    HXINSIGHT_CONNECTOR_GROUP_ID = "${ALFRESCO_GROUP_ID}"
-    HXINSIGHT_CONNECTOR_USER_NAME = "${HXINSIGHT_USER_NAME}"
-    HXINSIGHT_CONNECTOR_USER_ID = "${HXINSIGHT_USER_ID}"
+    CIC_CONNECTOR_GROUP_NAME = "${ALFRESCO_GROUP_NAME}"
+    CIC_CONNECTOR_GROUP_ID = "${ALFRESCO_GROUP_ID}"
+    CIC_CONNECTOR_USER_NAME = "${CIC_CONNECTOR_USER_NAME}"
+    CIC_CONNECTOR_USER_ID = "${CIC_CONNECTOR_USER_ID}"
   }
   labels = {
-    "org.label-schema.name" = "${PRODUCT_LINE} HxInsight Connector Prediction Applier"
-    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's HxInsight Connector Prediction Applier"
-    "org.opencontainers.image.description" = "Alfresco HxInsight Connector Prediction Applier"
+    "org.label-schema.name" = "${PRODUCT_LINE} CIC Connector Nucleus Sync"
+    "org.opencontainers.image.title" = "${PRODUCT_LINE} repository's CIC Connector Nucleus Sync"
+    "org.opencontainers.image.description" = "Alfresco CIC Connector Nucleus Sync"
   }
-  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-hxinsight-connector-prediction-applier:${image_tag("alfresco-hxinsight-connector-prediction-applier")}"]
+  tags = ["${REGISTRY}/${REGISTRY_NAMESPACE}/alfresco-cic-connector-nucleus-sync:${image_tag("alfresco-cic-connector-nucleus-sync")}"]
   output = ["type=docker"]
   platforms = split(",", "${TARGETARCH}")
 }

@@ -151,6 +151,21 @@ jobs:
           kubectl create configmap acc-config --from-file=app.config.json=test/configs/acc.json
           kubectl create configmap adw-config --from-file=app.config.json=test/configs/adw.json
 
+      - name: Create CIC test configuration
+        if: matrix.edition == 'enterprise'
+        run: |
+          kubectl create configmap cic-config \
+            --from-env-file=test/configs/cic-config.env \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          kubectl create secret generic cic-secrets \
+            --from-env-file=test/configs/cic-secrets.env \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          kubectl create secret generic repository-admin-secret \
+            --from-env-file=test/configs/repository-admin-secret.env \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Checkout acs-deployment sources
         uses: ./.github/actions/acs-deployment
 
@@ -174,6 +189,9 @@ jobs:
             sed -i "s|/alfresco-content-repository|/alfresco-content-repository-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
             sed -i "s|/alfresco-share|/alfresco-share-community|g" ${{ env.OVERRIDES_VALUES_FILE }}
           fi
+
+          sed -i "s|localhost/alfresco/|${REGISTRY}/${REGISTRY_NAMESPACE}/|g" test/helm/test-overrides-${{ matrix.edition }}.yaml
+          sed -i "s|tag: latest|tag: ${TAG}|g" test/helm/test-overrides-${{ matrix.edition }}.yaml
 
           cat ${{ env.OVERRIDES_VALUES_FILE }}
 

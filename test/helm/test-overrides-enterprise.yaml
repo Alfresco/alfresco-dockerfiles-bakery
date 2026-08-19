@@ -16,6 +16,64 @@ dtas:
           - id: alfresco-aos-module
             version: 3.4.1
             installed: true
-          - id: alfresco-hxinsight-connector-hxinsight-extension
-            version: 2.0.2
-            installed: true
+alfresco-connector-cic:
+  enabled: true
+  liveIngester:
+    image:
+      repository: localhost/alfresco/alfresco-cic-connector-live-ingester
+      tag: latest
+  bulkIngester:
+    image:
+      repository: localhost/alfresco/alfresco-cic-connector-bulk-ingester
+      tag: latest
+  cic:
+    existingConfigMap:
+      name: cic-config
+      keys:
+        hxAuthTokenUrl: HX_AUTH_TOKEN_URL
+        hxInsightIngestionUrl: HX_INSIGHT_INGESTION_URL
+        nucleusBaseUrl: NUCLEUS_BASE_URL
+        nucleusIdpBaseUrl: NUCLEUS_IDP_BASE_URL
+        nucleusSystemId: NUCLEUS_SYSTEM_ID
+    existingSecret:
+      name: cic-secrets
+      keys:
+        hxClientId: HX_CLIENT_ID
+        hxClientSecret: HX_CLIENT_SECRET
+        hxEnvKey: HX_ENV_KEY
+        hxAppSourceId: HX_APP_SOURCE_ID
+  messageBroker:
+    existingConfigMap:
+      name: cic-config
+      keys:
+        url: BROKER_URL
+    existingSecret:
+      name: cic-secrets
+      keys:
+        username: BROKER_USERNAME
+        password: BROKER_PASSWORD
+  ats:
+    existingConfigMap:
+      name: cic-config
+      keys:
+        sfsUrl: SFS_URL
+  repository:
+    authType: basic
+    existingConfigMap:
+      name: cic-config
+      keys:
+        url: REPOSITORY_URL
+        apiUrl: REPOSITORY_API_BASE_URL
+        versionOverride: REPOSITORY_VERSION_OVERRIDE
+    existingSecret:
+      name: repository-admin-secret
+      keys:
+        username: REPOSITORY_USERNAME
+        password: REPOSITORY_PASSWORD
+        clientId: REPOSITORY_CLIENT_ID
+        clientSecret: REPOSITORY_CLIENT_SECRET
+  nucleusSync:
+    enabled: true
+    image:
+      repository: localhost/alfresco/alfresco-cic-connector-nucleus-sync
+      tag: latest

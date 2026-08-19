@@ -1,0 +1,12 @@
+---
+updatecli_self: cic-connector/cic-connector-live-ingester/artifacts-23.yaml
+updatecli_matrix_version: 23.N
+artifacts:
+  alfresco-cic-connector-live-ingester:
+    name: alfresco-cic-connector-live-ingester
+    version: 1.0.1
+    classifier: "-app.jar"
+    repository: enterprise-releases
+    group: org.alfresco
+    path: cic-connector/cic-connector-live-ingester
+    checksum: "sha1:"
