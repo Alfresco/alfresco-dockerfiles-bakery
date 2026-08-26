@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v18.23.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v18.24.1
 
   build:
     needs: pre-commit
@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v18.23.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v18.24.1
 
       - name: Restore packages artifacts
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -54,7 +54,7 @@ jobs:
           path: artifacts_cache/**
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
 
       - name: Bake Docker images
         env:
@@ -111,7 +111,7 @@ jobs:
 
       - name: Verify docker-compose
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v18.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v18.24.1
         timeout-minutes: 10
         with:
           postman_path: test/postman/docker-compose
@@ -121,7 +121,7 @@ jobs:
 
       - name: Save containers logs
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v18.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v18.24.1
         with:
           output-archive-name: compose-logs
 
@@ -141,7 +141,7 @@ jobs:
 
       - name: Setup KinD cluster
         id: setup-kind
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v18.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v18.24.1
         with:
           traefik-enabled: 'true'
           traefik-chart-version: v40.0.0-ea.1
@@ -187,7 +187,7 @@ jobs:
             --values test/helm/test-overrides-community.yaml
 
       - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v18.23.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v18.24.1
 
       - name: Run helm test
         id: helm_test
