@@ -97,19 +97,13 @@ the reverse proxy rather than the proxy's own connection.
 | `TOMCAT_REMOTE_IP_HEADER` | `X-Forwarded-For` | Header carrying the originating client address |
 | `TOMCAT_REMOTE_IP_PROTOCOL_HEADER` | `X-Forwarded-Proto` | Header carrying the protocol the client used |
 | `TOMCAT_REMOTE_IP_PORT_HEADER` | `X-Forwarded-Port` | Header carrying the port the client connected to |
-| `TOMCAT_REMOTE_IP_INTERNAL_PROXIES` | private and loopback ranges | Regular expression matching the proxies whose forwarded headers are trusted |
+| `TOMCAT_REMOTE_IP_INTERNAL_PROXIES` | `10/8,172.16/12,...` (Tomcat 11+) | CIDR ranges matching the proxies whose forwarded headers are trusted |
+| `TOMCAT_REMOTE_IP_INTERNAL_PROXIES_TOMCAT10_REGEX` | regex (Tomcat 10 only) | Regex matching the proxies (Tomcat 10 compatibility; will be removed when Tomcat 10 is deprecated) |
 | `TOMCAT_REMOTE_IP_TRUSTED_PROXIES` | *(empty)* | Regular expression matching proxies that are trusted but should still appear in the proxies header |
 
-The default `TOMCAT_REMOTE_IP_INTERNAL_PROXIES` is the regular expression Tomcat
-itself ships, covering `10/8`, `172.16/12`, `192.168/16`, `169.254/16`,
-`100.64/10`, `127/8`, `::1`, `fe80::/10` and `fc00::/7`. Set it to the address of
-your ingress if you want to be stricter. Note that Tomcat 11 accepts CIDR
-notation here but Tomcat 10 does not, so use a regular expression if you build
-images for both.
+**Tomcat 11+:** `TOMCAT_REMOTE_IP_INTERNAL_PROXIES` defaults to `10/8,172.16/12,192.168/16,169.254/16,100.64/10,127/8,::1,fe80::/10,fc00::/7` using CIDR notation. Set it to the address of your ingress if you want to be stricter.
 
-Unlike the other variables, this one gets its default from an `ENV` in the
-Dockerfile rather than from `server.xml`, because the regular expression contains
-a closing brace.
+**Tomcat 10:** Uses `TOMCAT_REMOTE_IP_INTERNAL_PROXIES_TOMCAT10_REGEX` since Tomcat 10 does not support CIDR notation. This variable will be removed once Tomcat 10 is no longer supported.
 
 [valve]: https://tomcat.apache.org/tomcat-10.1-doc/config/valve.html#Remote_IP_Valve
 

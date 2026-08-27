@@ -54,6 +54,11 @@ RUN echo 'org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util
 RUN connector='/Server/Service[@name="Catalina"]/Connector[@protocol="HTTP/1.1"]'; \
   host='/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]'; \
   version_logger='/Server/Listener[@className="org.apache.catalina.startup.VersionLoggerListener"]'; \
+  if [ "$TOMCAT_MAJOR" = "11" ]; then \
+    internal_proxies='TOMCAT_REMOTE_IP_INTERNAL_PROXIES:-10/8,172.16/12,192.168/16,169.254/16,100.64/10,127/8,::1,fe80::/10,fc00::/7'; \
+  else \
+    internal_proxies='TOMCAT_REMOTE_IP_INTERNAL_PROXIES_TOMCAT10_REGEX'; \
+  fi; \
   xmlstarlet ed -L \
   # Remove comments
   -d '//comment()' \
@@ -80,7 +85,7 @@ RUN connector='/Server/Service[@name="Catalina"]/Connector[@protocol="HTTP/1.1"]
   -a "$host/Valve[last()]" -t attr -n portHeader -v '${TOMCAT_REMOTE_IP_PORT_HEADER:-X-Forwarded-Port}' \
   -a "$host/Valve[last()]" -t attr -n remoteIpHeader -v '${TOMCAT_REMOTE_IP_HEADER:-X-Forwarded-For}' \
   -a "$host/Valve[last()]" -t attr -n protocolHeader -v '${TOMCAT_REMOTE_IP_PROTOCOL_HEADER:-X-Forwarded-Proto}' \
-  -a "$host/Valve[last()]" -t attr -n internalProxies -v '${TOMCAT_REMOTE_IP_INTERNAL_PROXIES}' \
+  -a "$host/Valve[last()]" -t attr -n internalProxies -v "\${$internal_proxies}" \
   -a "$host/Valve[last()]" -t attr -n trustedProxies -v '${TOMCAT_REMOTE_IP_TRUSTED_PROXIES:-}' \
   # Do not leak server info within error pages
   -s "$host" -t elem -n 'Valve' \
@@ -123,6 +128,7 @@ FROM apr_pkg-rockylinux AS apr_pkg-rhel
 
 # hadolint ignore=DL3006
 FROM apr_pkg-${DISTRIB_NAME}
+ARG TOMCAT_MAJOR
 
 ENV CATALINA_HOME=/usr/local/tomcat
 # let "Tomcat Native" live somewhere isolated
@@ -130,9 +136,9 @@ ENV TOMCAT_NATIVE_LIBDIR=$CATALINA_HOME/native-jni-lib
 ENV LD_LIBRARY_PATH=$TOMCAT_NATIVE_LIBDIR
 ENV PATH=$CATALINA_HOME/bin:$PATH
 
-# The only TOMCAT_* default not inlined in server.xml: Tomcat ends a ${...:-default}
-# at the first '}', which this regex contains. Quoting keeps the backslashes.
-ENV TOMCAT_REMOTE_IP_INTERNAL_PROXIES="10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|100\.6[4-9]{1}\.\d{1,3}\.\d{1,3}|100\.[7-9]{1}\d{1}\.\d{1,3}\.\d{1,3}|100\.1[0-1]{1}\d{1}\.\d{1,3}\.\d{1,3}|100\.12[0-7]{1}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1|fe[89ab]\p{XDigit}:.*|f[cd]\p{XDigit}{2}+:.*"
+# Tomcat 10 only: regex-based internal proxies (will be removed when Tomcat 10 is deprecated).
+# Tomcat 11+ uses CIDR notation directly, which is more readable and natively supported.
+ENV TOMCAT_REMOTE_IP_INTERNAL_PROXIES_TOMCAT10_REGEX="10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|100\.6[4-9]{1}\.\d{1,3}\.\d{1,3}|100\.[7-9]{1}\d{1}\.\d{1,3}\.\d{1,3}|100\.1[0-1]{1}\d{1}\.\d{1,3}\.\d{1,3}|100\.12[0-7]{1}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1|fe[89ab]\p{XDigit}:.*|f[cd]\p{XDigit}{2}+:.*"
 
 WORKDIR $CATALINA_HOME
 # fix permissions (especially for running as non-root)
