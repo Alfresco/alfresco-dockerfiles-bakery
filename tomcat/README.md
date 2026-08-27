@@ -109,7 +109,7 @@ images for both.
 
 Unlike the other variables, this one gets its default from an `ENV` in the
 Dockerfile rather than from `server.xml`, because the regular expression contains
-a closing brace. See the note at the end of this page.
+a closing brace.
 
 [valve]: https://tomcat.apache.org/tomcat-10.1-doc/config/valve.html#Remote_IP_Valve
 
@@ -140,8 +140,6 @@ Anything not covered above can still be configured:
   `/usr/local/tomcat/conf/server.xml`. Environment variable substitution stays
   available, so your file can use `${...}` placeholders too.
 
-Two behaviours are worth knowing about when overriding these variables. Setting
-one to an empty string is not the same as leaving it unset: the empty value is
-substituted into `server.xml`, which for most attributes means "disabled". And a
-value containing a closing brace cannot be used, because Tomcat ends the
-placeholder at the first `}` it finds.
+One behaviour worth knowing about when overriding these variables: setting
+one to an empty string is not the same as leaving it unset. The empty value is
+substituted into `server.xml`, which for most attributes means "disabled".

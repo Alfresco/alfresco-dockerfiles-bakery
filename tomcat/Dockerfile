@@ -1,4 +1,4 @@
-# hadolint global ignore=DL3033,DL3008,SC2016
+# hadolint global ignore=DL3033,DL3008
 # Alfresco Base Tomcat Image
 # see also https://github.com/docker-library/tomcat
 ARG JAVA_MAJOR
@@ -48,7 +48,9 @@ WORKDIR /build/tomcat/lib/org/apache/catalina/util
 RUN printf "server.info=Alfresco servlet container/$TOMCAT_MAJOR\nserver.number=$TOMCAT_MAJOR" > ServerInfo.properties
 WORKDIR /build/tomcat
 # Enable environment variable substitution in Tomcat XML configs
+# hadolint ignore=SC2016
 RUN echo 'org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource' >> conf/catalina.properties
+# hadolint ignore=SC2016
 RUN connector='/Server/Service[@name="Catalina"]/Connector[@protocol="HTTP/1.1"]'; \
   host='/Server/Service[@name="Catalina"]/Engine[@name="Catalina"]/Host[@name="localhost"]'; \
   version_logger='/Server/Listener[@className="org.apache.catalina.startup.VersionLoggerListener"]'; \
