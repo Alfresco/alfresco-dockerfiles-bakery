@@ -2,7 +2,7 @@
 
 ## Description
 
-This Docker file is used to build the base Tomcat image every Alfresco Java web
+This Dockerfile is used to build the base Tomcat image that every Alfresco Java web
 application image is derived from. It ships Apache Tomcat (10.1 or 11.0,
 depending on the ACS version being built) together with the Tomcat Native
 library, and applies a set of hardening defaults to `conf/server.xml`.
