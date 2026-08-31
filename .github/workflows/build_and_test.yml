@@ -102,4 +102,7 @@ jobs:
         env:
           REGISTRY: ghcr.io
           REGISTRY_NAMESPACE: alfresco
-        run: ./test/verify.sh
+          VERSION_TO_TEST: 26
+        run: |
+          export TAG=${{ github.event_name == 'pull_request' && format('pr-{0}-v{1}', github.event.pull_request.number, env.VERSION_TO_TEST) || format('{0}-v{1}', github.ref_name, env.VERSION_TO_TEST) }}
+          ./test/verify.sh

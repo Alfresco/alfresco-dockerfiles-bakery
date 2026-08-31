@@ -72,7 +72,7 @@ get_image_tag_for_target() {
   version=$(echo "$ARTIFACT_VERSIONS" | jq -r ".\"$image_name\" // \"latest\"")
 
   # Construct full tag: registry/namespace/image:version
-  echo "$REGISTRY/$REGISTRY_NAMESPACE/$image_name:$version"
+  echo "$REGISTRY/$REGISTRY_NAMESPACE/$image_name:${TAG:-$version}"
 }
 
 # ============================================================================
