@@ -94,8 +94,9 @@ jobs:
       - name: Setup hcl2json
         uses: Alfresco/alfresco-build-tools/.github/actions/setup-github-release-binary@v18.21.2
         with:
-          repo: 'tmccombs/hcl2json'
-          version: 'v0.6.9'
+          repo: tmccombs/hcl2json
+          version: 0.6.9
+          url_template: v${VERSION}/${NAME}_${OS}_${ARCH}.tar.gz
 
       - name: Run image verification tests
         env:
