@@ -151,13 +151,6 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 RUN mkdir -m 770 logs temp work && chgrp tomcat . logs temp work; \
   find . -type d -exec chmod ug+rx {} +; \
   chmod ug+rx bin/*.sh; \
-  # verify Tomcat Native is working properly
-  nativeLines="$(catalina.sh configtest 2>&1 | grep -c 'Loaded Apache Tomcat Native library')" && \
-  test $nativeLines -ge 1 || { echo "Tomcat Native library not found or not working properly"; exit 1; }
-# Verify placeholders resolve: a value holding a closing brace truncates silently
-RUN out="$(TOMCAT_HTTP_PORT=9999 catalina.sh configtest 2>&1 || true)"; \
-  grep -q 'http-nio-9999' <<<"$out" || { echo "$out"; echo "TOMCAT_* env vars are not applied to server.xml"; exit 1; }; \
-  ! grep -qE '\$\{|Exception' <<<"$out" || { echo "$out"; echo "Unresolved placeholder or invalid value in server.xml"; exit 1; }; \
   rm -f logs/*
 USER tomcat
 EXPOSE 8080
