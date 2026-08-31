@@ -91,6 +91,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup hcl2json
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-github-release-binary@v18.21.2
+        with:
+          github-release-binary-org: 'tmccombs'
+          github-release-binary-repo: 'hcl2json'
+          github-release-binary-name: 'hcl2json'
+
       - name: Run image verification tests
         env:
           REGISTRY: ghcr.io
