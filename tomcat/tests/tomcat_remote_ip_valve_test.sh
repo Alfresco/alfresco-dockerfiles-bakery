@@ -4,12 +4,9 @@
 # image, and that the fallback regex env var is set for Tomcat 10.
 IMAGE=$1
 
-server_xml=$(docker run --rm "$IMAGE" cat conf/server.xml)
-
-xpath='//Valve[@className="org.apache.catalina.valves.RemoteIpValve"]/@internalProxies'
-internal_proxies=$(xmllint --xpath "$xpath" - <<<"$server_xml" 2>&1) || {
+internal_proxies=$(docker run --rm "$IMAGE" xmllint --xpath '//Valve[@className="org.apache.catalina.valves.RemoteIpValve"]/@internalProxies' conf/server.xml 2>&1) || {
   echo "Failed: could not extract internalProxies from server.xml"
-  echo "$internal_proxies"
+  echo "$internalProxies"
   exit 1
 }
 
