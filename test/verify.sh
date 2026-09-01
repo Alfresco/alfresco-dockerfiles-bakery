@@ -31,12 +31,9 @@ find_target_for_context() {
 # ============================================================================
 find_final_target_inheriting_from() {
   local parent_target="$1"
-  hcl2json "$HCL_FILE" 2>/dev/null | jq -r "
-    ([
-      .target | to_entries[] |
       select(
-        (.value[0].inherits | index(\"$parent_target\")) or
-        (.value[0].contexts | has(\"$parent_target\"))
+        ((.value[0].inherits // []) | index("$parent_target")) or
+        ((.value[0].contexts // {}) | has("$parent_target"))
       ) |
       select(
         (.value[0].output[0] // \"type=docker\") | contains(\"cacheonly\") | not
@@ -186,11 +183,13 @@ main() {
 
   # Summary
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  executed_count=$((passed_count + failed_count))
+  skipped_count=$((test_count - executed_count))
   if [ $failed_count -eq 0 ]; then
-    echo "✨ All tests passed! ($passed_count/$test_count)"
+    echo "✨ All executed tests passed! ($passed_count/$executed_count; skipped $skipped_count)"
     echo ""
   else
-    echo "⚠️  Results: $passed_count passed, $failed_count failed out of $test_count tests"
+    echo "⚠️  Results: $passed_count passed, $failed_count failed out of $executed_count executed tests (skipped $skipped_count)"
     echo ""
     exit 1
   fi
