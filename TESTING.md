@@ -10,7 +10,7 @@ This project uses a lightweight test discovery and execution system for verifyin
 - Each test script receives the image name as its first argument
 
 **Automatic discovery:**
-- `./verify.sh` discovers all test files and runs them
+- `./test/verify.sh` discovers all test files and runs them
 - For each test, it determines which bake target provides that image
 - If the target is cache-only (like `tomcat_base`), it finds the first final target that inherits from it
 - Tests run against real, runnable images (not intermediate/cache-only ones)
@@ -27,7 +27,7 @@ docker run --rm "$IMAGE" catalina.sh configtest 2>&1 | grep -q "Loaded Apache To
 
 ```bash
 # Run all discovered tests
-./verify.sh
+./test/verify.sh
 
 # Tests will:
 # 1. Discover all */tests/*_test.sh files
@@ -57,7 +57,7 @@ docker run --rm "$IMAGE" catalina.sh configtest 2>&1 | grep -q "Loaded Apache To
    chmod +x myimage/tests/my_feature_test.sh
    ```
 
-4. Run `./verify.sh` to test it
+4. Run `./test/verify.sh` to test it
 
 ## Test requirements
 
@@ -72,7 +72,7 @@ Add to your GitHub Actions workflow:
 
 ```yaml
 - name: Run image tests
-  run: ./verify.sh
+  run: ./test/verify.sh
 ```
 
 Tests will automatically fail the workflow if any test fails.
