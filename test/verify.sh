@@ -31,9 +31,12 @@ find_target_for_context() {
 # ============================================================================
 find_final_target_inheriting_from() {
   local parent_target="$1"
+  hcl2json "$HCL_FILE" 2>/dev/null | jq -r "
+    ([
+      .target | to_entries[] |
       select(
-        ((.value[0].inherits // []) | index("$parent_target")) or
-        ((.value[0].contexts // {}) | has("$parent_target"))
+        ((.value[0].inherits // []) | index(\"$parent_target\")) or
+        ((.value[0].contexts // {}) | has(\"$parent_target\"))
       ) |
       select(
         (.value[0].output[0] // \"type=docker\") | contains(\"cacheonly\") | not
