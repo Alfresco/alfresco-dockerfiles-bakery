@@ -145,7 +145,7 @@ run_test() {
 }
 
 main() {
-  local test_count=0 passed_count=0 failed_count=0 current_folder="" result
+  local test_count=0 passed_count=0 failed_count=0 skipped_count=0 current_folder="" result
 
   echo ""
   echo "🧪 Image Test Verification"
@@ -172,15 +172,20 @@ main() {
       passed_count=$((passed_count + 1))
     elif [ "$result" -eq 1 ]; then
       failed_count=$((failed_count + 1))
+    else
+      skipped_count=$((skipped_count + 1))
     fi
   done < <(cd "$REPO_ROOT" && find . -path "*/tests/*_test.sh" -type f | sort)
 
+  local skipped_note=""
+  [ "$skipped_count" -gt 0 ] && skipped_note=", $skipped_count skipped"
+
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   if [ "$failed_count" -eq 0 ]; then
-    echo "✨ All tests passed! ($passed_count/$test_count)"
+    echo "✨ All tests passed! ($passed_count/$test_count$skipped_note)"
     echo ""
   else
-    echo "⚠️  Results: $passed_count passed, $failed_count failed out of $test_count tests"
+    echo "⚠️  Results: $passed_count passed, $failed_count failed$skipped_note out of $test_count tests"
     echo ""
     exit 1
   fi
