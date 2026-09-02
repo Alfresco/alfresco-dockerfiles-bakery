@@ -24,7 +24,7 @@ jobs:
         target: [adf_apps, ats, audit_storage, connectors, cic_connector, repository, search_enterprise, search_service, share, sync, tengines, aps]
     runs-on: ubuntu-latest
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v18.23.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v18.26.0
 
       - name: Setup nexus authentication
         env:
@@ -37,7 +37,7 @@ jobs:
           echo "password ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
 
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -45,7 +45,7 @@ jobs:
       - run: make ${{ matrix.target }}
 
       - name: Install Grype
-        uses: anchore/scan-action/download-grype@e1165082ffb1fe366ebaf02d8526e7c4989ea9d2 # v7.4.0
+        uses: anchore/scan-action/download-grype@27805bf3b4e84b4a5c980df22ed233c00390a439 # v7.4.2
         id: grype-install
 
       - name: Add Grype to PATH
