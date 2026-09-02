@@ -2,7 +2,11 @@
 # Test: Verify environment variable substitution works
 IMAGE=$1
 
-out=$(docker run --rm -e TOMCAT_HTTP_PORT=9999 "$IMAGE" catalina.sh configtest 2>&1 || true)
+if ! out=$(docker run --rm -e TOMCAT_HTTP_PORT=9999 "$IMAGE" catalina.sh configtest 2>&1); then
+  echo "Failed: catalina.sh configtest exited non-zero"
+  echo "$out"
+  exit 1
+fi
 
 # Check that the env var was applied
 grep -q 'http-nio-9999' <<<"$out" || {
