@@ -68,12 +68,16 @@ jobs:
     secrets: inherit
 
   image-tests:
-    name: Run image verification tests
+    name: Test images v${{ matrix.version }}
     needs: [ACS_CI, APS_CI]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [26, 25]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -95,7 +99,6 @@ jobs:
         env:
           REGISTRY: ghcr.io
           REGISTRY_NAMESPACE: alfresco
-          VERSION_TO_TEST: 26
-        run: |
-          export TAG=${{ github.event_name == 'pull_request' && format('pr-{0}-v{1}', github.event.pull_request.number, env.VERSION_TO_TEST) || format('{0}-v{1}', github.ref_name, env.VERSION_TO_TEST) }}
-          ./test/verify.sh
+          ACS_VERSION: ${{ matrix.version }}
+          TAG: ${{ github.event_name == 'pull_request' && format('pr-{0}-v{1}', github.event.pull_request.number, matrix.version) || format('{0}-v{1}', github.ref_name, matrix.version) }}
+        run: ./test/verify.sh
