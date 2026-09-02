@@ -60,6 +60,12 @@ alfresco-activiti:
 |-------------|---------|-----------------------------------------------------|
 | `JAVA_OPTS` |    None | can be used to pass additional JRE options          |
 
+### Tomcat configuration
+
+This image is built on the Alfresco base Tomcat image, so the servlet container
+itself is configured with the `TOMCAT_*` environment variables documented in
+[tomcat/README.md](../../tomcat/README.md).
+
 ### Database configuration
 | Variable                             | Default                                      | Description                          |
 |--------------------------------------|----------------------------------------------|--------------------------------------|
