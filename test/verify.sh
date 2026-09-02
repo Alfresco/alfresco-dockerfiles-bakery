@@ -6,24 +6,23 @@
 set -e
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-HCL_FILE="$REPO_ROOT/docker-bake.hcl"
 
-REGISTRY="${REGISTRY:-localhost}"
-REGISTRY_NAMESPACE="${REGISTRY_NAMESPACE:-alfresco}"
+# Groups whose target graph is searched for images to test
+BAKE_GROUPS="${BAKE_GROUPS:-default aps}"
 
-# Initialize artifact versions for tag resolution
-export ARTIFACT_VERSIONS=$(python3 "$REPO_ROOT/scripts/print_artifact_versions.py")
+BAKE_JSON="$(mktemp)"
+trap 'rm -f "$BAKE_JSON"' EXIT
 
 # ============================================================================
 # Helper: Find the bake target that uses a given folder as its main context
 # ============================================================================
 find_target_for_context() {
   local context="$1"
-  hcl2json "$HCL_FILE" 2>/dev/null | jq -r "
+  jq -r --arg context "$context" '
     .target | to_entries[] |
-    select(.value[0].context == \"$context\") |
+    select(.value.context == $context) |
     .key
-  "
+  ' "$BAKE_JSON"
 }
 
 # ============================================================================
@@ -31,19 +30,15 @@ find_target_for_context() {
 # ============================================================================
 find_final_target_inheriting_from() {
   local parent_target="$1"
-  hcl2json "$HCL_FILE" 2>/dev/null | jq -r "
+  jq -r --arg parent "$parent_target" '
+    def is_final: [(.value.output // [])[].type] | index("cacheonly") | not;
     ([
       .target | to_entries[] |
-      select(
-        ((.value[0].inherits // []) | index(\"$parent_target\")) or
-        ((.value[0].contexts // {}) | has(\"$parent_target\"))
-      ) |
-      select(
-        (.value[0].output[0] // \"type=docker\") | contains(\"cacheonly\") | not
-      ) |
+      select((.value.contexts // {}) | has($parent)) |
+      select(is_final) |
       .key
     ] | first) // empty
-  "
+  ' "$BAKE_JSON"
 }
 
 # ============================================================================
@@ -51,64 +46,60 @@ find_final_target_inheriting_from() {
 # ============================================================================
 is_target_final() {
   local target="$1"
-  hcl2json "$HCL_FILE" 2>/dev/null | jq -e "
-    .target[\"$target\"][0].output[0] // \"type=docker\" | contains(\"cacheonly\") | not
-  " >/dev/null 2>&1
+  jq -e --arg target "$target" '
+    [(.target[$target].output // [])[].type] | index("cacheonly") | not
+  ' "$BAKE_JSON" >/dev/null 2>&1
 }
 
 # ============================================================================
-# Helper: Get the full tag for a target (with registry, namespace, and version)
+# Helper: Get the fully resolved tag bake would build the target with
 # ============================================================================
 get_image_tag_for_target() {
   local target="$1"
-  local image_name version
-
-  # Extract image name from bake target tag template
-  image_name=$(hcl2json "$HCL_FILE" 2>/dev/null | jq -r "
-    .target[\"$target\"][0].tags[0] | split(\"/\")[-1] | split(\":\")[0]
-  ")
-
-  # Look up version from artifact versions
-  version=$(echo "$ARTIFACT_VERSIONS" | jq -r ".\"$image_name\" // \"latest\"")
-
-  # Construct full tag: registry/namespace/image:version
-  echo "$REGISTRY/$REGISTRY_NAMESPACE/$image_name:${TAG:-$version}"
+  jq -r --arg target "$target" '.target[$target].tags[0] // empty' "$BAKE_JSON"
 }
 
 # ============================================================================
 # Validation
 # ============================================================================
-if [ ! -f "$HCL_FILE" ]; then
-  echo "Error: $HCL_FILE not found" >&2
+if ! docker buildx version &>/dev/null; then
+  echo "Error: docker buildx not found. Install it to continue." >&2
   exit 1
 fi
 
-if ! command -v hcl2json &>/dev/null; then
-  echo "Error: hcl2json not found. Install it to continue." >&2
+# Resolve the bake graph once: expands matrices, image_tag() and the
+# registry/namespace variables the way a build would
+# shellcheck disable=SC2086
+ARTIFACT_VERSIONS="$(python3 "$REPO_ROOT/scripts/print_artifact_versions.py")" \
+  docker buildx bake --file "$REPO_ROOT/docker-bake.hcl" --print $BAKE_GROUPS \
+  >"$BAKE_JSON" 2>/dev/null || {
+  echo "Error: failed to resolve bake targets for groups: $BAKE_GROUPS" >&2
   exit 1
-fi
+}
 
 # ============================================================================
 # Main: Discover and run tests
 # ============================================================================
 run_test() {
   local test_file="$1"
-  local test_dir="$(dirname "$test_file")"
-  local dockerfile_dir="${test_dir%/tests}"
+  local test_dir dockerfile_dir context test_name
+  test_dir="$(dirname "$test_file")"
+  dockerfile_dir="${test_dir%/tests}"
   dockerfile_dir="${dockerfile_dir#./}"
-  local context="./$dockerfile_dir"
-  local test_name="$(basename "$test_file")"
+  context="$dockerfile_dir"
+  test_name="$(basename "$test_file")"
 
   echo "  📋 Test: $test_name"
   echo "     Path: $test_file"
 
   # Find the bake target that uses this folder as context
-  local bake_target=$(find_target_for_context "$context")
+  local bake_target
+  bake_target=$(find_target_for_context "$context")
 
   if [ -z "$bake_target" ]; then
     echo "     ⏭️  Skipped: No bake target found for context $context"
     echo ""
-    return 2  # Skip (neither pass nor fail)
+    return 2
   fi
 
   echo "     🎯 Target: $bake_target"
@@ -131,10 +122,16 @@ run_test() {
     return 1
   fi
 
-  # Get full image tag (with registry, namespace, and version)
-  local full_image_tag=$(get_image_tag_for_target "$target_to_run")
+  local full_image_tag
+  full_image_tag=$(get_image_tag_for_target "$target_to_run")
 
-  # Run the test
+  if [ -z "$full_image_tag" ]; then
+    echo "     ❌ Failed: Target $target_to_run has no tag"
+    echo ""
+    return 1
+  fi
+
+  echo "     🏷️  Image: $full_image_tag"
   echo "     ▶️  Running test..."
   if bash "$test_file" "$full_image_tag"; then
     echo "     ✅ Passed"
@@ -148,51 +145,42 @@ run_test() {
 }
 
 main() {
-  test_count=0
-  passed_count=0
-  failed_count=0
+  local test_count=0 passed_count=0 failed_count=0 current_folder="" result
 
   echo ""
   echo "🧪 Image Test Verification"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   echo ""
 
-  # Group tests by folder
-  local current_folder=""
   while IFS= read -r test_file; do
-    local test_dir="$(dirname "$test_file")"
-    local dockerfile_dir="${test_dir%/tests}"
+    local test_dir dockerfile_dir
+    test_dir="$(dirname "$test_file")"
+    dockerfile_dir="${test_dir%/tests}"
     dockerfile_dir="${dockerfile_dir#./}"
 
-    # Print folder header when folder changes
     if [ "$dockerfile_dir" != "$current_folder" ]; then
-      if [ -n "$current_folder" ]; then
-        echo ""
-      fi
+      [ -n "$current_folder" ] && echo ""
       echo "📁 $dockerfile_dir/"
       current_folder="$dockerfile_dir"
     fi
 
     test_count=$((test_count + 1))
-    run_test "$test_file"
-    result=$?
+    result=0
+    run_test "$test_file" || result=$?
 
-    if [ $result -eq 0 ]; then
+    if [ "$result" -eq 0 ]; then
       passed_count=$((passed_count + 1))
-    elif [ $result -eq 1 ]; then
+    elif [ "$result" -eq 1 ]; then
       failed_count=$((failed_count + 1))
     fi
   done < <(cd "$REPO_ROOT" && find . -path "*/tests/*_test.sh" -type f | sort)
 
-  # Summary
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  executed_count=$((passed_count + failed_count))
-  skipped_count=$((test_count - executed_count))
-  if [ $failed_count -eq 0 ]; then
-    echo "✨ All executed tests passed! ($passed_count/$executed_count; skipped $skipped_count)"
+  if [ "$failed_count" -eq 0 ]; then
+    echo "✨ All tests passed! ($passed_count/$test_count)"
     echo ""
   else
-    echo "⚠️  Results: $passed_count passed, $failed_count failed out of $executed_count executed tests (skipped $skipped_count)"
+    echo "⚠️  Results: $passed_count passed, $failed_count failed out of $test_count tests"
     echo ""
     exit 1
   fi
