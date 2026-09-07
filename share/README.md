@@ -60,3 +60,9 @@ alfresco-connector-ms365:
 > If the image is meant to be used with the Alfresco Content Services Helm
 > chart, you can use other [higher level means of
 > configuration](https://github.com/Alfresco/alfresco-helm-charts/blob/main/charts/alfresco-share/README.md).
+
+### Tomcat configuration
+
+This image is built on the Alfresco base Tomcat image, so the servlet container
+itself is configured with the `TOMCAT_*` environment variables documented in
+[tomcat/README.md](../tomcat/README.md).

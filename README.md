@@ -153,6 +153,10 @@ make all
 
 ## Customizing the images
 
+All the images running a Java web application are built on the Alfresco base
+Tomcat image. The servlet container they embed is configured with the `TOMCAT_*`
+environment variables documented in [tomcat/README.md](tomcat/README.md).
+
 ### Customizing the Alfresco Content Repository image
 
 The Alfresco Content Repository image can be customized by adding files into
