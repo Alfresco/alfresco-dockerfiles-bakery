@@ -19,7 +19,7 @@ artifacts:
     path: share/distribution
   alfresco-googledrive-share:
     name: alfresco-googledrive-share
-    version: 4.1.0
+    version: 5.0.0
     classifier: ".amp"
     group: org.alfresco.integrations
     repository: releases
