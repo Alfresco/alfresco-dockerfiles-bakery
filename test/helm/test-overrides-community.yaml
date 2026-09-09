@@ -22,7 +22,7 @@ dtas:
         version: 26.2.0
         modules:
           - id: alfresco-aos-module
-            version: 3.4.1
+            version: 3.4.2
             installed: true
       adw: null
       aas: null
