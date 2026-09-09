@@ -1,11 +1,11 @@
 ---
 updatecli_self: repository/artifacts-25.yaml
 updatecli_matrix_version: 25.N
-updatecli_amps_release_branch: release/25.4
+updatecli_amps_release_branch: release/25.5
 artifacts:
   postgresql:
     name: postgresql
-    version: 42.7.10
+    version: 42.7.13
     classifier: ".jar"
     group: org.postgresql
     repository: public
@@ -21,7 +21,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-aos-module:
     name: alfresco-aos-module
-    version: 3.4.1
+    version: 3.4.2
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco.aos-module
@@ -29,7 +29,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-device-sync-repo:
     name: alfresco-device-sync-repo
-    version: 5.3.4
+    version: 5.3.6
     path: repository/amps_enterprise
     classifier: ".amp"
     group: org.alfresco.services.sync
@@ -37,7 +37,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-googledrive-repo-enterprise:
     name: alfresco-googledrive-repo-enterprise
-    version: 4.1.0
+    version: 5.0.0
     path: repository/amps_enterprise
     classifier: ".amp"
     group: org.alfresco.integrations
@@ -45,7 +45,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-content-services-distribution:
     name: alfresco-content-services-distribution
-    version: 25.4.1
+    version: 25.5.0
     path: repository/distribution
     classifier: ".zip"
     group: org.alfresco

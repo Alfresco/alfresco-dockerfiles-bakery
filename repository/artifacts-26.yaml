@@ -5,7 +5,7 @@ updatecli_amps_release_branch: release/26.2
 artifacts:
   postgresql:
     name: postgresql
-    version: 42.7.10
+    version: 42.7.13
     classifier: ".jar"
     group: org.postgresql
     repository: public
@@ -21,7 +21,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-aos-module:
     name: alfresco-aos-module
-    version: 3.4.1
+    version: 3.4.2
     path: repository/amps
     classifier: ".amp"
     group: org.alfresco.aos-module
@@ -29,7 +29,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-device-sync-repo:
     name: alfresco-device-sync-repo
-    version: 5.3.5
+    version: 5.3.6
     path: repository/amps_enterprise
     classifier: ".amp"
     group: org.alfresco.services.sync
@@ -45,7 +45,7 @@ artifacts:
     checksum: "sha1:"
   alfresco-content-services-distribution:
     name: alfresco-content-services-distribution
-    version: 26.2.1
+    version: 26.2.2
     path: repository/distribution
     classifier: ".zip"
     group: org.alfresco
