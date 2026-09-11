@@ -6,12 +6,11 @@ ARG ALFRESCO_REPO_GROUP_ID
 FROM tomcat_base AS repo_build
 
 ARG ALFRESCO_REPO_ARTIFACT
-ARG ALFRESCO_REPO_EDITION
 
 USER root
 RUN yum install -y unzip
 
-COPY distribution/${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
+COPY --from=repo_distribution ${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
 ENV DISTDIR="/tmp/distribution"
 
 RUN unzip /tmp/*.zip -d ${DISTDIR}
@@ -31,9 +30,9 @@ RUN sed -i \
   -re "s|(appender.rolling.filePattern=)(alfresco.log.%d\{yyyy-MM-dd\})|\1${CATALINA_HOME}/logs\/\2|" \
   ${CATALINA_HOME}/webapps/alfresco/WEB-INF/classes/log4j*.properties
 
-COPY amps /tmp/amps
-COPY amps_${ALFRESCO_REPO_EDITION} /tmp/amps
-COPY libs ${CATALINA_HOME}/lib/
+COPY --from=repo_amps / /tmp/amps
+COPY --from=repo_amps_edition / /tmp/amps
+COPY --from=repo_libs / ${CATALINA_HOME}/lib/
 RUN if [ -f /tmp/amps/alfresco-aos-module-*.amp ]; then umask 0027; \
      unzip ${DISTDIR}/web-server/webapps/ROOT.war -d ${CATALINA_HOME}/webapps/ROOT/; \
      cp ${CATALINA_HOME}/webapps/ROOT/META-INF/context.xml ${CATALINA_HOME}/conf/Catalina/localhost/ROOT.xml; \
@@ -44,7 +43,7 @@ RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar install \
     /tmp/amps/ ${CATALINA_HOME}/webapps/alfresco -nobackup -directory -force && \
     java -jar ${DISTDIR}/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/alfresco
 
-COPY simple_modules /tmp/simple_modules
+COPY --from=repo_simple_modules / /tmp/simple_modules
 RUN mkdir -m 750 -p ${CATALINA_HOME}/modules/platform && \
     for jar in /tmp/simple_modules/*.jar; do \
       if [ -f "$jar" ]; then \
