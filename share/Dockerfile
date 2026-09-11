@@ -15,7 +15,7 @@ COPY entrypoint.sh ${CATALINA_HOME}/shared/classes/alfresco
 ARG ALFRESCO_SHARE_ARTIFACT
 
 COPY distribution/${ALFRESCO_SHARE_ARTIFACT}-*.zip /tmp/
-COPY amps /tmp/amps
+COPY --from=share_amps / /tmp/amps
 
 ENV DISTDIR="/tmp/distribution"
 
@@ -33,7 +33,7 @@ RUN java -jar ${DISTDIR}/bin/alfresco-mmt.jar install \
     /tmp/amps/ ${CATALINA_HOME}/webapps/share -directory -nobackup -force && \
     java -jar ${DISTDIR}/bin/alfresco-mmt.jar list ${CATALINA_HOME}/webapps/share
 
-COPY simple_modules /tmp/simple_modules
+COPY --from=share_simple_modules / /tmp/simple_modules
 RUN mkdir -m 750 -p ${CATALINA_HOME}/modules/share && \
     for jar in /tmp/simple_modules/*.jar; do \
       if [ -f "$jar" ]; then \
