@@ -6,7 +6,9 @@ ARG APS_ADMIN_USER_ID
 FROM tomcat_base AS aps_admin_build
 
 USER root
-RUN yum install -y unzip
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    $PKG_MGR install -y unzip && \
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 ENV DISTDIR="/tmp/distribution"
 
@@ -34,10 +36,11 @@ COPY --chown=${APS_ADMIN_USER_ID}:${APS_ADMIN_GROUP_ID} --from=aps_admin_build $
 COPY --chown=${APS_ADMIN_USER_ID}:${APS_ADMIN_GROUP_ID} /configs/ ${ACTIVITI_CONFIG_DIR}
 
 USER root
-RUN groupadd -g ${APS_ADMIN_GROUP_ID} ${APS_ADMIN_GROUP_NAME} && \
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    groupadd -g ${APS_ADMIN_GROUP_ID} ${APS_ADMIN_GROUP_NAME} && \
     useradd -lu ${APS_ADMIN_USER_ID} -g ${APS_ADMIN_GROUP_NAME} ${APS_ADMIN_USER_NAME} -G tomcat && \
-    yum install -y openssl fontconfig dejavu-sans-fonts gettext && \
-    yum clean all && rm -rf /var/cache/yum
+    $PKG_MGR install -y openssl fontconfig dejavu-sans-fonts gettext && \
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 FROM aps_admin_rhlike AS aps-admin-rockylinux9
 
