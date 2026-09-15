@@ -109,7 +109,8 @@ COPY --from=tomcat_dist /build/tcnative $BUILD_DIR/tcnative
 WORKDIR ${BUILD_DIR}/tcnative/native
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 RUN PKG_MGR=$(command -v dnf || command -v microdnf); \
-  $PKG_MGR install -y gcc make openssl-devel expat-devel java-${JAVA_MAJOR}-openjdk-devel apr-devel redhat-rpm-config && $PKG_MGR clean all; \
+  $PKG_MGR install -y gcc make openssl-devel expat-devel java-${JAVA_MAJOR}-openjdk-devel apr-devel redhat-rpm-config; \
+  $PKG_MGR clean all; \
   ./configure \
     --libdir=${INSTALL_DIR}/tcnative \
     --with-apr=/usr/bin/apr-1-config \
