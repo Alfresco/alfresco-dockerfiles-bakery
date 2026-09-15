@@ -25,6 +25,7 @@ env:
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: alfresco
   TAG: ${{ inputs.tag }}
+  BAKE_NO_SBOM: ${{ vars.BAKE_NO_SBOM }}
 
 jobs:
   build:
@@ -114,6 +115,7 @@ jobs:
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Bake Docker images
+        id: bake
         env:
           ACS_VERSION: ${{ inputs.version }}
           TARGETARCH: ${{ startsWith(inputs.version, '7') && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
@@ -121,6 +123,33 @@ jobs:
         with:
           targets: ${{ inputs.bake-targets }}
           source: .
+          sbom: ${{ env.BAKE_NO_SBOM == '' && 'true' || 'false' }}
           set: |
             *.output=type=registry,push=true
             ${{ steps.cache-targets.outputs.cache-set }}
+
+      - name: Verify SBOM attestations
+        if: env.BAKE_NO_SBOM == ''
+        shell: bash
+        env:
+          METADATA: ${{ steps.bake.outputs.metadata }}
+        run: |
+          mapfile -t images < <(jq -r '.[] | select(type == "object") | ."image.name"? // empty | split(",")[0]' <<< "$METADATA")
+
+          if [ ${#images[@]} -eq 0 ]; then
+            echo "::error::Found no pushed image to check in the bake metadata"
+            exit 1
+          fi
+
+          for image in "${images[@]}"; do
+            echo "Checking SBOM attestation on $image"
+            if ! sbom=$(docker buildx imagetools inspect "$image" --format '{{ json .SBOM }}'); then
+              echo "::error::Failed to inspect $image"
+              exit 1
+            fi
+            # One SPDX document, holding at least one package, per built platform
+            if ! jq -e '[.. | objects | select(has("SPDX")) | (.SPDX.packages | length) > 0] | (length > 0) and all' <<< "$sbom" > /dev/null; then
+              echo "::error::Missing or empty SBOM attestation on $image"
+              exit 1
+            fi
+          done
