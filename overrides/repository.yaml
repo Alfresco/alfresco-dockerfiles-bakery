@@ -1,0 +1,25 @@
+# Repository artifact overrides. Change only versions as needed.
+artifacts:
+  alfresco-aos-module:
+    name: alfresco-aos-module
+    version: 3.4.2
+    classifier: ".amp"
+    group: org.alfresco.aos-module
+    repository: releases
+    path: repository/amps
+
+  alfresco-device-sync-repo:
+    name: alfresco-device-sync-repo
+    version: 5.3.6
+    classifier: ".amp"
+    group: org.alfresco.services.sync
+    repository: enterprise-releases
+    path: repository/amps_enterprise
+
+  postgresql:
+    name: postgresql
+    version: 42.7.13
+    classifier: ".jar"
+    group: org.postgresql
+    repository: public
+    path: repository/libs

@@ -1,0 +1,9 @@
+# CIC Live Ingester override example.
+artifacts:
+  alfresco-cic-connector-live-ingester:
+    name: alfresco-cic-connector-live-ingester
+    version: 1.0.2
+    classifier: "-app.jar"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: cic-connector/cic-connector-live-ingester

@@ -185,6 +185,117 @@ Repository contexts are `repo_amps`, `repo_amps_edition`, `repo_libs`, and
 `repo_simple_modules`. The replacement directory is used as the root of the
 corresponding build context.
 
+### Shared artifact override
+
+One customization branch can provide a single
+`overrides/artifacts.override.yaml` manifest for all artifact-producing Make
+targets. The artifact `path` decides where each downloaded file is staged, so
+the same file can contain Repository, Share, Search, connector, or other
+supported artifacts:
+
+```sh
+CUSTOMIZATION_REF=customizations make repository ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make share ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make search_enterprise ACS_VERSION=25
+```
+
+Each command first processes the selected Bakery manifests and then downloads
+the entries from the same remote override manifest. Use versions compatible
+with the selected ACS version. The same-repository URL is fixed; only
+`CUSTOMIZATION_REF` changes. Set `CUSTOMIZATION_ARTIFACTS_FILE` only if the
+manifest has a different path.
+
+For component-specific overrides, keep separate manifests under `overrides/`:
+
+```text
+overrides/
+├── repository.yaml
+├── share.yaml
+├── search.yaml
+├── connector/
+│   ├── ms365.yaml
+│   └── msteams.yaml
+├── adf-apps/
+│   ├── acc.yaml
+│   └── adw.yaml
+├── aps/
+│   ├── admin.yaml
+│   └── app.yaml
+├── ats/
+│   ├── sfs.yaml
+│   └── trouter.yaml
+├── audit-storage.yaml
+├── cic-connector/
+│   ├── bulk-ingester.yaml
+│   ├── live-ingester.yaml
+│   └── nucleus-sync.yaml
+├── sync.yaml
+└── tengine.yaml
+```
+
+Use the matching file for the component you are building:
+
+```sh
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/repository.yaml \
+make repository ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/share.yaml \
+make share ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/search.yaml \
+make search_enterprise ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/connector/msteams.yaml \
+make connectors ACS_VERSION=25
+```
+
+The remaining component-specific files are used in the same way:
+
+```sh
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/adf-apps/acc.yaml \
+make adf_apps ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/aps/app.yaml \
+make aps APS_VERSION=25
+
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/ats/sfs.yaml \
+make ats ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/audit-storage.yaml \
+make audit_storage ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/cic-connector/live-ingester.yaml \
+make cic_connector ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/sync.yaml \
+make sync ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations \
+CUSTOMIZATION_ARTIFACTS_FILE=overrides/tengine.yaml \
+make tengines ACS_VERSION=25
+```
+
+Minimal copies of these manifests are available under
+[`examples/overrides`](examples/overrides). Change only the artifact versions
+and keep the coordinates and paths aligned with the selected ACS release.
+
+See [`overrides/README.md`](overrides/README.md) for the component override
+layout and [`examples/overrides/README.md`](examples/overrides/README.md) for
+copyable examples.
+
+This keeps each override scoped to one component family. The existing
+`overrides/artifacts.override.yaml` remains available for a shared manifest.
+
 ### Customizing the Share image
 
 The Share image can be customized by adding files into specific folders:

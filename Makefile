@@ -32,6 +32,9 @@ help:
 
 ACS_VERSION ?= 26
 APS_VERSION ?= 26
+CUSTOMIZATION_REF ?=
+CUSTOMIZATION_ARTIFACTS_FILE ?= overrides/artifacts.override.yaml
+CUSTOMIZATION_ARTIFACTS_ARGS := $(if $(CUSTOMIZATION_REF),--override-artifacts-url https://raw.githubusercontent.com/Alfresco/alfresco-dockerfiles-bakery/$(CUSTOMIZATION_REF)/$(CUSTOMIZATION_ARTIFACTS_FILE),)
 export ACS_VERSION
 export APS_VERSION
 export ARTIFACT_VERSIONS := $(shell python3 ./scripts/print_artifact_versions.py)
@@ -84,59 +87,59 @@ clean_caches:
 
 prepare: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts"
-	@python3 ./scripts/fetch_artifacts.py
+	@python3 ./scripts/fetch_artifacts.py $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_adf: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF targets"
-	@python3 ./scripts/fetch_artifacts.py adf-apps
+	@python3 ./scripts/fetch_artifacts.py adf-apps $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_aps: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Alfresco Process Services targets"
-	@python3 ./scripts/fetch_artifacts.py "aps/**/artifacts-${APS_VERSION}.yaml"
+	@python3 ./scripts/fetch_artifacts.py "aps/**/artifacts-${APS_VERSION}.yaml" $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_ats: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ATS targets"
-	@python3 ./scripts/fetch_artifacts.py ats
+	@python3 ./scripts/fetch_artifacts.py ats $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_audit_storage: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Audit Storage targets"
-	@python3 ./scripts/fetch_artifacts.py audit-storage
+	@python3 ./scripts/fetch_artifacts.py audit-storage $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_connectors: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Connector targets"
-	@python3 ./scripts/fetch_artifacts.py connector
+	@python3 ./scripts/fetch_artifacts.py connector $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_cic_connector: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for CIC Connector targets"
-	@python3 ./scripts/fetch_artifacts.py cic-connector
+	@python3 ./scripts/fetch_artifacts.py cic-connector $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_repo: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Repository target"
-	@python3 ./scripts/fetch_artifacts.py repository
+	@python3 ./scripts/fetch_artifacts.py repository $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_search_community: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Search Community (Batch Indexing) target"
-	@python3 ./scripts/fetch_artifacts.py search/community
+	@python3 ./scripts/fetch_artifacts.py search/community $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_search_enterprise: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Search Enterprise targets"
-	@python3 ./scripts/fetch_artifacts.py search/enterprise
+	@python3 ./scripts/fetch_artifacts.py search/enterprise $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_search_service: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Search Service targets"
-	@python3 ./scripts/fetch_artifacts.py search/service
+	@python3 ./scripts/fetch_artifacts.py search/service $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_share: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Share targets"
-	@python3 ./scripts/fetch_artifacts.py share
+	@python3 ./scripts/fetch_artifacts.py share $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_sync: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for ADF targets"
-	@python3 ./scripts/fetch_artifacts.py sync
+	@python3 ./scripts/fetch_artifacts.py sync $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 prepare_tengines: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Transform Engine targets"
-	@python3 ./scripts/fetch_artifacts.py tengine
+	@python3 ./scripts/fetch_artifacts.py tengine $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 ## BUILD TARGETS
 ## Keep targets in alphabetical order (following the folder structure)

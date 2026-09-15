@@ -1,0 +1,9 @@
+# Audit Storage override example.
+artifacts:
+  alfresco-audit-storage-app:
+    name: alfresco-audit-storage-app
+    version: 1.3.4
+    classifier: ".jar"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: audit-storage
