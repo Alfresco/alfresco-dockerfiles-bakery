@@ -1,4 +1,4 @@
-# hadolint global ignore=DL3033,DL3008
+# hadolint global ignore=DL3008
 # Alfresco Base Tomcat Image
 # see also https://github.com/docker-library/tomcat
 ARG JAVA_MAJOR
@@ -108,7 +108,8 @@ ARG INSTALL_DIR=/usr/local
 COPY --from=tomcat_dist /build/tcnative $BUILD_DIR/tcnative
 WORKDIR ${BUILD_DIR}/tcnative/native
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
-RUN yum install -y gcc make openssl-devel expat-devel java-${JAVA_MAJOR}-openjdk-devel apr-devel redhat-rpm-config && yum clean all; \
+RUN PKG_MGR=$(command -v dnf || command -v microdnf); \
+  $PKG_MGR install -y gcc make openssl-devel expat-devel java-${JAVA_MAJOR}-openjdk-devel apr-devel redhat-rpm-config && $PKG_MGR clean all; \
   ./configure \
     --libdir=${INSTALL_DIR}/tcnative \
     --with-apr=/usr/bin/apr-1-config \
@@ -122,7 +123,9 @@ FROM tcnative_build-rockylinux AS tcnative_build-rhel
 FROM tcnative_build-${DISTRIB_NAME} AS tcnative_build
 
 FROM java_base AS apr_pkg-rockylinux
-RUN yum install -y apr && yum clean all
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+  $PKG_MGR install -y apr && \
+  $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 FROM apr_pkg-rockylinux AS apr_pkg-rhel
 

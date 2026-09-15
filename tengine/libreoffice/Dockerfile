@@ -11,17 +11,18 @@ ARG ALFRESCO_LIBREOFFICE_USER_ID
 ARG TARGETARCH
 
 RUN --mount=type=bind,source=/,target=/dist \
-    yum install -y cairo cups-libs libSM libGLU && \
+    PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    $PKG_MGR install -y cairo cups-libs libSM libGLU && \
     if [ "$TARGETARCH" == 'arm64' ]; then \
-        yum --enablerepo=devel install -y libreoffice && \
+        $PKG_MGR --enablerepo=devel install -y libreoffice && \
         update-alternatives --set java java-17-openjdk.aarch64; \
     else \
         mkdir /tmp/dist && \
         tar xzf /dist/*.gz -C /tmp/dist && \
-        yum localinstall -y /tmp/dist/LibreOffice*/RPMS/*.rpm; \
+        $PKG_MGR install -y /tmp/dist/LibreOffice*/RPMS/*.rpm; \
     fi && \
     rm -rf /tmp/dist && \
-    yum clean all
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 ADD alfresco-transform-libreoffice*.jar /opt/app.jar
 

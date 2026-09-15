@@ -10,9 +10,11 @@ ARG ALFRESCO_TIKA_GROUP_ID
 ARG ALFRESCO_TIKA_USER_NAME
 ARG ALFRESCO_TIKA_USER_ID
 
-RUN yum install -y ${TIKA_DEP_RPM_URL} && \
-    yum -y install perl-Image-ExifTool && \
-    yum clean all
+# microdnf cannot install an rpm from a URL
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    rpm -Uvh --replacepkgs ${TIKA_DEP_RPM_URL} && \
+    $PKG_MGR install -y perl-Image-ExifTool && \
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 ADD alfresco-transform-tika*.jar /opt/app.jar
 

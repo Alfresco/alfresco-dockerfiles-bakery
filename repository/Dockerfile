@@ -7,7 +7,9 @@ FROM tomcat_base AS repo_build
 
 ARG ALFRESCO_REPO_ARTIFACT
 USER root
-RUN yum install -y unzip
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+  $PKG_MGR install -y unzip && \
+  $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 COPY distribution/${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
 ENV DISTDIR="/tmp/distribution"
@@ -62,10 +64,11 @@ ARG ALFRESCO_REPO_USER_NAME
 COPY --chown=:${ALFRESCO_REPO_GROUP_ID} --from=repo_build ${CATALINA_HOME} ${CATALINA_HOME}
 
 USER root
-RUN groupadd -g ${ALFRESCO_REPO_GROUP_ID} ${ALFRESCO_REPO_GROUP_NAME} && \
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+  groupadd -g ${ALFRESCO_REPO_GROUP_ID} ${ALFRESCO_REPO_GROUP_NAME} && \
   useradd -u ${ALFRESCO_REPO_USER_ID} -g ${ALFRESCO_REPO_GROUP_NAME} ${ALFRESCO_REPO_USER_NAME} -G tomcat && \
-  yum install -y fontconfig && \
-  yum clean all && rm -rf /var/cache/yum
+  $PKG_MGR install -y fontconfig && \
+  $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 COPY entrypoint.sh /entrypoint.sh
 
