@@ -1,0 +1,8 @@
+artifacts:
+  alfresco-cic-connector-nucleus-sync:
+    name: alfresco-cic-connector-nucleus-sync
+    version: 1.0.2
+    classifier: "-app.jar"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: cic-connector/cic-connector-nucleus-sync

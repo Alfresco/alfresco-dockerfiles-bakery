@@ -1,0 +1,8 @@
+artifacts:
+  alfresco-ms-teams-springboot:
+    name: alfresco-ms-teams-springboot
+    version: 2.1.4
+    classifier: ".jar"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: connector/msteams

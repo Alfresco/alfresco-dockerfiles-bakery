@@ -1,0 +1,8 @@
+artifacts:
+  alfresco-transform-router:
+    name: alfresco-transform-router
+    version: 4.4.4
+    classifier: ".jar"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: ats/trouter

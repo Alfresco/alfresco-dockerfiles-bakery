@@ -1,0 +1,9 @@
+# Transform Engine override example.
+artifacts:
+  alfresco-transform-tika:
+    name: alfresco-transform-tika
+    version: 5.4.4
+    classifier: ".jar"
+    group: org.alfresco
+    repository: releases
+    path: tengine/tika

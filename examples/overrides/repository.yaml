@@ -1,0 +1,9 @@
+# Repository override example.
+artifacts:
+  alfresco-aos-module:
+    name: alfresco-aos-module
+    version: 3.4.2
+    classifier: ".amp"
+    group: org.alfresco.aos-module
+    repository: releases
+    path: repository/amps

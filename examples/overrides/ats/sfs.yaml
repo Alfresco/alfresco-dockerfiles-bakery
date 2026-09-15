@@ -1,0 +1,9 @@
+# ATS Shared File Store override example.
+artifacts:
+  alfresco-shared-file-store-controller:
+    name: alfresco-shared-file-store-controller
+    version: 4.4.4
+    classifier: ".jar"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: ats/sfs

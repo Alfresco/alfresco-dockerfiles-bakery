@@ -1,0 +1,9 @@
+# CIC Bulk Ingester override example.
+artifacts:
+  alfresco-cic-connector-bulk-ingester:
+    name: alfresco-cic-connector-bulk-ingester
+    version: 1.0.2
+    classifier: "-app.jar"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: cic-connector/cic-connector-bulk-ingester

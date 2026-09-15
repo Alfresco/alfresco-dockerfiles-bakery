@@ -1,0 +1,9 @@
+# APS App override example.
+artifacts:
+  alfresco-process-services-app:
+    name: activiti-app
+    version: 25.5.0
+    classifier: ".war"
+    group: com.activiti
+    repository: activiti-enterprise-releases
+    path: aps/app/distribution
