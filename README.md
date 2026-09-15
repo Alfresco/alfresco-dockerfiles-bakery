@@ -173,6 +173,18 @@ specific folders:
 - Additional JAR files for the JRE in the [libs](repository/libs/README.md)
   folder
 
+These sources use named Docker Bake build contexts with the folders above as
+their defaults. Each source can be customized independently with `--set`:
+
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_libs=./custom-libs
+```
+
+Repository contexts are `repo_amps`, `repo_amps_edition`, `repo_libs`, and
+`repo_simple_modules`. The replacement directory is used as the root of the
+corresponding build context.
+
 ### Customizing the Share image
 
 The Share image can be customized by adding files into specific folders:
@@ -181,6 +193,17 @@ The Share image can be customized by adding files into specific folders:
   folder
 - Share Simple Module (JAR) files in the
   [simple_modules](share/simple_modules/README.md) folder
+
+These sources use named Docker Bake build contexts with the folders above as
+their defaults. Each source can be customized independently with `--set`:
+
+```sh
+docker buildx bake share \
+  --set share.contexts.share_amps=./custom-share-amps
+```
+
+Share contexts are `share_amps` and `share_simple_modules`. The replacement
+directory is used as the root of the corresponding build context.
 
 ### Customizing the Community Batch Indexing image
 
