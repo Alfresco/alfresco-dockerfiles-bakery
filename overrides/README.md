@@ -30,18 +30,14 @@ overrides/
 └── tengine.yaml
 ```
 
-Use the matching manifest with the component Make target:
+Set `CUSTOMIZATION_REF` and Make selects the matching manifest automatically:
 
 ```sh
-CUSTOMIZATION_REF=customizations \
-CUSTOMIZATION_ARTIFACTS_FILE=overrides/repository.yaml \
-make repository ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make repository ACS_VERSION=25
 ```
 
 ```sh
-CUSTOMIZATION_REF=customizations \
-CUSTOMIZATION_ARTIFACTS_FILE=overrides/connector/ms365.yaml \
-make connectors ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make connectors ACS_VERSION=25
 ```
 
 The default Bakery manifest is processed first, then the remote override. The

@@ -7,9 +7,7 @@ then replace its artifact version with the version available in Nexus.
 For example:
 
 ```sh
-CUSTOMIZATION_REF=customizations \
-CUSTOMIZATION_ARTIFACTS_FILE=overrides/repository.yaml \
-make repository ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make repository ACS_VERSION=25
 ```
 
 The artifact name, group, repository, classifier, and path should remain the

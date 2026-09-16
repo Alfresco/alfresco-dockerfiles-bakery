@@ -4,7 +4,14 @@
 SHELL := /bin/bash
 DOCKER_BAKE_ARGS := --progress=plain
 
-.PHONY: help setenv auth all clean test
+.PHONY: all test
+.PHONY: enterprise community
+.PHONY: adf_apps aps ats audit_storage connectors cic_connector
+.PHONY: repository search_batch_indexing search_enterprise search_service share sync tengines
+.PHONY: prepare prepare_adf prepare_aps prepare_ats prepare_audit_storage prepare_connectors
+.PHONY: prepare_cic_connector prepare_repo prepare_search_community prepare_search_enterprise
+.PHONY: prepare_search_service prepare_share prepare_sync prepare_tengines
+.PHONY: help setenv auth clean clean_caches grype
 
 help:
 	@echo "Usage: make <target>"
@@ -33,11 +40,39 @@ help:
 ACS_VERSION ?= 26
 APS_VERSION ?= 26
 CUSTOMIZATION_REF ?=
-CUSTOMIZATION_ARTIFACTS_FILE ?= overrides/artifacts.override.yaml
-CUSTOMIZATION_ARTIFACTS_ARGS := $(if $(CUSTOMIZATION_REF),--override-artifacts-url https://raw.githubusercontent.com/Alfresco/alfresco-dockerfiles-bakery/$(CUSTOMIZATION_REF)/$(CUSTOMIZATION_ARTIFACTS_FILE),)
+
+CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES := overrides/repository.yaml
+CUSTOMIZATION_SHARE_ARTIFACTS_FILES := overrides/share.yaml
+CUSTOMIZATION_SEARCH_ARTIFACTS_FILES := overrides/search.yaml
+CUSTOMIZATION_TENGINE_ARTIFACTS_FILES := overrides/tengine.yaml
+CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES := overrides/audit-storage.yaml
+CUSTOMIZATION_SYNC_ARTIFACTS_FILES := overrides/sync.yaml
+CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES := overrides/connector/ms365.yaml overrides/connector/msteams.yaml
+CUSTOMIZATION_ADF_APPS_ARTIFACTS_FILES := overrides/adf-apps/acc.yaml overrides/adf-apps/adw.yaml
+CUSTOMIZATION_APS_ARTIFACTS_FILES := overrides/aps/admin.yaml overrides/aps/app.yaml
+CUSTOMIZATION_ATS_ARTIFACTS_FILES := overrides/ats/sfs.yaml overrides/ats/trouter.yaml
+CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES := overrides/cic-connector/bulk-ingester.yaml overrides/cic-connector/live-ingester.yaml overrides/cic-connector/nucleus-sync.yaml
+CUSTOMIZATION_ALL_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES) $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES) $(CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES) $(CUSTOMIZATION_SYNC_ARTIFACTS_FILES) $(CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES) $(CUSTOMIZATION_ADF_APPS_ARTIFACTS_FILES) $(CUSTOMIZATION_ATS_ARTIFACTS_FILES) $(CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES)
+
+CUSTOMIZATION_ARTIFACTS_ARGS = $(if $(CUSTOMIZATION_REF),$(foreach manifest,$(CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES),--override-artifacts-url https://raw.githubusercontent.com/Alfresco/alfresco-dockerfiles-bakery/$(CUSTOMIZATION_REF)/$(manifest)))
 export ACS_VERSION
 export APS_VERSION
-export ARTIFACT_VERSIONS := $(shell python3 ./scripts/print_artifact_versions.py)
+export ARTIFACT_VERSIONS = $(shell python3 ./scripts/print_artifact_versions.py $(CUSTOMIZATION_ARTIFACTS_ARGS))
+
+all prepare: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_ALL_ARTIFACTS_FILES)
+enterprise: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES) $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES) $(CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES) $(CUSTOMIZATION_SYNC_ARTIFACTS_FILES) $(CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES) $(CUSTOMIZATION_ADF_APPS_ARTIFACTS_FILES) $(CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES)
+community: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES) $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES) overrides/adf-apps/acc.yaml
+repository prepare_repo: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES)
+share prepare_share: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES)
+search_batch_indexing search_enterprise search_service prepare_search_community prepare_search_enterprise prepare_search_service: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES)
+connectors prepare_connectors: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES)
+adf_apps prepare_adf: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_ADF_APPS_ARTIFACTS_FILES)
+aps prepare_aps: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_APS_ARTIFACTS_FILES)
+ats prepare_ats: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_ATS_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES)
+audit_storage prepare_audit_storage: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES)
+cic_connector prepare_cic_connector: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES)
+sync prepare_sync: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SYNC_ARTIFACTS_FILES)
+tengines prepare_tengines: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES)
 
 setenv: auth
 ifdef BAKE_NO_CACHE
