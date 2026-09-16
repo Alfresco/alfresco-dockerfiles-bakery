@@ -65,6 +65,9 @@ else ifdef REGISTRY
 		exit 1; \
 	fi
 DOCKER_BAKE_ARGS += --set *.output=type=registry,push=true
+ifndef BAKE_NO_SBOM
+DOCKER_BAKE_ARGS += --sbom=true
+endif
 else
 	@echo "REGISTRY environment variable is not set. Images will be build & loaded locally"
 endif

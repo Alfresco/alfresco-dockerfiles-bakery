@@ -31,6 +31,7 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with helm](#testing-with-helm)
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
+  - [Software Bill of Materials](#software-bill-of-materials)
   - [Fetch artifacts script](#fetch-artifacts-script)
     - [Usage](#usage)
     - [Arguments](#arguments)
@@ -142,6 +143,9 @@ process:
 - `BAKE_NO_CACHE`: Set to `1` to disable the cache during the build process
 - `BAKE_NO_PROVENANCE`: Set to `1` to not add provenance metadata during the build
   process. This is mostly useful if your registry do not support it.
+- `BAKE_NO_SBOM`: Set to `1` to not attach an SBOM attestation to the images when
+  pushing them to a registry. See [Software Bill of Materials](#software-bill-of-materials)
+  for more information.
 
 For example, to build multi-arch images for ARM64 and X86_64 and push them to a
 custom registry, you can run the following command:
@@ -486,6 +490,53 @@ You can also run grype automatically at the end of the build process by setting
 
 ```sh
 make all GRYPE_ONBUILD=1
+```
+
+## Software Bill of Materials
+
+Images pushed to a registry carry an SPDX Software Bill of Materials, attached
+as a [BuildKit SBOM
+attestation](https://docs.docker.com/build/metadata/attestations/sbom/), with
+one attestation per image and per platform.
+
+Getting an SBOM requires `REGISTRY` to be set, since the `docker` exporter used
+when loading images locally cannot carry attestations:
+
+```sh
+export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds
+make repository
+```
+
+When calling bake directly instead of going through the `make` wrapper, pass
+`--sbom=true` yourself:
+
+```sh
+docker buildx bake repository --set *.output=type=registry,push=true --sbom=true
+```
+
+Set `BAKE_NO_SBOM=1` to turn SBOM generation off, for instance when targeting a
+registry which does not support OCI attestation manifests.
+
+To retrieve the SBOM of an image (the registry below is a placeholder, use your
+own):
+
+```sh
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> --format '{{ json .SBOM }}'
+```
+
+For a multi-arch image the output is keyed by platform, so pick one to get a
+plain SPDX document:
+
+```sh
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> --format '{{ json (index .SBOM "linux/amd64").SPDX }}'
+```
+
+The resulting document can be fed to any SPDX-aware tooling, for example to scan
+it without pulling the image:
+
+```sh
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> --format '{{ json (index .SBOM "linux/amd64").SPDX }}' > sbom.spdx.json
+grype sbom:sbom.spdx.json
 ```
 
 ## Fetch artifacts script

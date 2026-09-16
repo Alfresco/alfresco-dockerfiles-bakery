@@ -25,6 +25,7 @@ env:
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: alfresco
   TAG: ${{ inputs.tag }}
+  BAKE_NO_SBOM: ${{ vars.BAKE_NO_SBOM }}
 
 jobs:
   build:
@@ -121,6 +122,7 @@ jobs:
         with:
           targets: ${{ inputs.bake-targets }}
           source: .
+          sbom: ${{ env.BAKE_NO_SBOM == '' && 'true' || 'false' }}
           set: |
             *.output=type=registry,push=true
             ${{ steps.cache-targets.outputs.cache-set }}
