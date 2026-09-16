@@ -1,4 +1,4 @@
-# Search override example.
+# Enterprise Search common override example.
 artifacts:
   alfresco-elasticsearch-live-indexing-mediation:
     name: alfresco-elasticsearch-live-indexing-mediation

@@ -1,5 +1,13 @@
 # Repository artifact overrides. Change only versions as needed.
 artifacts:
+  alfresco-share-services:
+    name: alfresco-share-services
+    version: 25.4.2.1
+    classifier: ".amp"
+    group: org.alfresco
+    repository: releases
+    path: repository/amps
+
   alfresco-aos-module:
     name: alfresco-aos-module
     version: 3.4.2
@@ -13,6 +21,14 @@ artifacts:
     version: 5.3.6
     classifier: ".amp"
     group: org.alfresco.services.sync
+    repository: enterprise-releases
+    path: repository/amps_enterprise
+
+  alfresco-googledrive-repo-enterprise:
+    name: alfresco-googledrive-repo-enterprise
+    version: 5.0.0
+    classifier: ".amp"
+    group: org.alfresco.integrations
     repository: enterprise-releases
     path: repository/amps_enterprise
 

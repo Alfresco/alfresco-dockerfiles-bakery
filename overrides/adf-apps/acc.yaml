@@ -1,8 +1,0 @@
-artifacts:
-  alfresco-control-center:
-    name: alfresco-control-center
-    version: 11.0.0
-    classifier: ".zip"
-    group: org.alfresco
-    repository: releases
-    path: adf-apps/acc

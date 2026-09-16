@@ -8,13 +8,15 @@ committed.
 overrides/
 ├── repository.yaml
 ├── share.yaml
-├── search.yaml
+├── search/
+│   ├── community.yaml
+│   └── enterprise/
+│       ├── all-in-one.yaml
+│       ├── common.yaml
+│       └── reindexing.yaml
 ├── connector/
 │   ├── ms365.yaml
 │   └── msteams.yaml
-├── adf-apps/
-│   ├── acc.yaml
-│   └── adw.yaml
 ├── aps/
 │   ├── admin.yaml
 │   └── app.yaml
@@ -27,7 +29,13 @@ overrides/
 │   ├── live-ingester.yaml
 │   └── nucleus-sync.yaml
 ├── sync.yaml
-└── tengine.yaml
+└── tengine/
+	├── aio.yaml
+	├── imagemagick.yaml
+	├── libreoffice.yaml
+	├── misc.yaml
+	├── pdfrenderer.yaml
+	└── tika.yaml
 ```
 
 Set `CUSTOMIZATION_REF` and Make selects the matching manifest automatically:
@@ -43,3 +51,7 @@ CUSTOMIZATION_REF=customizations make connectors ACS_VERSION=25
 The default Bakery manifest is processed first, then the remote override. The
 override entry's `path` must match the component's artifact directory. Change
 the artifact `version` to select a different compatible Nexus version.
+
+The aggregate `search_enterprise` and `tengines` targets use all of their
+respective leaf manifests. The `search_liveindexing`, `search_reindexing`, and
+individual `tengine_*` targets use only their matching manifests.

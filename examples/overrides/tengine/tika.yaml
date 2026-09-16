@@ -1,4 +1,4 @@
-# Transform Engine override example.
+# Transform Engine Tika override example.
 artifacts:
   alfresco-transform-tika:
     name: alfresco-transform-tika

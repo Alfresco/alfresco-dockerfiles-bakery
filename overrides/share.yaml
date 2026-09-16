@@ -7,11 +7,3 @@ artifacts:
     group: org.alfresco.integrations
     repository: releases
     path: share/amps
-
-  alfresco-content-services-share-distribution:
-    name: alfresco-content-services-share-distribution
-    version: 25.5.0
-    classifier: ".zip"
-    group: org.alfresco
-    repository: enterprise-releases
-    path: share/distribution

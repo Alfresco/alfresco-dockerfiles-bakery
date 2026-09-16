@@ -1,0 +1,8 @@
+artifacts:
+  alfresco-elasticsearch-batch-indexing:
+    name: alfresco-elasticsearch-batch-indexing
+    version: 5.7.0
+    classifier: "-app.jar"
+    group: org.alfresco
+    repository: releases
+    path: search/community

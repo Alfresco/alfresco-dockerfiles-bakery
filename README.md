@@ -199,13 +199,15 @@ For component-specific overrides, keep separate manifests under `overrides/`:
 overrides/
 ├── repository.yaml
 ├── share.yaml
-├── search.yaml
+├── search/
+│   ├── community.yaml
+│   └── enterprise/
+│       ├── all-in-one.yaml
+│       ├── common.yaml
+│       └── reindexing.yaml
 ├── connector/
 │   ├── ms365.yaml
 │   └── msteams.yaml
-├── adf-apps/
-│   ├── acc.yaml
-│   └── adw.yaml
 ├── aps/
 │   ├── admin.yaml
 │   └── app.yaml
@@ -218,7 +220,13 @@ overrides/
 │   ├── live-ingester.yaml
 │   └── nucleus-sync.yaml
 ├── sync.yaml
-└── tengine.yaml
+└── tengine/
+  ├── aio.yaml
+  ├── imagemagick.yaml
+  ├── libreoffice.yaml
+  ├── misc.yaml
+  ├── pdfrenderer.yaml
+  └── tika.yaml
 ```
 
 Use the matching file for the component you are building:
@@ -236,8 +244,6 @@ CUSTOMIZATION_REF=customizations make connectors ACS_VERSION=25
 The remaining component-specific files are used in the same way:
 
 ```sh
-CUSTOMIZATION_REF=customizations make adf_apps ACS_VERSION=25
-
 CUSTOMIZATION_REF=customizations make aps APS_VERSION=25
 
 CUSTOMIZATION_REF=customizations make ats ACS_VERSION=25
@@ -249,6 +255,16 @@ CUSTOMIZATION_REF=customizations make cic_connector ACS_VERSION=25
 CUSTOMIZATION_REF=customizations make sync ACS_VERSION=25
 
 CUSTOMIZATION_REF=customizations make tengines ACS_VERSION=25
+```
+
+Individual Enterprise Search and Transform Engine images can be prepared and
+built with their matching override only:
+
+```sh
+CUSTOMIZATION_REF=customizations make search_liveindexing ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make search_reindexing ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make tengine_aio ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make tengine_tika ACS_VERSION=25
 ```
 
 Minimal copies of these manifests are available under

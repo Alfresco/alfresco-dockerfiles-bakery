@@ -1,12 +1,4 @@
 artifacts:
-  alfresco-process-services-admin:
-    name: activiti-admin
-    version: 25.5.0
-    classifier: ".war"
-    group: com.activiti
-    repository: activiti-enterprise-releases
-    path: aps/admin/distribution
-
   postgresql:
     name: postgresql
     version: 42.7.13

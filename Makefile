@@ -7,10 +7,12 @@ DOCKER_BAKE_ARGS := --progress=plain
 .PHONY: all test
 .PHONY: enterprise community
 .PHONY: adf_apps aps ats audit_storage connectors cic_connector
-.PHONY: repository search_batch_indexing search_enterprise search_service share sync tengines
+.PHONY: repository search_batch_indexing search_enterprise search_liveindexing search_reindexing search_service share sync tengines
+.PHONY: tengine_aio tengine_imagemagick tengine_libreoffice tengine_misc tengine_pdfrenderer tengine_tika
 .PHONY: prepare prepare_adf prepare_aps prepare_ats prepare_audit_storage prepare_connectors
 .PHONY: prepare_cic_connector prepare_repo prepare_search_community prepare_search_enterprise
-.PHONY: prepare_search_service prepare_share prepare_sync prepare_tengines
+.PHONY: prepare_search_liveindexing prepare_search_reindexing prepare_search_service prepare_share prepare_sync prepare_tengines
+.PHONY: prepare_tengine_aio prepare_tengine_imagemagick prepare_tengine_libreoffice prepare_tengine_misc prepare_tengine_pdfrenderer prepare_tengine_tika
 .PHONY: help setenv auth clean clean_caches grype
 
 help:
@@ -43,16 +45,24 @@ CUSTOMIZATION_REF ?=
 
 CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES := overrides/repository.yaml
 CUSTOMIZATION_SHARE_ARTIFACTS_FILES := overrides/share.yaml
-CUSTOMIZATION_SEARCH_ARTIFACTS_FILES := overrides/search.yaml
-CUSTOMIZATION_TENGINE_ARTIFACTS_FILES := overrides/tengine.yaml
+CUSTOMIZATION_SEARCH_COMMUNITY_ARTIFACTS_FILES := overrides/search/community.yaml
+CUSTOMIZATION_SEARCH_LIVEINDEXING_ARTIFACTS_FILES := overrides/search/enterprise/common.yaml overrides/search/enterprise/all-in-one.yaml
+CUSTOMIZATION_SEARCH_REINDEXING_ARTIFACTS_FILES := overrides/search/enterprise/reindexing.yaml
+CUSTOMIZATION_SEARCH_ARTIFACTS_FILES := $(CUSTOMIZATION_SEARCH_LIVEINDEXING_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_REINDEXING_ARTIFACTS_FILES)
+CUSTOMIZATION_TENGINE_AIO_ARTIFACTS_FILES := overrides/tengine/aio.yaml
+CUSTOMIZATION_TENGINE_IMAGEMAGICK_ARTIFACTS_FILES := overrides/tengine/imagemagick.yaml
+CUSTOMIZATION_TENGINE_LIBREOFFICE_ARTIFACTS_FILES := overrides/tengine/libreoffice.yaml
+CUSTOMIZATION_TENGINE_MISC_ARTIFACTS_FILES := overrides/tengine/misc.yaml
+CUSTOMIZATION_TENGINE_PDFRENDERER_ARTIFACTS_FILES := overrides/tengine/pdfrenderer.yaml
+CUSTOMIZATION_TENGINE_TIKA_ARTIFACTS_FILES := overrides/tengine/tika.yaml
+CUSTOMIZATION_TENGINE_ARTIFACTS_FILES := $(CUSTOMIZATION_TENGINE_AIO_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_IMAGEMAGICK_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_LIBREOFFICE_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_MISC_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_PDFRENDERER_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_TIKA_ARTIFACTS_FILES)
 CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES := overrides/audit-storage.yaml
 CUSTOMIZATION_SYNC_ARTIFACTS_FILES := overrides/sync.yaml
 CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES := overrides/connector/ms365.yaml overrides/connector/msteams.yaml
-CUSTOMIZATION_ADF_APPS_ARTIFACTS_FILES := overrides/adf-apps/acc.yaml overrides/adf-apps/adw.yaml
 CUSTOMIZATION_APS_ARTIFACTS_FILES := overrides/aps/admin.yaml overrides/aps/app.yaml
 CUSTOMIZATION_ATS_ARTIFACTS_FILES := overrides/ats/sfs.yaml overrides/ats/trouter.yaml
 CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES := overrides/cic-connector/bulk-ingester.yaml overrides/cic-connector/live-ingester.yaml overrides/cic-connector/nucleus-sync.yaml
-CUSTOMIZATION_ALL_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES) $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES) $(CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES) $(CUSTOMIZATION_SYNC_ARTIFACTS_FILES) $(CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES) $(CUSTOMIZATION_ADF_APPS_ARTIFACTS_FILES) $(CUSTOMIZATION_ATS_ARTIFACTS_FILES) $(CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES)
+CUSTOMIZATION_ALL_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES) $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_COMMUNITY_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES) $(CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES) $(CUSTOMIZATION_SYNC_ARTIFACTS_FILES) $(CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES) $(CUSTOMIZATION_APS_ARTIFACTS_FILES) $(CUSTOMIZATION_ATS_ARTIFACTS_FILES) $(CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES)
 
 CUSTOMIZATION_ARTIFACTS_ARGS = $(if $(CUSTOMIZATION_REF),$(foreach manifest,$(CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES),--override-artifacts-url https://raw.githubusercontent.com/Alfresco/alfresco-dockerfiles-bakery/$(CUSTOMIZATION_REF)/$(manifest)))
 export ACS_VERSION
@@ -60,19 +70,27 @@ export APS_VERSION
 export ARTIFACT_VERSIONS = $(shell python3 ./scripts/print_artifact_versions.py $(CUSTOMIZATION_ARTIFACTS_ARGS))
 
 all prepare: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_ALL_ARTIFACTS_FILES)
-enterprise: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES) $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES) $(CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES) $(CUSTOMIZATION_SYNC_ARTIFACTS_FILES) $(CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES) $(CUSTOMIZATION_ADF_APPS_ARTIFACTS_FILES) $(CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES)
-community: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES) $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES) overrides/adf-apps/acc.yaml
+enterprise: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES) $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES) $(CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES) $(CUSTOMIZATION_SYNC_ARTIFACTS_FILES) $(CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES) $(CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES)
+community: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES) $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES) $(CUSTOMIZATION_SEARCH_COMMUNITY_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES)
 repository prepare_repo: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_REPOSITORY_ARTIFACTS_FILES)
 share prepare_share: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SHARE_ARTIFACTS_FILES)
-search_batch_indexing search_enterprise search_service prepare_search_community prepare_search_enterprise prepare_search_service: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES)
+search_enterprise prepare_search_enterprise: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SEARCH_ARTIFACTS_FILES)
+search_batch_indexing prepare_search_community: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SEARCH_COMMUNITY_ARTIFACTS_FILES)
+search_liveindexing prepare_search_liveindexing: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SEARCH_LIVEINDEXING_ARTIFACTS_FILES)
+search_reindexing prepare_search_reindexing: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SEARCH_REINDEXING_ARTIFACTS_FILES)
 connectors prepare_connectors: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_CONNECTORS_ARTIFACTS_FILES)
-adf_apps prepare_adf: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_ADF_APPS_ARTIFACTS_FILES)
 aps prepare_aps: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_APS_ARTIFACTS_FILES)
 ats prepare_ats: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_ATS_ARTIFACTS_FILES) $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES)
 audit_storage prepare_audit_storage: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_AUDIT_STORAGE_ARTIFACTS_FILES)
 cic_connector prepare_cic_connector: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_CIC_CONNECTOR_ARTIFACTS_FILES)
 sync prepare_sync: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_SYNC_ARTIFACTS_FILES)
 tengines prepare_tengines: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_TENGINE_ARTIFACTS_FILES)
+tengine_aio prepare_tengine_aio: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_TENGINE_AIO_ARTIFACTS_FILES)
+tengine_imagemagick prepare_tengine_imagemagick: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_TENGINE_IMAGEMAGICK_ARTIFACTS_FILES)
+tengine_libreoffice prepare_tengine_libreoffice: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_TENGINE_LIBREOFFICE_ARTIFACTS_FILES)
+tengine_misc prepare_tengine_misc: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_TENGINE_MISC_ARTIFACTS_FILES)
+tengine_pdfrenderer prepare_tengine_pdfrenderer: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_TENGINE_PDFRENDERER_ARTIFACTS_FILES)
+tengine_tika prepare_tengine_tika: CUSTOMIZATION_DEFAULT_ARTIFACTS_FILES := $(CUSTOMIZATION_TENGINE_TIKA_ARTIFACTS_FILES)
 
 setenv: auth
 ifdef BAKE_NO_CACHE
@@ -160,6 +178,14 @@ prepare_search_enterprise: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Search Enterprise targets"
 	@python3 ./scripts/fetch_artifacts.py search/enterprise $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
+prepare_search_liveindexing: scripts/fetch_artifacts.py
+	@echo "Fetching artifacts for Enterprise Search live indexing"
+	@python3 ./scripts/fetch_artifacts.py search/enterprise/common search/enterprise/all-in-one $(CUSTOMIZATION_ARTIFACTS_ARGS)
+
+prepare_search_reindexing: scripts/fetch_artifacts.py
+	@echo "Fetching artifacts for Enterprise Search reindexing"
+	@python3 ./scripts/fetch_artifacts.py search/enterprise/reindexing $(CUSTOMIZATION_ARTIFACTS_ARGS)
+
 prepare_search_service: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Search Service targets"
 	@python3 ./scripts/fetch_artifacts.py search/service $(CUSTOMIZATION_ARTIFACTS_ARGS)
@@ -175,6 +201,10 @@ prepare_sync: scripts/fetch_artifacts.py
 prepare_tengines: scripts/fetch_artifacts.py
 	@echo "Fetching all artifacts for Transform Engine targets"
 	@python3 ./scripts/fetch_artifacts.py tengine $(CUSTOMIZATION_ARTIFACTS_ARGS)
+
+prepare_tengine_aio prepare_tengine_imagemagick prepare_tengine_libreoffice prepare_tengine_misc prepare_tengine_pdfrenderer prepare_tengine_tika: scripts/fetch_artifacts.py
+	@echo "Fetching artifacts for Transform Engine target $(@:prepare_%=%)"
+	@python3 ./scripts/fetch_artifacts.py tengine/$(@:prepare_tengine_%=%) $(CUSTOMIZATION_ARTIFACTS_ARGS)
 
 ## BUILD TARGETS
 ## Keep targets in alphabetical order (following the folder structure)
@@ -239,6 +269,16 @@ search_enterprise: docker-bake.hcl prepare_search_enterprise setenv
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 
+search_liveindexing: docker-bake.hcl prepare_search_liveindexing setenv
+	@echo "Building Enterprise Search live indexing images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
+search_reindexing: docker-bake.hcl prepare_search_reindexing setenv
+	@echo "Building Enterprise Search reindexing image"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
 search_service: docker-bake.hcl prepare_search_service setenv
 	@echo "Building Search Service images"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
@@ -256,6 +296,18 @@ sync: docker-bake.hcl prepare_sync setenv
 
 tengines: docker-bake.hcl prepare_tengines setenv
 	@echo "Building Transform Engine images"
+	docker buildx bake ${DOCKER_BAKE_ARGS} $@
+	$(call grype_scan,$@)
+
+tengine_aio: docker-bake.hcl prepare_tengine_aio setenv
+tengine_imagemagick: docker-bake.hcl prepare_tengine_imagemagick setenv
+tengine_libreoffice: docker-bake.hcl prepare_tengine_libreoffice setenv
+tengine_misc: docker-bake.hcl prepare_tengine_misc setenv
+tengine_pdfrenderer: docker-bake.hcl prepare_tengine_pdfrenderer setenv
+tengine_tika: docker-bake.hcl prepare_tengine_tika setenv
+
+tengine_aio tengine_imagemagick tengine_libreoffice tengine_misc tengine_pdfrenderer tengine_tika:
+	@echo "Building Transform Engine image $@"
 	docker buildx bake ${DOCKER_BAKE_ARGS} $@
 	$(call grype_scan,$@)
 

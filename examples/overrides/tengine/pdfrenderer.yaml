@@ -1,0 +1,9 @@
+# Transform Engine PDF Renderer override example.
+artifacts:
+  alfresco-transform-pdf-renderer:
+    name: alfresco-transform-pdf-renderer
+    version: 5.4.4
+    classifier: ".jar"
+    group: org.alfresco
+    repository: releases
+    path: tengine/pdfrenderer

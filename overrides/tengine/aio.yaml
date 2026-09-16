@@ -1,0 +1,8 @@
+artifacts:
+  alfresco-transform-core-aio:
+    name: alfresco-transform-core-aio
+    version: 5.4.4
+    classifier: ".jar"
+    group: org.alfresco
+    repository: releases
+    path: tengine/aio

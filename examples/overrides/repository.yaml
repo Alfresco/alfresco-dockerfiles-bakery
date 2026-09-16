@@ -1,5 +1,23 @@
 # Repository override example.
 artifacts:
+  postgresql:
+    name: postgresql
+    version: 42.7.13
+    classifier: ".jar"
+    group: org.postgresql
+    repository: public
+    path: repository/libs
+    checksum: "sha1:"
+
+  alfresco-share-services:
+    name: alfresco-share-services
+    version: 25.4.2.1
+    classifier: ".amp"
+    group: org.alfresco
+    repository: releases
+    path: repository/amps
+    checksum: "sha1:"
+
   alfresco-aos-module:
     name: alfresco-aos-module
     version: 3.4.2
@@ -7,3 +25,22 @@ artifacts:
     group: org.alfresco.aos-module
     repository: releases
     path: repository/amps
+    checksum: "sha1:"
+
+  alfresco-device-sync-repo:
+    name: alfresco-device-sync-repo
+    version: 5.3.6
+    classifier: ".amp"
+    group: org.alfresco.services.sync
+    repository: enterprise-releases
+    path: repository/amps_enterprise
+    checksum: "sha1:"
+
+  alfresco-googledrive-repo-enterprise:
+    name: alfresco-googledrive-repo-enterprise
+    version: 5.0.0
+    classifier: ".amp"
+    group: org.alfresco.integrations
+    repository: enterprise-releases
+    path: repository/amps_enterprise
+    checksum: "sha1:"
