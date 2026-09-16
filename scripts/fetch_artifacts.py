@@ -108,7 +108,7 @@ def prune_stale_artifacts(artifact_details, current_final_path):
 
     for entry in os.listdir(artifact_dir):
         entry_path = os.path.join(artifact_dir, entry)
-        if entry == current_basename or entry_path in FETCHED_ARTIFACTS:
+        if entry == current_basename:
             continue
         if os.path.isfile(entry_path) and pattern.fullmatch(entry):
             os.remove(entry_path)

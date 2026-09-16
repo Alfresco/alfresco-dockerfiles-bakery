@@ -191,6 +191,27 @@ EOF
     [ -f "$ACTUAL_REPO_ROOT/bats_test/test-artifact-2.0.0.jar" ]
 }
 
+@test "a later manifest replaces an artifact fetched by an earlier manifest" {
+    mkdir -p "$ACTUAL_REPO_ROOT/bats_test"
+    touch "$ACTUAL_REPO_ROOT/bats_test/test-artifact-1.0.0.jar"
+    touch "$ACTUAL_REPO_ROOT/bats_test/test-artifact-2.0.0.jar"
+
+    cd "$ACTUAL_REPO_ROOT"
+    run python3 - <<'PY'
+import scripts.fetch_artifacts as fetcher
+
+fetcher.FETCHED_ARTIFACTS.add("bats_test/test-artifact-1.0.0.jar")
+fetcher.prune_stale_artifacts(
+    {"name": "test-artifact", "classifier": ".jar", "path": "bats_test"},
+    "bats_test/test-artifact-2.0.0.jar",
+)
+PY
+
+    [ "$status" -eq 0 ]
+    [ ! -f "$ACTUAL_REPO_ROOT/bats_test/test-artifact-1.0.0.jar" ]
+    [ -f "$ACTUAL_REPO_ROOT/bats_test/test-artifact-2.0.0.jar" ]
+}
+
 @test "script does not remove a differently-named artifact sharing a name prefix" {
     export ACS_VERSION="25"
 
