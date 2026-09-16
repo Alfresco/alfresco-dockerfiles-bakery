@@ -14,10 +14,10 @@ ENV JAVA_HOME=/etc/alternatives/jre
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
-RUN \
-  yum upgrade -y && \
-  yum install -y langpacks-en java-${JAVA_MAJOR}-openjdk-headless which procps && \
-  yum clean all && rm -rf /var/cache/yum
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+  $PKG_MGR upgrade -y && \
+  $PKG_MGR install -y langpacks-en java-${JAVA_MAJOR}-openjdk-headless which procps && \
+  $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 FROM rhlike AS rockylinux8
 FROM rhlike AS rockylinux9

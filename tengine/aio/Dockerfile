@@ -11,22 +11,24 @@ ARG ALFRESCO_AIO_USER_ID
 ARG DISTRIB_MAJOR
 ARG TARGETARCH
 
+# microdnf cannot install an rpm from a URL
 RUN --mount=type=bind,source=/,target=/dist \
     [ "$TARGETARCH" == 'arm64' ] && export PKGARCH='-aarch64' PDFARCH='-arm'; \
-    yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm && \
-    yum install -y cairo cups-libs libSM libGLU perl-Image-ExifTool && \
+    PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    rpm -Uvh --replacepkgs https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm && \
+    $PKG_MGR install -y cairo cups-libs libSM libGLU perl-Image-ExifTool && \
     mkdir /tmp/dist && \
-    yum localinstall -y /dist/imagemagick/imagemagick-distribution*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/imagemagick/libs/imagemagick-distribution*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm && \
+    $PKG_MGR install -y /dist/imagemagick/imagemagick-distribution*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/imagemagick/libs/imagemagick-distribution*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm && \
     tar xzf /dist/pdfrenderer/*-linux${PDFARCH}.tgz -C /usr/bin alfresco-pdf-renderer && \
     if [ "$TARGETARCH" == 'arm64' ]; then \
-        yum --enablerepo=devel install -y libreoffice && \
+        $PKG_MGR --enablerepo=devel install -y libreoffice && \
         update-alternatives --set java java-17-openjdk.aarch64; \
     else \
         tar xzf /dist/libreoffice/*.gz -C /tmp/dist && \
-        yum localinstall -y /tmp/dist/LibreOffice*/RPMS/*.rpm; \
+        $PKG_MGR install -y /tmp/dist/LibreOffice*/RPMS/*.rpm; \
     fi && \
     rm -rf /tmp/dist && \
-    yum clean all && rm -rf /var/cache/yum
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 COPY aio/alfresco-transform-core-aio*.jar /opt/app.jar
 

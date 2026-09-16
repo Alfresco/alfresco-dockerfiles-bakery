@@ -6,7 +6,9 @@ ARG APS_APP_USER_ID
 FROM tomcat_base AS aps_app_build
 
 USER root
-RUN yum install -y unzip
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    $PKG_MGR install -y unzip && \
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 ENV DISTDIR="/tmp/distribution"
 
@@ -39,10 +41,11 @@ COPY --chown=${APS_APP_USER_ID}:${APS_APP_GROUP_ID} --from=aps_app_build ${CATAL
 COPY --chown=${APS_APP_USER_ID}:${APS_APP_GROUP_ID} /configs/ ${ACTIVITI_CONFIG_DIR}
 
 USER root
-RUN groupadd -g ${APS_APP_GROUP_ID} ${APS_APP_GROUP_NAME} && \
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    groupadd -g ${APS_APP_GROUP_ID} ${APS_APP_GROUP_NAME} && \
     useradd -lu ${APS_APP_USER_ID} -g ${APS_APP_GROUP_NAME} ${APS_APP_USER_NAME} -G tomcat && \
-    yum install -y openssl fontconfig dejavu-sans-fonts gettext && \
-    yum clean all && rm -rf /var/cache/yum && \
+    $PKG_MGR install -y openssl fontconfig dejavu-sans-fonts gettext && \
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum && \
     mkdir -p ${ACTIVITI_APP_CONTENTSTORAGE_DIR} && \
     chown -R ${APS_APP_USER_ID}:${APS_APP_GROUP_ID} ${ACTIVITI_APP_CONTENTSTORAGE_DIR}
 
