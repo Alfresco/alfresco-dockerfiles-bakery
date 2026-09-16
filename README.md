@@ -185,6 +185,99 @@ Repository contexts are `repo_amps`, `repo_amps_edition`, `repo_libs`, and
 `repo_simple_modules`. The replacement directory is used as the root of the
 corresponding build context.
 
+### Component-specific artifact overrides
+
+Each Make target selects the matching remote override manifest from the
+customization branch. The default Bakery manifest is processed first, then the
+component-specific manifest is applied. Use versions compatible with the
+selected ACS version. The same-repository URL is fixed; only
+`CUSTOMIZATION_REF` changes.
+
+For component-specific overrides, keep separate manifests under `overrides/`:
+
+```text
+overrides/
+├── repository.yaml
+├── share.yaml
+├── search/
+│   ├── community.yaml
+│   └── enterprise/
+│       ├── all-in-one.yaml
+│       ├── common.yaml
+│       └── reindexing.yaml
+├── connector/
+│   ├── ms365.yaml
+│   └── msteams.yaml
+├── aps/
+│   ├── admin.yaml
+│   └── app.yaml
+├── ats/
+│   ├── sfs.yaml
+│   └── trouter.yaml
+├── audit-storage.yaml
+├── cic-connector/
+│   ├── bulk-ingester.yaml
+│   ├── live-ingester.yaml
+│   └── nucleus-sync.yaml
+├── sync.yaml
+└── tengine/
+  ├── aio.yaml
+  ├── imagemagick.yaml
+  ├── libreoffice.yaml
+  ├── misc.yaml
+  ├── pdfrenderer.yaml
+  └── tika.yaml
+```
+
+Use the matching file for the component you are building:
+
+```sh
+CUSTOMIZATION_REF=customizations make repository ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations make share ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations make search_enterprise ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations make connectors ACS_VERSION=25
+```
+
+The remaining component-specific files are used in the same way:
+
+```sh
+CUSTOMIZATION_REF=customizations make aps APS_VERSION=25
+
+CUSTOMIZATION_REF=customizations make ats ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations make audit_storage ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations make cic_connector ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations make sync ACS_VERSION=25
+
+CUSTOMIZATION_REF=customizations make tengines ACS_VERSION=25
+```
+
+Individual Enterprise Search and Transform Engine images can be prepared and
+built with their matching override only:
+
+```sh
+CUSTOMIZATION_REF=customizations make search_liveindexing ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make search_reindexing ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make tengine_aio ACS_VERSION=25
+CUSTOMIZATION_REF=customizations make tengine_tika ACS_VERSION=25
+```
+
+Minimal copies of these manifests are available under
+[`examples/overrides`](examples/overrides). Change only the artifact versions
+and keep the coordinates and paths aligned with the selected ACS release.
+
+See [`overrides/README.md`](overrides/README.md) for the component override
+layout and [`examples/overrides/README.md`](examples/overrides/README.md) for
+copyable examples.
+
+This keeps each override scoped to one component family and ensures the
+override versions are used for both the downloaded artifacts and image tags.
+
 ### Customizing the Share image
 
 The Share image can be customized by adding files into specific folders:

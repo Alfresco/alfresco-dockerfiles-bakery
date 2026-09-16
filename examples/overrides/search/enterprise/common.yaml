@@ -1,0 +1,9 @@
+# Enterprise Search common override example.
+artifacts:
+  alfresco-elasticsearch-live-indexing-mediation:
+    name: alfresco-elasticsearch-live-indexing-mediation
+    version: 5.8.0
+    classifier: "-app.jar"
+    group: org.alfresco
+    repository: enterprise-releases
+    path: search/enterprise/common

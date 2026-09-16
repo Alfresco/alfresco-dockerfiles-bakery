@@ -2,7 +2,8 @@
 Process artifacts yml files to download the artifacts from the Alfresco Nexus repository
 
 Run this script with:
-python3 scripts/fetch_artifacts.py [<target_subdir>] [--log-level LEVEL] [--log-file FILE]
+python3 scripts/fetch_artifacts.py [<target_subdir>] [--override-artifacts-url URL]
+    [--log-level LEVEL] [--log-file FILE]
 
 The target_subdir is the subdirectory where the artifacts yaml files are located (optional)
 """
@@ -107,7 +108,7 @@ def prune_stale_artifacts(artifact_details, current_final_path):
 
     for entry in os.listdir(artifact_dir):
         entry_path = os.path.join(artifact_dir, entry)
-        if entry == current_basename or entry_path in FETCHED_ARTIFACTS:
+        if entry == current_basename:
             continue
         if os.path.isfile(entry_path) and pattern.fullmatch(entry):
             os.remove(entry_path)
@@ -264,10 +265,19 @@ def main(target_subdir=""):
     for target_file in targets:
         do_parse_and_mvn_fetch(target_file)
 
+def fetch_override_manifest(url):
+    """Download a remote artifact manifest to the temporary workspace."""
+    manifest_path = os.path.join(TEMP_DIR, f"override-{len(os.listdir(TEMP_DIR))}.yaml")
+    with urllib.request.urlopen(url) as response, open(manifest_path, "wb") as manifest_file:
+        shutil.copyfileobj(response, manifest_file)
+    return manifest_path
+
 def parse_arguments():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description="Download artifacts from Alfresco Nexus repository")
     parser.add_argument('targets', nargs='*', help='Target directories or patterns')
+    parser.add_argument('--override-artifacts-url', action='append', default=[],
+                        help='Remote artifacts YAML to process after the local manifests')
     parser.add_argument('--log-level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'], default='INFO', help='Set logging level')
     parser.add_argument('--log-file', help='Log to file')
     return parser.parse_args()
@@ -290,3 +300,7 @@ if __name__ == "__main__":
         for target_directory in args.targets:
             logger.debug(f"--- Processing target: {target_directory} ---")
             main(target_directory)
+
+    for override_url in args.override_artifacts_url:
+        override_manifest = fetch_override_manifest(override_url)
+        do_parse_and_mvn_fetch(override_manifest)

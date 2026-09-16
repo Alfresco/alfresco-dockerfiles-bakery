@@ -1,0 +1,9 @@
+# Share artifact overrides. Change only versions as needed.
+artifacts:
+  alfresco-googledrive-share:
+    name: alfresco-googledrive-share
+    version: 5.0.0
+    classifier: ".amp"
+    group: org.alfresco.integrations
+    repository: releases
+    path: share/amps

@@ -1,0 +1,9 @@
+# APS App library override example.
+artifacts:
+  postgresql:
+    name: postgresql
+    version: 42.7.13
+    classifier: ".jar"
+    group: org.postgresql
+    repository: public
+    path: aps/app/libs
