@@ -10,18 +10,24 @@ ARG ALFRESCO_LIBREOFFICE_USER_NAME
 ARG ALFRESCO_LIBREOFFICE_USER_ID
 ARG TARGETARCH
 
+# microdnf cannot resolve dependencies of local rpms, so the dependency closure is
+# installed from the repos before rpm applies the local set
 RUN --mount=type=bind,source=/,target=/dist \
     PKG_MGR=$(command -v dnf || command -v microdnf) && \
-    $PKG_MGR install -y cairo cups-libs libSM libGLU && \
+    $PKG_MGR install -y cairo cups-libs libSM libGLU tar && \
     if [ "$TARGETARCH" == 'arm64' ]; then \
         $PKG_MGR --enablerepo=devel install -y libreoffice && \
         update-alternatives --set java java-17-openjdk.aarch64; \
     else \
         mkdir /tmp/dist && \
         tar xzf /dist/*.gz -C /tmp/dist && \
-        $PKG_MGR install -y /tmp/dist/LibreOffice*/RPMS/*.rpm; \
+        set -- /tmp/dist/LibreOffice*/RPMS/*.rpm && \
+        rpm -qp --provides "$@" | sed 's/ .*//' | sort -u > /tmp/provides && \
+        rpm -qpR "$@" | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
+        $PKG_MGR install -y $(cat /tmp/requires) && \
+        rpm -Uvh "$@"; \
     fi && \
-    rm -rf /tmp/dist && \
+    rm -rf /tmp/dist /tmp/provides /tmp/requires && \
     $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 ADD alfresco-transform-libreoffice*.jar /opt/app.jar

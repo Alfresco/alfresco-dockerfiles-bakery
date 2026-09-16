@@ -67,7 +67,7 @@ USER root
 RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
   groupadd -g ${ALFRESCO_REPO_GROUP_ID} ${ALFRESCO_REPO_GROUP_NAME} && \
   useradd -u ${ALFRESCO_REPO_USER_ID} -g ${ALFRESCO_REPO_GROUP_NAME} ${ALFRESCO_REPO_USER_NAME} -G tomcat && \
-  $PKG_MGR install -y fontconfig && \
+  $PKG_MGR install -y fontconfig dejavu-sans-fonts && \
   $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 COPY entrypoint.sh /entrypoint.sh

@@ -146,7 +146,7 @@ variable "JDIST" {
 }
 
 variable "IMAGE_BASE_LOCATION" {
-  default = "docker.io/rockylinux/rockylinux:9"
+  default = "docker.io/rockylinux/rockylinux:9-minimal"
 }
 
 variable "LIVEINDEXING" {
