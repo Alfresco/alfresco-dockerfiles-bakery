@@ -463,10 +463,12 @@ if the `grype` binary is available in the PATH.
 > manual triaging of scanner findings within the application code. Remember to
 > always assess findings within the context of your specific deployment.
 
-Images are built on `docker.io/rockylinux/rockylinux:9-minimal`, set through the
-`IMAGE_BASE_LOCATION` bake variable. [`.grype.yaml`](.grype.yaml) skips
-`java-archive` packages, so results cover the OS package surface and not the
-application. Recorded results for that base image are in
+The Rocky Linux based images, which is everything built from `java_base`, use
+`docker.io/rockylinux/rockylinux:9-minimal` through the `IMAGE_BASE_LOCATION`
+bake variable. The ADF app images are built on `nginx-unprivileged:1-alpine`
+instead, so results for them are unrelated. [`.grype.yaml`](.grype.yaml) skips
+`java-archive` packages, so application JARs are left out of the results.
+Recorded results for the Rocky base image are in
 [docs/security-scanning.md](docs/security-scanning.md).
 
 If you want to run the security scan manually, you can use the following command:

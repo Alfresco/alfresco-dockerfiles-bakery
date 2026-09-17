@@ -1,28 +1,10 @@
 # Security scanning baseline
 
-A reference point for Grype results, so the next base image change has something
-to compare against. Taken when the default base moved from
-`docker.io/rockylinux/rockylinux:9` to `:9-minimal` (OPSEXP-4315).
-
-Measured on 2026-09-17 with Grype v0.118.0 and DB v6.1.9, `ACS_VERSION=26`, on
-`linux/arm64`. Both sides came from `f3b113f` with only `IMAGE_BASE_LOCATION`
-varied and `GRYPE_DB_AUTO_UPDATE=false`, so the base tag is the one variable.
-The scan needs the same `TAG` and `IMAGE_BASE_LOCATION` as the build, because
-`make grype` re-resolves tags through `docker buildx bake --print`.
-
-```sh
-TAG=before IMAGE_BASE_LOCATION=docker.io/rockylinux/rockylinux:9 make repository tengines
-TAG=after make repository tengines
-TAG=<side> make grype GRYPE_TARGET=<target> GRYPE_OUTPUT_DIR=scan/<side> \
-  GRYPE_OUTPUT_FORMAT=json GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
-```
-
-## Result
-
-Unique CVEs roughly halved and images lost about a tenth of their size. The
-gated count stayed where it was. Gated here means
-`--only-fixed --ignore-states wont-fix`, the filter the weekly workflow uploads
-from.
+Grype results before and after the default base image moved from
+`docker.io/rockylinux/rockylinux:9` to `:9-minimal` (OPSEXP-4315). Measured on
+2026-09-17 with Grype v0.118.0 against one database snapshot, on `linux/arm64`,
+building `repository` and `tengines` from `f3b113f` with only
+`IMAGE_BASE_LOCATION` varied.
 
 | Image | rpms | Size | Gated CVEs | Total CVEs |
 | --- | --- | --- | --- | --- |
@@ -34,42 +16,24 @@ from.
 | `alfresco-transform-misc` | 173 → 149 | 755 → 673 MB | 10 → 10 | 378 → 201 |
 | `alfresco-pdf-renderer` | 173 → 150 | 688 → 617 MB | 10 → 10 | 378 → 208 |
 
-Counts are unique CVE IDs. Grype match counts run three to four times higher,
-because a CVE is reported once per affected rpm.
+Counts are unique CVE IDs. Gated means `--only-fixed --ignore-states wont-fix`,
+the filter the weekly workflow uses.
 
-The gated count cannot move, because `java/Dockerfile` runs `$PKG_MGR upgrade -y`
-before anything else, so both builds start fully patched. What survives has no
-fixed rpm published yet: openssl and `libcap` everywhere, `libxslt` and
-`gdk-pixbuf2` on the transform engines. None of those packages go away with a
-base image variant.
+Total CVEs fell by 23% on `transform-core-aio` up to 47% on `transform-misc`,
+almost all of it from dropping `vim-minimal` and `binutils`. The gated count
+stayed where it was. `java/Dockerfile` runs
+`$PKG_MGR upgrade -y` before anything else, so both builds start fully patched
+and what survives has no fixed rpm published yet: openssl and `libcap`
+everywhere, `libxslt` and `gdk-pixbuf2` on the transform engines.
 
 Two CVEs came in on every image, `CVE-2025-5372` and `CVE-2026-3731` in
-`libssh`, both medium and unfixed. The minimal base ships full `curl` rather
-than `curl-minimal`, and full `libcurl` pulls `libssh` in for SFTP. The other 67
-new matches are existing CVEs reported again under renamed rpms, `curl` and
-`libcurl` for `curl-minimal` and `libcurl-minimal`, `python-unversioned-command`
-for `python3`. Going the other way, 33 packages left, mostly the `dnf` and `yum`
-stack, with `vim-minimal` and `binutils` accounting for most of the drop.
+`libssh`, both medium and unfixed. The minimal base ships full `curl`, and full
+`libcurl` needs `libssh` for SFTP.
 
-## What the workflow saw
+The weekly workflow has since run on this base and closed 24 alerts, 107 open
+down to 83, opening none. All were on the two `ats` images. Sixteen were
+`vim-minimal`, which `:9-minimal` does not ship, and the other eight closed
+because that build resolved newer rpms rather than because of the base image.
 
-The run on `86d215f7` (2026-09-17) closed 24 alerts, 107 down to 83, and opened
-none. `repository` and `tengines` held steady as predicted. All 24 closures were
-on `ats/alfresco-shared-file-store` and `ats/alfresco-transform-router`.
-
-Sixteen were `vim-minimal` and will not return, because `:9-minimal` has no such
-package. The other eight (`expat`, `glib2`, `coreutils-single`) are still in the
-images at patched versions, so they closed because this build resolved newer
-rpms, not because of the base image.
-
-## Caveats
-
-- Measured on `linux/arm64`, where the `tengine` Dockerfiles take LibreOffice
-  from the `devel` repo instead of the bundled rpms, so transform engine package
-  counts will not match the `linux/amd64` CI scans.
-- The before side is the current tree with the base tag overridden, not the
-  pre-OPSEXP-4315 tree, so `tar` and `dejavu-sans-fonts` sit on both sides.
-- Counts move with the vulnerability database, so only the rpm and size columns
-  mean anything against a scan on a different DB snapshot. For current numbers
-  use [code
-  scanning](https://github.com/Alfresco/alfresco-dockerfiles-bakery/security/code-scanning).
+Numbers move with the vulnerability database, so for current figures use [code
+scanning](https://github.com/Alfresco/alfresco-dockerfiles-bakery/security/code-scanning).
