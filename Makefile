@@ -32,6 +32,7 @@ help:
 
 ACS_VERSION ?= 26
 APS_VERSION ?= 26
+BAKE_PROVENANCE ?= false
 export ACS_VERSION
 export APS_VERSION
 export ARTIFACT_VERSIONS := $(shell python3 ./scripts/print_artifact_versions.py)
@@ -39,9 +40,6 @@ export ARTIFACT_VERSIONS := $(shell python3 ./scripts/print_artifact_versions.py
 setenv: auth
 ifdef BAKE_NO_CACHE
 DOCKER_BAKE_ARGS += --no-cache
-endif
-ifdef BAKE_NO_PROVENANCE
-DOCKER_BAKE_ARGS += --provenance=false
 endif
 	@echo "REGISTRY=$(if $(REGISTRY),$(REGISTRY),localhost) REGISTRY_NAMESPACE=$(if $(REGISTRY_NAMESPACE),$(REGISTRY_NAMESPACE),alfresco) TAG=$(if $(TAG),$(TAG),<none, tags come from artifact versions>)"
 
@@ -68,6 +66,7 @@ DOCKER_BAKE_ARGS += --set *.output=type=registry,push=true
 ifndef BAKE_NO_SBOM
 DOCKER_BAKE_ARGS += --sbom=true
 endif
+DOCKER_BAKE_ARGS += --provenance=$(BAKE_PROVENANCE)
 else
 	@echo "REGISTRY environment variable is not set. Images will be build & loaded locally"
 endif

@@ -32,6 +32,7 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
   - [Software Bill of Materials](#software-bill-of-materials)
+  - [Build provenance](#build-provenance)
   - [Fetch artifacts script](#fetch-artifacts-script)
     - [Usage](#usage)
     - [Arguments](#arguments)
@@ -141,11 +142,13 @@ process:
   architecture of the system where the build is run). See [Supported
   Architectures](#supported-architectures) for more information.
 - `BAKE_NO_CACHE`: Set to `1` to disable the cache during the build process
-- `BAKE_NO_PROVENANCE`: Set to `1` to not add provenance metadata during the build
-  process. This is mostly useful if your registry do not support it.
 - `BAKE_NO_SBOM`: Set to `1` to not attach an SBOM attestation to the images when
   pushing them to a registry. See [Software Bill of Materials](#software-bill-of-materials)
   for more information.
+- `BAKE_PROVENANCE`: Provenance attestation to attach to the images when pushing
+  them to a registry, disabled (`false`) by default. Set to `mode=min` or
+  `mode=max` to describe your own build. See [Build
+  provenance](#build-provenance) for more information.
 
 For example, to build multi-arch images for ARM64 and X86_64 and push them to a
 custom registry, you can run the following command:
@@ -537,6 +540,58 @@ it without pulling the image:
 ```sh
 docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> --format '{{ json (index .SBOM "linux/amd64").SPDX }}' > sbom.spdx.json
 grype sbom:sbom.spdx.json
+```
+
+## Build provenance
+
+Images pushed to `ghcr.io/alfresco` by this repository's CI carry a SLSA
+provenance record, attached as a [BuildKit provenance
+attestation](https://docs.docker.com/build/metadata/attestations/slsa-provenance/)
+in `mode=max`, with one attestation per image and per platform. It records the
+source repository and commit the image was built from, the workflow run which
+built it, and the build parameters used, so consumers can tell an official image
+apart from one built elsewhere.
+
+Provenance is off by default everywhere else: an image built outside of this
+repository's CI would otherwise carry a record pointing at a build nobody can
+relate to Alfresco. If you build your own images and want provenance, describe
+your own build by setting `BAKE_PROVENANCE`:
+
+```sh
+export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds BAKE_PROVENANCE=mode=max
+make repository
+```
+
+As with the SBOM, this requires `REGISTRY` to be set, since the `docker`
+exporter used when loading images locally cannot carry attestations. When
+calling bake directly instead of going through the `make` wrapper, pass
+`--provenance` yourself:
+
+```sh
+docker buildx bake repository --set *.output=type=registry,push=true --provenance=mode=max
+```
+
+Use `mode=min` for the invocation details only, or leave provenance disabled
+when targeting a registry which does not support OCI attestation manifests.
+
+To retrieve the provenance of an image, picking one platform out of the
+per-platform map:
+
+```sh
+docker buildx imagetools inspect ghcr.io/alfresco/alfresco-content-repository:<tag> --format '{{ json (index .Provenance "linux/amd64").SLSA }}'
+```
+
+The interesting fields of the resulting [SLSA
+v1](https://slsa.dev/spec/v1.0/provenance) statement are
+`buildDefinition.externalParameters` (the repository, ref and bake target built),
+`runDetails.builder.id` and `runDetails.metadata.invocationId` (the workflow run
+which produced the image). For example, to check an image was built from this
+repository:
+
+```sh
+docker buildx imagetools inspect ghcr.io/alfresco/alfresco-content-repository:<tag> \
+  --format '{{ json (index .Provenance "linux/amd64").SLSA }}' \
+  | jq '.buildDefinition.externalParameters.configSource, .runDetails.metadata.invocationId'
 ```
 
 ## Fetch artifacts script
