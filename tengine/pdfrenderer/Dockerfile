@@ -12,6 +12,9 @@ ARG TARGETARCH
 
 RUN --mount=type=bind,source=/,target=/dist \
     [ "$TARGETARCH" == 'arm64' ] && export PDFARCH='-arm'; \
+    PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    $PKG_MGR install -y tar && \
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum && \
     tar xzf /dist/*-linux${PDFARCH}.tgz -C /usr/bin alfresco-pdf-renderer
 
 ADD alfresco-transform-pdf-renderer*.jar /opt/app.jar

@@ -13,12 +13,16 @@ ARG TARGETARCH
 
 COPY alfresco-transform-imagemagick*.jar /opt/app.jar
 
-# microdnf cannot install an rpm from a URL
 RUN --mount=type=bind,source=/,target=/dist \
     [ "$TARGETARCH" == 'arm64' ] && export PKGARCH='-aarch64'; \
     PKG_MGR=$(command -v dnf || command -v microdnf) && \
     rpm -Uvh --replacepkgs https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm && \
-    $PKG_MGR install -y /dist/imagemagick-distribution-*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/libs/imagemagick-distribution-*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm && \
+    RPMS="/dist/imagemagick-distribution-*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/libs/imagemagick-distribution-*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm" && \
+    rpm -qp --provides $RPMS | sed 's/ .*//' | sort -u > /tmp/provides && \
+    rpm -qpR $RPMS | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
+    $PKG_MGR install -y $(cat /tmp/requires) && \
+    rpm -Uvh $RPMS && \
+    rm -f /tmp/provides /tmp/requires && \
     $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 RUN groupadd -g ${ALFRESCO_IMAGEMAGICK_GROUP_ID} ${ALFRESCO_IMAGEMAGICK_GROUP_NAME} && \
