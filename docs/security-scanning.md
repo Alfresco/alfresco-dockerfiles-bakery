@@ -56,6 +56,18 @@ for `curl-minimal`/`libcurl-minimal`, and `python-unversioned-command` for
 `python3`). 33 packages were dropped, mostly the `dnf`/`yum` stack;
 `vim-minimal`, `binutils` and `binutils-gold` account for most of the reduction.
 
+## Confirmed in CI
+
+The weekly workflow reran on `86d215f7` (2026-09-17) and closed 24 code scanning
+alerts, 107 open to 83, with nothing new. All 24 were on
+`ats/alfresco-shared-file-store` and `ats/alfresco-transform-router`, which are
+also `FROM java_base`; `repository` and `tengines` did not move, as the local
+comparison predicted. Sixteen of the closures are `vim-minimal`, a package
+`:9-minimal` does not ship. The other eight (`expat`, `glib2`,
+`coreutils-single`) closed because changing the base tag invalidated a stale
+`java_base` `upgrade -y` layer, not because of the minimal base itself — those
+packages are still present, at patched versions.
+
 ## Caveats
 
 - Measured on `linux/arm64`, where the `tengine` Dockerfiles install LibreOffice
