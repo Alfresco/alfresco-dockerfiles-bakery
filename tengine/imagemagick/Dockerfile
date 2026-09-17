@@ -13,17 +13,15 @@ ARG TARGETARCH
 
 COPY alfresco-transform-imagemagick*.jar /opt/app.jar
 
-# microdnf can neither install an rpm from a URL nor resolve dependencies of local rpms,
-# so the dependency closure is installed from the repos before rpm applies the local set
 RUN --mount=type=bind,source=/,target=/dist \
     [ "$TARGETARCH" == 'arm64' ] && export PKGARCH='-aarch64'; \
     PKG_MGR=$(command -v dnf || command -v microdnf) && \
     rpm -Uvh --replacepkgs https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm && \
-    set -- /dist/imagemagick-distribution-*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/libs/imagemagick-distribution-*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm && \
-    rpm -qp --provides "$@" | sed 's/ .*//' | sort -u > /tmp/provides && \
-    rpm -qpR "$@" | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
+    RPMS="/dist/imagemagick-distribution-*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/libs/imagemagick-distribution-*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm" && \
+    rpm -qp --provides $RPMS | sed 's/ .*//' | sort -u > /tmp/provides && \
+    rpm -qpR $RPMS | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
     $PKG_MGR install -y $(cat /tmp/requires) && \
-    rpm -Uvh "$@" && \
+    rpm -Uvh $RPMS && \
     rm -f /tmp/provides /tmp/requires && \
     $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 

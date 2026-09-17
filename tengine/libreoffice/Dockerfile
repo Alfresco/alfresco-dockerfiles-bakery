@@ -10,8 +10,6 @@ ARG ALFRESCO_LIBREOFFICE_USER_NAME
 ARG ALFRESCO_LIBREOFFICE_USER_ID
 ARG TARGETARCH
 
-# microdnf cannot resolve dependencies of local rpms, so the dependency closure is
-# installed from the repos before rpm applies the local set
 RUN --mount=type=bind,source=/,target=/dist \
     PKG_MGR=$(command -v dnf || command -v microdnf) && \
     $PKG_MGR install -y cairo cups-libs libSM libGLU tar && \
@@ -21,11 +19,11 @@ RUN --mount=type=bind,source=/,target=/dist \
     else \
         mkdir /tmp/dist && \
         tar xzf /dist/*.gz -C /tmp/dist && \
-        set -- /tmp/dist/LibreOffice*/RPMS/*.rpm && \
-        rpm -qp --provides "$@" | sed 's/ .*//' | sort -u > /tmp/provides && \
-        rpm -qpR "$@" | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
+        RPMS='/tmp/dist/LibreOffice*/RPMS/*.rpm' && \
+        rpm -qp --provides $RPMS | sed 's/ .*//' | sort -u > /tmp/provides && \
+        rpm -qpR $RPMS | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
         $PKG_MGR install -y $(cat /tmp/requires) && \
-        rpm -Uvh "$@"; \
+        rpm -Uvh $RPMS; \
     fi && \
     rm -rf /tmp/dist /tmp/provides /tmp/requires && \
     $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum

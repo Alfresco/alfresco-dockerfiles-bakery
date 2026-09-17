@@ -11,30 +11,28 @@ ARG ALFRESCO_AIO_USER_ID
 ARG DISTRIB_MAJOR
 ARG TARGETARCH
 
-# microdnf can neither install an rpm from a URL nor resolve dependencies of local rpms,
-# so the dependency closure is installed from the repos before rpm applies each local set
 RUN --mount=type=bind,source=/,target=/dist \
     [ "$TARGETARCH" == 'arm64' ] && export PKGARCH='-aarch64' PDFARCH='-arm'; \
     PKG_MGR=$(command -v dnf || command -v microdnf) && \
     rpm -Uvh --replacepkgs https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm && \
     $PKG_MGR install -y cairo cups-libs libSM libGLU perl-Image-ExifTool tar && \
     mkdir /tmp/dist && \
-    set -- /dist/imagemagick/imagemagick-distribution*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/imagemagick/libs/imagemagick-distribution*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm && \
-    rpm -qp --provides "$@" | sed 's/ .*//' | sort -u > /tmp/provides && \
-    rpm -qpR "$@" | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
+    RPMS="/dist/imagemagick/imagemagick-distribution*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/imagemagick/libs/imagemagick-distribution*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm" && \
+    rpm -qp --provides $RPMS | sed 's/ .*//' | sort -u > /tmp/provides && \
+    rpm -qpR $RPMS | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
     $PKG_MGR install -y $(cat /tmp/requires) && \
-    rpm -Uvh "$@" && \
+    rpm -Uvh $RPMS && \
     tar xzf /dist/pdfrenderer/*-linux${PDFARCH}.tgz -C /usr/bin alfresco-pdf-renderer && \
     if [ "$TARGETARCH" == 'arm64' ]; then \
         $PKG_MGR --enablerepo=devel install -y libreoffice && \
         update-alternatives --set java java-17-openjdk.aarch64; \
     else \
         tar xzf /dist/libreoffice/*.gz -C /tmp/dist && \
-        set -- /tmp/dist/LibreOffice*/RPMS/*.rpm && \
-        rpm -qp --provides "$@" | sed 's/ .*//' | sort -u > /tmp/provides && \
-        rpm -qpR "$@" | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
+        RPMS='/tmp/dist/LibreOffice*/RPMS/*.rpm' && \
+        rpm -qp --provides $RPMS | sed 's/ .*//' | sort -u > /tmp/provides && \
+        rpm -qpR $RPMS | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
         $PKG_MGR install -y $(cat /tmp/requires) && \
-        rpm -Uvh "$@"; \
+        rpm -Uvh $RPMS; \
     fi && \
     rm -rf /tmp/dist /tmp/provides /tmp/requires && \
     $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
