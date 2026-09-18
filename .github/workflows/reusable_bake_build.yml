@@ -26,6 +26,7 @@ env:
   REGISTRY_NAMESPACE: alfresco
   TAG: ${{ inputs.tag }}
   BAKE_NO_SBOM: ${{ vars.BAKE_NO_SBOM }}
+  BAKE_PROVENANCE: ${{ vars.BAKE_PROVENANCE }}
 
 jobs:
   build:
@@ -123,6 +124,7 @@ jobs:
           targets: ${{ inputs.bake-targets }}
           source: .
           sbom: ${{ env.BAKE_NO_SBOM == '' && 'true' || 'false' }}
+          provenance: ${{ env.BAKE_PROVENANCE != '' && env.BAKE_PROVENANCE || 'mode=max' }}
           set: |
             *.output=type=registry,push=true
             ${{ steps.cache-targets.outputs.cache-set }}
