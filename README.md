@@ -544,8 +544,8 @@ grype sbom:sbom.spdx.json
 
 ## Build provenance
 
-Images pushed to `ghcr.io/alfresco` by this repository's CI carry a SLSA
-provenance record, attached as a [BuildKit provenance
+Images pushed by this repository's CI carry a SLSA provenance
+record, attached as a [BuildKit provenance
 attestation](https://docs.docker.com/build/metadata/attestations/slsa-provenance/)
 in `mode=max`, with one attestation per image and per platform. It records the
 source repository and commit the image was built from, the workflow run which
@@ -575,21 +575,21 @@ Use `mode=min` for the invocation details only, or leave provenance disabled
 when targeting a registry which does not support OCI attestation manifests.
 
 To retrieve the provenance of an image, picking one platform out of the
-per-platform map:
+per-platform map (the registry below is a placeholder, use your own):
 
 ```sh
-docker buildx imagetools inspect ghcr.io/alfresco/alfresco-content-repository:<tag> --format '{{ json (index .Provenance "linux/amd64").SLSA }}'
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> --format '{{ json (index .Provenance "linux/amd64").SLSA }}'
 ```
 
 The interesting fields of the resulting [SLSA
 v1](https://slsa.dev/spec/v1.0/provenance) statement are
 `buildDefinition.externalParameters` (the repository, ref and bake target built),
 `runDetails.builder.id` and `runDetails.metadata.invocationId` (the workflow run
-which produced the image). For example, to check an image was built from this
-repository:
+which produced the image). For example, to check which repository and run an
+image was built from:
 
 ```sh
-docker buildx imagetools inspect ghcr.io/alfresco/alfresco-content-repository:<tag> \
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> \
   --format '{{ json (index .Provenance "linux/amd64").SLSA }}' \
   | jq '.buildDefinition.externalParameters.configSource, .runDetails.metadata.invocationId'
 ```
