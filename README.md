@@ -583,15 +583,18 @@ docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-cont
 
 The interesting fields of the resulting [SLSA
 v1](https://slsa.dev/spec/v1.0/provenance) statement are
-`buildDefinition.externalParameters` (the repository, ref and bake target built),
-`runDetails.builder.id` and `runDetails.metadata.invocationId` (the workflow run
-which produced the image). For example, to check which repository and run an
-image was built from:
+`runDetails.builder.id`, which points at the CI job which produced the image,
+and the `vcs:source` / `vcs:revision` build request arguments, which hold the
+repository and the commit it was built from. The `mode=max` statement also
+carries every build argument, the Dockerfile itself and the resolved base image
+digests. To check which repository, commit and job an image comes from:
 
 ```sh
 docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> \
   --format '{{ json (index .Provenance "linux/amd64").SLSA }}' \
-  | jq '.buildDefinition.externalParameters.configSource, .runDetails.metadata.invocationId'
+  | jq '{builder: .runDetails.builder.id,
+         source: .buildDefinition.externalParameters.request.root.request.args["vcs:source"],
+         revision: .buildDefinition.externalParameters.request.root.request.args["vcs:revision"]}'
 ```
 
 ## Fetch artifacts script
