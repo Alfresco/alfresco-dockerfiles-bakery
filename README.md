@@ -544,18 +544,17 @@ grype sbom:sbom.spdx.json
 
 ## Build provenance
 
-Images pushed by this repository's CI carry a SLSA provenance
-record, attached as a [BuildKit provenance
-attestation](https://docs.docker.com/build/metadata/attestations/slsa-provenance/)
-in `mode=max`, with one attestation per image and per platform. It records the
-source repository and commit the image was built from, the workflow run which
-built it, and the build parameters used, so consumers can tell an official image
-apart from one built elsewhere.
+Provenance records how and where an image was built: the repository and commit
+it was built from, the job which built it and the build parameters used. It is
+attached to images pushed to a registry as a [BuildKit provenance
+attestation](https://docs.docker.com/build/metadata/attestations/slsa-provenance/),
+one attestation per image and per platform. This repository's CI builds attach
+it in `mode=max`.
 
-Provenance is off by default everywhere else: an image built outside of this
-repository's CI would otherwise carry a record pointing at a build nobody can
-relate to Alfresco. If you build your own images and want provenance, describe
-your own build by setting `BAKE_PROVENANCE`:
+Provenance is disabled by default, since a record only describes the build which
+produced it, and says nothing to whoever consumes the image unless they know the
+build environment it points at. If you build your own images and want
+provenance, describe your own build by setting `BAKE_PROVENANCE`:
 
 ```sh
 export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds BAKE_PROVENANCE=mode=max
