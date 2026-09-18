@@ -146,7 +146,11 @@ variable "JDIST" {
 }
 
 variable "IMAGE_BASE_LOCATION" {
-  default = "docker.io/rockylinux/rockylinux:9-minimal"
+  default = "docker.io/rockylinux/rockylinux:9-ubi-micro"
+}
+
+variable "IMAGE_BUILDER_LOCATION" {
+  default = "docker.io/rockylinux/rockylinux:9"
 }
 
 variable "LIVEINDEXING" {
@@ -218,6 +222,7 @@ target "java_base" {
     DISTRIB_MAJOR = "${DISTRIB_MAJOR}"
     JDIST = "${JDIST}"
     IMAGE_BASE_LOCATION = "${IMAGE_BASE_LOCATION}"
+    IMAGE_BUILDER_LOCATION = "${IMAGE_BUILDER_LOCATION}"
     JAVA_MAJOR = "${JAVA_MAJOR}"
   }
   labels = {
