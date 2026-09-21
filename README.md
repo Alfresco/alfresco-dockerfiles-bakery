@@ -466,6 +466,12 @@ if the `grype` binary is available in the PATH.
 > manual triaging of scanner findings within the application code. Remember to
 > always assess findings within the context of your specific deployment.
 
+Images built from `java_base` use
+`docker.io/rockylinux/rockylinux:9-minimal`, set through the
+`IMAGE_BASE_LOCATION` bake variable. [`.grype.yaml`](.grype.yaml) skips
+`java-archive` packages, so application JARs are left out. Recorded results are
+in [docs/security-scanning.md](docs/security-scanning.md).
+
 If you want to run the security scan manually, you can use the following command:
 
 ```sh
