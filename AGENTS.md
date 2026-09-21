@@ -21,8 +21,8 @@ make repository                # build only the Repository image (also: share, t
 make clean                     # remove fetched Nexus artifacts
 make clean_caches              # prune docker build cache + artifacts_cache/
 
-ACS_VERSION=25 make enterprise ACS_VERSION=23   # build a specific ACS version (26 is default; 23/25/26 supported)
-APS_VERSION=26 make aps                          # build a specific APS version
+make enterprise ACS_VERSION=23                  # build a specific ACS version (26 is default; 23/25/26 supported)
+make aps APS_VERSION=26                          # build a specific APS version
 
 docker buildx bake <target>                     # bake a target directly, bypassing the make wrapper
 docker buildx bake <target> --print              # inspect resolved config/tags for a target without building
@@ -61,17 +61,20 @@ Targets are grouped (`group "enterprise"`, `group "community"`, etc.) and the `M
 these groups/targets, in each case running `prepare_*` (artifact fetch) then `docker buildx bake` then an
 optional Grype scan.
 
-**ACS/APS version switching.** `ACS_VERSION` (23/25/26, default 26) and `APS_VERSION` drive which
-`artifacts-XX.yaml` files get read and which Tomcat/Java version bake selects (`select_java_version`,
+**ACS/APS version switching.** `ACS_VERSION` (23/25/26, default 26) drives which `artifacts-XX.yaml` files get
+read for ACS components and which Tomcat/Java version bake selects (`select_java_version`,
 `select_tomcat_field` in `docker-bake.hcl`; JDK 17 for ACS 23/25, 21 for 26). Community search also branches on
 version: ACS 23/25/26.0/26.1 build `search_service` (Solr), 26.2+ build `search_batch_indexing`
-(Elasticsearch) — see `select_community_search()`.
+(Elasticsearch) — see `select_community_search()`. `APS_VERSION` is independent and only selects which
+`aps/**/artifacts-XX.yaml` files get fetched for the APS targets; it has no effect on Java/Tomcat selection.
 
 **Artifacts pipeline.** Each image directory that needs external binaries has one or more `artifacts-XX.yaml`
 files declaring Maven/Nexus coordinates, version, checksum, and destination `path`. `scripts/fetch_artifacts.py`
-walks the repo for `artifacts-*.yaml` (or a given target/glob), downloads and checksum-verifies each artifact
-into that image's build context (e.g. `repository/amps`, `repository/libs`), and prunes stale versions of the
-same artifact automatically. `scripts/print_artifact_versions.py` (invoked by the `Makefile` into
+walks the repo for `artifacts-*.yaml` (or a given target/glob) and downloads each artifact into that image's
+build context (e.g. `repository/amps`, `repository/libs`). It verifies the checksum when the manifest declares
+one (some manifests, e.g. `search/community/artifacts-26.yaml`, omit it, in which case verification is skipped
+with a logged warning), and prunes stale versions of the same artifact automatically.
+`scripts/print_artifact_versions.py` (invoked by the `Makefile` into
 `ARTIFACT_VERSIONS`) turns those same YAML files into the version map that `image_tag()` in `docker-bake.hcl`
 uses to tag images — so an image's tag is normally the version of the Alfresco artifact it packages, not
 `TAG`/`latest`, unless `TAG` is explicitly set.
@@ -82,14 +85,19 @@ named contexts in their bake target (e.g. `repo_amps`, `repo_amps_edition`, `rep
 (`repository/amps`, `repository/libs`, ...) but can be redirected with `docker buildx bake <target>
 --set <target>.contexts.<name>=<path>` to point at a different directory, without editing the Dockerfile.
 
-**Directory layout convention.** Each top-level product folder (repository, share, search, tengine, sync, ats,
-audit-storage, connector, cic-connector, adf-apps, aps, java, tomcat) holds its own `Dockerfile`,
-`artifacts-XX.yaml`, `tests/`, and often a `README.md` documenting that image's specific customization points —
-read the folder's own README before changing its Dockerfile. `artifacts_cache/` is the (gitignored, checked-in
-placeholder) download cache used by `fetch_artifacts.py`; don't hand-edit its contents.
+**Directory layout convention.** Top-level product folders (repository, share, search, tengine, sync, ats,
+audit-storage, connector, cic-connector, adf-apps, aps, java, tomcat) group one or more images. Simple ones
+(repository, share, java, tomcat) hold their `Dockerfile`, `artifacts-XX.yaml` and `tests/` directly; others
+nest per-component subdirectories with their own `Dockerfile`/`artifacts-XX.yaml`/`tests/` (e.g.
+`search/community`, `ats/sfs`, `aps/admin`) — not every folder has all three, and not every image has tests.
+Most image directories also carry a `README.md` documenting their specific customization points; read it
+before changing that image's Dockerfile. `artifacts_cache/` is the (gitignored, checked-in placeholder)
+download cache used by `fetch_artifacts.py`; don't hand-edit its contents.
 
 **CI.** `.github/workflows/build_and_test.yml` is the main pipeline: pre-commit, then matrixed ACS builds (26,
 25, 23) via `acs_reusable_build_and_test.yml` and APS builds via `aps_reusable_build_and_test.yml`, both
-wrapping `reusable_bake_build.yml`. `build_forks.yml` handles the same for PRs from forks (no secrets).
-`bumpVersions.yml` runs updatecli to bump artifact/base-image versions. `grype-scan.yml` and `kics.yml` run
-security scanning. Release process is documented at the bottom of `README.md`.
+wrapping `reusable_bake_build.yml`. `build_forks.yml` is a reduced, no-secrets path for PRs from forks: it
+builds only the Community ACS 26 target, then runs compose and Helm smoke tests against it — it does not cover
+the full ACS/APS version matrix. `bumpVersions.yml` runs updatecli to bump artifact/base-image versions.
+`grype-scan.yml` and `kics.yml` run security scanning. Release process is documented at the bottom of
+`README.md`.
