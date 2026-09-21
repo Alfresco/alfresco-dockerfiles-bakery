@@ -40,10 +40,12 @@ Building requires Docker with `buildx`, plus `jq`, `yq`, `make`, and Python 3 wi
 (for Enterprise artifacts) go in `~/.netrc` for `machine nexus.alfresco.com`. The `Vagrantfile` provisions a VM
 with all of this preinstalled as an alternative to a local toolchain.
 
-There is no unit test suite for application code — this repo's "tests" are the `*_test.sh` scripts under each
-image's `tests/` directory, run against real built images by `./test/verify.sh` (see `TESTING.md`). To add a
-test for an image, drop an executable `<image>/tests/*_test.sh` that takes the resolved image ref as `$1` and
-exits non-zero on failure.
+There is no unit test suite for application code. Image tests are the `*_test.sh` scripts under each image's
+`tests/` directory, run against real built images by `./test/verify.sh` (see `TESTING.md`) — to add one, drop
+an executable `<image>/tests/*_test.sh` that takes the resolved image ref as `$1` and exits non-zero on
+failure. Separately, `scripts/tests/*.bats` unit-tests `fetch_artifacts.py` and `print_artifact_versions.py`
+themselves, run by `bats -r .` (see `.github/workflows/test-with-bats.yml`) — update these when changing
+either script.
 
 Pre-commit hooks (`.pre-commit-config.yaml`) check YAML/JSON/XML validity, GitHub workflow schemas
 (`check-github-workflows`), and `Makefile` quality (`checkmake`, configured via `checkmake.ini`). KICS
@@ -51,22 +53,25 @@ Pre-commit hooks (`.pre-commit-config.yaml`) check YAML/JSON/XML validity, GitHu
 
 ## Architecture
 
-**Bake target graph.** Every image is a `target` block in `docker-bake.hcl`, composed by inheritance:
-`java_base` (OS + JDK, `docker.io/rockylinux/rockylinux:9-minimal` by default) → `tomcat_base` (adds Tomcat,
-selected per ACS version) → per-application targets (`repository`, `share`, ...) that `inherit` from those and
-add their own build context and Dockerfile. `java_base` and `tomcat_base` are `output = ["type=cacheonly"]` —
-they never produce a runnable image on their own, only cache layers other targets build on; `test/verify.sh`
-knows to redirect tests for such cache-only targets to the first real target that inherits from them.
-Targets are grouped (`group "enterprise"`, `group "community"`, etc.) and the `Makefile` targets map 1:1 to
-these groups/targets, in each case running `prepare_*` (artifact fetch) then `docker buildx bake` then an
-optional Grype scan.
+**Bake target graph.** Every image is a `target` block in `docker-bake.hcl`. `java_base` (OS + a headless JRE,
+`docker.io/rockylinux/rockylinux:9-minimal` by default) is the root of the graph and is `output =
+["type=cacheonly"]` — it never produces a runnable image on its own, only cache layers other targets build on.
+Most targets inherit from it directly (`search_batch_indexing`, `search_service`, `sync`, the transform
+engines, ...); Tomcat-based ones (`repository`, `share`) go through the intermediate `tomcat_base`, also
+cache-only, which adds Tomcat selected per ACS version. A few targets (`acc`, `adw`, the ADF apps) don't
+inherit from either and build from their own Nginx-based Dockerfile instead. `test/verify.sh` knows to
+redirect tests for cache-only targets to the first real target that inherits from them. Targets are grouped
+(`group "enterprise"`, `group "community"`, etc.) and the `Makefile` targets map 1:1 to these groups/targets,
+in each case running `prepare_*` (artifact fetch) then `docker buildx bake` then an optional Grype scan.
 
 **ACS/APS version switching.** `ACS_VERSION` (23/25/26, default 26) drives which `artifacts-XX.yaml` files get
 read for ACS components and which Tomcat/Java version bake selects (`select_java_version`,
 `select_tomcat_field` in `docker-bake.hcl`; JDK 17 for ACS 23/25, 21 for 26). Community search also branches on
 version: ACS 23/25/26.0/26.1 build `search_service` (Solr), 26.2+ build `search_batch_indexing`
-(Elasticsearch) — see `select_community_search()`. `APS_VERSION` is independent and only selects which
-`aps/**/artifacts-XX.yaml` files get fetched for the APS targets; it has no effect on Java/Tomcat selection.
+(Elasticsearch) — see `select_community_search()`. `APS_VERSION` is independent of `ACS_VERSION`: it selects
+which `aps/**/artifacts-XX.yaml` files get fetched (and, through `print_artifact_versions.py` /
+`ARTIFACT_VERSIONS`, which artifact versions APS image tags resolve to), but has no effect on Java/Tomcat
+selection.
 
 **Artifacts pipeline.** Each image directory that needs external binaries has one or more `artifacts-XX.yaml`
 files declaring Maven/Nexus coordinates, version, checksum, and destination `path`. `scripts/fetch_artifacts.py`
