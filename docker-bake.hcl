@@ -183,14 +183,14 @@ variable "TOMCAT_VERSIONS" {
   default = {
     tomcat10 = {
       major   = 10
-      version = "10.1.59"
-      sha512  = "992a8e88fc9c0338445f018a1e4a2757c9e71708dba795e2864c9b1613f2b3b9b19c048e787682deae6d6bff9971defc746e31282085d52ef1d32192e09f7a0f"
+      version = "10.1.60"
+      sha512  = "aa06508300ca137a023b74b8600f2c1b3248412eb85d4fc5e2f337c6c4d3776f4491e272f79856ac541cfab0fc35537111ae4f3cfcd0bbe702c0a3610a61bd04"
     }
 
     tomcat11 = {
       major   = 11
-      version = "11.0.25"
-      sha512  = "81339c046dff1b363a80a3bccf80cb391660a6828dd8ae042180ceb11c8b1614317143e60b311b9e791dab585bb046b777234667acce7dca2203a74b37bf20f2"
+      version = "11.0.26"
+      sha512  = "e77e080d9d8d7e052544d0d21b0c738169f9ecf284fe5a68d0c7e2da97dd93e0f0f3b2aa178507ad8552583c355d8e2b193fdb76b3e4c2c12ebfd458c43ced24"
     }
   }
 }
@@ -254,11 +254,11 @@ variable "TOMCAT_SHA512" {
 }
 
 variable "TCNATIVE_VERSION" {
-  default = "2.0.15"
+  default = "2.0.16"
 }
 
 variable "TCNATIVE_SHA512" {
-  default = "a0b53890c36c3409e764895cfc521cdbbc49af4d03968f5d3ed72ba686524a05bd15c3f7ab8259fbab091547ecbc2fb7aae8f47d8bc38027db0f6a5dbda65004"
+  default = "a38713bfd18a0e6cab9cfb8cacb694fecb6790c13ff495a56ca804f8c9fe2e521356e4eeeef1e2c9967a5f36618779dc321adf65a069676290cf493d6222fbb9"
 }
 
 target "tomcat_base" {
