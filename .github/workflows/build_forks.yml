@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v18.27.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/pre-commit@v18.28.3
 
   build:
     needs: pre-commit
@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v18.27.0
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v18.28.3
 
       - name: Restore packages artifacts
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -54,13 +54,13 @@ jobs:
           path: artifacts_cache/**
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - name: Bake Docker images
         env:
           ACS_VERSION: 26
           TARGETARCH: linux/amd64
-        uses: docker/bake-action@d3418bd7d0e9324001bca92fa8ba175ea7e6dc9b  # v7.3.0
+        uses: docker/bake-action@018cb6412ab401ebaa809aa5f85966b74628600f  # v7.4.0
         with:
           source: .
           targets: community
@@ -111,7 +111,7 @@ jobs:
 
       - name: Verify docker-compose
         id: verify_compose
-        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v18.27.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/dbp-charts/verify-compose@v18.28.3
         timeout-minutes: 10
         with:
           postman_path: test/postman/docker-compose
@@ -121,7 +121,7 @@ jobs:
 
       - name: Save containers logs
         if: always() && steps.verify_compose.outcome != 'skipped'
-        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v18.27.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/docker-dump-containers-logs@v18.28.3
         with:
           output-archive-name: compose-logs
 
@@ -141,7 +141,7 @@ jobs:
 
       - name: Setup KinD cluster
         id: setup-kind
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v18.27.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-kind@v18.28.3
         with:
           traefik-enabled: 'true'
           traefik-chart-version: v40.0.0-ea.1
@@ -187,7 +187,7 @@ jobs:
             --values test/helm/test-overrides-community.yaml
 
       - name: Wait for pods to be ready
-        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v18.27.0
+        uses: Alfresco/alfresco-build-tools/.github/actions/kubectl-wait@v18.28.3
 
       - name: Run helm test
         id: helm_test
