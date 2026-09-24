@@ -9,7 +9,7 @@ ARG ALFRESCO_REPO_ARTIFACT
 USER root
 RUN yum install -y unzip
 
-COPY distribution/${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
+COPY --from=repo_distribution ${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
 ENV DISTDIR="/tmp/distribution"
 
 RUN unzip /tmp/*.zip -d ${DISTDIR}

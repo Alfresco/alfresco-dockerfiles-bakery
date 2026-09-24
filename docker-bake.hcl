@@ -298,6 +298,7 @@ target "repository" {
   inherits = ["tomcat_base"]
   contexts = {
     tomcat_base = "target:tomcat_base"
+    repo_distribution = "./repository/distribution"
     repo_amps = "./repository/amps"
     repo_amps_edition = "./repository/amps_${repository_editions.name}"
     repo_libs = "./repository/libs"
