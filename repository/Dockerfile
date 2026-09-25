@@ -11,7 +11,7 @@ RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
   $PKG_MGR install -y unzip && \
   $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
-COPY distribution/${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
+COPY --from=repo_distribution ${ALFRESCO_REPO_ARTIFACT}-*.zip /tmp/
 ENV DISTDIR="/tmp/distribution"
 
 RUN unzip /tmp/*.zip -d ${DISTDIR}
