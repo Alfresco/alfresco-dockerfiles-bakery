@@ -187,6 +187,95 @@ root of the corresponding build context. `repo_distribution` supplies the
 Alfresco Content Services distribution zip, which lets a build source the
 distribution from a local folder instead of the in-tree `repository/distribution`.
 
+#### Examples
+
+In each case, either drop files into the in-tree folder (the context default) or
+point the context at another folder with `--set`. Overrides are matched by
+component name, so a same-named default is replaced by your file.
+
+Add a new module (AMP) — place the AMP in the `amps` folder, then build:
+
+```sh
+cp my-custom-module-1.0.0.amp repository/amps/
+docker buildx bake repository
+```
+
+Override a module with a different version — use the same component name; the
+default is replaced:
+
+```sh
+# default ships alfresco-share-services-<x>.amp
+cp alfresco-share-services-26.1.0.61.amp repository/amps/
+docker buildx bake repository
+```
+
+Add a JAR to the Tomcat `lib` folder — place it in `libs`, or point the context
+elsewhere:
+
+```sh
+cp postgresql-42.7.10.jar repository/libs/
+# or, without touching the in-tree folder:
+docker buildx bake repository --set repository.contexts.repo_libs=./custom-libs
+```
+
+Supply the distribution zip from a local folder (useful when building from a
+remote reference):
+
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_distribution=./my-distribution
+```
+
+Add or override a simple module (platform JAR) — place it in `simple_modules`,
+or point the context elsewhere:
+
+```sh
+cp my-simple-module-1.0.0.jar repository/simple_modules/
+# or:
+docker buildx bake repository \
+  --set repository.contexts.repo_simple_modules=./custom-simple-modules
+```
+
+Override enterprise-only AMPs independently (`repo_amps_edition`) — swap the
+edition AMPs (device-sync, googledrive) without touching the common ones:
+
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_amps_edition=./custom-enterprise-amps
+```
+
+Build the Community edition — the `repository_community` target uses
+`amps_community` for its edition AMPs:
+
+```sh
+docker buildx bake repository_community \
+  --set repository_community.contexts.repo_amps_edition=./custom-community-amps
+```
+
+Combine multiple overrides and set a custom image tag:
+
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_amps=./amps \
+  --set repository.contexts.repo_libs=./libs \
+  --set repository.contexts.repo_simple_modules=./simple-modules \
+  --set repository_enterprise.tags=localhost/alfresco/alfresco-content-repository:custom
+```
+
+Build entirely from a remote reference with local overrides (no bakery clone) —
+use `cwd://` so the paths resolve against your current directory:
+
+```sh
+docker buildx bake \
+  "https://github.com/Alfresco/alfresco-dockerfiles-bakery.git#main" \
+  --set repository_enterprise.contexts.repo_distribution=cwd://dist \
+  --set repository_enterprise.contexts.repo_amps=cwd://amps \
+  --set repository_enterprise.contexts.repo_amps_edition=cwd://amps \
+  --set repository_enterprise.contexts.repo_libs=cwd://libs \
+  --set repository_enterprise.contexts.repo_simple_modules=cwd://simple-modules \
+  repository_enterprise
+```
+
 ### Customizing the Share image
 
 The Share image can be customized by adding files into specific folders:
