@@ -196,23 +196,20 @@ distribution from a local folder instead of the in-tree `repository/distribution
 
 #### Overriding a build context source
 
-There are two ways to customize these inputs, and they behave differently:
+Each of these inputs is a named Docker Bake build context, so you can supply it
+from your own source instead of the in-tree default. Depending on how you supply
+the files, there are two behaviours:
 
-- **Merge with the fetched defaults** — drop your files directly into the
-  in-tree default folders (`repository/amps`, `repository/amps_<edition>`,
-  `repository/libs`, `repository/simple_modules`). `fetch_artifacts.py` (run by
-  `make`) populates those same folders with the Nexus defaults such as
-  `share-services` and `aos`, so your files sit **alongside** them and both end
-  up in the image. This is the model used by the customization folders described
-  above, and the one the
-  [Alfresco Bakery Customization](https://github.com/Alfresco/alfresco-bakery-customization)
-  starter template repo automates — a basic but workable model you can adapt to
-  your own customization workflow.
-- **Replace a context wholesale** — point a named context at a *different*
-  source with `--set`. The replacement becomes the **root** of the context, so it
-  must contain every file you want for that input; it replaces the in-tree folder
-  and does **not** merge with it. Any default the folder omits (e.g.
-  `share-services`, `aos`) is dropped.
+- **Merge with the fetched defaults** — add your files to the in-tree default
+  folders (`repository/amps`, `repository/amps_<edition>`, `repository/libs`,
+  `repository/simple_modules`). `fetch_artifacts.py` (run by `make`) fills those
+  same folders with the Nexus defaults such as `share-services` and `aos`, so
+  your files land **alongside** them and both end up in the image.
+- **Replace a context wholesale** — point a context at a *different* source with
+  `--set`. The replacement becomes the **root** of the context, so it must
+  contain every file you want for that input; it does **not** merge with the
+  in-tree folder, and any default it omits (e.g. `share-services`, `aos`) is
+  dropped.
 
 The table below lists each repository context, what you put in it, and where the
 files land in the built image:
@@ -224,33 +221,46 @@ files land in the built image:
 | Add / override a Tomcat library | `repo_libs` | `*.jar` (e.g. JDBC drivers) | `/usr/local/tomcat/lib/` |
 | Add / override a simple module | `repo_simple_modules` | `*.jar` | `/usr/local/tomcat/modules/platform/` |
 
-**Add or override AMPs.** Point `repo_amps` at a folder containing the `*.amp`
-files you want installed. Because the context is replaced wholesale, that folder
-must hold *every* AMP the image should have — a new component name is added, a
-default component name is overridden by yours, and any default AMP you omit
-(e.g. `share-services`, `aos`) is dropped:
+For example, supply your own AMPs (the folder must hold every AMP the image
+should have), Tomcat libraries and simple modules from local folders:
+
+**Add or override AMPs** (both editions) — installed into `alfresco.war`:
 
 ```sh
 docker buildx bake repository \
   --set repository.contexts.repo_amps=./my-amps
 ```
 
-To keep the fetched defaults, add your AMPs into the in-tree `repository/amps`
-folder instead of repointing the context, or use the starter repo to overlay
-your own AMPs on top by component name.
+**Add or override an edition-only AMP** (`repository/amps_community` or
+`repository/amps_enterprise`) — installed into `alfresco.war`:
 
-**Add a library to Tomcat** (for example a JDBC driver in
-`/usr/local/tomcat/lib`):
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_amps_edition=./my-edition-amps
+```
+
+**Add or override a Tomcat library** (e.g. a JDBC driver) — placed in
+`/usr/local/tomcat/lib/`:
 
 ```sh
 docker buildx bake repository \
   --set repository.contexts.repo_libs=./my-libs
 ```
 
-**Add a simple module** (platform JAR in `/usr/local/tomcat/modules/platform`):
+**Add or override a simple module** (platform JAR) — placed in
+`/usr/local/tomcat/modules/platform/`:
 
 ```sh
 docker buildx bake repository \
+  --set repository.contexts.repo_simple_modules=./my-simple-modules
+```
+
+You can also combine them in a single build:
+
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_amps=./my-amps \
+  --set repository.contexts.repo_libs=./my-libs \
   --set repository.contexts.repo_simple_modules=./my-simple-modules
 ```
 
