@@ -188,9 +188,11 @@ docker buildx bake repository \
   --set repository.contexts.repo_libs=./custom-libs
 ```
 
-Repository contexts are `repo_amps`, `repo_amps_edition`, `repo_libs`, and
-`repo_simple_modules`. The replacement directory is used as the root of the
-corresponding build context.
+Repository contexts are `repo_distribution`, `repo_amps`, `repo_amps_edition`,
+`repo_libs`, and `repo_simple_modules`. The replacement directory is used as the
+root of the corresponding build context. `repo_distribution` supplies the
+Alfresco Content Services distribution zip, which lets a build source the
+distribution from a local folder instead of the in-tree `repository/distribution`.
 
 ### Customizing the Share image
 
@@ -209,8 +211,11 @@ docker buildx bake share \
   --set share.contexts.share_amps=./custom-share-amps
 ```
 
-Share contexts are `share_amps` and `share_simple_modules`. The replacement
-directory is used as the root of the corresponding build context.
+Share contexts are `share_distribution`, `share_amps`, and
+`share_simple_modules`. The replacement directory is used as the root of the
+corresponding build context. `share_distribution` supplies the Alfresco Share
+distribution zip, which lets a build source the distribution from a local folder
+instead of the in-tree `share/distribution`.
 
 ### Customizing the Community Batch Indexing image
 
