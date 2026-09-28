@@ -194,6 +194,71 @@ root of the corresponding build context. `repo_distribution` supplies the
 Alfresco Content Services distribution zip, which lets a build source the
 distribution from a local folder instead of the in-tree `repository/distribution`.
 
+#### Overriding a build context source
+
+Point a named context at your own folder to supply that image input from
+outside the tree. The replacement directory becomes the **root** of the context,
+so it must contain every file you want for that input: it replaces the in-tree
+folder, it does not merge with it. The table below lists each repository context,
+what you put in it, and where the files land in the built image:
+
+| Scenario | Context | Put in the folder | Lands in the image |
+| --- | --- | --- | --- |
+| Add / override an AMP module (both editions) | `repo_amps` | `*.amp` | installed into `alfresco.war` |
+| Add / override an edition-only AMP | `repo_amps_edition` | `*.amp` (community/enterprise) | installed into `alfresco.war` |
+| Add / override a Tomcat library | `repo_libs` | `*.jar` (e.g. JDBC drivers) | `/usr/local/tomcat/lib/` |
+| Add / override a simple module | `repo_simple_modules` | `*.jar` | `/usr/local/tomcat/modules/platform/` |
+
+**Add or override AMPs.** Point `repo_amps` at a folder containing the `*.amp`
+files you want installed. Because the context is replaced wholesale, that folder
+must hold *every* AMP the image should have — a new component name is added, a
+default component name is overridden by yours, and any default AMP you omit
+(e.g. `share-services`, `aos`) is dropped:
+
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_amps=./my-amps
+```
+
+To keep the fetched defaults and only layer your own AMPs on top by component
+name, use the starter repo below instead of a bare `--set`.
+
+**Add a library to Tomcat** (for example a JDBC driver in
+`/usr/local/tomcat/lib`):
+
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_libs=./my-libs
+```
+
+**Add a simple module** (platform JAR in `/usr/local/tomcat/modules/platform`):
+
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_simple_modules=./my-simple-modules
+```
+
+A local folder is only one of the source types a Docker Bake named context
+accepts. You can also point a context at a Git URL (optionally with a ref and
+subdirectory), an HTTP tarball URL, or an image reference. For example, to pull
+the AMPs from a Git repository at a given tag and subdirectory:
+
+```sh
+docker buildx bake repository \
+  --set repository.contexts.repo_amps=https://github.com/myorg/my-amps.git#v1.0.0:amps
+```
+
+For the exact syntax of each source type, see the Docker Bake documentation on
+[named contexts](https://docs.docker.com/build/bake/reference/#targetcontexts)
+and [build contexts](https://docs.docker.com/build/building/context/).
+
+> **Tip:** For a ready-made starter that wires these overrides for you — fetching
+> the bakery defaults and overlaying your local `amps`, `tomcat-libs`, and
+> `simple-modules` folders by component name — see the
+> [Alfresco Bakery Customization](https://github.com/Alfresco/alfresco-bakery-customization)
+> template repository. It is a basic but workable model you can adapt to your own
+> customization workflow.
+
 ### Customizing the Share image
 
 The Share image can be customized by adding files into specific folders:
