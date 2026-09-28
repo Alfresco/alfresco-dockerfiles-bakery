@@ -755,6 +755,7 @@ target "share" {
   inherits = ["tomcat_base"]
   contexts = {
     tomcat_base = "target:tomcat_base"
+    share_distribution = "./share/distribution"
     share_amps = "./share/amps"
     share_simple_modules = "./share/simple_modules"
   }

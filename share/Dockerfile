@@ -14,7 +14,7 @@ COPY entrypoint.sh ${CATALINA_HOME}/shared/classes/alfresco
 
 ARG ALFRESCO_SHARE_ARTIFACT
 
-COPY distribution/${ALFRESCO_SHARE_ARTIFACT}-*.zip /tmp/
+COPY --from=share_distribution ${ALFRESCO_SHARE_ARTIFACT}-*.zip /tmp/
 COPY --from=share_amps / /tmp/amps
 
 ENV DISTDIR="/tmp/distribution"
