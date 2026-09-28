@@ -196,11 +196,26 @@ distribution from a local folder instead of the in-tree `repository/distribution
 
 #### Overriding a build context source
 
-Point a named context at your own folder to supply that image input from
-outside the tree. The replacement directory becomes the **root** of the context,
-so it must contain every file you want for that input: it replaces the in-tree
-folder, it does not merge with it. The table below lists each repository context,
-what you put in it, and where the files land in the built image:
+There are two ways to customize these inputs, and they behave differently:
+
+- **Merge with the fetched defaults** — drop your files directly into the
+  in-tree default folders (`repository/amps`, `repository/amps_<edition>`,
+  `repository/libs`, `repository/simple_modules`). `fetch_artifacts.py` (run by
+  `make`) populates those same folders with the Nexus defaults such as
+  `share-services` and `aos`, so your files sit **alongside** them and both end
+  up in the image. This is the model used by the customization folders described
+  above, and the one the
+  [Alfresco Bakery Customization](https://github.com/Alfresco/alfresco-bakery-customization)
+  starter template repo automates — a basic but workable model you can adapt to
+  your own customization workflow.
+- **Replace a context wholesale** — point a named context at a *different*
+  source with `--set`. The replacement becomes the **root** of the context, so it
+  must contain every file you want for that input; it replaces the in-tree folder
+  and does **not** merge with it. Any default the folder omits (e.g.
+  `share-services`, `aos`) is dropped.
+
+The table below lists each repository context, what you put in it, and where the
+files land in the built image:
 
 | Scenario | Context | Put in the folder | Lands in the image |
 | --- | --- | --- | --- |
@@ -220,8 +235,9 @@ docker buildx bake repository \
   --set repository.contexts.repo_amps=./my-amps
 ```
 
-To keep the fetched defaults and only layer your own AMPs on top by component
-name, use the starter repo below instead of a bare `--set`.
+To keep the fetched defaults, add your AMPs into the in-tree `repository/amps`
+folder instead of repointing the context, or use the starter repo to overlay
+your own AMPs on top by component name.
 
 **Add a library to Tomcat** (for example a JDBC driver in
 `/usr/local/tomcat/lib`):
@@ -251,13 +267,6 @@ docker buildx bake repository \
 For the exact syntax of each source type, see the Docker Bake documentation on
 [named contexts](https://docs.docker.com/build/bake/reference/#targetcontexts)
 and [build contexts](https://docs.docker.com/build/building/context/).
-
-> **Tip:** For a ready-made starter that wires these overrides for you — fetching
-> the bakery defaults and overlaying your local `amps`, `tomcat-libs`, and
-> `simple-modules` folders by component name — see the
-> [Alfresco Bakery Customization](https://github.com/Alfresco/alfresco-bakery-customization)
-> template repository. It is a basic but workable model you can adapt to your own
-> customization workflow.
 
 ### Customizing the Share image
 
