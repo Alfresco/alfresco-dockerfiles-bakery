@@ -31,6 +31,8 @@ Bake](https://docs.docker.com/build/bake/).
     - [Testing with helm](#testing-with-helm)
     - [Testing with docker compose](#testing-with-docker-compose)
   - [Security scanning](#security-scanning)
+  - [Software Bill of Materials](#software-bill-of-materials)
+  - [Build provenance](#build-provenance)
   - [Fetch artifacts script](#fetch-artifacts-script)
     - [Usage](#usage)
     - [Arguments](#arguments)
@@ -140,8 +142,13 @@ process:
   architecture of the system where the build is run). See [Supported
   Architectures](#supported-architectures) for more information.
 - `BAKE_NO_CACHE`: Set to `1` to disable the cache during the build process
-- `BAKE_NO_PROVENANCE`: Set to `1` to not add provenance metadata during the build
-  process. This is mostly useful if your registry do not support it.
+- `BAKE_NO_SBOM`: Set to `1` to not attach an SBOM attestation to the images when
+  pushing them to a registry. See [Software Bill of Materials](#software-bill-of-materials)
+  for more information.
+- `BAKE_PROVENANCE`: Provenance attestation to attach to the images when pushing
+  them to a registry, disabled (`false`) by default. Set to `mode=min` or
+  `mode=max` to describe your own build. See [Build
+  provenance](#build-provenance) for more information.
 
 For example, to build multi-arch images for ARM64 and X86_64 and push them to a
 custom registry, you can run the following command:
@@ -464,6 +471,12 @@ if the `grype` binary is available in the PATH.
 > manual triaging of scanner findings within the application code. Remember to
 > always assess findings within the context of your specific deployment.
 
+Images built from `java_base` use
+`docker.io/rockylinux/rockylinux:9-minimal`, set through the
+`IMAGE_BASE_LOCATION` bake variable. [`.grype.yaml`](.grype.yaml) skips
+`java-archive` packages, so application JARs are left out. Recorded results are
+in [docs/security-scanning.md](docs/security-scanning.md).
+
 If you want to run the security scan manually, you can use the following command:
 
 ```sh
@@ -491,6 +504,107 @@ You can also run grype automatically at the end of the build process by setting
 
 ```sh
 make all GRYPE_ONBUILD=1
+```
+
+## Software Bill of Materials
+
+Images pushed to a registry carry an SPDX Software Bill of Materials, attached
+as a [BuildKit SBOM
+attestation](https://docs.docker.com/build/metadata/attestations/sbom/), with
+one attestation per image and per platform.
+
+Getting an SBOM requires `REGISTRY` to be set, since the `docker` exporter used
+when loading images locally cannot carry attestations:
+
+```sh
+export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds
+make repository
+```
+
+When calling bake directly instead of going through the `make` wrapper, pass
+`--sbom=true` yourself:
+
+```sh
+docker buildx bake repository --set *.output=type=registry,push=true --sbom=true
+```
+
+Set `BAKE_NO_SBOM=1` to turn SBOM generation off, for instance when targeting a
+registry which does not support OCI attestation manifests.
+
+To retrieve the SBOM of an image (the registry below is a placeholder, use your
+own):
+
+```sh
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> --format '{{ json .SBOM }}'
+```
+
+For a multi-arch image the output is keyed by platform, so pick one to get a
+plain SPDX document:
+
+```sh
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> --format '{{ json (index .SBOM "linux/amd64").SPDX }}'
+```
+
+The resulting document can be fed to any SPDX-aware tooling, for example to scan
+it without pulling the image:
+
+```sh
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> --format '{{ json (index .SBOM "linux/amd64").SPDX }}' > sbom.spdx.json
+grype sbom:sbom.spdx.json
+```
+
+## Build provenance
+
+Provenance records how and where an image was built: the repository and commit
+it was built from, the job which built it and the build parameters used. It is
+attached to images pushed to a registry as a [BuildKit provenance
+attestation](https://docs.docker.com/build/metadata/attestations/slsa-provenance/),
+one attestation per image and per platform. This repository's CI builds attach
+it in `mode=max`.
+
+Provenance is disabled by default, since a record only describes the build which
+produced it, and says nothing to whoever consumes the image unless they know the
+build environment it points at. If you build your own images and want
+provenance, describe your own build by setting `BAKE_PROVENANCE`:
+
+```sh
+export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds BAKE_PROVENANCE=mode=max
+make repository
+```
+
+As with the SBOM, this requires `REGISTRY` to be set, since the `docker`
+exporter used when loading images locally cannot carry attestations. When
+calling bake directly instead of going through the `make` wrapper, pass
+`--provenance` yourself:
+
+```sh
+docker buildx bake repository --set *.output=type=registry,push=true --provenance=mode=max
+```
+
+Use `mode=min` for the invocation details only, or leave provenance disabled
+when targeting a registry which does not support OCI attestation manifests.
+
+To retrieve the provenance of an image, picking one platform out of the
+per-platform map (the registry below is a placeholder, use your own):
+
+```sh
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> --format '{{ json (index .Provenance "linux/amd64").SLSA }}'
+```
+
+The interesting fields of the resulting [SLSA
+v1](https://slsa.dev/spec/v1.0/provenance) statement are
+`runDetails.builder.id`, which points at the CI job which produced the image,
+and the `vcs:source` / `vcs:revision` build request arguments, which hold the
+repository and the commit it was built from. The `mode=max` statement also
+carries every build argument, the Dockerfile itself and the resolved base image
+digests. To check which repository, commit and job an image comes from:
+
+```sh
+docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-content-repository:<tag> \
+  --format '{{ json (index .Provenance "linux/amd64").SLSA }}' \
+  | jq '{builder: .runDetails.builder.id,
+         source: .buildDefinition.externalParameters.request.root.request.args["vcs:source"],
+         revision: .buildDefinition.externalParameters.request.root.request.args["vcs:revision"]}'
 ```
 
 ## Fetch artifacts script

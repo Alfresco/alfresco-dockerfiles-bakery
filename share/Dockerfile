@@ -8,7 +8,9 @@ EXPOSE 8000
 RUN mkdir -p ${CATALINA_HOME}/shared/classes/alfresco/web-extension \
     ${CATALINA_HOME}/conf/Catalina/localhost
 
-RUN yum install -y unzip
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    $PKG_MGR install -y unzip && \
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 COPY entrypoint.sh ${CATALINA_HOME}/shared/classes/alfresco
 
@@ -53,10 +55,11 @@ ARG ALFRESCO_SHARE_USER_NAME
 COPY --chown=${ALFRESCO_SHARE_USER_ID}:${ALFRESCO_SHARE_GROUP_ID} --from=share_build ${CATALINA_HOME} ${CATALINA_HOME}
 
 USER root
-RUN groupadd -g ${ALFRESCO_SHARE_GROUP_ID} ${ALFRESCO_SHARE_GROUP_NAME} && \
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    groupadd -g ${ALFRESCO_SHARE_GROUP_ID} ${ALFRESCO_SHARE_GROUP_NAME} && \
     useradd -u ${ALFRESCO_SHARE_USER_ID} -g ${ALFRESCO_SHARE_GROUP_NAME} ${ALFRESCO_SHARE_USER_NAME} -G tomcat && \
-    yum install -y xmlstarlet && \
-    yum clean all && rm -rf /var/cache/yum
+    $PKG_MGR install -y xmlstarlet && \
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 FROM share-rhlike AS share-rockylinux9
 

@@ -15,9 +15,15 @@ COPY alfresco-transform-imagemagick*.jar /opt/app.jar
 
 RUN --mount=type=bind,source=/,target=/dist \
     [ "$TARGETARCH" == 'arm64' ] && export PKGARCH='-aarch64'; \
-    yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm; \
-    yum localinstall -y /dist/imagemagick-distribution-*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/libs/imagemagick-distribution-*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm; \
-    yum clean all && rm -rf /var/cache/yum
+    PKG_MGR=$(command -v dnf || command -v microdnf) && \
+    rpm -Uvh --replacepkgs https://dl.fedoraproject.org/pub/epel/epel-release-latest-${DISTRIB_MAJOR}.noarch.rpm && \
+    RPMS="/dist/imagemagick-distribution-*-el${DISTRIB_MAJOR}${PKGARCH}.rpm /dist/libs/imagemagick-distribution-*-libs-el${DISTRIB_MAJOR}${PKGARCH}.rpm" && \
+    rpm -qp --provides $RPMS | sed 's/ .*//' | sort -u > /tmp/provides && \
+    rpm -qpR $RPMS | grep -vE '^(rpmlib|config)\(|^rtld' | sed 's/ .*//' | sort -u | comm -23 - /tmp/provides > /tmp/requires && \
+    $PKG_MGR install -y $(cat /tmp/requires) && \
+    rpm -Uvh $RPMS && \
+    rm -f /tmp/provides /tmp/requires && \
+    $PKG_MGR clean all && rm -rf /var/cache/dnf /var/cache/yum
 
 RUN groupadd -g ${ALFRESCO_IMAGEMAGICK_GROUP_ID} ${ALFRESCO_IMAGEMAGICK_GROUP_NAME} && \
     useradd -lu ${ALFRESCO_IMAGEMAGICK_USER_ID} -g ${ALFRESCO_IMAGEMAGICK_GROUP_NAME} ${ALFRESCO_IMAGEMAGICK_USER_NAME} && \

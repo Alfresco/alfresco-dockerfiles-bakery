@@ -6,7 +6,8 @@ USER root
 
 COPY distribution /tmp/
 
-RUN yum install -y xmlstarlet unzip && \
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+   $PKG_MGR install -y xmlstarlet unzip && \
    unzip /tmp/*.zip -d $(dirname ${ALFRESCO_SOLR_DIST_DIR}) && \
    mkdir -p ${ALFRESCO_SOLR_DIST_DIR}/data && \
    mv ${ALFRESCO_SOLR_DIST_DIR}/solrhome/alfrescoModels ${ALFRESCO_SOLR_DIST_DIR}/data/ && \
@@ -45,11 +46,12 @@ COPY entrypoint.sh /
 
 WORKDIR ${ALFRESCO_SOLR_DIST_DIR}
 
-RUN groupadd -g ${ALFRESCO_SOLR_GROUP_ID} ${ALFRESCO_SOLR_GROUP_NAME} && \
+RUN PKG_MGR=$(command -v dnf || command -v microdnf) && \
+  groupadd -g ${ALFRESCO_SOLR_GROUP_ID} ${ALFRESCO_SOLR_GROUP_NAME} && \
   useradd -u ${ALFRESCO_SOLR_USER_ID} -g ${ALFRESCO_SOLR_GROUP_NAME} ${ALFRESCO_SOLR_USER_NAME} && \
-  yum install gettext -y && \
-  yum clean all && \
-  rm -rf /var/cache/yum && \
+  $PKG_MGR install -y gettext && \
+  $PKG_MGR clean all && \
+  rm -rf /var/cache/dnf /var/cache/yum && \
   chmod g+w -R {logs,data,solrhome} && \
   chmod +x /entrypoint.sh
 
