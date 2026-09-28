@@ -3,6 +3,9 @@
 Place here your Alfresco module Packages (AMPs) to be installed in the Alfresco
 repository.
 
+> This folder is the default location for the `repo_amps` build context.
+> Override it with `--set repository.contexts.repo_amps=<path>`.
+
 AMP packages should have the `.amp` extension and stick to the Alfresco module
 packaging format as described in the [Alfresco documentation][amp].
 

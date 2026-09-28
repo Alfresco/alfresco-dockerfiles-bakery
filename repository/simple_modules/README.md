@@ -6,3 +6,6 @@ documentation](https://docs.hyland.com/search/all?query=simple+module+jars&value
 Copy jar files produced by the [Alfresco
 SDK](https://github.com/Alfresco/alfresco-sdk) into `repository/simple_modules`
 to add Simple Module to every built repository image.
+
+> This folder is the default location for the `repo_simple_modules` build
+> context. Override it with `--set repository.contexts.repo_simple_modules=<path>`.
