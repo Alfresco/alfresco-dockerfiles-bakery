@@ -189,7 +189,7 @@ variable "TOMCAT_VERSIONS" {
 
     tomcat11 = {
       major   = 11
-      version = "11.0.26"
+      version = "11.0.27"
       sha512  = "a617896307cada4884b24f80c4e977ddad8b3e0f88ce0e2a6eea29d5f332498e276ae5976c227a9c8daecf05c7c90def684a3766dd5a81f47a56d8b1adf43dc3"
     }
   }
