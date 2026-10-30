@@ -349,7 +349,59 @@ EOF
 
     run_fetch
     [ "$status" -eq 0 ]
-    [ -f "$ACTUAL_REPO_ROOT/artifacts_cache/cachesrc/cached-artifact-9.9.9.jar" ]
+    # Cached under the source name, in a URL-keyed subdirectory.
+    [ -n "$(find "$ACTUAL_REPO_ROOT/artifacts_cache/cachesrc" -name 'cached-artifact-9.9.9.jar')" ]
+}
+
+@test "repointing a source to a new URL does not serve the stale cache" {
+    local port_a port_b root_a root_b log_b
+    port_a="$(free_port)"
+    port_b="$(free_port)"
+    root_a="$WORK/repo_a"
+    root_b="$WORK/repo_b"
+    log_b="$WORK/log_b"
+    # Same coordinates on both repos, different bytes, and no checksum (the path
+    # that previously served a stale cached copy).
+    seed_artifact "$root_a" "com.test" "moving-artifact" "1.0.0" ".jar"
+    seed_artifact "$root_b" "com.test" "moving-artifact" "1.0.0" ".jar"
+    echo "from-b" > "$root_b/com/test/moving-artifact/1.0.0/moving-artifact-1.0.0.jar"
+
+    start_mock "$port_a" "$root_a" "" "" ""
+    start_mock "$port_b" "$root_b" "" "" "$log_b"
+    CACHE_DIRS+=("movingsrc")
+
+    # First fetch from repo A populates the cache for that URL.
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  movingsrc:
+    url: http://127.0.0.1:$port_a
+EOF
+    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
+artifacts:
+  moving-artifact:
+    name: moving-artifact
+    version: 1.0.0
+    classifier: .jar
+    group: com.test
+    source: movingsrc
+    path: $DEST
+EOF
+    run_fetch
+    [ "$status" -eq 0 ]
+
+    # Repoint the same source name to repo B and fetch again.
+    rm -f "$DEST/moving-artifact-1.0.0.jar"
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  movingsrc:
+    url: http://127.0.0.1:$port_b
+EOF
+    run_fetch
+    [ "$status" -eq 0 ]
+
+    # Repo B was actually contacted and its bytes served, not the stale cache.
+    grep -q "moving-artifact-1.0.0.jar" "$log_b"
+    grep -q "from-b" "$DEST/moving-artifact-1.0.0.jar"
 }
 
 @test "fails fast on an unknown source" {
