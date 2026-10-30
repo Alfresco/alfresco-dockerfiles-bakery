@@ -6,13 +6,13 @@ artifacts:
     name: libreoffice-dist
     version: 7.2.5
     classifier: "-linux.gz"
-    repository: thirdparty
+    source: thirdparty
     group: org.libreoffice
     path: tengine/libreoffice
   alfresco-transform-libreoffice:
     name: alfresco-transform-libreoffice
     version: 5.4.5
     classifier: ".jar"
-    repository: releases
+    source: releases
     group: org.alfresco
     path: tengine/libreoffice

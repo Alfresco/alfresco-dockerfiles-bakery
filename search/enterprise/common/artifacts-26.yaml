@@ -6,34 +6,34 @@ artifacts:
     name: alfresco-elasticsearch-live-indexing-mediation
     version: 5.9.0
     classifier: "-app.jar"
-    repository: enterprise-releases
+    source: enterprise-releases
     group: org.alfresco
     path: search/enterprise/common
   alfresco-elasticsearch-live-indexing-metadata:
     name: alfresco-elasticsearch-live-indexing-metadata
     version: 5.9.0
     classifier: "-app.jar"
-    repository: enterprise-releases
+    source: enterprise-releases
     group: org.alfresco
     path: search/enterprise/common
   alfresco-elasticsearch-live-indexing-path:
     name: alfresco-elasticsearch-live-indexing-path
     version: 5.9.0
     classifier: "-app.jar"
-    repository: enterprise-releases
+    source: enterprise-releases
     group: org.alfresco
     path: search/enterprise/common
   alfresco-elasticsearch-live-indexing-content:
     name: alfresco-elasticsearch-live-indexing-content
     version: 5.9.0
     classifier: "-app.jar"
-    repository: enterprise-releases
+    source: enterprise-releases
     group: org.alfresco
     path: search/enterprise/common
   alfresco-elasticsearch-live-indexing:
     name: alfresco-elasticsearch-live-indexing
     version: 5.9.0
     classifier: "-app.jar"
-    repository: enterprise-releases
+    source: enterprise-releases
     group: org.alfresco
     path: search/enterprise/common

@@ -3,11 +3,12 @@ name: Update Artifacts for version {{ .updatecli_matrix_version }} in {{ .update
 sources:
 {{- range $key, $artifact := .artifacts }}
   {{- if all $artifact.updatecli_matrix_component_key $artifact.group $artifact.name }}
+  {{- $source := index $.sources $artifact.source }}
   src_{{ $key }}:
     name: {{ $artifact.name }}
     kind: maven
     spec:
-      repository: {{ requiredEnv "NEXUS_USERNAME" }}:{{ requiredEnv "NEXUS_PASSWORD" }}@nexus.alfresco.com/nexus/repository/{{ $artifact.repository }}
+      repository: {{ requiredEnv "NEXUS_USERNAME" }}:{{ requiredEnv "NEXUS_PASSWORD" }}@{{ $source.url | trimPrefix "https://" | trimPrefix "http://" }}
       groupid: {{ $artifact.group }}
       artifactid: {{ $artifact.name}}
       {{- $matrix_filter := index $ "matrix" $.updatecli_matrix_version $artifact.updatecli_matrix_component_key }}

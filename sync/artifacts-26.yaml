@@ -7,12 +7,12 @@ artifacts:
     version: 5.3.7
     classifier: ".zip"
     group: org.alfresco.services.sync
-    repository: enterprise-releases
+    source: enterprise-releases
     path: sync/distribution
   postgresql:
     name: postgresql
     version: 42.7.13
     classifier: ".jar"
     group: org.postgresql
-    repository: public
+    source: public
     path: sync/configs/connectors
