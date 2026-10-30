@@ -81,11 +81,15 @@ def setup_logging(log_level=logging.INFO, log_file=None):
 
 def get_credentials_from_netrc(machine):
     """
-    Get credentials from .netrc file for the specified machine
+    Get credentials from .netrc for the exact machine entry.
+
+    netrc.authenticators() falls back to the special `default` entry when there
+    is no exact match; we deliberately read `hosts[machine]` instead so a default
+    credential is never sent to an unrelated source host.
     """
     try:
         netrc_file = netrc.netrc()
-        auth_info = netrc_file.authenticators(machine)
+        auth_info = netrc_file.hosts.get(machine)
         if auth_info:
             login, _, password = auth_info
             return login, password

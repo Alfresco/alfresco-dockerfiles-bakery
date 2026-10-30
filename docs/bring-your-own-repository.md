@@ -105,3 +105,10 @@ matching entry are accessed anonymously.
   `repository` key fails fast with a clear error.
 - **Credentials never cross hosts.** Each request carries only the credentials of
   its own source's host.
+- **Version bumps only authenticate to Nexus.** The updatecli bump workflow
+  (`.github/updatecli.tpl`) embeds the `NEXUS_USERNAME`/`NEXUS_PASSWORD` pair only
+  for sources on a trusted Nexus host; sources on any other host are queried
+  anonymously, so pointing a source at a third-party repository never sends
+  Alfresco credentials to it. To bump versions from an authenticated third-party
+  repository, add its host to the trusted list in the template and provide its
+  credentials to the workflow.
