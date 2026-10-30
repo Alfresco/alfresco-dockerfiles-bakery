@@ -284,6 +284,44 @@ EOF
     ! grep -q "$auth_a" "$log_b"
 }
 
+@test "does not fall back to the netrc default entry" {
+    local port root log
+    port="$(free_port)"
+    root="$WORK/repo"
+    log="$WORK/log"
+    seed_artifact "$root" "com.test" "default-artifact" "1.0.0" ".jar"
+
+    # Only a 'default' entry exists; the source host has no exact entry, so it
+    # must be treated as anonymous rather than reusing the default credential.
+    printf 'default\n  login defuser\n  password defpass\n' > "$HOME/.netrc"
+    chmod 600 "$HOME/.netrc"
+
+    start_mock "$port" "$root" "" "" "$log"
+
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  mocksrc:
+    url: http://127.0.0.1:$port
+EOF
+    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
+artifacts:
+  default-artifact:
+    name: default-artifact
+    version: 1.0.0
+    classifier: .jar
+    group: com.test
+    source: mocksrc
+    path: $DEST
+EOF
+    CACHE_DIRS+=("mocksrc")
+
+    run_fetch
+    [ "$status" -eq 0 ]
+    [ -f "$DEST/default-artifact-1.0.0.jar" ]
+    # No Authorization header was sent: the default credential was not reused.
+    ! grep -q "Basic " "$log"
+}
+
 @test "caches artifacts in a per-source directory" {
     local port root
     port="$(free_port)"
