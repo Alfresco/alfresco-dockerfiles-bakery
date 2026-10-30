@@ -260,6 +260,16 @@ def prune_stale_artifacts(artifact_details, current_final_path):
             os.remove(entry_path)
             logger.info(f"Removing stale artifact {entry_path} (superseded by {current_basename})")
 
+def source_cache_dir(source):
+    """
+    Per-source cache directory keyed by both the source name (readable) and a
+    hash of its resolved URL. Tying the key to the URL means repointing a source
+    to a different repository under the same name uses a different cache
+    directory, so a stale artifact from the old repository is never served.
+    """
+    url_tag = hashlib.sha1(source["url"].encode("utf-8")).hexdigest()[:12]
+    return os.path.join(REPO_ROOT, "artifacts_cache", source["name"], url_tag)
+
 def fetch_artifact(artifact_details):
     """
     Download a single artifact from its source's Maven repository, using the
@@ -276,7 +286,7 @@ def fetch_artifact(artifact_details):
 
     artifact_basename = artifact_filename(artifact_details)
     artifact_tmp_path = os.path.join(TEMP_DIR, artifact_basename)
-    artifact_cache_path = os.path.join(REPO_ROOT, "artifacts_cache", source["name"], artifact_basename)
+    artifact_cache_path = os.path.join(source_cache_dir(source), artifact_basename)
     artifact_final_path = os.path.join(artifact_path, artifact_basename)
     artifact_download_url = artifact_url(artifact_details, source)
 
