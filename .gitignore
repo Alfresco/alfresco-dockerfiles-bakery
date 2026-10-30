@@ -35,3 +35,4 @@ test/helm/community_values.yaml
 .venv
 venv
 mise.toml
+__pycache__/

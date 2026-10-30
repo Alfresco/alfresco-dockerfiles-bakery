@@ -10,6 +10,7 @@ on:
       - .github/updatecli_values.yaml
       - .github/updatecli_amps.tpl
       - .github/updatecli_amps_values.yaml
+      - sources.yaml
     tags-ignore:
       - "**"
   workflow_dispatch:
@@ -69,7 +70,7 @@ jobs:
         run: |
           set -x
           find . -type f -name 'artifacts-*.yaml' | while read -r i; do
-             updatecli pipeline apply -c .github/updatecli.tpl      -v ${i} -v .github/updatecli_values.yaml -v alfresco-updatecli/deployments/values/supported-matrix.yaml
+             updatecli pipeline apply -c .github/updatecli.tpl      -v ${i} -v .github/updatecli_values.yaml -v sources.yaml -v alfresco-updatecli/deployments/values/supported-matrix.yaml
 
             if yq -e '.updatecli_amps_release_branch' ${i} > /dev/null; then
               updatecli pipeline apply -c .github/updatecli_amps.tpl -v ${i} -v .github/updatecli_amps_values.yaml

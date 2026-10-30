@@ -6,6 +6,6 @@ artifacts:
     name: alfresco-elasticsearch-live-indexing
     version: 5.9.0
     classifier: "-app.jar"
-    repository: enterprise-releases
+    source: enterprise-releases
     group: org.alfresco
     path: search/enterprise/all-in-one

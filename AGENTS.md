@@ -37,7 +37,7 @@ make grype GRYPE_TARGET=repository GRYPE_OPTS="-f high --only-fixed --ignore-sta
 ```
 
 Building requires Docker with `buildx`, plus `jq`, `yq`, `make`, and Python 3 with `pyyaml`. Nexus credentials
-(for Enterprise artifacts) go in `~/.netrc` for `machine nexus.alfresco.com`. The `Vagrantfile` provisions a VM
+(for Enterprise artifacts) go in `~/.netrc` for `machine nexus.alfresco.com` (one entry per source host). The `Vagrantfile` provisions a VM
 with all of this preinstalled as an alternative to a local toolchain.
 
 There is no unit test suite for application code. Image tests are the `*_test.sh` scripts under each image's
@@ -74,9 +74,15 @@ which `aps/**/artifacts-XX.yaml` files get fetched (and, through `print_artifact
 selection.
 
 **Artifacts pipeline.** Each image directory that needs external binaries has one or more `artifacts-XX.yaml`
-files declaring Maven/Nexus coordinates, version, checksum, and destination `path`. `scripts/fetch_artifacts.py`
-walks the repo for `artifacts-*.yaml` (or a given target/glob) and downloads each artifact into that image's
-build context (e.g. `repository/amps`, `repository/libs`). It verifies the checksum when the manifest declares
+files declaring Maven coordinates, version, checksum, a `source`, and destination `path`. Each `source` is a
+named Maven repository root defined in the committed `sources.yaml`; credentials are never stored there but
+resolved per source, by host, from `~/.netrc` (anonymous when none), so a build can mix multiple repositories.
+Third parties can repoint these at their own repositories — see `docs/bring-your-own-repository.md`.
+`scripts/fetch_artifacts.py` walks the repo for `artifacts-*.yaml` (or a given target/glob) and downloads each
+artifact into that image's build context (e.g. `repository/amps`, `repository/libs`) from its source's base URL
+using the standard Maven GAV layout, caching per source under `artifacts_cache/<source>/`. A missing/unknown
+source (or a leftover `repository` key) fails fast; a `401`/`403` skips the artifact and is reported in an
+end-of-run summary. It verifies the checksum when the manifest declares
 one (some manifests, e.g. `search/community/artifacts-26.yaml`, omit it, in which case verification is skipped
 with a logged warning), and prunes stale versions of the same artifact automatically.
 `scripts/print_artifact_versions.py` (invoked by the `Makefile` into
