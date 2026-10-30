@@ -7,7 +7,7 @@ artifacts:
     version: 26.2.0
     classifier: ".war"
     group: com.activiti
-    repository: activiti-enterprise-releases
+    source: activiti-enterprise-releases
     path: aps/admin/distribution
     checksum: "sha1:"
   postgresql:
@@ -15,6 +15,6 @@ artifacts:
     version: 42.7.13
     classifier: ".jar"
     group: org.postgresql
-    repository: public
+    source: public
     path: aps/admin/libs
     checksum: "sha1:"

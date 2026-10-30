@@ -6,7 +6,7 @@ artifacts:
     name: alfresco-cic-connector-nucleus-sync
     version: 1.0.3
     classifier: "-app.jar"
-    repository: enterprise-releases
+    source: enterprise-releases
     group: org.alfresco
     path: cic-connector/cic-connector-nucleus-sync
     checksum: "sha1:"

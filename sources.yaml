@@ -1,0 +1,23 @@
+# Maven repository sources used by scripts/fetch_artifacts.py.
+#
+# Each entry is a named source whose `url` is the root of a Maven repository
+# (the part before the group/artifact/version path). Every artifact in an
+# `artifacts-*.yaml` file references one of these names through its `source`
+# field.
+#
+# No credentials are stored here. Credentials are resolved per source, by host,
+# from your `~/.netrc` file (anonymous access is used when no entry matches).
+#
+# Third parties can point these at their own Maven repositories; see
+# docs/bring-your-own-repository.md.
+sources:
+  public:
+    url: https://nexus.alfresco.com/nexus/repository/public
+  releases:
+    url: https://nexus.alfresco.com/nexus/repository/releases
+  enterprise-releases:
+    url: https://nexus.alfresco.com/nexus/repository/enterprise-releases
+  activiti-enterprise-releases:
+    url: https://nexus.alfresco.com/nexus/repository/activiti-enterprise-releases
+  thirdparty:
+    url: https://nexus.alfresco.com/nexus/repository/thirdparty
