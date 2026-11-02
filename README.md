@@ -103,6 +103,12 @@ Make sure to make the file non-world readable:
 chmod 600 ~/.netrc
 ```
 
+Credentials are resolved per source, by the host of each source defined in
+[`sources.yaml`](sources.yaml), so a `~/.netrc` may hold an entry for every host
+you fetch from. Sources whose host has no matching entry are accessed
+anonymously. To point the build at your own Maven repositories, see [Bring your
+own repository](docs/bring-your-own-repository.md).
+
 ## Getting started quickly
 
 If you do not plan on applying specific customizations but just want to get
@@ -734,13 +740,25 @@ python3 scripts/fetch_artifacts.py repository --log-level DEBUG
 python3 scripts/fetch_artifacts.py repository --log-file download.log
 ```
 
+### Sources
+
+Each artifact in an `artifacts-*.yaml` file declares a `source` that must be
+defined in [`sources.yaml`](sources.yaml) at the root of this repository. A
+source is the root URL of a Maven repository; artifacts are fetched from it
+using the standard Maven GAV layout. Credentials are never stored in
+`sources.yaml`: they are resolved per source, by host, from your `~/.netrc`
+file, and anonymous access is used when no entry matches.
+
+To fetch Alfresco artifacts from your own Maven repositories instead of Nexus,
+see [Bring your own repository](docs/bring-your-own-repository.md).
+
 ### Environment Variables
 
 - `ACS_VERSION` - Alfresco Content Services version (default: "26")
-- `NEXUS_USERNAME` - Nexus repository username
-- `NEXUS_PASSWORD` - Nexus repository password
-- `MAVEN_FQDN` - Maven repository FQDN (default: "nexus.alfresco.com")
-- `MAVEN_REPO` - Full Maven repository URL
+- `NEXUS_USERNAME` - Nexus repository username (overrides `~/.netrc` for the Nexus host)
+- `NEXUS_PASSWORD` - Nexus repository password (overrides `~/.netrc` for the Nexus host)
+- `MAVEN_FQDN` - Host the `NEXUS_USERNAME`/`NEXUS_PASSWORD` override applies to (default: "nexus.alfresco.com")
+- `SOURCES_FILE` - Path to the sources definition file (default: `sources.yaml`)
 
 For authentication check out [nexus authentication](#nexus-authentication)
 

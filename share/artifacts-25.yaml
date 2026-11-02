@@ -8,19 +8,19 @@ artifacts:
     version: 25.5.2
     classifier: ".zip"
     group: org.alfresco
-    repository: enterprise-releases
+    source: enterprise-releases
     path: share/distribution
   alfresco-content-services-community-distribution:
     name: alfresco-content-services-community-distribution
     version: 25.3.0
     classifier: ".zip"
     group: org.alfresco
-    repository: public
+    source: public
     path: share/distribution
   alfresco-googledrive-share:
     name: alfresco-googledrive-share
     version: 5.0.0
     classifier: ".amp"
     group: org.alfresco.integrations
-    repository: releases
+    source: releases
     path: share/amps

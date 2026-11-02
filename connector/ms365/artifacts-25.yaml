@@ -6,6 +6,6 @@ artifacts:
     name: onedrive-springboot
     version: 2.1.5
     classifier: ".jar"
-    repository: enterprise-releases
+    source: enterprise-releases
     group: org.alfresco
     path: connector/ms365

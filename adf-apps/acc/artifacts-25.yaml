@@ -7,5 +7,5 @@ artifacts:
     version: 11.0.0
     classifier: ".zip"
     group: org.alfresco
-    repository: releases
+    source: releases
     path: adf-apps/acc

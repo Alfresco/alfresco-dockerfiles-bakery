@@ -6,6 +6,6 @@ artifacts:
     name: alfresco-elasticsearch-batch-indexing
     version: 5.7.0
     classifier: "-app.jar"
-    repository: releases
+    source: releases
     group: org.alfresco
     path: search/community

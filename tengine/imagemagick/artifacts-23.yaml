@@ -6,34 +6,34 @@ artifacts:
     name: imagemagick-distribution
     version: 7.1.2-13-ci-1
     classifier: "-libs-el9.rpm"
-    repository: thirdparty
+    source: thirdparty
     group: org.imagemagick
     path: tengine/imagemagick/libs
   imagemagick-distribution-el9:
     name: imagemagick-distribution
     version: 7.1.2-13-ci-1
     classifier: "-el9.rpm"
-    repository: thirdparty
+    source: thirdparty
     group: org.imagemagick
     path: tengine/imagemagick
   imagemagick-distribution-el9-libs-aarch64:
     name: imagemagick-distribution
     version: 7.1.2-13-ci-1
     classifier: "-libs-el9-aarch64.rpm"
-    repository: thirdparty
+    source: thirdparty
     group: org.imagemagick
     path: tengine/imagemagick/libs
   imagemagick-distribution-el9-aarch64:
     name: imagemagick-distribution
     version: 7.1.2-13-ci-1
     classifier: "-el9-aarch64.rpm"
-    repository: thirdparty
+    source: thirdparty
     group: org.imagemagick
     path: tengine/imagemagick
   alfresco-transform-imagemagick:
     name: alfresco-transform-imagemagick
     version: 5.4.5
     classifier: ".jar"
-    repository: releases
+    source: releases
     group: org.alfresco
     path: tengine/imagemagick

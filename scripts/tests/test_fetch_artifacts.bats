@@ -53,7 +53,7 @@ artifacts:
     name: test-artifact
     version: 1.0.0
     classifier: .jar
-    repository: public
+    source: public
     group: com.test
     path: test_repo1
 EOF
@@ -177,7 +177,7 @@ artifacts:
     name: test-artifact
     version: 2.0.0
     classifier: .jar
-    repository: public
+    source: public
     group: com.test
     path: bats_test
 EOF
@@ -205,7 +205,7 @@ artifacts:
     name: test-artifact
     version: 2.0.0
     classifier: .jar
-    repository: public
+    source: public
     group: com.test
     path: bats_test
 EOF
@@ -229,7 +229,7 @@ artifacts:
     name: test-artifact
     version: 2.0.0
     classifier: .jar
-    repository: public
+    source: public
     group: com.test
     path: bats_test
 EOF
