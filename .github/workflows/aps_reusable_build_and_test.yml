@@ -117,7 +117,7 @@ jobs:
           repository: Alfresco/alfresco-deployment-test-automation-scripts
           path: dtas
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
-          ref: v1.7.2
+          ref: v1.9.1
 
       - name: Prepare DTAS config file
         run: >-
