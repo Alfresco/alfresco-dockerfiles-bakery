@@ -43,6 +43,15 @@ def secret_prefix(source_name):
     return re.sub(r"[^A-Z0-9]+", "_", source_name.upper()).strip("_")
 
 
+def netrc_quote(value):
+    """
+    Double-quote a credential token so values containing whitespace or special
+    characters round-trip through Python's netrc parser instead of raising
+    NetrcParseError. Backslashes and double quotes are escaped.
+    """
+    return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
 def main():
     if not os.path.isfile(SOURCES_FILE):
         print(f"No sources file at {SOURCES_FILE}; nothing to do")
@@ -60,18 +69,36 @@ def main():
         data = yaml.safe_load(sources_file) or {}
     sources = data.get("sources") or {}
 
-    # The Nexus host is already written by the workflow's own step.
-    seen_hosts = {NEXUS_HOST}
+    # Nexus is written by the workflow's own step; everything else is handled here.
+    seen_hosts = set()
+    # Guard against two differently-named sources normalising to the same secret
+    # prefix: reusing one credential pair across hosts could send a repository's
+    # credentials to the wrong server.
+    prefix_owner = {}
     entries = []
     for name, spec in sources.items():
         url = spec.get("url") if isinstance(spec, dict) else None
         if not url:
             continue
         host = urlsplit(url).hostname
-        if not host or host in seen_hosts:
+        if not host or host == NEXUS_HOST:
             continue
 
         prefix = secret_prefix(name)
+        owner = prefix_owner.get(prefix)
+        if owner is not None and owner[1] != host:
+            print(
+                f"Sources '{owner[0]}' and '{name}' normalise to the same secret "
+                f"prefix '{prefix}' but point to different hosts ({owner[1]}, {host}); "
+                f"rename one so their credentials are not shared.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        prefix_owner.setdefault(prefix, (name, host))
+
+        if host in seen_hosts:
+            continue
+
         username = secrets.get(f"{prefix}_ARTIFACTS_USERNAME")
         password = secrets.get(f"{prefix}_ARTIFACTS_PASSWORD")
         if username and password:
@@ -87,7 +114,11 @@ def main():
 
     with open(NETRC_PATH, "a", encoding="utf-8") as netrc_file:
         for host, username, password in entries:
-            netrc_file.write(f"machine {host}\n  login {username}\n  password {password}\n")
+            netrc_file.write(
+                f"machine {host}\n"
+                f"  login {netrc_quote(username)}\n"
+                f"  password {netrc_quote(password)}\n"
+            )
     os.chmod(NETRC_PATH, 0o600)
 
 

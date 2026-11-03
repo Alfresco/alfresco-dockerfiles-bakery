@@ -52,11 +52,37 @@ EOF
 
     run_script '{"CLOUDSMITH_ARTIFACTS_USERNAME":"csuser","CLOUDSMITH_ARTIFACTS_PASSWORD":"cssecret"}'
     [ "$status" -eq 0 ]
-    # Nexus entry preserved, Cloudsmith entry appended for its host.
+    # Nexus entry preserved, Cloudsmith entry appended for its host with quoted tokens.
     grep -q "machine nexus.alfresco.com" "$NETRC_PATH"
     grep -q "machine dl.cloudsmith.io" "$NETRC_PATH"
-    grep -q "login csuser" "$NETRC_PATH"
-    grep -q "password cssecret" "$NETRC_PATH"
+    grep -q 'login "csuser"' "$NETRC_PATH"
+    grep -q 'password "cssecret"' "$NETRC_PATH"
+}
+
+@test "writes credentials that parse back via the netrc module, including specials" {
+    cat > "$SOURCES_FILE" << 'EOF'
+sources:
+  cloudsmith:
+    url: https://dl.cloudsmith.io/basic/acme/maven
+EOF
+
+    # Password contains a space, a quote and a backslash — all of which would
+    # break an unquoted netrc token.
+    run_script '{"CLOUDSMITH_ARTIFACTS_USERNAME":"cs user","CLOUDSMITH_ARTIFACTS_PASSWORD":"pa ss\"x\\y"}'
+    [ "$status" -eq 0 ]
+
+    # fetch_artifacts.py reads this with the stdlib netrc module; it must parse
+    # and return the exact original values.
+    run env NETRC_PATH="$NETRC_PATH" python3 - <<'PY'
+import netrc, os
+n = netrc.netrc(os.environ["NETRC_PATH"])
+login, _, password = n.hosts["dl.cloudsmith.io"]
+assert login == "cs user", repr(login)
+assert password == 'pa ss"x\\y', repr(password)
+print("ok")
+PY
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"ok"* ]]
 }
 
 @test "skips a non-Nexus source without credentials" {
@@ -97,4 +123,19 @@ EOF
     [ "$status" -eq 0 ]
     [[ "$output" != *"TopSecretValue"* ]]
     [[ "$output" != *"csuser"* ]]
+}
+
+@test "fails when two sources on different hosts share a normalized secret prefix" {
+    cat > "$SOURCES_FILE" << 'EOF'
+sources:
+  my-mirror:
+    url: https://maven.example.com/repo
+  my_mirror:
+    url: https://maven.other.test/repo
+EOF
+
+    run_script '{}'
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"same secret prefix"* ]]
+    [[ "$output" == *"MY_MIRROR"* ]]
 }
