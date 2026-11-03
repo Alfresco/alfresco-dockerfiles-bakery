@@ -91,6 +91,31 @@ matching entry are accessed anonymously.
    python3 scripts/fetch_artifacts.py repository --log-level DEBUG
    ```
 
+## CI authentication for a new source
+
+The build, test, and scan workflows assemble `~/.netrc` with the
+`setup-artifact-netrc` composite action. The action writes the Nexus entry and
+then runs `scripts/write_source_netrc.py`, which reads `sources.yaml` and appends
+a `machine <host>` block for every source on a non-Nexus host whose credentials
+are provided as repository secrets. The resulting `~/.netrc` holds the Nexus
+entry plus one entry per authenticated source host — exactly what
+`fetch_artifacts.py` reads to authenticate per host during the build.
+
+Credentials are handed to the action as `toJSON(secrets)` and looked up by naming
+convention. For a source named `<name>`, add two repository secrets:
+
+- `<NAME>_ARTIFACTS_USERNAME`
+- `<NAME>_ARTIFACTS_PASSWORD`
+
+where `<NAME>` is the source name upper-cased with every run of non-alphanumeric
+characters replaced by a single underscore. For example a source named
+`my-mirror` uses `MY_MIRROR_ARTIFACTS_USERNAME` / `MY_MIRROR_ARTIFACTS_PASSWORD`.
+
+The script appends an entry only when both of a source's secrets are set; a
+source missing either secret, or one that stays on the Nexus host, produces no
+entry. It logs only source names and hosts, so credential values never appear in
+the workflow logs.
+
 ## Behaviour and troubleshooting
 
 - **Authentication failures are skipped, not fatal.** When a source returns

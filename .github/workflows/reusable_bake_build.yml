@@ -37,16 +37,12 @@ jobs:
 
       - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v19.7.1
 
-      - name: Setup nexus authentication
-        shell: bash
-        env:
-          NETRC_PATH: ~/.netrc
-        run: |
-          touch ${{ env.NETRC_PATH }}
-          chmod 600 ${{ env.NETRC_PATH }}
-          echo "machine nexus.alfresco.com" >> ${{ env.NETRC_PATH }}
-          echo "login ${{ secrets.NEXUS_USERNAME_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
-          echo "password ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
+      - name: Setup artifact authentication
+        uses: ./.github/actions/setup-artifact-netrc
+        with:
+          nexus-username: ${{ secrets.NEXUS_USERNAME_READ_ONLY }}
+          nexus-password: ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}
+          secrets-json: ${{ toJSON(secrets) }}
 
       - name: Restore packages artifacts
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0

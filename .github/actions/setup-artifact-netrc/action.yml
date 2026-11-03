@@ -1,0 +1,51 @@
+name: Setup artifact netrc
+description: >-
+  Build the ~/.netrc used to fetch build artifacts. Writes the Nexus entry, then
+  appends a machine entry for each non-Nexus source in sources.yaml whose
+  credentials are supplied as repository secrets (looked up as
+  <NAME>_ARTIFACTS_USERNAME / <NAME>_ARTIFACTS_PASSWORD). Sources without both
+  secrets produce no entry.
+
+inputs:
+  nexus-username:
+    description: Nexus read-only username
+    required: true
+  nexus-password:
+    description: Nexus read-only password
+    required: true
+  sources-file:
+    description: Path to the sources definition file
+    required: false
+    default: sources.yaml
+  secrets-json:
+    description: >-
+      JSON object of repository secrets, pass toJSON(secrets) from the caller.
+      Used to look up per-source credentials by naming convention. Never logged.
+    required: false
+    default: "{}"
+
+runs:
+  using: composite
+  steps:
+    - name: Write Nexus netrc entry
+      shell: bash
+      env:
+        NEXUS_USERNAME: ${{ inputs.nexus-username }}
+        NEXUS_PASSWORD: ${{ inputs.nexus-password }}
+      run: |
+        umask 077
+        netrc="$HOME/.netrc"
+        touch "$netrc"
+        chmod 600 "$netrc"
+        {
+          echo "machine nexus.alfresco.com"
+          echo "  login $NEXUS_USERNAME"
+          echo "  password $NEXUS_PASSWORD"
+        } >> "$netrc"
+
+    - name: Write per-source netrc entries
+      shell: bash
+      env:
+        SOURCES_FILE: ${{ inputs.sources-file }}
+        SECRETS_JSON: ${{ inputs.secrets-json }}
+      run: python3 "${{ github.workspace }}/scripts/write_source_netrc.py"
