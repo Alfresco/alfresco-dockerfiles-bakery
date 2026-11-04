@@ -26,7 +26,7 @@ jobs:
           ) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v19.7.1
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v19.11.0
 
       - name: Setup nexus authentication
         if: '! github.event.pull_request.head.repo.fork'
