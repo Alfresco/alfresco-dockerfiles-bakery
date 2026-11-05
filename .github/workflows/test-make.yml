@@ -45,13 +45,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Build
-        # make runs fetch_artifacts.py. To authenticate a non-Nexus source, add
-        # an env: block here with its named secrets, e.g.:
-        #   env:
-        #     MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
-        #     MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
-        run: make ${{ matrix.target }}
+      - name: Setup additional source authentication
+        if: '! github.event.pull_request.head.repo.fork'
+        shell: bash
+        # Writes a ~/.netrc entry for each non-Nexus source whose credentials are
+        # passed here as named secrets. To authenticate a new source, uncomment and
+        # add its <NAME>_ARTIFACTS_USERNAME / <NAME>_ARTIFACTS_PASSWORD secrets:
+        # env:
+        #   MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
+        #   MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
+        run: python3 ./scripts/write_source_netrc.py
+
+      - run: make ${{ matrix.target }}
 
       - name: Check Images are loaded
         run: |

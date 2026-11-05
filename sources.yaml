@@ -5,10 +5,11 @@
 # `artifacts-*.yaml` file references one of these names through its `source`
 # field.
 #
-# No credentials are stored here. Credentials are resolved per source from
-# `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` environment variables,
-# then (Nexus host only) NEXUS_USERNAME / NEXUS_PASSWORD, then by host from your
-# `~/.netrc` file (anonymous access is used when nothing matches).
+# No credentials are stored here. fetch_artifacts.py resolves them by host: the
+# NEXUS_USERNAME / NEXUS_PASSWORD override for the Nexus host, otherwise your
+# `~/.netrc` file (anonymous access is used when nothing matches). In CI the
+# `~/.netrc` is populated by scripts/write_source_netrc.py from each source's
+# `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` secrets.
 #
 # Third parties can point these at their own Maven repositories; see
 # docs/bring-your-own-repository.md.

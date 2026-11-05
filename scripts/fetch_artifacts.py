@@ -3,10 +3,11 @@ Process artifacts yml files to download the artifacts from Maven repositories.
 
 Each artifact declares a `source` that must be defined in sources.yaml. A source
 is the root URL of a Maven repository; artifacts are fetched from it using the
-standard Maven GAV layout. Credentials are resolved per source: from the
-`<PREFIX>_ARTIFACTS_USERNAME`/`<PREFIX>_ARTIFACTS_PASSWORD` environment variables
-(where `<PREFIX>` is derived from the source name), then the Nexus override, then
-the standard ~/.netrc file (anonymous access is used when none match).
+standard Maven GAV layout. Credentials are resolved by the source's host: the
+Nexus override for the Nexus host, then the standard ~/.netrc file (the credential
+store that developers maintain and CI populates with scripts/write_source_netrc.py),
+and anonymous access when neither matches. Per-source credentials are never read
+from the environment here; environment variables only tweak behaviour.
 
 Run this script with:
 python3 scripts/fetch_artifacts.py [<target_subdir>] [--log-level LEVEL] [--log-file FILE]
@@ -144,32 +145,18 @@ def validate_source_prefixes(names):
             sys.exit(1)
         seen[prefix] = name
 
-def resolve_source_credentials(name, host):
+def resolve_source_credentials(host):
     """
-    Resolve the credentials for a source. Resolution order:
-      1. <PREFIX>_ARTIFACTS_USERNAME / <PREFIX>_ARTIFACTS_PASSWORD environment
-         variables, where <PREFIX> is derived from the source name (see
-         secret_prefix). This lets CI pass only the named secrets it needs.
-      2. NEXUS_USERNAME / NEXUS_PASSWORD environment variables, for the Nexus host.
-      3. The matching ~/.netrc entry for the host.
-    Returns (None, None) for anonymous access.
+    Resolve the credentials for a source's host. Resolution order:
+      1. NEXUS_USERNAME / NEXUS_PASSWORD environment variables, for the Nexus host
+         (the sanctioned credential override for that one host).
+      2. The matching ~/.netrc entry for the host, which is the credential store:
+         developers maintain it themselves and CI populates it from per-source
+         secrets with scripts/write_source_netrc.py.
+    Returns (None, None) for anonymous access. Per-source credentials are never
+    read from the environment here; the `<PREFIX>_ARTIFACTS_*` variables are only
+    consumed by write_source_netrc.py when it builds ~/.netrc.
     """
-    prefix = secret_prefix(name)
-    user_var = f"{prefix}_ARTIFACTS_USERNAME"
-    pass_var = f"{prefix}_ARTIFACTS_PASSWORD"
-    username = os.getenv(user_var)
-    password = os.getenv(pass_var)
-    if username and password:
-        return username, password
-    if username or password:
-        # A half-set pair is always a misconfiguration (e.g. a typo'd secret
-        # name); fail fast rather than silently degrading to a confusing 401/403.
-        logger.error(
-            f"Source '{name}': only one of {user_var} / {pass_var} is set; "
-            f"set both or neither"
-        )
-        sys.exit(1)
-
     if host == NEXUS_HOST and os.getenv("NEXUS_USERNAME") and os.getenv("NEXUS_PASSWORD"):
         return os.getenv("NEXUS_USERNAME"), os.getenv("NEXUS_PASSWORD")
 
@@ -202,7 +189,7 @@ def load_sources():
             sys.exit(1)
         url = url.rstrip("/")
         host = urllib.parse.urlsplit(url).hostname
-        username, password = resolve_source_credentials(name, host)
+        username, password = resolve_source_credentials(host)
         resolved[name] = {
             "name": name,
             "url": url,

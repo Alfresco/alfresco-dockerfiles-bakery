@@ -36,12 +36,12 @@ An artifact declaring `source: releases` with group `org.alfresco`, name
 that is, the source URL followed by the standard Maven
 `group/artifact/version/file` path.
 
-No credentials are stored in `sources.yaml`. They are resolved per source, from
-the `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` environment
-variables (see [CI authentication for a new source](#ci-authentication-for-a-new-source)),
-then, for the Nexus host only, from `NEXUS_USERNAME` / `NEXUS_PASSWORD`, and
-otherwise from your `~/.netrc` file, keyed by the host of each source URL.
-Sources with no matching credentials are accessed anonymously.
+No credentials are stored in `sources.yaml`. `fetch_artifacts.py` resolves them by
+the host of each source URL: the `NEXUS_USERNAME` / `NEXUS_PASSWORD` override for
+the Nexus host, otherwise your `~/.netrc` file. Sources whose host has no matching
+entry are accessed anonymously. In CI the `~/.netrc` is built from per-source
+secrets (see [CI authentication for a new
+source](#ci-authentication-for-a-new-source)).
 
 ## Using your own repositories
 
@@ -96,19 +96,24 @@ Sources with no matching credentials are accessed anonymously.
 
 ## CI authentication for a new source
 
-The build, test, and scan workflows write the Nexus `~/.netrc` entry inline.
-Every other source authenticates through environment variables that
-`fetch_artifacts.py` reads directly: for a source named `<name>` it looks up
+The build, test, and scan workflows write the Nexus `~/.netrc` entry inline, then
+run `scripts/write_source_netrc.py` to add a `~/.netrc` entry for every other
+source whose credentials are supplied as secrets. `fetch_artifacts.py` then reads
+those credentials from `~/.netrc` by host, exactly as it reads a developer's own
+`~/.netrc`. Environment variables are only how the secrets reach that script; the
+fetch itself never reads credentials from the environment.
+
+For a source named `<name>`, the two secrets are
 `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD`, where `<NAME>` is the
 source name upper-cased, with every run of non-alphanumeric characters replaced by
 a single underscore and any leading or trailing underscore removed. The prefix
 must contain a letter, must not start with a digit, and must be unique across
-sources; `fetch_artifacts.py` fails fast otherwise. Source names must also be
-text: quote names that YAML would read as another type, such as `"true"`, `"null"`
-or `"123"`. For example a source named
-`my-mirror` resolves to `MY_MIRROR_ARTIFACTS_USERNAME` / `MY_MIRROR_ARTIFACTS_PASSWORD`.
+sources; the script fails fast otherwise. Source names must also be text: quote
+names that YAML would read as another type, such as `"true"`, `"null"` or `"123"`.
+For example a source named `my-mirror` uses `MY_MIRROR_ARTIFACTS_USERNAME` /
+`MY_MIRROR_ARTIFACTS_PASSWORD`.
 
-Examples of how a source name maps to its credential variables:
+Examples of how a source name maps to its secret names:
 
 | Source name            | Prefix                | Variables                                                       | Valid |
 | ---------------------- | --------------------- | -------------------------------------------------------------- | ----- |
@@ -146,48 +151,28 @@ Examples of how a source name maps to its credential variables:
 3. Add the two credentials as repository secrets named
    `MY_MIRROR_ARTIFACTS_USERNAME` and `MY_MIRROR_ARTIFACTS_PASSWORD`.
 
-4. Pass only those secrets to the step that fetches artifacts, via its `env:`
-   block. In `.github/workflows/reusable_bake_build.yml` that is the step that
-   runs `fetch_artifacts.py` (currently named `Fetch artifacts with test from
-   nexus for ACS`; despite the name it downloads from every source, not only
-   Nexus):
+4. Pass only those secrets to the `Setup additional source authentication` step
+   (the one that runs `scripts/write_source_netrc.py`) via its `env:` block. The
+   three workflows carry a commented placeholder for exactly this — uncomment and
+   fill it in:
 
    ```yaml
-   - name: Fetch artifacts for ACS
+   - name: Setup additional source authentication
      shell: bash
      env:
-       ACS_VERSION: ${{ inputs.version }}
        MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
        MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
-     run: |
-       python3 ./scripts/fetch_artifacts.py '${{ inputs.artifacts-to-fetch }}'
-   ```
-
-   In `.github/workflows/grype-scan.yml` and `.github/workflows/test-make.yml`
-   the fetch runs inside `make`, so add the same `env:` to the `make` step:
-
-   ```yaml
-   - env:
-       MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
-       MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
-     run: make ${{ matrix.target }}
+     run: python3 ./scripts/write_source_netrc.py
    ```
 
 Nothing needs changing until such a source exists: every source shipped in
 `sources.yaml` is on the Nexus host and authenticates through the inline Nexus
-entry, so the workflows carry no per-source `env:` today.
+entry, so the workflows pass no per-source secrets today.
 
 ### Running locally
 
-Locally you can either export the same variables:
-
-```sh
-export MY_MIRROR_ARTIFACTS_USERNAME='alice'
-export MY_MIRROR_ARTIFACTS_PASSWORD='s3cret'
-python3 scripts/fetch_artifacts.py repository
-```
-
-or add a `~/.netrc` entry for the source's host (keyed by host, not source name):
+Locally, add a `~/.netrc` entry for each host your sources use — the same file
+`fetch_artifacts.py` reads in CI:
 
 ```sh
 machine maven.acme.example.com
@@ -195,12 +180,20 @@ machine maven.acme.example.com
   password s3cret
 ```
 
-When both variables are set the source authenticates with them. Setting only one
-is treated as a misconfiguration and `fetch_artifacts.py` fails fast. When
-neither is set the source falls back to `NEXUS_USERNAME` / `NEXUS_PASSWORD`
-(Nexus host only), then `~/.netrc`, and finally anonymous access. Only the named
-secrets a source needs are exposed to the process, and credential values are
-never logged.
+```sh
+chmod 600 ~/.netrc
+```
+
+Then build as usual, or run the fetch directly:
+
+```sh
+python3 scripts/fetch_artifacts.py repository --log-level DEBUG
+```
+
+Omit the entry for hosts that serve artifacts anonymously. `fetch_artifacts.py`
+resolves credentials by host: the `NEXUS_USERNAME` / `NEXUS_PASSWORD` override for
+the Nexus host, then `~/.netrc`, then anonymous access. It never reads per-source
+credentials from the environment, and credential values are never logged.
 
 ## Behaviour and troubleshooting
 
@@ -214,11 +207,11 @@ never logged.
 - **Validation is strict.** Every artifact must declare a `source` that exists in
   the active sources file. A missing source, an unknown source, or a leftover
   `repository` key fails fast with a clear error.
-- **Credentials never cross hosts.** Each request carries only the credentials of
-  its own source's host. Credentials supplied through
-  `<NAME>_ARTIFACTS_*` are tied to the source *name*, not its host, so review any
-  change to a source's `url` in `sources.yaml` as carefully as a change to the
-  secret itself.
+- **Credentials never cross hosts.** `fetch_artifacts.py` sends each request only
+  the `~/.netrc` credentials for that request's host. When CI builds `~/.netrc`
+  from per-source secrets, each source's secret is written under its own host, so
+  review any change to a source's `url` in `sources.yaml` as carefully as a change
+  to the secret itself.
 - **Version bumps only authenticate to Nexus.** The updatecli bump workflow
   (`.github/updatecli.tpl`) embeds the `NEXUS_USERNAME`/`NEXUS_PASSWORD` pair only
   for sources on a trusted Nexus host; sources on any other host are queried
@@ -226,3 +219,20 @@ never logged.
   Alfresco credentials to it. To bump versions from an authenticated third-party
   repository, add its host to the trusted list in the template and provide its
   credentials to the workflow.
+
+## Limitations
+
+- **One credential per host.** `~/.netrc` is keyed by host, so two sources on the
+  same host cannot use different credentials. In CI the netrc builder writes the
+  first such source's entry and skips the rest of that host; the others then reuse
+  that credential and fail with `401`/`403` if it is wrong. Give colliding sources
+  distinct hosts if they need distinct credentials.
+- **CI auth for a new source is a manual, two-step change.** GitHub Actions cannot
+  enumerate secrets, so each new authenticated source needs its two secrets
+  created and referenced explicitly in the workflow step's `env:`. There is no
+  automatic discovery; nothing happens until both are done.
+- **The CI netrc builder requires Python 3.11+.** `scripts/write_source_netrc.py`
+  quotes credentials so values with spaces or special characters round-trip, and
+  only Python 3.11+'s `netrc` parser understands those quotes. This is satisfied
+  by the CI runners; it does not affect developers, who maintain their own
+  `~/.netrc`.

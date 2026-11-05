@@ -48,6 +48,16 @@ jobs:
           echo "login ${{ secrets.NEXUS_USERNAME_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
           echo "password ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
 
+      - name: Setup additional source authentication
+        shell: bash
+        # Writes a ~/.netrc entry for each non-Nexus source whose credentials are
+        # passed here as named secrets. To authenticate a new source, uncomment and
+        # add its <NAME>_ARTIFACTS_USERNAME / <NAME>_ARTIFACTS_PASSWORD secrets:
+        # env:
+        #   MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
+        #   MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
+        run: python3 ./scripts/write_source_netrc.py
+
       - name: Restore packages artifacts
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: artifacts-cache
@@ -59,9 +69,6 @@ jobs:
         shell: bash
         env:
           ACS_VERSION: ${{ inputs.version }}
-          # To authenticate a non-Nexus source, add its named secrets here, e.g.:
-          # MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
-          # MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
         run: |
           python3 ./scripts/fetch_artifacts.py '${{ inputs.artifacts-to-fetch }}'
 

@@ -119,106 +119,6 @@ EOF
     [ -f "$DEST/test-artifact-1.0.0.jar" ]
 }
 
-@test "resolves source credentials from per-source environment variables" {
-    local port root
-    port="$(free_port)"
-    root="$WORK/repo"
-    seed_artifact "$root" "com.test" "env-artifact" "1.0.0" ".jar"
-
-    # No .netrc entry: credentials must come from the source's env vars.
-    start_mock "$port" "$root" "envuser" "envsecret" ""
-
-    cat > "$SOURCES_FILE" << EOF
-sources:
-  mocksrc:
-    url: http://127.0.0.1:$port
-EOF
-    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
-artifacts:
-  env-artifact:
-    name: env-artifact
-    version: 1.0.0
-    classifier: .jar
-    group: com.test
-    source: mocksrc
-    path: $DEST
-EOF
-    CACHE_DIRS+=("mocksrc")
-
-    export MOCKSRC_ARTIFACTS_USERNAME="envuser"
-    export MOCKSRC_ARTIFACTS_PASSWORD="envsecret"
-    run_fetch
-    [ "$status" -eq 0 ]
-    [ -f "$DEST/env-artifact-1.0.0.jar" ]
-}
-
-@test "per-source environment credentials take precedence over netrc" {
-    local port root
-    port="$(free_port)"
-    root="$WORK/repo"
-    seed_artifact "$root" "com.test" "precedence-artifact" "1.0.0" ".jar"
-
-    # Wrong credentials in .netrc; the correct ones come from the env vars.
-    printf 'machine 127.0.0.1\n  login wrong\n  password wrong\n' > "$HOME/.netrc"
-    chmod 600 "$HOME/.netrc"
-    start_mock "$port" "$root" "envuser" "envsecret" ""
-
-    cat > "$SOURCES_FILE" << EOF
-sources:
-  mocksrc:
-    url: http://127.0.0.1:$port
-EOF
-    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
-artifacts:
-  precedence-artifact:
-    name: precedence-artifact
-    version: 1.0.0
-    classifier: .jar
-    group: com.test
-    source: mocksrc
-    path: $DEST
-EOF
-    CACHE_DIRS+=("mocksrc")
-
-    export MOCKSRC_ARTIFACTS_USERNAME="envuser"
-    export MOCKSRC_ARTIFACTS_PASSWORD="envsecret"
-    run_fetch
-    [ "$status" -eq 0 ]
-    [ -f "$DEST/precedence-artifact-1.0.0.jar" ]
-}
-
-@test "maps a hyphenated source name to an underscored env prefix" {
-    local port root
-    port="$(free_port)"
-    root="$WORK/repo"
-    seed_artifact "$root" "com.test" "hyphen-artifact" "1.0.0" ".jar"
-
-    start_mock "$port" "$root" "mirroruser" "mirrorsecret" ""
-
-    cat > "$SOURCES_FILE" << EOF
-sources:
-  my-mirror:
-    url: http://127.0.0.1:$port
-EOF
-    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
-artifacts:
-  hyphen-artifact:
-    name: hyphen-artifact
-    version: 1.0.0
-    classifier: .jar
-    group: com.test
-    source: my-mirror
-    path: $DEST
-EOF
-    CACHE_DIRS+=("my-mirror")
-
-    export MY_MIRROR_ARTIFACTS_USERNAME="mirroruser"
-    export MY_MIRROR_ARTIFACTS_PASSWORD="mirrorsecret"
-    run_fetch
-    [ "$status" -eq 0 ]
-    [ -f "$DEST/hyphen-artifact-1.0.0.jar" ]
-}
-
 @test "fetches anonymously when the source has no credentials" {
     local port root
     port="$(free_port)"
@@ -617,23 +517,6 @@ EOF
     [[ "$output" == *"ok"* ]]
 }
 
-@test "a wrong env credential is rejected by the source" {
-    local port root
-    port="$(free_port)"
-    root="$WORK/repo"
-    # Guards the precedence test: the mock must refuse wrong credentials even
-    # when .netrc holds the right ones.
-    printf 'machine 127.0.0.1\n  login envuser\n  password envsecret\n' > "$HOME/.netrc"
-    chmod 600 "$HOME/.netrc"
-    start_mock "$port" "$root" "envuser" "envsecret" ""
-    write_basic_fixture mocksrc wrong-env-artifact "$port" "$root"
-
-    export MOCKSRC_ARTIFACTS_USERNAME="wrong"
-    export MOCKSRC_ARTIFACTS_PASSWORD="wrong"
-    run_fetch
-    [ ! -f "$DEST/wrong-env-artifact-1.0.0.jar" ]
-}
-
 @test "fails fast on a non-string (boolean) source name" {
     # An unquoted 'true' key is loaded as a YAML boolean, not a string; it must
     # produce a clear configuration error, not an AttributeError traceback.
@@ -659,59 +542,6 @@ EOF
     [[ "$output" == *"is not a string"* ]]
 }
 
-@test "empty per-source variables are treated as unset" {
-    local port root
-    port="$(free_port)"
-    root="$WORK/repo"
-    # GitHub expands a missing secret to an empty string, so a workflow that
-    # passes a secret nobody created must still fall back to .netrc.
-    printf 'machine 127.0.0.1\n  login alice\n  password secret\n' > "$HOME/.netrc"
-    chmod 600 "$HOME/.netrc"
-    start_mock "$port" "$root" "alice" "secret" ""
-    write_basic_fixture mocksrc empty-env-artifact "$port" "$root"
-
-    export MOCKSRC_ARTIFACTS_USERNAME=""
-    export MOCKSRC_ARTIFACTS_PASSWORD=""
-    run_fetch
-    [ "$status" -eq 0 ]
-    [ -f "$DEST/empty-env-artifact-1.0.0.jar" ]
-}
-
-@test "fails fast when only one per-source variable is set" {
-    local port root
-    port="$(free_port)"
-    root="$WORK/repo"
-    printf 'machine 127.0.0.1\n  login alice\n  password secret\n' > "$HOME/.netrc"
-    chmod 600 "$HOME/.netrc"
-    start_mock "$port" "$root" "alice" "secret" ""
-    write_basic_fixture mocksrc partial-artifact "$port" "$root"
-
-    export MOCKSRC_ARTIFACTS_USERNAME="onlyuser"
-    unset MOCKSRC_ARTIFACTS_PASSWORD
-    run_fetch
-    [ "$status" -ne 0 ]
-    [[ "$output" == *"only one of MOCKSRC_ARTIFACTS_USERNAME / MOCKSRC_ARTIFACTS_PASSWORD"* ]]
-    [[ "$output" != *"onlyuser"* ]]
-    [ ! -f "$DEST/partial-artifact-1.0.0.jar" ]
-}
-
-@test "per-source env credentials take precedence over the Nexus override" {
-    local port root
-    port="$(free_port)"
-    root="$WORK/repo"
-    start_mock "$port" "$root" "envuser" "envsecret" ""
-    write_basic_fixture mocksrc nexus-prec-artifact "$port" "$root"
-
-    export MAVEN_FQDN="127.0.0.1"
-    export NEXUS_USERNAME="nexuswrong"
-    export NEXUS_PASSWORD="nexuswrong"
-    export MOCKSRC_ARTIFACTS_USERNAME="envuser"
-    export MOCKSRC_ARTIFACTS_PASSWORD="envsecret"
-    run_fetch
-    [ "$status" -eq 0 ]
-    [ -f "$DEST/nexus-prec-artifact-1.0.0.jar" ]
-}
-
 @test "the Nexus override applies to the Nexus host when no per-source variables are set" {
     local port root
     port="$(free_port)"
@@ -732,13 +562,14 @@ EOF
     local port root
     port="$(free_port)"
     root="$WORK/repo"
+    printf 'machine 127.0.0.1\n  login secretuser\n  password s3cr3t-value\n' > "$HOME/.netrc"
+    chmod 600 "$HOME/.netrc"
     start_mock "$port" "$root" "secretuser" "s3cr3t-value" ""
     write_basic_fixture mocksrc nolog-artifact "$port" "$root"
 
-    export MOCKSRC_ARTIFACTS_USERNAME="secretuser"
-    export MOCKSRC_ARTIFACTS_PASSWORD="s3cr3t-value"
     run_fetch
     [ "$status" -eq 0 ]
+    [ -f "$DEST/nolog-artifact-1.0.0.jar" ]
     [[ "$output" != *"s3cr3t-value"* ]]
     [[ "$output" != *"secretuser"* ]]
 }
