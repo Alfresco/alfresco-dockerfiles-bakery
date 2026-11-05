@@ -105,9 +105,9 @@ chmod 600 ~/.netrc
 
 Credentials are resolved per source: first from the
 `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` environment variables
-(where `<NAME>` is the source name from [`sources.yaml`](sources.yaml) upper-cased
-with non-alphanumeric characters replaced by underscores), then, for the Nexus
-host, from `NEXUS_USERNAME` / `NEXUS_PASSWORD`, and otherwise from your `~/.netrc`
+(where `<NAME>` is the source name from [`sources.yaml`](sources.yaml) upper-cased,
+with each run of non-alphanumeric characters collapsed to one underscore and
+leading and trailing underscores removed), then, for the Nexus host, from `NEXUS_USERNAME` / `NEXUS_PASSWORD`, and otherwise from your `~/.netrc`
 file by host. Sources with no matching credentials are accessed anonymously. To
 point the build at your own Maven repositories, see [Bring your own
 repository](docs/bring-your-own-repository.md).
@@ -762,7 +762,7 @@ see [Bring your own repository](docs/bring-your-own-repository.md).
 ### Environment Variables
 
 - `ACS_VERSION` - Alfresco Content Services version (default: "26")
-- `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` - Per-source credentials, where `<NAME>` is the source name from `sources.yaml` upper-cased with non-alphanumeric runs replaced by underscores (e.g. `my-mirror` -> `MY_MIRROR`)
+- `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` - Per-source credentials, where `<NAME>` is the source name from `sources.yaml` upper-cased, with each run of non-alphanumeric characters collapsed to one underscore and leading and trailing underscores removed (e.g. `my-mirror` and `my--mirror` -> `MY_MIRROR`)
 - `NEXUS_USERNAME` - Nexus repository username (overrides `~/.netrc` for the Nexus host)
 - `NEXUS_PASSWORD` - Nexus repository password (overrides `~/.netrc` for the Nexus host)
 - `MAVEN_FQDN` - Host the `NEXUS_USERNAME`/`NEXUS_PASSWORD` override applies to (default: "nexus.alfresco.com")
