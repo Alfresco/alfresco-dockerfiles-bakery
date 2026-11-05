@@ -36,9 +36,11 @@ An artifact declaring `source: releases` with group `org.alfresco`, name
 that is, the source URL followed by the standard Maven
 `group/artifact/version/file` path.
 
-No credentials are stored in `sources.yaml`. They are resolved per source, by the
-host of each source URL, from your `~/.netrc` file. Sources whose host has no
-matching entry are accessed anonymously.
+No credentials are stored in `sources.yaml`. They are resolved per source, from
+the `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` environment
+variables (see [CI authentication for a new source](#ci-authentication-for-a-new-source))
+and otherwise from your `~/.netrc` file, keyed by the host of each source URL.
+Sources with no matching credentials are accessed anonymously.
 
 ## Using your own repositories
 
@@ -93,28 +95,30 @@ matching entry are accessed anonymously.
 
 ## CI authentication for a new source
 
-The build, test, and scan workflows write the Nexus `~/.netrc` entry inline, then
-add credentials for other hosts with the `setup-source-netrc` composite action.
-The action runs `scripts/write_source_netrc.py`, which reads `sources.yaml` and
-appends a `machine <host>` block for every source on a non-Nexus host whose
-credentials are provided as repository secrets. The resulting `~/.netrc` holds
-the Nexus entry plus one entry per authenticated source host — exactly what
-`fetch_artifacts.py` reads to authenticate per host during the build.
+The build, test, and scan workflows write the Nexus `~/.netrc` entry inline.
+Every other source authenticates through environment variables that
+`fetch_artifacts.py` reads directly: for a source named `<name>` it looks up
+`<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD`, where `<NAME>` is the
+source name upper-cased with every run of non-alphanumeric characters replaced by
+a single underscore. For example a source named `my-mirror` resolves to
+`MY_MIRROR_ARTIFACTS_USERNAME` / `MY_MIRROR_ARTIFACTS_PASSWORD`.
 
-Credentials are handed to the action as `toJSON(secrets)` and looked up by naming
-convention. For a source named `<name>`, add two repository secrets:
+To authenticate a new source in CI:
 
-- `<NAME>_ARTIFACTS_USERNAME`
-- `<NAME>_ARTIFACTS_PASSWORD`
+1. Add the two credentials as repository secrets using the names above.
+2. Pass only those secrets to the step that fetches artifacts (the
+   `fetch_artifacts.py` step, or the `make` step that calls it) via its `env:`
+   block, e.g.:
 
-where `<NAME>` is the source name upper-cased with every run of non-alphanumeric
-characters replaced by a single underscore. For example a source named
-`my-mirror` uses `MY_MIRROR_ARTIFACTS_USERNAME` / `MY_MIRROR_ARTIFACTS_PASSWORD`.
+   ```yaml
+   env:
+     MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
+     MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
+   ```
 
-The script appends an entry only when both of a source's secrets are set; a
-source missing either secret, or one that stays on the Nexus host, produces no
-entry. It logs only source names and hosts, so credential values never appear in
-the workflow logs.
+When both variables are set the source authenticates with them; otherwise it
+falls back to `~/.netrc` and finally to anonymous access. Only the named secrets
+a source needs are exposed to the process, and credential values are never logged.
 
 ## Behaviour and troubleshooting
 

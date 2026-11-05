@@ -48,11 +48,6 @@ jobs:
           echo "login ${{ secrets.NEXUS_USERNAME_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
           echo "password ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}" >> ${{ env.NETRC_PATH }}
 
-      - name: Setup additional source authentication
-        uses: ./.github/actions/setup-source-netrc
-        with:
-          secrets-json: ${{ toJSON(secrets) }}
-
       - name: Restore packages artifacts
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: artifacts-cache

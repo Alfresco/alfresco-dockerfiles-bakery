@@ -119,6 +119,106 @@ EOF
     [ -f "$DEST/test-artifact-1.0.0.jar" ]
 }
 
+@test "resolves source credentials from per-source environment variables" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    seed_artifact "$root" "com.test" "env-artifact" "1.0.0" ".jar"
+
+    # No .netrc entry: credentials must come from the source's env vars.
+    start_mock "$port" "$root" "envuser" "envsecret" ""
+
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  mocksrc:
+    url: http://127.0.0.1:$port
+EOF
+    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
+artifacts:
+  env-artifact:
+    name: env-artifact
+    version: 1.0.0
+    classifier: .jar
+    group: com.test
+    source: mocksrc
+    path: $DEST
+EOF
+    CACHE_DIRS+=("mocksrc")
+
+    export MOCKSRC_ARTIFACTS_USERNAME="envuser"
+    export MOCKSRC_ARTIFACTS_PASSWORD="envsecret"
+    run_fetch
+    [ "$status" -eq 0 ]
+    [ -f "$DEST/env-artifact-1.0.0.jar" ]
+}
+
+@test "per-source environment credentials take precedence over netrc" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    seed_artifact "$root" "com.test" "precedence-artifact" "1.0.0" ".jar"
+
+    # Wrong credentials in .netrc; the correct ones come from the env vars.
+    printf 'machine 127.0.0.1\n  login wrong\n  password wrong\n' > "$HOME/.netrc"
+    chmod 600 "$HOME/.netrc"
+    start_mock "$port" "$root" "envuser" "envsecret" ""
+
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  mocksrc:
+    url: http://127.0.0.1:$port
+EOF
+    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
+artifacts:
+  precedence-artifact:
+    name: precedence-artifact
+    version: 1.0.0
+    classifier: .jar
+    group: com.test
+    source: mocksrc
+    path: $DEST
+EOF
+    CACHE_DIRS+=("mocksrc")
+
+    export MOCKSRC_ARTIFACTS_USERNAME="envuser"
+    export MOCKSRC_ARTIFACTS_PASSWORD="envsecret"
+    run_fetch
+    [ "$status" -eq 0 ]
+    [ -f "$DEST/precedence-artifact-1.0.0.jar" ]
+}
+
+@test "maps a hyphenated source name to an underscored env prefix" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    seed_artifact "$root" "com.test" "hyphen-artifact" "1.0.0" ".jar"
+
+    start_mock "$port" "$root" "mirroruser" "mirrorsecret" ""
+
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  my-mirror:
+    url: http://127.0.0.1:$port
+EOF
+    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
+artifacts:
+  hyphen-artifact:
+    name: hyphen-artifact
+    version: 1.0.0
+    classifier: .jar
+    group: com.test
+    source: my-mirror
+    path: $DEST
+EOF
+    CACHE_DIRS+=("my-mirror")
+
+    export MY_MIRROR_ARTIFACTS_USERNAME="mirroruser"
+    export MY_MIRROR_ARTIFACTS_PASSWORD="mirrorsecret"
+    run_fetch
+    [ "$status" -eq 0 ]
+    [ -f "$DEST/hyphen-artifact-1.0.0.jar" ]
+}
+
 @test "fetches anonymously when the source has no credentials" {
     local port root
     port="$(free_port)"

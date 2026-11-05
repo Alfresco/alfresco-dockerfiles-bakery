@@ -3,8 +3,10 @@ Process artifacts yml files to download the artifacts from Maven repositories.
 
 Each artifact declares a `source` that must be defined in sources.yaml. A source
 is the root URL of a Maven repository; artifacts are fetched from it using the
-standard Maven GAV layout. Credentials are resolved per source, by host, from
-the standard ~/.netrc file (anonymous access is used when no entry matches).
+standard Maven GAV layout. Credentials are resolved per source: from the
+`<PREFIX>_ARTIFACTS_USERNAME`/`<PREFIX>_ARTIFACTS_PASSWORD` environment variables
+(where `<PREFIX>` is derived from the source name), then the Nexus override, then
+the standard ~/.netrc file (anonymous access is used when none match).
 
 Run this script with:
 python3 scripts/fetch_artifacts.py [<target_subdir>] [--log-level LEVEL] [--log-file FILE]
@@ -100,17 +102,34 @@ def get_credentials_from_netrc(machine):
         logger.error(f"Error parsing .netrc file: {e}")
     return None, None
 
-def resolve_source_credentials(host):
+def secret_prefix(source_name):
     """
-    Resolve the credentials for a given host from ~/.netrc, honouring the
-    NEXUS_USERNAME/NEXUS_PASSWORD override for the Nexus host only. Returns
-    (None, None) for anonymous access.
+    Map a source name to its credential env-var prefix: upper-cased with every run
+    of non-alphanumeric characters collapsed to a single underscore
+    (e.g. 'my-mirror' -> 'MY_MIRROR').
     """
-    username, password = get_credentials_from_netrc(host)
+    return re.sub(r"[^A-Z0-9]+", "_", source_name.upper()).strip("_")
+
+def resolve_source_credentials(name, host):
+    """
+    Resolve the credentials for a source. Resolution order:
+      1. <PREFIX>_ARTIFACTS_USERNAME / <PREFIX>_ARTIFACTS_PASSWORD environment
+         variables, where <PREFIX> is derived from the source name (see
+         secret_prefix). This lets CI pass only the named secrets it needs.
+      2. NEXUS_USERNAME / NEXUS_PASSWORD environment variables, for the Nexus host.
+      3. The matching ~/.netrc entry for the host.
+    Returns (None, None) for anonymous access.
+    """
+    prefix = secret_prefix(name)
+    username = os.getenv(f"{prefix}_ARTIFACTS_USERNAME")
+    password = os.getenv(f"{prefix}_ARTIFACTS_PASSWORD")
+    if username and password:
+        return username, password
+
     if host == NEXUS_HOST and os.getenv("NEXUS_USERNAME") and os.getenv("NEXUS_PASSWORD"):
-        username = os.getenv("NEXUS_USERNAME")
-        password = os.getenv("NEXUS_PASSWORD")
-    return username, password
+        return os.getenv("NEXUS_USERNAME"), os.getenv("NEXUS_PASSWORD")
+
+    return get_credentials_from_netrc(host)
 
 def load_sources():
     """
@@ -137,7 +156,7 @@ def load_sources():
             sys.exit(1)
         url = url.rstrip("/")
         host = urllib.parse.urlsplit(url).hostname
-        username, password = resolve_source_credentials(host)
+        username, password = resolve_source_credentials(name, host)
         resolved[name] = {
             "name": name,
             "url": url,
