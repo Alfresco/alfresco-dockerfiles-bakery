@@ -106,18 +106,91 @@ must contain a letter, must not start with a digit, and must be unique across
 sources; `fetch_artifacts.py` fails fast otherwise. For example a source named
 `my-mirror` resolves to `MY_MIRROR_ARTIFACTS_USERNAME` / `MY_MIRROR_ARTIFACTS_PASSWORD`.
 
-To authenticate a new source in CI:
+Examples of how a source name maps to its credential variables:
 
-1. Add the two credentials as repository secrets using the names above.
-2. Pass only those secrets to the step that fetches artifacts (the
-   `fetch_artifacts.py` step, or the `make` step that calls it) via its `env:`
-   block, e.g.:
+| Source name            | Prefix                | Variables                                                       | Valid |
+| ---------------------- | --------------------- | -------------------------------------------------------------- | ----- |
+| `my-mirror`            | `MY_MIRROR`           | `MY_MIRROR_ARTIFACTS_USERNAME` / `..._PASSWORD`                 | yes   |
+| `enterprise-releases`  | `ENTERPRISE_RELEASES` | `ENTERPRISE_RELEASES_ARTIFACTS_USERNAME` / `..._PASSWORD`       | yes   |
+| `acme.repo`            | `ACME_REPO`           | `ACME_REPO_ARTIFACTS_USERNAME` / `..._PASSWORD`                 | yes   |
+| `2mirror`              | `2MIRROR`             | — (prefix starts with a digit)                                  | no    |
+| `---`                  | `` (empty)            | — (no alphanumeric characters)                                 | no    |
+| `my-mirror` + `my.mirror` | `MY_MIRROR`        | — (two sources collide on one prefix)                          | no    |
+
+### Worked example: add an authenticated `my-mirror` source
+
+1. Declare the source in `sources.yaml` (URL only — no credentials live here):
 
    ```yaml
-   env:
-     MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
-     MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
+   sources:
+     my-mirror:
+       url: https://maven.acme.example.com/repository/alfresco
    ```
+
+2. Point an artifact at it via its `source` field in an `artifacts-*.yaml` file:
+
+   ```yaml
+   artifacts:
+     my-thing:
+       name: my-thing
+       version: 1.0.0
+       classifier: .jar
+       group: com.acme
+       source: my-mirror
+       path: ./repository/libs
+   ```
+
+3. Add the two credentials as repository secrets named
+   `MY_MIRROR_ARTIFACTS_USERNAME` and `MY_MIRROR_ARTIFACTS_PASSWORD`.
+
+4. Pass only those secrets to the step that fetches artifacts, via its `env:`
+   block. In `.github/workflows/reusable_bake_build.yml` that is the step that
+   runs `fetch_artifacts.py` (currently named `Fetch artifacts with test from
+   nexus for ACS`; despite the name it downloads from every source, not only
+   Nexus):
+
+   ```yaml
+   - name: Fetch artifacts for ACS
+     shell: bash
+     env:
+       ACS_VERSION: ${{ inputs.version }}
+       MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
+       MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
+     run: |
+       python3 ./scripts/fetch_artifacts.py '${{ inputs.artifacts-to-fetch }}'
+   ```
+
+   In `.github/workflows/grype-scan.yml` and `.github/workflows/test-make.yml`
+   the fetch runs inside `make`, so add the same `env:` to the `make` step:
+
+   ```yaml
+   - env:
+       MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
+       MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
+     run: make ${{ matrix.target }}
+   ```
+
+Nothing needs changing until such a source exists: every source shipped in
+`sources.yaml` is on the Nexus host and authenticates through the inline Nexus
+entry, so the workflows carry no per-source `env:` today.
+
+### Running locally
+
+Locally you can either export the same variables:
+
+```sh
+export MY_MIRROR_ARTIFACTS_USERNAME='alice'
+export MY_MIRROR_ARTIFACTS_PASSWORD='s3cret'
+python3 scripts/fetch_artifacts.py repository
+```
+
+or add a `~/.netrc` entry for the source's host (keyed by host, not source name):
+
+```sh
+machine maven.acme.example.com
+  login alice
+  password s3cret
+```
 
 When both variables are set the source authenticates with them. Setting only one
 is treated as a misconfiguration and `fetch_artifacts.py` fails fast. When

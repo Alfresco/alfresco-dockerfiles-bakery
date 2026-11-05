@@ -42,7 +42,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - run: make ${{ matrix.target }}
+      - name: Build
+        # make runs fetch_artifacts.py. To authenticate a non-Nexus source, add
+        # an env: block here with its named secrets, e.g.:
+        #   env:
+        #     MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
+        #     MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
+        run: make ${{ matrix.target }}
 
       - name: Install Grype
         uses: anchore/scan-action/download-grype@27805bf3b4e84b4a5c980df22ed233c00390a439 # v7.4.2
