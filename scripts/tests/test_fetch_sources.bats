@@ -568,3 +568,169 @@ EOF
     [ "$status" -ne 0 ]
     [[ "$output" == *"removed 'repository' field"* ]]
 }
+
+# write_basic_fixture <source-name> <artifact-name> <port> <root>
+write_basic_fixture() {
+    local src="$1" art="$2" port="$3" root="$4"
+    seed_artifact "$root" "com.test" "$art" "1.0.0" ".jar"
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  $src:
+    url: http://127.0.0.1:$port
+EOF
+    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
+artifacts:
+  $art:
+    name: $art
+    version: 1.0.0
+    classifier: .jar
+    group: com.test
+    source: $src
+    path: $DEST
+EOF
+    CACHE_DIRS+=("$src")
+}
+
+@test "secret_prefix normalises source names" {
+    run python3 - << EOF
+import sys
+sys.path.insert(0, "$SCRIPT_DIR")
+import fetch_artifacts as f
+cases = {
+    "my-mirror": "MY_MIRROR",
+    "my.mirror": "MY_MIRROR",
+    "a--b": "A_B",
+    "-lead-": "LEAD",
+    "__x__y__": "X_Y",
+    "releases": "RELEASES",
+    "---": "",
+}
+for name, want in cases.items():
+    got = f.secret_prefix(name)
+    assert got == want, (name, got, want)
+print("ok")
+EOF
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"ok"* ]]
+}
+
+@test "a wrong env credential is rejected by the source" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    # Guards the precedence test: the mock must refuse wrong credentials even
+    # when .netrc holds the right ones.
+    printf 'machine 127.0.0.1\n  login envuser\n  password envsecret\n' > "$HOME/.netrc"
+    chmod 600 "$HOME/.netrc"
+    start_mock "$port" "$root" "envuser" "envsecret" ""
+    write_basic_fixture mocksrc wrong-env-artifact "$port" "$root"
+
+    export MOCKSRC_ARTIFACTS_USERNAME="wrong"
+    export MOCKSRC_ARTIFACTS_PASSWORD="wrong"
+    run_fetch
+    [ ! -f "$DEST/wrong-env-artifact-1.0.0.jar" ]
+}
+
+@test "fails fast when only one per-source variable is set" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    printf 'machine 127.0.0.1\n  login alice\n  password secret\n' > "$HOME/.netrc"
+    chmod 600 "$HOME/.netrc"
+    start_mock "$port" "$root" "alice" "secret" ""
+    write_basic_fixture mocksrc partial-artifact "$port" "$root"
+
+    export MOCKSRC_ARTIFACTS_USERNAME="onlyuser"
+    unset MOCKSRC_ARTIFACTS_PASSWORD
+    run_fetch
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"only one of MOCKSRC_ARTIFACTS_USERNAME / MOCKSRC_ARTIFACTS_PASSWORD"* ]]
+    [[ "$output" != *"onlyuser"* ]]
+    [ ! -f "$DEST/partial-artifact-1.0.0.jar" ]
+}
+
+@test "per-source env credentials take precedence over the Nexus override" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    start_mock "$port" "$root" "envuser" "envsecret" ""
+    write_basic_fixture mocksrc nexus-prec-artifact "$port" "$root"
+
+    export MAVEN_FQDN="127.0.0.1"
+    export NEXUS_USERNAME="nexuswrong"
+    export NEXUS_PASSWORD="nexuswrong"
+    export MOCKSRC_ARTIFACTS_USERNAME="envuser"
+    export MOCKSRC_ARTIFACTS_PASSWORD="envsecret"
+    run_fetch
+    [ "$status" -eq 0 ]
+    [ -f "$DEST/nexus-prec-artifact-1.0.0.jar" ]
+}
+
+@test "the Nexus override applies to the Nexus host when no per-source variables are set" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    start_mock "$port" "$root" "nexususer" "nexussecret" ""
+    write_basic_fixture mocksrc nexus-only-artifact "$port" "$root"
+
+    export MAVEN_FQDN="127.0.0.1"
+    export NEXUS_USERNAME="nexususer"
+    export NEXUS_PASSWORD="nexussecret"
+    unset MOCKSRC_ARTIFACTS_USERNAME MOCKSRC_ARTIFACTS_PASSWORD
+    run_fetch
+    [ "$status" -eq 0 ]
+    [ -f "$DEST/nexus-only-artifact-1.0.0.jar" ]
+}
+
+@test "credential values are never logged" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    start_mock "$port" "$root" "secretuser" "s3cr3t-value" ""
+    write_basic_fixture mocksrc nolog-artifact "$port" "$root"
+
+    export MOCKSRC_ARTIFACTS_USERNAME="secretuser"
+    export MOCKSRC_ARTIFACTS_PASSWORD="s3cr3t-value"
+    run_fetch
+    [ "$status" -eq 0 ]
+    [[ "$output" != *"s3cr3t-value"* ]]
+    [[ "$output" != *"secretuser"* ]]
+}
+
+@test "fails fast when two sources map to the same credential prefix" {
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  my-mirror:
+    url: http://127.0.0.1:1
+  my_mirror:
+    url: http://127.0.0.1:2
+EOF
+    echo "artifacts: {}" > "$TARGET_DIR/artifacts-25.yaml"
+    run_fetch
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"both map to the credential prefix 'MY_MIRROR'"* ]]
+}
+
+@test "fails fast when a source name has no usable credential prefix" {
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  "---":
+    url: http://127.0.0.1:1
+EOF
+    echo "artifacts: {}" > "$TARGET_DIR/artifacts-25.yaml"
+    run_fetch
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"not a valid environment variable prefix"* ]]
+}
+
+@test "fails fast when a source name starts with a digit" {
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  1mirror:
+    url: http://127.0.0.1:1
+EOF
+    echo "artifacts: {}" > "$TARGET_DIR/artifacts-25.yaml"
+    run_fetch
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"not a valid environment variable prefix"* ]]
+}

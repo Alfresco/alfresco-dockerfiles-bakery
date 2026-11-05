@@ -38,8 +38,9 @@ that is, the source URL followed by the standard Maven
 
 No credentials are stored in `sources.yaml`. They are resolved per source, from
 the `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` environment
-variables (see [CI authentication for a new source](#ci-authentication-for-a-new-source))
-and otherwise from your `~/.netrc` file, keyed by the host of each source URL.
+variables (see [CI authentication for a new source](#ci-authentication-for-a-new-source)),
+then, for the Nexus host only, from `NEXUS_USERNAME` / `NEXUS_PASSWORD`, and
+otherwise from your `~/.netrc` file, keyed by the host of each source URL.
 Sources with no matching credentials are accessed anonymously.
 
 ## Using your own repositories
@@ -99,9 +100,11 @@ The build, test, and scan workflows write the Nexus `~/.netrc` entry inline.
 Every other source authenticates through environment variables that
 `fetch_artifacts.py` reads directly: for a source named `<name>` it looks up
 `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD`, where `<NAME>` is the
-source name upper-cased with every run of non-alphanumeric characters replaced by
-a single underscore. For example a source named `my-mirror` resolves to
-`MY_MIRROR_ARTIFACTS_USERNAME` / `MY_MIRROR_ARTIFACTS_PASSWORD`.
+source name upper-cased, with every run of non-alphanumeric characters replaced by
+a single underscore and any leading or trailing underscore removed. The prefix
+must contain a letter, must not start with a digit, and must be unique across
+sources; `fetch_artifacts.py` fails fast otherwise. For example a source named
+`my-mirror` resolves to `MY_MIRROR_ARTIFACTS_USERNAME` / `MY_MIRROR_ARTIFACTS_PASSWORD`.
 
 To authenticate a new source in CI:
 
@@ -116,9 +119,12 @@ To authenticate a new source in CI:
      MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
    ```
 
-When both variables are set the source authenticates with them; otherwise it
-falls back to `~/.netrc` and finally to anonymous access. Only the named secrets
-a source needs are exposed to the process, and credential values are never logged.
+When both variables are set the source authenticates with them. Setting only one
+is treated as a misconfiguration and `fetch_artifacts.py` fails fast. When
+neither is set the source falls back to `NEXUS_USERNAME` / `NEXUS_PASSWORD`
+(Nexus host only), then `~/.netrc`, and finally anonymous access. Only the named
+secrets a source needs are exposed to the process, and credential values are
+never logged.
 
 ## Behaviour and troubleshooting
 
@@ -133,7 +139,10 @@ a source needs are exposed to the process, and credential values are never logge
   the active sources file. A missing source, an unknown source, or a leftover
   `repository` key fails fast with a clear error.
 - **Credentials never cross hosts.** Each request carries only the credentials of
-  its own source's host.
+  its own source's host. Credentials supplied through
+  `<NAME>_ARTIFACTS_*` are tied to the source *name*, not its host, so review any
+  change to a source's `url` in `sources.yaml` as carefully as a change to the
+  secret itself.
 - **Version bumps only authenticate to Nexus.** The updatecli bump workflow
   (`.github/updatecli.tpl`) embeds the `NEXUS_USERNAME`/`NEXUS_PASSWORD` pair only
   for sources on a trusted Nexus host; sources on any other host are queried

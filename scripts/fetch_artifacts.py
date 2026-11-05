@@ -105,10 +105,34 @@ def get_credentials_from_netrc(machine):
 def secret_prefix(source_name):
     """
     Map a source name to its credential env-var prefix: upper-cased with every run
-    of non-alphanumeric characters collapsed to a single underscore
-    (e.g. 'my-mirror' -> 'MY_MIRROR').
+    of non-alphanumeric characters collapsed to a single underscore, with leading
+    and trailing underscores removed (e.g. 'my-mirror' -> 'MY_MIRROR').
     """
     return re.sub(r"[^A-Z0-9]+", "_", source_name.upper()).strip("_")
+
+def validate_source_prefixes(names):
+    """
+    Fail fast when source names cannot be given distinct, usable credential
+    env-var prefixes: an empty prefix, a prefix starting with a digit (not a
+    valid env var / GitHub secret name), or two names mapping to the same prefix.
+    """
+    seen = {}
+    for name in names:
+        prefix = secret_prefix(str(name))
+        if not prefix or prefix[0].isdigit():
+            logger.error(
+                f"Source name '{name}' in {SOURCES_FILE} maps to credential prefix "
+                f"'{prefix}', which is not a valid environment variable prefix; "
+                f"it must contain a letter and not start with a digit"
+            )
+            sys.exit(1)
+        if prefix in seen:
+            logger.error(
+                f"Source names '{seen[prefix]}' and '{name}' in {SOURCES_FILE} both "
+                f"map to the credential prefix '{prefix}'; rename one of them"
+            )
+            sys.exit(1)
+        seen[prefix] = name
 
 def resolve_source_credentials(name, host):
     """
@@ -121,10 +145,20 @@ def resolve_source_credentials(name, host):
     Returns (None, None) for anonymous access.
     """
     prefix = secret_prefix(name)
-    username = os.getenv(f"{prefix}_ARTIFACTS_USERNAME")
-    password = os.getenv(f"{prefix}_ARTIFACTS_PASSWORD")
+    user_var = f"{prefix}_ARTIFACTS_USERNAME"
+    pass_var = f"{prefix}_ARTIFACTS_PASSWORD"
+    username = os.getenv(user_var)
+    password = os.getenv(pass_var)
     if username and password:
         return username, password
+    if username or password:
+        # A half-set pair is always a misconfiguration (e.g. a typo'd secret
+        # name); fail fast rather than silently degrading to a confusing 401/403.
+        logger.error(
+            f"Source '{name}': only one of {user_var} / {pass_var} is set; "
+            f"set both or neither"
+        )
+        sys.exit(1)
 
     if host == NEXUS_HOST and os.getenv("NEXUS_USERNAME") and os.getenv("NEXUS_PASSWORD"):
         return os.getenv("NEXUS_USERNAME"), os.getenv("NEXUS_PASSWORD")
@@ -147,6 +181,8 @@ def load_sources():
     if not sources:
         logger.error(f"No sources defined in {SOURCES_FILE}")
         sys.exit(1)
+
+    validate_source_prefixes(sources)
 
     resolved = {}
     for name, spec in sources.items():
