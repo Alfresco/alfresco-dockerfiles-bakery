@@ -608,6 +608,9 @@ cases = {
 for name, want in cases.items():
     got = f.secret_prefix(name)
     assert got == want, (name, got, want)
+# Non-string YAML keys (e.g. an unquoted 'true') must not raise.
+assert f.secret_prefix(True) == "TRUE", f.secret_prefix(True)
+assert f.secret_prefix(None) == "NONE", f.secret_prefix(None)
 print("ok")
 EOF
     [ "$status" -eq 0 ]
@@ -629,6 +632,49 @@ EOF
     export MOCKSRC_ARTIFACTS_PASSWORD="wrong"
     run_fetch
     [ ! -f "$DEST/wrong-env-artifact-1.0.0.jar" ]
+}
+
+@test "fails fast on a non-string (boolean) source name" {
+    # An unquoted 'true' key is loaded as a YAML boolean, not a string; it must
+    # produce a clear configuration error, not an AttributeError traceback.
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  true:
+    url: http://127.0.0.1:1
+EOF
+    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
+artifacts:
+  bool-artifact:
+    name: bool-artifact
+    version: 1.0.0
+    classifier: .jar
+    group: com.test
+    source: true
+    path: $DEST
+EOF
+
+    run_fetch
+    [ "$status" -ne 0 ]
+    [[ "$output" != *"AttributeError"* ]]
+    [[ "$output" == *"is not a string"* ]]
+}
+
+@test "empty per-source variables are treated as unset" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    # GitHub expands a missing secret to an empty string, so a workflow that
+    # passes a secret nobody created must still fall back to .netrc.
+    printf 'machine 127.0.0.1\n  login alice\n  password secret\n' > "$HOME/.netrc"
+    chmod 600 "$HOME/.netrc"
+    start_mock "$port" "$root" "alice" "secret" ""
+    write_basic_fixture mocksrc empty-env-artifact "$port" "$root"
+
+    export MOCKSRC_ARTIFACTS_USERNAME=""
+    export MOCKSRC_ARTIFACTS_PASSWORD=""
+    run_fetch
+    [ "$status" -eq 0 ]
+    [ -f "$DEST/empty-env-artifact-1.0.0.jar" ]
 }
 
 @test "fails fast when only one per-source variable is set" {

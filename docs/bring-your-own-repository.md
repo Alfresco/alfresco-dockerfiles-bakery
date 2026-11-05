@@ -103,7 +103,9 @@ Every other source authenticates through environment variables that
 source name upper-cased, with every run of non-alphanumeric characters replaced by
 a single underscore and any leading or trailing underscore removed. The prefix
 must contain a letter, must not start with a digit, and must be unique across
-sources; `fetch_artifacts.py` fails fast otherwise. For example a source named
+sources; `fetch_artifacts.py` fails fast otherwise. Source names must also be
+text: quote names that YAML would read as another type, such as `"true"`, `"null"`
+or `"123"`. For example a source named
 `my-mirror` resolves to `MY_MIRROR_ARTIFACTS_USERNAME` / `MY_MIRROR_ARTIFACTS_PASSWORD`.
 
 Examples of how a source name maps to its credential variables:
@@ -114,6 +116,7 @@ Examples of how a source name maps to its credential variables:
 | `enterprise-releases`  | `ENTERPRISE_RELEASES` | `ENTERPRISE_RELEASES_ARTIFACTS_USERNAME` / `..._PASSWORD`       | yes   |
 | `acme.repo`            | `ACME_REPO`           | `ACME_REPO_ARTIFACTS_USERNAME` / `..._PASSWORD`                 | yes   |
 | `2mirror`              | `2MIRROR`             | — (prefix starts with a digit)                                  | no    |
+| `true` (unquoted)      | —                     | — (YAML reads it as a boolean, not text; quote it)              | no    |
 | `---`                  | `` (empty)            | — (no alphanumeric characters)                                 | no    |
 | `my-mirror` + `my.mirror` | `MY_MIRROR`        | — (two sources collide on one prefix)                          | no    |
 

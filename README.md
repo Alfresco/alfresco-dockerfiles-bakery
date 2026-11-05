@@ -103,11 +103,14 @@ Make sure to make the file non-world readable:
 chmod 600 ~/.netrc
 ```
 
-Credentials are resolved per source, by the host of each source defined in
-[`sources.yaml`](sources.yaml), so a `~/.netrc` may hold an entry for every host
-you fetch from. Sources whose host has no matching entry are accessed
-anonymously. To point the build at your own Maven repositories, see [Bring your
-own repository](docs/bring-your-own-repository.md).
+Credentials are resolved per source: first from the
+`<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` environment variables
+(where `<NAME>` is the source name from [`sources.yaml`](sources.yaml) upper-cased
+with non-alphanumeric characters replaced by underscores), then, for the Nexus
+host, from `NEXUS_USERNAME` / `NEXUS_PASSWORD`, and otherwise from your `~/.netrc`
+file by host. Sources with no matching credentials are accessed anonymously. To
+point the build at your own Maven repositories, see [Bring your own
+repository](docs/bring-your-own-repository.md).
 
 ## Getting started quickly
 
@@ -746,8 +749,12 @@ Each artifact in an `artifacts-*.yaml` file declares a `source` that must be
 defined in [`sources.yaml`](sources.yaml) at the root of this repository. A
 source is the root URL of a Maven repository; artifacts are fetched from it
 using the standard Maven GAV layout. Credentials are never stored in
-`sources.yaml`: they are resolved per source, by host, from your `~/.netrc`
-file, and anonymous access is used when no entry matches.
+`sources.yaml`: they are resolved per source from the
+`<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` environment variables,
+then (Nexus host only) `NEXUS_USERNAME` / `NEXUS_PASSWORD`, then by host from
+your `~/.netrc` file, and anonymous access is used when nothing matches. See
+[Bring your own repository](docs/bring-your-own-repository.md) for the naming
+convention.
 
 To fetch Alfresco artifacts from your own Maven repositories instead of Nexus,
 see [Bring your own repository](docs/bring-your-own-repository.md).
@@ -755,6 +762,7 @@ see [Bring your own repository](docs/bring-your-own-repository.md).
 ### Environment Variables
 
 - `ACS_VERSION` - Alfresco Content Services version (default: "26")
+- `<NAME>_ARTIFACTS_USERNAME` / `<NAME>_ARTIFACTS_PASSWORD` - Per-source credentials, where `<NAME>` is the source name from `sources.yaml` upper-cased with non-alphanumeric runs replaced by underscores (e.g. `my-mirror` -> `MY_MIRROR`)
 - `NEXUS_USERNAME` - Nexus repository username (overrides `~/.netrc` for the Nexus host)
 - `NEXUS_PASSWORD` - Nexus repository password (overrides `~/.netrc` for the Nexus host)
 - `MAVEN_FQDN` - Host the `NEXUS_USERNAME`/`NEXUS_PASSWORD` override applies to (default: "nexus.alfresco.com")

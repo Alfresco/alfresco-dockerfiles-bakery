@@ -106,19 +106,29 @@ def secret_prefix(source_name):
     """
     Map a source name to its credential env-var prefix: upper-cased with every run
     of non-alphanumeric characters collapsed to a single underscore, with leading
-    and trailing underscores removed (e.g. 'my-mirror' -> 'MY_MIRROR').
+    and trailing underscores removed (e.g. 'my-mirror' -> 'MY_MIRROR'). The name
+    is stringified first so non-string YAML keys (e.g. an unquoted 'true') do not
+    raise, and are rejected by validate_source_prefixes instead.
     """
-    return re.sub(r"[^A-Z0-9]+", "_", source_name.upper()).strip("_")
+    return re.sub(r"[^A-Z0-9]+", "_", str(source_name).upper()).strip("_")
 
 def validate_source_prefixes(names):
     """
     Fail fast when source names cannot be given distinct, usable credential
-    env-var prefixes: an empty prefix, a prefix starting with a digit (not a
-    valid env var / GitHub secret name), or two names mapping to the same prefix.
+    env-var prefixes: a non-string name (e.g. an unquoted YAML 'true'/'null'),
+    an empty prefix, a prefix starting with a digit (not a valid env var / GitHub
+    secret name), or two names mapping to the same prefix.
     """
     seen = {}
     for name in names:
-        prefix = secret_prefix(str(name))
+        if not isinstance(name, str):
+            logger.error(
+                f"Source name '{name}' in {SOURCES_FILE} is not a string "
+                f"(unquoted YAML booleans/null are parsed as non-strings); "
+                f"quote it so it is read as text"
+            )
+            sys.exit(1)
+        prefix = secret_prefix(name)
         if not prefix or prefix[0].isdigit():
             logger.error(
                 f"Source name '{name}' in {SOURCES_FILE} maps to credential prefix "
