@@ -51,6 +51,7 @@ sources:
 EOF
     export CLOUDSMITH_ARTIFACTS_USERNAME="csuser"
     export CLOUDSMITH_ARTIFACTS_PASSWORD="cssecret"
+    export CLOUDSMITH_ARTIFACTS_HOST="dl.cloudsmith.io"
     run_writer
     [ "$status" -eq 0 ]
     grep -q "machine nexus.alfresco.com" "$NETRC_PATH"
@@ -94,6 +95,7 @@ sources:
 EOF
     export CLOUDSMITH_ARTIFACTS_USERNAME="csuser"
     export CLOUDSMITH_ARTIFACTS_PASSWORD="cssecret"
+    export CLOUDSMITH_ARTIFACTS_HOST="dl.cloudsmith.io"
     run_writer
     [ "$status" -eq 0 ]
     run_writer
@@ -109,6 +111,7 @@ sources:
 EOF
     export MY_MIRROR_ARTIFACTS_USERNAME="u"
     export MY_MIRROR_ARTIFACTS_PASSWORD="p"
+    export MY_MIRROR_ARTIFACTS_HOST="maven.example.com"
     run_writer
     [ "$status" -eq 0 ]
     grep -q "machine maven.example.com" "$NETRC_PATH"
@@ -123,6 +126,7 @@ EOF
     # Password contains a space, a quote and a backslash.
     export CLOUDSMITH_ARTIFACTS_USERNAME="cs user"
     export CLOUDSMITH_ARTIFACTS_PASSWORD='pa ss"x\y'
+    export CLOUDSMITH_ARTIFACTS_HOST="dl.cloudsmith.io"
     run_writer
     [ "$status" -eq 0 ]
 
@@ -146,6 +150,7 @@ sources:
 EOF
     export CLOUDSMITH_ARTIFACTS_USERNAME="csuser"
     export CLOUDSMITH_ARTIFACTS_PASSWORD="TopSecretValue"
+    export CLOUDSMITH_ARTIFACTS_HOST="dl.cloudsmith.io"
     run_writer
     [ "$status" -eq 0 ]
     [[ "$output" != *"TopSecretValue"* ]]
@@ -163,4 +168,64 @@ EOF
     run_writer
     [ "$status" -ne 0 ]
     [[ "$output" == *"MY_MIRROR"* ]]
+}
+
+@test "rejects a sources.yaml host that does not match the trusted host" {
+    # Emulates a PR redirecting a known source to an attacker host: the secret
+    # must not be written anywhere.
+    cat > "$SOURCES_FILE" << 'EOF'
+sources:
+  cloudsmith:
+    url: https://evil.attacker.test/basic/acme/maven
+EOF
+    local before
+    before="$(cat "$NETRC_PATH")"
+    export CLOUDSMITH_ARTIFACTS_USERNAME="csuser"
+    export CLOUDSMITH_ARTIFACTS_PASSWORD="cssecret"
+    export CLOUDSMITH_ARTIFACTS_HOST="dl.cloudsmith.io"
+    run_writer
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"does not match the trusted CLOUDSMITH_ARTIFACTS_HOST"* ]]
+    [ "$(cat "$NETRC_PATH")" = "$before" ]
+    [[ "$output" != *"cssecret"* ]]
+}
+
+@test "fails fast when credentials are set but the trusted host is not" {
+    cat > "$SOURCES_FILE" << 'EOF'
+sources:
+  cloudsmith:
+    url: https://dl.cloudsmith.io/basic/acme/maven
+EOF
+    export CLOUDSMITH_ARTIFACTS_USERNAME="csuser"
+    export CLOUDSMITH_ARTIFACTS_PASSWORD="cssecret"
+    unset CLOUDSMITH_ARTIFACTS_HOST
+    run_writer
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"CLOUDSMITH_ARTIFACTS_HOST"* ]]
+}
+
+@test "stays parseable when the existing netrc has no trailing newline" {
+    # Emulate an inline Nexus entry written without a final newline.
+    printf 'machine nexus.alfresco.com\n  login nexususer\n  password nexuspass' > "$NETRC_PATH"
+    cat > "$SOURCES_FILE" << 'EOF'
+sources:
+  cloudsmith:
+    url: https://dl.cloudsmith.io/basic/acme/maven
+EOF
+    export CLOUDSMITH_ARTIFACTS_USERNAME="csuser"
+    export CLOUDSMITH_ARTIFACTS_PASSWORD="cssecret"
+    export CLOUDSMITH_ARTIFACTS_HOST="dl.cloudsmith.io"
+    run_writer
+    [ "$status" -eq 0 ]
+
+    # Both entries must parse back via the netrc module, not be concatenated.
+    run env NETRC_PATH="$NETRC_PATH" python3 - <<'PY'
+import netrc, os
+n = netrc.netrc(os.environ["NETRC_PATH"])
+assert n.hosts["nexus.alfresco.com"][0] == "nexususer"
+assert n.hosts["dl.cloudsmith.io"][0] == "csuser"
+print("ok")
+PY
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"ok"* ]]
 }

@@ -52,10 +52,13 @@ jobs:
         shell: bash
         # Writes a ~/.netrc entry for each non-Nexus source whose credentials are
         # passed here as named secrets. To authenticate a new source, uncomment and
-        # add its <NAME>_ARTIFACTS_USERNAME / <NAME>_ARTIFACTS_PASSWORD secrets:
+        # add its secrets plus its trusted host. <NAME>_ARTIFACTS_HOST is a repo
+        # variable (not read from the checkout) that the source's sources.yaml host
+        # must match, so a pull request cannot redirect the credentials elsewhere:
         # env:
         #   MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
         #   MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
+        #   MY_MIRROR_ARTIFACTS_HOST: ${{ vars.MY_MIRROR_ARTIFACTS_HOST }}
         run: python3 ./scripts/write_source_netrc.py
 
       - name: Restore packages artifacts
