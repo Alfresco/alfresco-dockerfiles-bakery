@@ -235,15 +235,17 @@ credentials from the environment, and credential values are never logged.
 
 - **One credential per host.** `~/.netrc` is keyed by host, so two sources on the
   same host cannot use different credentials. In CI the netrc builder writes the
-  first such source's entry and skips the rest of that host; the others then reuse
-  that credential and fail with `401`/`403` if it is wrong. Give colliding sources
-  distinct hosts if they need distinct credentials.
-- **CI auth for a new source is a manual, two-step change.** GitHub Actions cannot
-  enumerate secrets, so each new authenticated source needs its two secrets
-  created and referenced explicitly in the workflow step's `env:`. There is no
-  automatic discovery; nothing happens until both are done.
-- **The CI netrc builder requires Python 3.11+.** `scripts/write_source_netrc.py`
-  quotes credentials so values with spaces or special characters round-trip, and
-  only Python 3.11+'s `netrc` parser understands those quotes. This is satisfied
-  by the CI runners; it does not affect developers, who maintain their own
-  `~/.netrc`.
+  first such source's entry and logs that it is skipping the rest of that host; the
+  others then reuse that credential and fail with `401`/`403` if it is wrong. Give
+  colliding sources distinct hosts if they need distinct credentials.
+- **CI auth for a new source is a manual, three-value change.** GitHub Actions
+  cannot enumerate secrets, so each new authenticated source needs its two secrets
+  and its `<NAME>_ARTIFACTS_HOST` variable created and referenced explicitly in the
+  workflow step's `env:`. There is no automatic discovery; nothing happens until
+  they are set.
+- **Credentials with special characters require Python 3.11+ in CI.**
+  `scripts/write_source_netrc.py` quotes only credential values that contain
+  whitespace or a netrc special character (`"`, `\`, `#`); such quoted tokens are
+  understood only by Python 3.11+'s `netrc` parser. Ordinary values are written
+  verbatim and parse on any version. This affects CI only; developers maintain
+  their own `~/.netrc`.

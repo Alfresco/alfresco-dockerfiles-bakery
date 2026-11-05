@@ -25,6 +25,7 @@ Environment:
 
 import logging
 import os
+import re
 import sys
 import urllib.parse
 
@@ -39,12 +40,15 @@ NETRC_PATH = os.getenv("NETRC_PATH", os.path.join(os.path.expanduser("~"), ".net
 logger = logging.getLogger(__name__)
 
 
-def netrc_quote(value):
+def netrc_token(value):
     """
-    Double-quote a credential token so values containing whitespace or special
-    characters round-trip through the stdlib netrc parser (Python 3.11+) that
-    fetch_artifacts.py uses. Backslashes and double quotes are escaped.
+    Render a credential token for netrc. A value with whitespace or a netrc
+    special character (`"`, `\\`, `#`) is double-quoted and escaped, which only
+    Python 3.11+'s netrc parser understands; ordinary values are written verbatim
+    so they also parse on older interpreters.
     """
+    if not re.search(r'[\s"\\#]', value):
+        return value
     return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
@@ -84,47 +88,63 @@ def collect_entries(sources):
             logger.error(f"Source '{name}' has no 'url' defined in {SOURCES_FILE}")
             sys.exit(1)
         host = urllib.parse.urlsplit(url.rstrip("/")).hostname
-        # Nexus is written by the workflow's inline step; skip hosts already present.
-        if not host or host == NEXUS_HOST or host in already or host in seen_hosts:
-            continue
         prefix = secret_prefix(name)
         user_var = f"{prefix}_ARTIFACTS_USERNAME"
         pass_var = f"{prefix}_ARTIFACTS_PASSWORD"
         host_var = f"{prefix}_ARTIFACTS_HOST"
         username = os.getenv(user_var)
         password = os.getenv(pass_var)
-        if username and password:
-            # The host comes from sources.yaml, which a pull request can edit; the
-            # secret is trusted. Require a trusted host (a repository variable, not
-            # taken from the checkout) and refuse to write the credential anywhere
-            # else, so a redirected URL cannot exfiltrate it.
-            trusted_host = os.getenv(host_var)
-            if not trusted_host:
-                logger.error(
-                    f"Source '{name}': {user_var} / {pass_var} are set but {host_var} "
-                    f"is not; set {host_var} (a trusted repository variable) to the "
-                    f"expected host so a redirected URL cannot send the credentials "
-                    f"elsewhere"
-                )
-                sys.exit(1)
-            if host != trusted_host:
-                logger.error(
-                    f"Source '{name}': host '{host}' from {SOURCES_FILE} does not match "
-                    f"the trusted {host_var} '{trusted_host}'; refusing to write its "
-                    f"credentials. Update {host_var} if the host change is intended"
-                )
-                sys.exit(1)
-            entries.append((host, username, password))
-            seen_hosts.add(host)
-            logger.info(f"Adding ~/.netrc entry for source '{name}' (host {host})")
-        elif username or password:
+
+        # Validate the credential pair first, so a half-set pair always fails fast,
+        # whatever host the source is on.
+        if bool(username) != bool(password):
             logger.error(
                 f"Source '{name}': only one of {user_var} / {pass_var} is set; "
                 f"set both or neither"
             )
             sys.exit(1)
-        else:
+        if not username:
             logger.info(f"No credentials for source '{name}' (host {host}); skipping")
+            continue
+
+        # ~/.netrc is keyed by host: the Nexus entry is written inline by the
+        # workflow, and every other host gets at most one entry. Skips are logged so
+        # a later 401 is traceable.
+        if not host:
+            logger.info(f"Source '{name}' has no host in its url; skipping")
+            continue
+        if host == NEXUS_HOST:
+            logger.info(f"Source '{name}' is on the Nexus host (written inline); skipping")
+            continue
+        if host in already or host in seen_hosts:
+            logger.info(
+                f"Host '{host}' already has a ~/.netrc entry; skipping source '{name}'"
+            )
+            continue
+
+        # The host comes from sources.yaml, which a pull request can edit; the secret
+        # is trusted. Require a trusted host (a repository variable, not taken from the
+        # checkout) and refuse to write the credential anywhere else, so a redirected
+        # URL cannot exfiltrate it. URL hosts are lower-cased, so compare likewise.
+        trusted = os.getenv(host_var)
+        if not trusted:
+            logger.error(
+                f"Source '{name}': {user_var} / {pass_var} are set but {host_var} "
+                f"is not; set {host_var} (a trusted repository variable) to the "
+                f"expected host so a redirected URL cannot send the credentials "
+                f"elsewhere"
+            )
+            sys.exit(1)
+        if host != trusted.strip().lower():
+            logger.error(
+                f"Source '{name}': host '{host}' from {SOURCES_FILE} does not match "
+                f"the trusted {host_var} '{trusted}'; refusing to write its "
+                f"credentials. Update {host_var} if the host change is intended"
+            )
+            sys.exit(1)
+        entries.append((host, username, password))
+        seen_hosts.add(host)
+        logger.info(f"Adding ~/.netrc entry for source '{name}' (host {host})")
     return entries
 
 
@@ -155,8 +175,8 @@ def main():
         for host, username, password in entries:
             netrc_file.write(
                 f"machine {host}\n"
-                f"  login {netrc_quote(username)}\n"
-                f"  password {netrc_quote(password)}\n"
+                f"  login {netrc_token(username)}\n"
+                f"  password {netrc_token(password)}\n"
             )
     os.chmod(NETRC_PATH, 0o600)
 

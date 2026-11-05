@@ -56,8 +56,9 @@ EOF
     [ "$status" -eq 0 ]
     grep -q "machine nexus.alfresco.com" "$NETRC_PATH"
     grep -q "machine dl.cloudsmith.io" "$NETRC_PATH"
-    grep -q 'login "csuser"' "$NETRC_PATH"
-    grep -q 'password "cssecret"' "$NETRC_PATH"
+    # Ordinary values are written verbatim (no quotes needed).
+    grep -q 'login csuser' "$NETRC_PATH"
+    grep -q 'password cssecret' "$NETRC_PATH"
 }
 
 @test "skips a non-Nexus source without credentials" {
@@ -202,6 +203,42 @@ EOF
     run_writer
     [ "$status" -ne 0 ]
     [[ "$output" == *"CLOUDSMITH_ARTIFACTS_HOST"* ]]
+}
+
+@test "matches the trusted host case-insensitively" {
+    # URL hosts are lower-cased by urlsplit; the trusted variable may be typed
+    # with capitals and must still match.
+    cat > "$SOURCES_FILE" << 'EOF'
+sources:
+  cloudsmith:
+    url: https://DL.CloudSmith.IO/basic/acme/maven
+EOF
+    export CLOUDSMITH_ARTIFACTS_USERNAME="csuser"
+    export CLOUDSMITH_ARTIFACTS_PASSWORD="cssecret"
+    export CLOUDSMITH_ARTIFACTS_HOST="DL.CloudSmith.IO"
+    run_writer
+    [ "$status" -eq 0 ]
+    grep -q "machine dl.cloudsmith.io" "$NETRC_PATH"
+}
+
+@test "warns and skips a second source on a host that already has an entry" {
+    cat > "$SOURCES_FILE" << 'EOF'
+sources:
+  mirror-a:
+    url: https://maven.example.com/repo-a
+  mirror-b:
+    url: https://maven.example.com/repo-b
+EOF
+    export MIRROR_A_ARTIFACTS_USERNAME="usera"
+    export MIRROR_A_ARTIFACTS_PASSWORD="passa"
+    export MIRROR_A_ARTIFACTS_HOST="maven.example.com"
+    export MIRROR_B_ARTIFACTS_USERNAME="userb"
+    export MIRROR_B_ARTIFACTS_PASSWORD="passb"
+    export MIRROR_B_ARTIFACTS_HOST="maven.example.com"
+    run_writer
+    [ "$status" -eq 0 ]
+    [ "$(grep -c 'machine maven.example.com' "$NETRC_PATH")" -eq 1 ]
+    [[ "$output" == *"already has a ~/.netrc entry; skipping source"* ]]
 }
 
 @test "stays parseable when the existing netrc has no trailing newline" {
