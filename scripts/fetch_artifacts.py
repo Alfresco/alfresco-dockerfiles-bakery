@@ -99,15 +99,6 @@ def get_credentials_from_netrc(machine):
         logger.error(f"Error parsing .netrc file: {e}")
     return None, None
 
-def resolve_source_credentials(host):
-    """
-    Resolve a source's credentials from the matching ~/.netrc entry for its host
-    (developers maintain ~/.netrc themselves; CI populates it from per-source
-    secrets with scripts/write_source_netrc.py). Returns (None, None) for
-    anonymous access. Credentials are never read from the environment here.
-    """
-    return get_credentials_from_netrc(host)
-
 def load_sources():
     """
     Load and resolve every source defined in sources.yaml. Credentials are
@@ -133,7 +124,7 @@ def load_sources():
             sys.exit(1)
         url = url.rstrip("/")
         host = urllib.parse.urlsplit(url).hostname
-        username, password = resolve_source_credentials(host)
+        username, password = get_credentials_from_netrc(host)
         resolved[name] = {
             "name": name,
             "url": url,
