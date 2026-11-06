@@ -36,8 +36,8 @@ An artifact declaring `source: releases` with group `org.alfresco`, name
 that is, the source URL followed by the standard Maven
 `group/artifact/version/file` path.
 
-No credentials are stored in `sources.yaml`. They are resolved per source, by the
-host of each source URL, from your `~/.netrc` file. Sources whose host has no
+No credentials are stored in `sources.yaml`. `fetch_artifacts.py` resolves them
+from your `~/.netrc` file by the host of each source URL. Sources whose host has no
 matching entry are accessed anonymously.
 
 ## Using your own repositories
@@ -103,8 +103,9 @@ matching entry are accessed anonymously.
 - **Validation is strict.** Every artifact must declare a `source` that exists in
   the active sources file. A missing source, an unknown source, or a leftover
   `repository` key fails fast with a clear error.
-- **Credentials never cross hosts.** Each request carries only the credentials of
-  its own source's host.
+- **Credentials never cross hosts.** `fetch_artifacts.py` sends each request only
+  the `~/.netrc` credentials for that request's host, so a source never receives
+  another source's credentials.
 - **Version bumps only authenticate to Nexus.** The updatecli bump workflow
   (`.github/updatecli.tpl`) embeds the `NEXUS_USERNAME`/`NEXUS_PASSWORD` pair only
   for sources on a trusted Nexus host; sources on any other host are queried
@@ -112,3 +113,9 @@ matching entry are accessed anonymously.
   Alfresco credentials to it. To bump versions from an authenticated third-party
   repository, add its host to the trusted list in the template and provide its
   credentials to the workflow.
+
+## Limitations
+
+- **One credential per host.** `~/.netrc` is keyed by host, so two sources on the
+  same host cannot use different credentials; give colliding sources distinct hosts
+  if they need distinct credentials.

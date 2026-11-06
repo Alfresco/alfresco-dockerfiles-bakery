@@ -5,8 +5,9 @@
 # `artifacts-*.yaml` file references one of these names through its `source`
 # field.
 #
-# No credentials are stored here. Credentials are resolved per source, by host,
-# from your `~/.netrc` file (anonymous access is used when no entry matches).
+# No credentials are stored here. fetch_artifacts.py resolves them from your
+# `~/.netrc` file by the host of each source URL (anonymous access is used when
+# nothing matches).
 #
 # Third parties can point these at their own Maven repositories; see
 # docs/bring-your-own-repository.md.

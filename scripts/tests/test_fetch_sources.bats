@@ -468,3 +468,41 @@ EOF
     [ "$status" -ne 0 ]
     [[ "$output" == *"removed 'repository' field"* ]]
 }
+
+# write_basic_fixture <source-name> <artifact-name> <port> <root>
+write_basic_fixture() {
+    local src="$1" art="$2" port="$3" root="$4"
+    seed_artifact "$root" "com.test" "$art" "1.0.0" ".jar"
+    cat > "$SOURCES_FILE" << EOF
+sources:
+  $src:
+    url: http://127.0.0.1:$port
+EOF
+    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
+artifacts:
+  $art:
+    name: $art
+    version: 1.0.0
+    classifier: .jar
+    group: com.test
+    source: $src
+    path: $DEST
+EOF
+    CACHE_DIRS+=("$src")
+}
+
+@test "credential values are never logged" {
+    local port root
+    port="$(free_port)"
+    root="$WORK/repo"
+    printf 'machine 127.0.0.1\n  login secretuser\n  password s3cr3t-value\n' > "$HOME/.netrc"
+    chmod 600 "$HOME/.netrc"
+    start_mock "$port" "$root" "secretuser" "s3cr3t-value" ""
+    write_basic_fixture mocksrc nolog-artifact "$port" "$root"
+
+    run_fetch
+    [ "$status" -eq 0 ]
+    [ -f "$DEST/nolog-artifact-1.0.0.jar" ]
+    [[ "$output" != *"s3cr3t-value"* ]]
+    [[ "$output" != *"secretuser"* ]]
+}
