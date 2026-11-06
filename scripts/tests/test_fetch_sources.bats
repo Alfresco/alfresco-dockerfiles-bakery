@@ -491,73 +491,6 @@ EOF
     CACHE_DIRS+=("$src")
 }
 
-@test "secret_prefix normalises source names" {
-    run python3 - << EOF
-import sys
-sys.path.insert(0, "$SCRIPT_DIR")
-import fetch_artifacts as f
-cases = {
-    "my-mirror": "MY_MIRROR",
-    "my.mirror": "MY_MIRROR",
-    "a--b": "A_B",
-    "-lead-": "LEAD",
-    "__x__y__": "X_Y",
-    "releases": "RELEASES",
-    "---": "",
-}
-for name, want in cases.items():
-    got = f.secret_prefix(name)
-    assert got == want, (name, got, want)
-# Non-string YAML keys (e.g. an unquoted 'true') must not raise.
-assert f.secret_prefix(True) == "TRUE", f.secret_prefix(True)
-assert f.secret_prefix(None) == "NONE", f.secret_prefix(None)
-print("ok")
-EOF
-    [ "$status" -eq 0 ]
-    [[ "$output" == *"ok"* ]]
-}
-
-@test "fails fast on a non-string (boolean) source name" {
-    # An unquoted 'true' key is loaded as a YAML boolean, not a string; it must
-    # produce a clear configuration error, not an AttributeError traceback.
-    cat > "$SOURCES_FILE" << EOF
-sources:
-  true:
-    url: http://127.0.0.1:1
-EOF
-    cat > "$TARGET_DIR/artifacts-25.yaml" << EOF
-artifacts:
-  bool-artifact:
-    name: bool-artifact
-    version: 1.0.0
-    classifier: .jar
-    group: com.test
-    source: true
-    path: $DEST
-EOF
-
-    run_fetch
-    [ "$status" -ne 0 ]
-    [[ "$output" != *"AttributeError"* ]]
-    [[ "$output" == *"is not a string"* ]]
-}
-
-@test "the Nexus override applies to the Nexus host when no per-source variables are set" {
-    local port root
-    port="$(free_port)"
-    root="$WORK/repo"
-    start_mock "$port" "$root" "nexususer" "nexussecret" ""
-    write_basic_fixture mocksrc nexus-only-artifact "$port" "$root"
-
-    export MAVEN_FQDN="127.0.0.1"
-    export NEXUS_USERNAME="nexususer"
-    export NEXUS_PASSWORD="nexussecret"
-    unset MOCKSRC_ARTIFACTS_USERNAME MOCKSRC_ARTIFACTS_PASSWORD
-    run_fetch
-    [ "$status" -eq 0 ]
-    [ -f "$DEST/nexus-only-artifact-1.0.0.jar" ]
-}
-
 @test "credential values are never logged" {
     local port root
     port="$(free_port)"
@@ -572,42 +505,4 @@ EOF
     [ -f "$DEST/nolog-artifact-1.0.0.jar" ]
     [[ "$output" != *"s3cr3t-value"* ]]
     [[ "$output" != *"secretuser"* ]]
-}
-
-@test "fails fast when two sources map to the same credential prefix" {
-    cat > "$SOURCES_FILE" << EOF
-sources:
-  my-mirror:
-    url: http://127.0.0.1:1
-  my_mirror:
-    url: http://127.0.0.1:2
-EOF
-    echo "artifacts: {}" > "$TARGET_DIR/artifacts-25.yaml"
-    run_fetch
-    [ "$status" -ne 0 ]
-    [[ "$output" == *"both map to the credential prefix 'MY_MIRROR'"* ]]
-}
-
-@test "fails fast when a source name has no usable credential prefix" {
-    cat > "$SOURCES_FILE" << EOF
-sources:
-  "---":
-    url: http://127.0.0.1:1
-EOF
-    echo "artifacts: {}" > "$TARGET_DIR/artifacts-25.yaml"
-    run_fetch
-    [ "$status" -ne 0 ]
-    [[ "$output" == *"not a valid environment variable prefix"* ]]
-}
-
-@test "fails fast when a source name starts with a digit" {
-    cat > "$SOURCES_FILE" << EOF
-sources:
-  1mirror:
-    url: http://127.0.0.1:1
-EOF
-    echo "artifacts: {}" > "$TARGET_DIR/artifacts-25.yaml"
-    run_fetch
-    [ "$status" -ne 0 ]
-    [[ "$output" == *"not a valid environment variable prefix"* ]]
 }

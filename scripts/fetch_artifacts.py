@@ -3,11 +3,10 @@ Process artifacts yml files to download the artifacts from Maven repositories.
 
 Each artifact declares a `source` that must be defined in sources.yaml. A source
 is the root URL of a Maven repository; artifacts are fetched from it using the
-standard Maven GAV layout. Credentials are resolved by the source's host: the
-Nexus override for the Nexus host, then the standard ~/.netrc file (the credential
-store that developers maintain and CI populates with scripts/write_source_netrc.py),
-and anonymous access when neither matches. Per-source credentials are never read
-from the environment here; environment variables only tweak behaviour.
+standard Maven GAV layout. Credentials are resolved from the standard ~/.netrc
+file by the source's host (developers maintain ~/.netrc themselves and CI
+populates it with scripts/write_source_netrc.py); anonymous access is used when no
+entry matches. Credentials are never read from the environment here.
 
 Run this script with:
 python3 scripts/fetch_artifacts.py [<target_subdir>] [--log-level LEVEL] [--log-file FILE]
@@ -48,9 +47,6 @@ TEMP_DIR = tempfile.mkdtemp()
 FETCHED_ARTIFACTS = set()
 ACS_VERSION = os.getenv("ACS_VERSION", "26")
 SOURCES_FILE = os.getenv("SOURCES_FILE", os.path.join(REPO_ROOT, "sources.yaml"))
-# Host for which the NEXUS_USERNAME/NEXUS_PASSWORD environment variables act as a
-# credentials override; other hosts always resolve credentials from ~/.netrc.
-NEXUS_HOST = os.getenv("MAVEN_FQDN", "nexus.alfresco.com")
 
 # Populated by load_sources(); maps a source name to its resolved configuration.
 SOURCES = {}
@@ -103,63 +99,13 @@ def get_credentials_from_netrc(machine):
         logger.error(f"Error parsing .netrc file: {e}")
     return None, None
 
-def secret_prefix(source_name):
-    """
-    Map a source name to its credential env-var prefix: upper-cased with every run
-    of non-alphanumeric characters collapsed to a single underscore, with leading
-    and trailing underscores removed (e.g. 'my-mirror' -> 'MY_MIRROR'). The name
-    is stringified first so non-string YAML keys (e.g. an unquoted 'true') do not
-    raise, and are rejected by validate_source_prefixes instead.
-    """
-    return re.sub(r"[^A-Z0-9]+", "_", str(source_name).upper()).strip("_")
-
-def validate_source_prefixes(names):
-    """
-    Fail fast when source names cannot be given distinct, usable credential
-    env-var prefixes: a non-string name (e.g. an unquoted YAML 'true'/'null'),
-    an empty prefix, a prefix starting with a digit (not a valid env var / GitHub
-    secret name), or two names mapping to the same prefix.
-    """
-    seen = {}
-    for name in names:
-        if not isinstance(name, str):
-            logger.error(
-                f"Source name '{name}' in {SOURCES_FILE} is not a string "
-                f"(unquoted YAML booleans/null are parsed as non-strings); "
-                f"quote it so it is read as text"
-            )
-            sys.exit(1)
-        prefix = secret_prefix(name)
-        if not prefix or prefix[0].isdigit():
-            logger.error(
-                f"Source name '{name}' in {SOURCES_FILE} maps to credential prefix "
-                f"'{prefix}', which is not a valid environment variable prefix; "
-                f"it must contain a letter and not start with a digit"
-            )
-            sys.exit(1)
-        if prefix in seen:
-            logger.error(
-                f"Source names '{seen[prefix]}' and '{name}' in {SOURCES_FILE} both "
-                f"map to the credential prefix '{prefix}'; rename one of them"
-            )
-            sys.exit(1)
-        seen[prefix] = name
-
 def resolve_source_credentials(host):
     """
-    Resolve the credentials for a source's host. Resolution order:
-      1. NEXUS_USERNAME / NEXUS_PASSWORD environment variables, for the Nexus host
-         (the sanctioned credential override for that one host).
-      2. The matching ~/.netrc entry for the host, which is the credential store:
-         developers maintain it themselves and CI populates it from per-source
-         secrets with scripts/write_source_netrc.py.
-    Returns (None, None) for anonymous access. Per-source credentials are never
-    read from the environment here; the `<PREFIX>_ARTIFACTS_*` variables are only
-    consumed by write_source_netrc.py when it builds ~/.netrc.
+    Resolve a source's credentials from the matching ~/.netrc entry for its host
+    (developers maintain ~/.netrc themselves; CI populates it from per-source
+    secrets with scripts/write_source_netrc.py). Returns (None, None) for
+    anonymous access. Credentials are never read from the environment here.
     """
-    if host == NEXUS_HOST and os.getenv("NEXUS_USERNAME") and os.getenv("NEXUS_PASSWORD"):
-        return os.getenv("NEXUS_USERNAME"), os.getenv("NEXUS_PASSWORD")
-
     return get_credentials_from_netrc(host)
 
 def load_sources():
@@ -178,8 +124,6 @@ def load_sources():
     if not sources:
         logger.error(f"No sources defined in {SOURCES_FILE}")
         sys.exit(1)
-
-    validate_source_prefixes(sources)
 
     resolved = {}
     for name, spec in sources.items():

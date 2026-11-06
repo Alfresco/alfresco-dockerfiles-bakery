@@ -48,9 +48,6 @@ jobs:
       - name: Setup additional source authentication
         if: '! github.event.pull_request.head.repo.fork'
         shell: bash
-        # Builds ~/.netrc entries for non-Nexus sources from their per-source
-        # secrets. To authenticate a new source, add its env here — see "CI
-        # authentication for a new source" in docs/bring-your-own-repository.md.
         run: python3 ./scripts/write_source_netrc.py
 
       - run: make ${{ matrix.target }}
