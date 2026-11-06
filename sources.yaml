@@ -7,9 +7,7 @@
 #
 # No credentials are stored here. fetch_artifacts.py resolves them from your
 # `~/.netrc` file by the host of each source URL (anonymous access is used when
-# nothing matches). In CI the `~/.netrc` is populated by
-# scripts/write_source_netrc.py from each source's `<NAME>_ARTIFACTS_USERNAME` /
-# `<NAME>_ARTIFACTS_PASSWORD` secrets.
+# nothing matches).
 #
 # Third parties can point these at their own Maven repositories; see
 # docs/bring-your-own-repository.md.

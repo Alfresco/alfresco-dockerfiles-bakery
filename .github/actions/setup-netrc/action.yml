@@ -1,0 +1,31 @@
+name: Setup netrc
+description: >-
+  Write ~/.netrc from host-keyed entries so tools that read it (such as
+  scripts/fetch_artifacts.py) can authenticate per host. Each non-empty line of
+  `entries` is "host login password"; lines missing a field are skipped. The file
+  is (re)created with 0600 permissions.
+
+inputs:
+  entries:
+    description: Newline-separated "host login password" triples, one per host.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        NETRC_ENTRIES: ${{ inputs.entries }}
+      run: |
+        netrc="$HOME/.netrc"
+        umask 077
+        : > "$netrc"
+        chmod 600 "$netrc"
+        while read -r host login password _; do
+          [ -n "$host" ] && [ -n "$login" ] && [ -n "$password" ] || continue
+          {
+            printf 'machine %s\n' "$host"
+            printf '  login %s\n' "$login"
+            printf '  password %s\n' "$password"
+          } >> "$netrc"
+        done <<< "$NETRC_ENTRIES"

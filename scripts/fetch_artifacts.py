@@ -4,8 +4,8 @@ Process artifacts yml files to download the artifacts from Maven repositories.
 Each artifact declares a `source` that must be defined in sources.yaml. A source
 is the root URL of a Maven repository; artifacts are fetched from it using the
 standard Maven GAV layout. Credentials are resolved from the standard ~/.netrc
-file by the source's host (developers maintain ~/.netrc themselves and CI
-populates it with scripts/write_source_netrc.py); anonymous access is used when no
+file by the source's host (developers maintain ~/.netrc themselves and CI writes
+it with the .github/actions/setup-netrc action); anonymous access is used when no
 entry matches. Credentials are never read from the environment here.
 
 Run this script with:
