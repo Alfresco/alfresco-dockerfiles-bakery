@@ -44,15 +44,9 @@ jobs:
 
       - name: Setup additional source authentication
         shell: bash
-        # Writes a ~/.netrc entry for each non-Nexus source whose credentials are
-        # passed here as named secrets. To authenticate a new source, uncomment and
-        # add its secrets plus its trusted host. <NAME>_ARTIFACTS_HOST is a repo
-        # variable (not read from the checkout) that the source's sources.yaml host
-        # must match, so a pull request cannot redirect the credentials elsewhere:
-        # env:
-        #   MY_MIRROR_ARTIFACTS_USERNAME: ${{ secrets.MY_MIRROR_ARTIFACTS_USERNAME }}
-        #   MY_MIRROR_ARTIFACTS_PASSWORD: ${{ secrets.MY_MIRROR_ARTIFACTS_PASSWORD }}
-        #   MY_MIRROR_ARTIFACTS_HOST: ${{ vars.MY_MIRROR_ARTIFACTS_HOST }}
+        # Builds ~/.netrc entries for non-Nexus sources from their per-source
+        # secrets. To authenticate a new source, add its env here — see "CI
+        # authentication for a new source" in docs/bring-your-own-repository.md.
         run: python3 ./scripts/write_source_netrc.py
 
       - run: make ${{ matrix.target }}
