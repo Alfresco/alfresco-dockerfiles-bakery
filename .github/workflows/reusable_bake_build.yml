@@ -38,10 +38,7 @@ jobs:
       - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v19.7.1
 
       - name: Setup artifact authentication
-        uses: ./.github/actions/setup-netrc
-        with:
-          entries: |
-            nexus.alfresco.com ${{ secrets.NEXUS_USERNAME_READ_ONLY }} ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}
+        run: ./scripts/setup-netrc.sh "nexus.alfresco.com ${{ secrets.NEXUS_USERNAME_READ_ONLY }} ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}"
 
       - name: Restore packages artifacts
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
