@@ -3,8 +3,10 @@ Process artifacts yml files to download the artifacts from Maven repositories.
 
 Each artifact declares a `source` that must be defined in sources.yaml. A source
 is the root URL of a Maven repository; artifacts are fetched from it using the
-standard Maven GAV layout. Credentials are resolved per source, by host, from
-the standard ~/.netrc file (anonymous access is used when no entry matches).
+standard Maven GAV layout. Credentials are resolved from the standard ~/.netrc
+file by the source's host (developers maintain ~/.netrc themselves and CI writes
+it with the .github/actions/setup-netrc action); anonymous access is used when no
+entry matches. Credentials are never read from the environment here.
 
 Run this script with:
 python3 scripts/fetch_artifacts.py [<target_subdir>] [--log-level LEVEL] [--log-file FILE]
@@ -45,9 +47,6 @@ TEMP_DIR = tempfile.mkdtemp()
 FETCHED_ARTIFACTS = set()
 ACS_VERSION = os.getenv("ACS_VERSION", "26")
 SOURCES_FILE = os.getenv("SOURCES_FILE", os.path.join(REPO_ROOT, "sources.yaml"))
-# Host for which the NEXUS_USERNAME/NEXUS_PASSWORD environment variables act as a
-# credentials override; other hosts always resolve credentials from ~/.netrc.
-NEXUS_HOST = os.getenv("MAVEN_FQDN", "nexus.alfresco.com")
 
 # Populated by load_sources(); maps a source name to its resolved configuration.
 SOURCES = {}
@@ -100,18 +99,6 @@ def get_credentials_from_netrc(machine):
         logger.error(f"Error parsing .netrc file: {e}")
     return None, None
 
-def resolve_source_credentials(host):
-    """
-    Resolve the credentials for a given host from ~/.netrc, honouring the
-    NEXUS_USERNAME/NEXUS_PASSWORD override for the Nexus host only. Returns
-    (None, None) for anonymous access.
-    """
-    username, password = get_credentials_from_netrc(host)
-    if host == NEXUS_HOST and os.getenv("NEXUS_USERNAME") and os.getenv("NEXUS_PASSWORD"):
-        username = os.getenv("NEXUS_USERNAME")
-        password = os.getenv("NEXUS_PASSWORD")
-    return username, password
-
 def load_sources():
     """
     Load and resolve every source defined in sources.yaml. Credentials are
@@ -137,7 +124,7 @@ def load_sources():
             sys.exit(1)
         url = url.rstrip("/")
         host = urllib.parse.urlsplit(url).hostname
-        username, password = resolve_source_credentials(host)
+        username, password = get_credentials_from_netrc(host)
         resolved[name] = {
             "name": name,
             "url": url,
