@@ -1,0 +1,38 @@
+# Third-party binaries that Alfresco repackages into the Nexus thirdparty
+# repository. The component key names in artifacts-*.yaml are listed per file
+# so every ACS line follows the same version.
+components:
+  - id: imagemagick
+    name: ImageMagick
+    group: org.imagemagick
+    artifact: imagemagick-distribution
+    # Captures the whole version, so a "-ci-N" rebuild is picked up. Semver reads
+    # the "-N-ci-M" tail as a text pre-release: ordering breaks at revision 100.
+    versionregex: '^(\d+\.\d+\.\d+-\d+-ci-\d+)$'
+    classifiers:
+      - "-el9.rpm"
+      - "-libs-el9.rpm"
+      - "-el9-aarch64.rpm"
+      - "-libs-el9-aarch64.rpm"
+    files:
+      - tengine/imagemagick/artifacts-23.yaml
+      - tengine/imagemagick/artifacts-25.yaml
+      - tengine/imagemagick/artifacts-26.yaml
+    keys:
+      - imagemagick-distribution-el9
+      - imagemagick-distribution-el9-libs
+      - imagemagick-distribution-el9-aarch64
+      - imagemagick-distribution-el9-libs-aarch64
+  - id: libreoffice
+    name: LibreOffice
+    group: org.libreoffice
+    artifact: libreoffice-dist
+    versionregex: '^(\d+\.\d+\.\d+)$'
+    classifiers:
+      - "-linux.gz"
+    files:
+      - tengine/libreoffice/artifacts-23.yaml
+      - tengine/libreoffice/artifacts-25.yaml
+      - tengine/libreoffice/artifacts-26.yaml
+    keys:
+      - libreoffice-dist
