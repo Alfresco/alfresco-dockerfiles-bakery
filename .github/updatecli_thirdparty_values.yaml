@@ -6,9 +6,9 @@ components:
     name: ImageMagick
     group: org.imagemagick
     artifact: imagemagick-distribution
-    # Only the upstream version is compared; the trailing "-ci-N" is the
-    # packaging release of imagemagick-build.
-    versionregex: '^(\d+\.\d+\.\d+-\d+)-ci-\d+$'
+    # Captures the whole version, so a "-ci-N" rebuild is picked up. Semver reads
+    # the "-N-ci-M" tail as a text pre-release: ordering breaks at revision 100.
+    versionregex: '^(\d+\.\d+\.\d+-\d+-ci-\d+)$'
     classifiers:
       - "-el9.rpm"
       - "-libs-el9.rpm"
