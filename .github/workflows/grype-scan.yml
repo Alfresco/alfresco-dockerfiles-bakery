@@ -24,7 +24,7 @@ jobs:
         target: [adf_apps, ats, audit_storage, connectors, cic_connector, repository, search_enterprise, search_service, share, sync, tengines, aps]
     runs-on: ubuntu-latest
     steps:
-      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v19.7.1
+      - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v19.12.1
 
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

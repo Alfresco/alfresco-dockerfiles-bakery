@@ -56,7 +56,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v19.7.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v19.12.1
 
       - name: Checkout updatecli configs
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -84,7 +84,7 @@ jobs:
 
       - name: Open pull request
         if: github.actor != 'dependabot[bot]'
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        uses: peter-evans/create-pull-request@15733dbdfeedb4f7fdb73d13c6f5ac83b710fab8 # v8.1.2
         with:
           token: ${{ steps.app-token.outputs.token }}
           base: main
@@ -120,7 +120,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v19.7.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v19.12.1
 
       - name: Updatecli scm cache
         uses: actions/cache@v6
@@ -159,7 +159,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install Updatecli
-        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v19.7.1
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v19.12.1
 
       - run: updatecli pipeline apply -c .github/updatecli_dockerfile.tpl
         env:
