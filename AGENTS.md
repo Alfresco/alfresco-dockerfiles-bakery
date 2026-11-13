@@ -109,6 +109,6 @@ download cache used by `fetch_artifacts.py`; don't hand-edit its contents.
 25, 23) via `acs_reusable_build_and_test.yml` and APS builds via `aps_reusable_build_and_test.yml`, both
 wrapping `reusable_bake_build.yml`. `build_forks.yml` is a reduced, no-secrets path for PRs from forks: it
 builds only the Community ACS 26 target, then runs compose and Helm smoke tests against it — it does not cover
-the full ACS/APS version matrix. `bumpVersions.yml` runs updatecli to bump artifact/base-image versions.
+the full ACS/APS version matrix. `bumpVersions.yml` runs updatecli to bump artifact/base-image versions. The `thirdparty` job (`.github/updatecli_thirdparty.tpl`, values in `.github/updatecli_thirdparty_values.yaml`) bumps the repackaged ImageMagick and LibreOffice distributions in every `tengine/{imagemagick,libreoffice}/artifacts-*.yaml`, once all their classifiers are published on Nexus.
 `grype-scan.yml` and `kics.yml` run security scanning. Release process is documented at the bottom of
 `README.md`.

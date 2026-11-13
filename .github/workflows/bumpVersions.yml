@@ -26,6 +26,7 @@ on:
           - artifacts
           - tomcat
           - dockerfile
+          - thirdparty
   schedule:
     - cron: '0 6 * * 1'
 
@@ -163,6 +164,39 @@ jobs:
 
       - run: updatecli pipeline apply -c .github/updatecli_dockerfile.tpl
         env:
+          UPDATECLI_GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME }}
+          UPDATECLI_GITHUB_EMAIL: ${{ vars.BOT_GITHUB_EMAIL }}
+
+  thirdparty:
+    runs-on: ubuntu-latest
+    name: Bump ImageMagick and LibreOffice versions
+    if: |
+      (inputs.update-type == 'thirdparty' || github.event_name == 'schedule') &&
+      github.actor != 'dependabot[bot]'
+    concurrency:
+      group: ${{ github.workflow }}-thirdparty-${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
+    steps:
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.GH_APP_ENGINEERING_CONTRIB_CLIENT_ID }}
+          private-key: ${{ secrets.GH_APP_ENGINEERING_CONTRIB_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Updatecli
+        uses: Alfresco/alfresco-build-tools/.github/actions/setup-updatecli@v19.7.1
+
+      - run: updatecli pipeline apply -c .github/updatecli_thirdparty.tpl -v .github/updatecli_thirdparty_values.yaml
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME_READ_ONLY }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}
           UPDATECLI_GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME }}
           UPDATECLI_GITHUB_EMAIL: ${{ vars.BOT_GITHUB_EMAIL }}
