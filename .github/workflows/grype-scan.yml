@@ -55,11 +55,12 @@ jobs:
         run: |
           # Code scanning requires a unique category per run: give each image its own,
           # via automationDetails.id (takes precedence over the upload-sarif `category` input).
+          # The tag is stripped so the category stays stable across releases and fixed alerts get closed.
           # https://github.blog/changelog/2025-07-21-code-scanning-will-stop-combining-multiple-sarif-runs-uploaded-in-the-same-sarif-file/
           shopt -s nullglob
           for f in sarif/*.out; do
             name=$(basename "$f" .out)
-            id="${{ matrix.target }}/$(echo "$name" | sed -E 's/^localhost_alfresco_//; s/_latest_?$//')/"
+            id="${{ matrix.target }}/$(echo "$name" | sed -E 's/^localhost_alfresco_//; s/_[^_]+_?$//')/"
             jq --arg id "$id" '.runs[0].automationDetails.id = $id' "$f" > "sarif/$name.sarif"
             rm "$f"
           done
