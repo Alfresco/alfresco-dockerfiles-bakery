@@ -30,15 +30,20 @@ sources:
 {{- range $c := .components }}
   {{ $c.id }}Version:
     name: Latest {{ $c.name }} in Nexus thirdparty
-    kind: maven
+    {{- /* Semver orders "-N-ci-M" as text (6 > 36), so sort -V picks the newest. */}}
+    kind: shell
     spec:
-      repository: {{ $auth }}@{{ $nexus }}
-      groupid: {{ $c.group }}
-      artifactid: {{ $c.artifact }}
-      versionFilter:
-        kind: regex/semver
-        regex: '{{ $c.versionregex }}'
-        pattern: '>=0.0.0-0'
+      shell: bash
+      environments:
+        - name: PATH
+        - name: NEXUS_USERNAME
+        - name: NEXUS_PASSWORD
+      command: >-
+        set -o pipefail;
+        curl -fsS -u "$NEXUS_USERNAME:$NEXUS_PASSWORD"
+        'https://{{ $nexus }}/{{ $c.group | replace "." "/" }}/{{ $c.artifact }}/maven-metadata.xml'
+        | grep -o '<version>[^<]*</version>' | sed -e 's/<[^>]*>//g'
+        | grep -E '{{ $c.versionregex }}' | sort -V | tail -n 1 | grep .
 {{- end }}
 
 conditions:
