@@ -81,7 +81,6 @@ jobs:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME_READ_ONLY }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}
           UPDATECLI_GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME}}
 
       - name: Open pull request
         if: github.actor != 'dependabot[bot]'
@@ -134,8 +133,6 @@ jobs:
       - run: updatecli pipeline apply -c .github/updatecli_tomcat.tpl
         env:
           UPDATECLI_GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME }}
-          UPDATECLI_GITHUB_EMAIL: ${{ vars.BOT_GITHUB_EMAIL }}
 
   dockerfile:
     runs-on: ubuntu-latest
@@ -165,8 +162,6 @@ jobs:
       - run: updatecli pipeline apply -c .github/updatecli_dockerfile.tpl
         env:
           UPDATECLI_GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME }}
-          UPDATECLI_GITHUB_EMAIL: ${{ vars.BOT_GITHUB_EMAIL }}
 
   thirdparty:
     runs-on: ubuntu-latest
@@ -198,5 +193,3 @@ jobs:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME_READ_ONLY }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}
           UPDATECLI_GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          UPDATECLI_GITHUB_USERNAME: ${{ vars.BOT_GITHUB_USERNAME }}
-          UPDATECLI_GITHUB_EMAIL: ${{ vars.BOT_GITHUB_EMAIL }}

@@ -12,9 +12,6 @@ scms:
       repository: alfresco-dockerfiles-bakery
       branch: main
       token: {{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}
-      username: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
-      user: {{ requiredEnv "UPDATECLI_GITHUB_USERNAME" }}
-      email: {{ requiredEnv "UPDATECLI_GITHUB_EMAIL" }}
       commitusingapi: true
 
 actions:
