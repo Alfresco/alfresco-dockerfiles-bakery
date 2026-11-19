@@ -28,4 +28,7 @@ ARG DISTRIB_NAME
 ARG DISTRIB_MAJOR
 ARG JAVA_MAJOR
 
+# Mitigates CVE-2026-114938 (Java4Shell) until patched JDKs are rolled out
+ENV JAVA_TOOL_OPTIONS=-XX:-UseBASE64Intrinsics
+
 RUN $JAVA_HOME/bin/java -version
