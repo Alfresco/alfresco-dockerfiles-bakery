@@ -25,7 +25,7 @@ artifacts:
     path: tengine/imagemagick/libs
   imagemagick-distribution-el9-aarch64:
     name: imagemagick-distribution
-    version: 7.1.2-13-ci-1
+    version: 7.1.2-36-ci-1
     classifier: "-el9-aarch64.rpm"
     source: thirdparty
     group: org.imagemagick
