@@ -165,12 +165,18 @@ jobs:
 
   thirdparty:
     runs-on: ubuntu-latest
-    name: Bump ImageMagick and LibreOffice versions
+    name: Bump ${{ matrix.component }} version
     if: |
       (inputs.update-type == 'thirdparty' || github.event_name == 'schedule') &&
       github.actor != 'dependabot[bot]'
+    strategy:
+      fail-fast: false
+      matrix:
+        component:
+          - imagemagick
+          - libreoffice
     concurrency:
-      group: ${{ github.workflow }}-thirdparty-${{ github.head_ref || github.ref_name }}
+      group: ${{ github.workflow }}-thirdparty-${{ matrix.component }}-${{ github.head_ref || github.ref_name }}
       cancel-in-progress: true
     steps:
       - name: Generate app token
@@ -190,6 +196,7 @@ jobs:
 
       - run: updatecli pipeline apply -c .github/updatecli_thirdparty.tpl -v .github/updatecli_thirdparty_values.yaml
         env:
+          COMPONENT: ${{ matrix.component }}
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME_READ_ONLY }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD_READ_ONLY }}
           UPDATECLI_GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}

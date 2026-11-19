@@ -1,8 +1,9 @@
-name: Bump third-party tengine components
-
+{{- $id := requiredEnv "COMPONENT" }}
+{{- $c := index .components $id }}
 {{- /* The Nexus credentials only ever go to nexus.alfresco.com. */}}
 {{- $nexus := "nexus.alfresco.com/nexus/repository/thirdparty" }}
 {{- $auth := printf "%s:%s" (requiredEnv "NEXUS_USERNAME") (requiredEnv "NEXUS_PASSWORD") }}
+name: Bump {{ $c.name }} version
 
 scms:
   github:
@@ -19,7 +20,7 @@ actions:
     kind: github/pullrequest
     scmid: github
     spec:
-      title: Bump ImageMagick and LibreOffice versions
+      title: Bump {{ $c.name }} version
       draft: true
       labels:
         - updatecli
@@ -27,8 +28,7 @@ actions:
         - Alfresco/alfresco-ops-readiness
 
 sources:
-{{- range $c := .components }}
-  {{ $c.id }}Version:
+  version:
     name: Latest {{ $c.name }} in Nexus thirdparty
     {{- /* Semver orders "-N-ci-M" as text (6 > 36), so sort -V picks the newest. */}}
     kind: shell
@@ -44,36 +44,29 @@ sources:
         'https://{{ $nexus }}/{{ $c.group | replace "." "/" }}/{{ $c.artifact }}/maven-metadata.xml'
         | grep -o '<version>[^<]*</version>' | sed -e 's/<[^>]*>//g'
         | grep -E '{{ $c.versionregex }}' | sort -V | tail -n 1 | grep .
-{{- end }}
 
 conditions:
-{{- range $c := .components }}
-  {{- $sourceRef := printf "%sVersion" $c.id }}
-  {{- range $i, $classifier := $c.classifiers }}
-  {{ $c.id }}File{{ $i }}:
+{{- range $i, $classifier := $c.classifiers }}
+  file{{ $i }}:
     name: {{ $c.name }} {{ $classifier }} is published
     kind: http
-    sourceid: {{ $sourceRef }}
+    sourceid: version
     spec:
-      url: 'https://{{ $auth }}@{{ $nexus }}/{{ $c.group | replace "." "/" }}/{{ $c.artifact }}/{{ source $sourceRef }}/{{ $c.artifact }}-{{ source $sourceRef }}{{ $classifier }}'
+      url: 'https://{{ $auth }}@{{ $nexus }}/{{ $c.group | replace "." "/" }}/{{ $c.artifact }}/{{ source "version" }}/{{ $c.artifact }}-{{ source "version" }}{{ $classifier }}'
       request:
         verb: HEAD
-  {{- end }}
 {{- end }}
 
 targets:
-{{- range $c := .components }}
-  {{- $sourceRef := printf "%sVersion" $c.id }}
-  {{- range $fi, $file := $c.files }}
-    {{- range $ki, $key := $c.keys }}
-  {{ $c.id }}F{{ $fi }}K{{ $ki }}:
+{{- range $fi, $file := $c.files }}
+  {{- range $ki, $key := $c.keys }}
+  f{{ $fi }}k{{ $ki }}:
     name: {{ $c.name }} {{ $key }} in {{ $file }}
     kind: yaml
     scmid: github
-    sourceid: {{ $sourceRef }}
+    sourceid: version
     spec:
       file: "{{ $file }}"
       key: "$.artifacts.{{ $key }}.version"
-    {{- end }}
   {{- end }}
 {{- end }}

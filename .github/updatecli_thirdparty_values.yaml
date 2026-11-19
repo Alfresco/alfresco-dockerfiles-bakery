@@ -1,8 +1,8 @@
 # Third-party binaries that Alfresco repackages into the Nexus thirdparty
-# repository. The component key names in artifacts-*.yaml are listed per file
-# so every ACS line follows the same version.
+# repository, keyed by the COMPONENT the workflow matrix passes in. The keys
+# are the same in every artifacts-*.yaml so every ACS line follows one version.
 components:
-  - id: imagemagick
+  imagemagick:
     name: ImageMagick
     group: org.imagemagick
     artifact: imagemagick-distribution
@@ -21,7 +21,7 @@ components:
       - imagemagick-distribution-el9-libs
       - imagemagick-distribution-el9-aarch64
       - imagemagick-distribution-el9-libs-aarch64
-  - id: libreoffice
+  libreoffice:
     name: LibreOffice
     group: org.libreoffice
     artifact: libreoffice-dist
