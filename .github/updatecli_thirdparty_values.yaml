@@ -1,0 +1,36 @@
+# Third-party binaries that Alfresco repackages into the Nexus thirdparty
+# repository, keyed by the COMPONENT the workflow matrix passes in. The keys
+# are the same in every artifacts-*.yaml so every ACS line follows one version.
+components:
+  imagemagick:
+    name: ImageMagick
+    group: org.imagemagick
+    artifact: imagemagick-distribution
+    versionregex: '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]+-ci-[0-9]+$'
+    classifiers:
+      - "-el9.rpm"
+      - "-libs-el9.rpm"
+      - "-el9-aarch64.rpm"
+      - "-libs-el9-aarch64.rpm"
+    files:
+      - tengine/imagemagick/artifacts-23.yaml
+      - tengine/imagemagick/artifacts-25.yaml
+      - tengine/imagemagick/artifacts-26.yaml
+    keys:
+      - imagemagick-distribution-el9
+      - imagemagick-distribution-el9-libs
+      - imagemagick-distribution-el9-aarch64
+      - imagemagick-distribution-el9-libs-aarch64
+  libreoffice:
+    name: LibreOffice
+    group: org.libreoffice
+    artifact: libreoffice-dist
+    versionregex: '^[0-9]+\.[0-9]+\.[0-9]+$'
+    classifiers:
+      - "-linux.gz"
+    files:
+      - tengine/libreoffice/artifacts-23.yaml
+      - tengine/libreoffice/artifacts-25.yaml
+      - tengine/libreoffice/artifacts-26.yaml
+    keys:
+      - libreoffice-dist
