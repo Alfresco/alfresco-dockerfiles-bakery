@@ -176,6 +176,28 @@ func TestFetchFailsFastOnBadSource(t *testing.T) {
 	}
 }
 
+func TestFetchQuotedNetrcCredentials(t *testing.T) {
+	cases := map[string]string{
+		"quoted":  "machine 127.0.0.1\n  login \"alice\"\n  password \"secret value\"\n",
+		"escaped": "machine 127.0.0.1 login alice password secret\\ value\n",
+	}
+	for name, netrc := range cases {
+		t.Run(name, func(t *testing.T) {
+			f := newFixture(t)
+			r := newMavenRepo(t, "alice", "secret value")
+			r.seed(t, "com.test", "quoted-artifact", "1.0.0", ".jar", "")
+			f.netrc(netrc)
+			f.write("sources.yaml", sourcesFor("mocksrc", r.URL))
+			f.write("t/artifacts-26.yaml", manifest(artifact("quoted-artifact", "1.0.0", "com.test", "mocksrc", "t/libs")))
+
+			res := f.run("", "fetch", "t")
+			if res.code != 0 || !f.exists("t/libs/quoted-artifact-1.0.0.jar") {
+				t.Fatal("artifact not fetched with quoted credentials")
+			}
+		})
+	}
+}
+
 func TestFetchNeverLogsCredentials(t *testing.T) {
 	f := newFixture(t)
 	r := newMavenRepo(t, "secretuser", "s3cr3t-value")

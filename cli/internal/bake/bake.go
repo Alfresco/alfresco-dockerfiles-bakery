@@ -100,12 +100,20 @@ func targetNames() string {
 func (o Options) pushing() bool { return o.Registry != "" && o.Registry != "localhost" }
 
 func (o Options) env(versions string) []string {
-	env := append(os.Environ(),
+	resolved := map[string]string{"REGISTRY": o.Registry, "REGISTRY_NAMESPACE": o.Namespace, "TAG": o.Tag}
+	var env []string
+	// Drop inherited values, so an explicitly empty flag restores the bake default.
+	for _, kv := range os.Environ() {
+		if _, ok := resolved[strings.SplitN(kv, "=", 2)[0]]; !ok {
+			env = append(env, kv)
+		}
+	}
+	env = append(env,
 		"ACS_VERSION="+o.ACSVersion,
 		"APS_VERSION="+o.APSVersion,
 		"ARTIFACT_VERSIONS="+versions,
 	)
-	for k, v := range map[string]string{"REGISTRY": o.Registry, "REGISTRY_NAMESPACE": o.Namespace, "TAG": o.Tag} {
+	for k, v := range resolved {
 		if v != "" {
 			env = append(env, k+"="+v)
 		}

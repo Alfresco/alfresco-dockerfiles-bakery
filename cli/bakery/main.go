@@ -14,6 +14,7 @@ import (
 	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/clean"
 	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/logx"
 	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/repo"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/shellwords"
 )
 
 // Set by the release build.
@@ -139,7 +140,9 @@ func newBuildCmd(g *globalOpts) *cobra.Command {
 			}
 			defer closeLog()
 			o.Root, o.ACSVersion, o.APSVersion = root, g.acsVersion, g.apsVersion
-			o.GrypeOpts.Args = strings.Fields(grypeArgs)
+			if o.GrypeOpts.Args, err = shellwords.Split(grypeArgs, true); err != nil {
+				return fmt.Errorf("--grype-opts: %w", err)
+			}
 			stdio(&o)
 			return bake.Build(cmd.Context(), o, args, f.Run)
 		},
@@ -193,6 +196,7 @@ func newGrypeCmd(g *globalOpts) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "grype [target]",
 		Short: "Scan the images of a target with grype",
+		Long:  "Scan the images of a bake target or group with grype. The target defaults to GRYPE_TARGET, then to the default group.",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			root, err := g.root()
@@ -200,9 +204,11 @@ func newGrypeCmd(g *globalOpts) *cobra.Command {
 				return err
 			}
 			o.Root, o.ACSVersion, o.APSVersion = root, g.acsVersion, g.apsVersion
-			o.GrypeOpts.Args = strings.Fields(grypeArgs)
+			if o.GrypeOpts.Args, err = shellwords.Split(grypeArgs, true); err != nil {
+				return fmt.Errorf("--grype-opts: %w", err)
+			}
 			stdio(&o)
-			target := ""
+			target := os.Getenv("GRYPE_TARGET")
 			if len(args) == 1 {
 				target = args[0]
 			}

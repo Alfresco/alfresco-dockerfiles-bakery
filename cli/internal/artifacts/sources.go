@@ -11,6 +11,8 @@ import (
 	"strings"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/shellwords"
 )
 
 type source struct {
@@ -121,7 +123,11 @@ lines:
 		if strings.HasPrefix(strings.TrimSpace(line), "#") {
 			continue
 		}
-		fields := strings.Fields(line)
+		// netrc quotes with double quotes only; a single quote is part of the value.
+		fields, err := shellwords.Split(line, false)
+		if err != nil {
+			return creds, err
+		}
 		for i, tok := range fields {
 			if tok == "macdef" {
 				inMacro = true

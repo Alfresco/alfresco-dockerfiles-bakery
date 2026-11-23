@@ -633,8 +633,8 @@ bakery grype repository
 ```
 
 The target accepts any `docker-bake.hcl` target or group name (e.g. `repository`,
-`share`, `community`, `enterprise`). Without a target, the default group is
-scanned.
+`share`, `community`, `enterprise`). Without a target, `GRYPE_TARGET` is used,
+and without either the default group is scanned.
 
 You can pass `--grype-opts` (or `GRYPE_OPTS`) to override the default options
 passed to Grype (`-f high --only-fixed --ignore-states wont-fix`), which exit

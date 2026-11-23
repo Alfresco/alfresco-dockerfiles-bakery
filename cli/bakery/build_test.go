@@ -258,6 +258,47 @@ func TestGrypeDefaultOptsToStdout(t *testing.T) {
 	assertContains(t, res.out, "report for")
 }
 
+func TestGrypeOptsKeepQuotedValues(t *testing.T) {
+	f := bakeFixture(t)
+	must(t, os.WriteFile(f.print, []byte(printJSON), 0o644))
+	res := f.run("", "grype", "share", "--grype-opts", `--config "my configs/grype.yaml" --only-fixed`)
+	if res.code != 0 {
+		t.Fatal("grype failed")
+	}
+	assertContains(t, f.calls(), "argv: [--config] [my configs/grype.yaml] [--only-fixed] [localhost/alfresco/alfresco-share:26.1.0]")
+}
+
+func TestGrypeTargetFromEnv(t *testing.T) {
+	f := bakeFixture(t)
+	must(t, os.WriteFile(f.print, []byte(printJSON), 0o644))
+	f.env = []string{"GRYPE_TARGET=aps"}
+	if res := f.run("", "grype"); res.code != 0 {
+		t.Fatal("grype failed")
+	}
+	assertContains(t, f.calls(), "docker buildx bake aps --print")
+
+	f.run("", "grype", "share")
+	assertContains(t, f.calls(), "docker buildx bake share --print")
+}
+
+func TestEmptyFlagsOverrideInheritedEnv(t *testing.T) {
+	f := bakeFixture(t)
+	f.env = []string{"REGISTRY=quay.io", "REGISTRY_NAMESPACE=myorg", "TAG=custom"}
+	res := f.run("", "build", "share", "--registry", "", "--namespace", "", "--tag", "")
+	if res.code != 0 {
+		t.Fatal("build failed")
+	}
+	log := f.calls()
+	assertNotContains(t, log, "docker login")
+	bakeAt := strings.Index(log, "docker buildx bake --progress=plain share")
+	if bakeAt < 0 {
+		t.Fatal("bake did not run")
+	}
+	for _, v := range []string{"REGISTRY=quay.io", "REGISTRY_NAMESPACE=myorg", "TAG=custom"} {
+		assertNotContains(t, log[bakeAt:], v)
+	}
+}
+
 func TestGrypeMissing(t *testing.T) {
 	f := bakeFixture(t)
 	must(t, os.Remove(filepath.Join(f.bin, "grype")))

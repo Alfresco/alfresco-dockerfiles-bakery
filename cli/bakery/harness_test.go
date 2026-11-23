@@ -63,6 +63,8 @@ const fakeGrype = `#!/bin/sh
 {
   printf 'grype'
   for a in "$@"; do printf ' %s' "$a"; done
+  printf '\n  argv:'
+  for a in "$@"; do printf ' [%s]' "$a"; done
   printf '\n'
 } >> "$FAKE_LOG"
 echo "report for $*"
