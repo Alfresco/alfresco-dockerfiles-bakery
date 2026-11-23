@@ -56,7 +56,8 @@ and env; add a case there for any CLI behaviour change. `cli/internal/artifacts/
 manifest in this repo against the legacy Nexus URL layout.
 
 Pre-commit hooks (`.pre-commit-config.yaml`) check YAML/JSON/XML validity and GitHub workflow schemas
-(`check-github-workflows`); `gofmt` and `go vet` run in the CLI workflow. KICS (`kics.config`) and Grype
+(`check-github-workflows`), and for changes under `cli/` run `gofmt`, `go mod tidy -diff` and `go vet` (local
+hooks, so they need Go installed). KICS (`kics.config`) and Grype
 (`.grype.yaml`) scan for IaC and container vulnerabilities respectively in CI.
 
 ## Architecture

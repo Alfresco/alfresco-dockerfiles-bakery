@@ -96,6 +96,9 @@ go vet ./...
 go test ./...
 ```
 
+Pre-commit also runs `gofmt`, `go mod tidy -diff` and `go vet` on changes
+under `cli/`.
+
 Most tests in `cli/bakery` build the real binary and run it against a scratch
 checkout, with a mock Maven repository and fake `docker` and `grype`
 executables on `PATH` that record how they were called. They need a POSIX
