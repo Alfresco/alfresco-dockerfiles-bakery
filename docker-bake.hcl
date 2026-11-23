@@ -183,14 +183,14 @@ variable "TOMCAT_VERSIONS" {
   default = {
     tomcat10 = {
       major   = 10
-      version = "10.1.61"
-      sha512  = "35120a2b1182bac3d55438fbec0dc581d03b0f1c16ce692a930f3bb6a1097cf896b94b389152257071a87cb2928ac8c15f1bad08387c14acc7c17dbc1bb598fb"
+      version = "10.1.62"
+      sha512  = "ca776bf4045d3eadc2ede1b9bb2c33fc52ce1d102b63ca635ec6c0e515140027c6be7a15b2c1e1d8d8692aeaf25a72de99ca0f14135c3e1d163eedaf3dac5a54"
     }
 
     tomcat11 = {
       major   = 11
-      version = "11.0.27"
-      sha512  = "a617896307cada4884b24f80c4e977ddad8b3e0f88ce0e2a6eea29d5f332498e276ae5976c227a9c8daecf05c7c90def684a3766dd5a81f47a56d8b1adf43dc3"
+      version = "11.0.29"
+      sha512  = "be277ce58876a584653f980fd695c82e6708029f05fc7ad9fcfbdcede3836ae6ffa4f858eac26de6ff938f130f31158be8a54b5f546393ea1ad5da0cd202873c"
     }
   }
 }
