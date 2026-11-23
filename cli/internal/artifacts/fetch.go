@@ -20,7 +20,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/internal/logx"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/logx"
 )
 
 type Fetcher struct {

@@ -1,4 +1,4 @@
-module github.com/Alfresco/alfresco-dockerfiles-bakery
+module github.com/Alfresco/alfresco-dockerfiles-bakery/cli
 
 go 1.25.0
 

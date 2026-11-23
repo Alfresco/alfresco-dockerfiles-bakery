@@ -9,11 +9,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/internal/artifacts"
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/internal/bake"
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/internal/clean"
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/internal/logx"
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/internal/repo"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/artifacts"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/bake"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/clean"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/logx"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/repo"
 )
 
 // Set by the release build.

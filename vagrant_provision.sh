@@ -44,4 +44,4 @@ adduser vagrant docker
 
 echo "Installing the bakery CLI..."
 # The distro Go downloads the toolchain version go.mod asks for.
-(cd /vagrant && GOTOOLCHAIN=auto GOBIN=/usr/local/bin go install ./cmd/bakery)
+(cd /vagrant/cli && GOTOOLCHAIN=auto GOBIN=/usr/local/bin go install ./bakery)

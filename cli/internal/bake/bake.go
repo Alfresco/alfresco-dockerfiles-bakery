@@ -15,8 +15,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/internal/artifacts"
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/internal/clean"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/artifacts"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/clean"
 )
 
 type Options struct {

@@ -70,7 +70,7 @@ fi
 if command -v bakery &>/dev/null; then
   ARTIFACT_VERSIONS="$(bakery --dir "$REPO_ROOT" versions)"
 elif command -v go &>/dev/null; then
-  ARTIFACT_VERSIONS="$(cd "$REPO_ROOT" && go run ./cmd/bakery versions)"
+  ARTIFACT_VERSIONS="$(cd "$REPO_ROOT/cli" && go run ./bakery versions)"
 else
   echo "Error: the bakery CLI (or Go, to run it from source) is required." >&2
   exit 1

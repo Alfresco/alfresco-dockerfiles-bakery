@@ -1,7 +1,12 @@
 version: 2
 
+before:
+  hooks:
+    # Archive files must live under this directory.
+    - cp ../LICENSE LICENSE
+
 builds:
-  - main: ./cmd/bakery
+  - main: ./bakery
     binary: bakery
     env:
       - CGO_ENABLED=0

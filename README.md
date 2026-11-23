@@ -72,7 +72,7 @@ Or, with Go installed, build it from your checkout so it always matches the
 recipes you build:
 
 ```sh
-go install ./cmd/bakery
+cd cli && go install ./bakery
 ```
 
 Run `bakery --help` to list the commands, and `bakery build --help` for the

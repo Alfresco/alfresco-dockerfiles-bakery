@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/internal/logx"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/logx"
 )
 
 // The source model must build the same URLs as the legacy layout
@@ -14,7 +14,7 @@ import (
 // repository is now the source name, for every manifest in this checkout.
 func TestURLParityWithLegacyNexusLayout(t *testing.T) {
 	const legacyBase = "https://nexus.alfresco.com/nexus/repository"
-	root, err := filepath.Abs("../..")
+	root, err := filepath.Abs("../../..")
 	if err != nil {
 		t.Fatal(err)
 	}

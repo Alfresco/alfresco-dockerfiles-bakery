@@ -5,11 +5,13 @@ runs:
   steps:
     - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
       with:
-        go-version-file: go.mod
+        go-version-file: cli/go.mod
+        cache-dependency-path: cli/go.sum
 
     - name: Build bakery
       shell: bash
+      working-directory: cli
       run: |
         mkdir -p "$RUNNER_TEMP/bakery-bin"
-        go build -o "$RUNNER_TEMP/bakery-bin/bakery" ./cmd/bakery
+        go build -o "$RUNNER_TEMP/bakery-bin/bakery" ./bakery
         echo "$RUNNER_TEMP/bakery-bin" >> "$GITHUB_PATH"

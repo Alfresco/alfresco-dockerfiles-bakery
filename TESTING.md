@@ -87,17 +87,18 @@ Tests will automatically fail the workflow if any test fails.
 
 ## CLI tests
 
-The `bakery` CLI (`cmd/bakery`, `internal/`) has its own Go tests, run by the
+The `bakery` CLI is a Go module in `cli`, with its own Go tests run by the
 [CLI workflow](.github/workflows/cli.yml) on every change to the CLI:
 
 ```bash
+cd cli
 go vet ./...
 go test ./...
 ```
 
-Most tests in `cmd/bakery` build the real binary and run it against a scratch
+Most tests in `cli/bakery` build the real binary and run it against a scratch
 checkout, with a mock Maven repository and fake `docker` and `grype`
 executables on `PATH` that record how they were called. They need a POSIX
 shell, so they are skipped on Windows.
-`internal/artifacts` also checks every manifest in this repository against the
+`cli/internal/artifacts` also checks every manifest in this repository against the
 legacy Nexus URL layout.

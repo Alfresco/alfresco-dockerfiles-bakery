@@ -8,13 +8,13 @@ code in this repository.
 Alfresco Dockerfiles Bakery: Docker Bake definitions and Dockerfiles that build container images for the
 Alfresco Content Services (ACS) and Alfresco Process Services (APS) platforms (repository, share, search,
 transform engines, sync, connectors, audit storage, etc). `docker-bake.hcl` is the single source of truth
-for every image target; the `bakery` Go CLI (`cmd/bakery`, `internal/`) wraps `docker buildx bake` and adds
+for every image target; the `bakery` Go CLI (its own Go module in `cli`) wraps `docker buildx bake` and adds
 artifact fetching, registry auth/push confirmation, cleanup, and optional Grype scanning.
 
 ## Commands
 
 ```sh
-go run ./cmd/bakery <command>                   # or `go install ./cmd/bakery` and run `bakery <command>`
+cd cli && go install ./bakery              # or `go run ./bakery <command>` from cli
 
 bakery build community                          # build all Community edition images locally
 bakery build enterprise                         # build all Enterprise edition images locally
@@ -38,7 +38,7 @@ bakery fetch repository --log-level DEBUG
 
 bakery grype repository                         # manual vuln scan (default opts: -f high --only-fixed --ignore-states wont-fix)
 
-go vet ./... && go test ./...                   # CLI tests
+(cd cli && go vet ./... && go test ./...)   # CLI tests
 ```
 
 Building requires Docker with `buildx` and the `bakery` CLI (a release binary, or Go to build it). Every option
@@ -50,9 +50,9 @@ toolchain.
 Image tests are the `*_test.sh` scripts under each image's `tests/` directory, run against real built images
 by `./test/verify.sh` (see `TESTING.md`) — to add one, drop an executable `<image>/tests/*_test.sh` that takes
 the resolved image ref as `$1` and exits non-zero on failure. The CLI has Go tests, run by
-`.github/workflows/cli.yml`: most live in `cmd/bakery` and run the real binary against a scratch checkout
+`.github/workflows/cli.yml`: most live in `cli/bakery` and run the real binary against a scratch checkout
 with a mock Maven repository (`httptest`) and fake `docker`/`grype` scripts on `PATH` that log their argv
-and env; add a case there for any CLI behaviour change. `internal/artifacts/repo_test.go` checks every
+and env; add a case there for any CLI behaviour change. `cli/internal/artifacts/repo_test.go` checks every
 manifest in this repo against the legacy Nexus URL layout.
 
 Pre-commit hooks (`.pre-commit-config.yaml`) check YAML/JSON/XML validity and GitHub workflow schemas
@@ -70,7 +70,7 @@ cache-only, which adds Tomcat selected per ACS version. A few targets (`acc`, `a
 inherit from either and build from their own Nginx-based Dockerfile instead. `test/verify.sh` knows to
 redirect tests for cache-only targets to the first real target that inherits from them. Targets are grouped
 (`group "enterprise"`, `group "community"`, etc.). The CLI's build targets (the `targets` table in
-`internal/bake/bake.go`) map 1:1 to these groups, each with the folders or glob it fetches artifacts from;
+`cli/internal/bake/bake.go`) map 1:1 to these groups, each with the folders or glob it fetches artifacts from;
 `bakery build` fetches them, runs `docker buildx bake`, then an optional Grype scan. Add a row there when
 adding a new top-level group.
 
@@ -88,7 +88,7 @@ files declaring Maven coordinates, version, checksum, a `source`, and destinatio
 named Maven repository root defined in the committed `sources.yaml`; credentials are never stored there but
 resolved per source, by host, from `~/.netrc` (anonymous when none), so a build can mix multiple repositories.
 Third parties can repoint these at their own repositories — see `docs/bring-your-own-repository.md`.
-`bakery fetch` (`internal/artifacts`) walks the repo for `artifacts-*.yaml` (or a given target/glob, skipping
+`bakery fetch` (`cli/internal/artifacts`) walks the repo for `artifacts-*.yaml` (or a given target/glob, skipping
 hidden folders) and downloads each
 artifact into that image's build context (e.g. `repository/amps`, `repository/libs`) from its source's base URL
 using the standard Maven GAV layout, caching per source under `artifacts_cache/<source>/`. A missing/unknown
@@ -123,5 +123,5 @@ the full ACS/APS version matrix. `bumpVersions.yml` runs updatecli to bump artif
 `grype-scan.yml` and `kics.yml` run security scanning. Workflows get the CLI through the
 `.github/actions/setup-bakery` composite action, which builds it from the checkout. `cli.yml` tests the CLI
 and smoke-builds every target with it. Release process is documented at the bottom of `README.md`;
-publishing a release runs `on-release.yml`, which attaches the GoReleaser binaries (`.goreleaser.yaml`) to
+publishing a release runs `on-release.yml`, which attaches the GoReleaser binaries (`cli/.goreleaser.yaml`) to
 that release.
