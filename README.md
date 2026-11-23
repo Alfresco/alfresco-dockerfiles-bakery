@@ -17,6 +17,7 @@ Bake](https://docs.docker.com/build/bake/).
 - [Alfresco Dockerfiles Bakery 🍞](#alfresco-dockerfiles-bakery-)
   - [Prerequisites](#prerequisites)
     - [Installing the bakery CLI](#installing-the-bakery-cli)
+      - [Building from source](#building-from-source)
     - [Vagrant alternative](#vagrant-alternative)
     - [Nexus authentication](#nexus-authentication)
   - [Getting started quickly](#getting-started-quickly)
@@ -64,19 +65,45 @@ The `bakery` CLI builds the images defined in this repository. It runs on
 Linux, macOS and Windows, and works on the checkout it is run from (or the one
 given with `--dir`).
 
-Download the archive for your platform from the [GitHub
-release](https://github.com/Alfresco/alfresco-dockerfiles-bakery/releases)
-matching your checkout, extract it and put the `bakery` binary on your `PATH`.
+On Linux and macOS, download the latest release for your platform and move the
+binary to a folder already in your `PATH`, such as `/usr/local/bin`:
 
-Or, with Go installed, build it from your checkout so it always matches the
-recipes you build:
+```sh
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
+curl -fsSL "https://github.com/Alfresco/alfresco-dockerfiles-bakery/releases/latest/download/bakery_${OS}_${ARCH}.tar.gz" | tar -xz bakery
+sudo mv bakery /usr/local/bin/
+bakery --version
+```
+
+With `wget`, replace the `curl` line with:
+
+```sh
+wget -qO- "https://github.com/Alfresco/alfresco-dockerfiles-bakery/releases/latest/download/bakery_${OS}_${ARCH}.tar.gz" | tar -xz bakery
+```
+
+To install the CLI from a specific release, for example the one matching your
+checkout, replace `latest/download` in the URL with `download/<tag>`, such as
+`download/v0.17.0`. Each release also has a `bakery_checksums.txt` file with the
+SHA-256 of every archive.
+
+On Windows, download `bakery_windows_amd64.zip` (or `bakery_windows_arm64.zip`)
+from the [releases
+page](https://github.com/Alfresco/alfresco-dockerfiles-bakery/releases),
+extract `bakery.exe` and put it in a folder listed in your `PATH`.
+
+Run `bakery --help` to list the commands, and `bakery build --help` for the
+available targets and options.
+
+#### Building from source
+
+With Go installed, you can build the CLI from your checkout instead, so it
+always matches the recipes you build. `go install` puts the binary in
+`$(go env GOPATH)/bin`, which must be in your `PATH`:
 
 ```sh
 cd cli && go install ./bakery
 ```
-
-Run `bakery --help` to list the commands, and `bakery build --help` for the
-available targets and options.
 
 ### Vagrant alternative
 
