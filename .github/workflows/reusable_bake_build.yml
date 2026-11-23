@@ -47,12 +47,14 @@ jobs:
           key: ${{ runner.os }}-packages-v2-${{ hashFiles(inputs.artifacts-to-fetch) }}-${{ inputs.version }}
           path: artifacts_cache/**
 
+      - uses: ./.github/actions/setup-bakery
+
       - name: Fetch artifacts with test from nexus for ACS
         shell: bash
         env:
           ACS_VERSION: ${{ inputs.version }}
         run: |
-          python3 ./scripts/fetch_artifacts.py '${{ inputs.artifacts-to-fetch }}'
+          bakery fetch '${{ inputs.artifacts-to-fetch }}'
 
       - name: Save packages artifacts
         if: steps.artifacts-cache.outputs.cache-hit != 'true'

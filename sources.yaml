@@ -1,11 +1,11 @@
-# Maven repository sources used by scripts/fetch_artifacts.py.
+# Maven repository sources used by `bakery fetch` (and `bakery build`).
 #
 # Each entry is a named source whose `url` is the root of a Maven repository
 # (the part before the group/artifact/version path). Every artifact in an
 # `artifacts-*.yaml` file references one of these names through its `source`
 # field.
 #
-# No credentials are stored here. fetch_artifacts.py resolves them from your
+# No credentials are stored here. The bakery CLI resolves them from your
 # `~/.netrc` file by the host of each source URL (anonymous access is used when
 # nothing matches).
 #

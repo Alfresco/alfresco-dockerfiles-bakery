@@ -1,0 +1,15 @@
+name: Setup bakery CLI
+description: Build the bakery CLI from this checkout and put it on PATH
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+      with:
+        go-version-file: go.mod
+
+    - name: Build bakery
+      shell: bash
+      run: |
+        mkdir -p "$RUNNER_TEMP/bakery-bin"
+        go build -o "$RUNNER_TEMP/bakery-bin/bakery" ./cmd/bakery
+        echo "$RUNNER_TEMP/bakery-bin" >> "$GITHUB_PATH"

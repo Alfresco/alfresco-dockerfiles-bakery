@@ -28,6 +28,9 @@ docker run --rm "$IMAGE" catalina.sh configtest 2>&1 | grep -q "Loaded Apache To
 
 ## Running tests
 
+`verify.sh` needs the `bakery` CLI on `PATH`, or Go to run it from source, to
+resolve the image tags.
+
 ```bash
 # Run all discovered tests
 ./test/verify.sh
@@ -74,8 +77,27 @@ docker run --rm "$IMAGE" catalina.sh configtest 2>&1 | grep -q "Loaded Apache To
 Add to your GitHub Actions workflow:
 
 ```yaml
+- uses: ./.github/actions/setup-bakery
+
 - name: Run image tests
   run: ./test/verify.sh
 ```
 
 Tests will automatically fail the workflow if any test fails.
+
+## CLI tests
+
+The `bakery` CLI (`cmd/bakery`, `internal/`) has its own Go tests, run by the
+[CLI workflow](.github/workflows/cli.yml) on every change to the CLI:
+
+```bash
+go vet ./...
+go test ./...
+```
+
+Most tests in `cmd/bakery` build the real binary and run it against a scratch
+checkout, with a mock Maven repository and fake `docker` and `grype`
+executables on `PATH` that record how they were called. They need a POSIX
+shell, so they are skipped on Windows.
+`internal/artifacts` also checks every manifest in this repository against the
+legacy Nexus URL layout.

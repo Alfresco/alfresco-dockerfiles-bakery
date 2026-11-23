@@ -16,6 +16,7 @@ Bake](https://docs.docker.com/build/bake/).
 
 - [Alfresco Dockerfiles Bakery 🍞](#alfresco-dockerfiles-bakery-)
   - [Prerequisites](#prerequisites)
+    - [Installing the bakery CLI](#installing-the-bakery-cli)
     - [Vagrant alternative](#vagrant-alternative)
     - [Nexus authentication](#nexus-authentication)
   - [Getting started quickly](#getting-started-quickly)
@@ -33,12 +34,13 @@ Bake](https://docs.docker.com/build/bake/).
   - [Security scanning](#security-scanning)
   - [Software Bill of Materials](#software-bill-of-materials)
   - [Build provenance](#build-provenance)
-  - [Fetch artifacts script](#fetch-artifacts-script)
+  - [Fetching artifacts](#fetching-artifacts)
     - [Usage](#usage)
     - [Arguments](#arguments)
       - [Targets (optional)](#targets-optional)
       - [Options](#options)
     - [Examples](#examples)
+    - [Sources](#sources)
     - [Environment Variables](#environment-variables)
   - [Known issues](#known-issues)
   - [Release](#release)
@@ -48,15 +50,33 @@ Bake](https://docs.docker.com/build/bake/).
 Building images requires the following tools:
 
 - A recent enough Docker installation (with `buildx` support)
+- The `bakery` CLI, see [Installing the bakery CLI](#installing-the-bakery-cli)
 - Credentials to access the Alfresco artifacts (Nexus server), if building
   Enterprise images
-- Some common unix tools: `jq`, `yq`, `make`
-- Python 3 with pyyaml (`pip install pyyaml`) for fetching artifacts via the
-  `fetch-artifacts.py` script
 
 Alternatively, you can use the provided [Vagrantfile](Vagrantfile) to create a
 dedicated VM with all the required tools installed. This is useful if you want
 to build the images without installing the tools on your local machine.
+
+### Installing the bakery CLI
+
+The `bakery` CLI builds the images defined in this repository. It runs on
+Linux, macOS and Windows, and works on the checkout it is run from (or the one
+given with `--dir`).
+
+Download the archive for your platform from the [GitHub
+release](https://github.com/Alfresco/alfresco-dockerfiles-bakery/releases)
+matching your checkout, extract it and put the `bakery` binary on your `PATH`.
+
+Or, with Go installed, build it from your checkout so it always matches the
+recipes you build:
+
+```sh
+go install ./cmd/bakery
+```
+
+Run `bakery --help` to list the commands, and `bakery build --help` for the
+available targets and options.
 
 ### Vagrant alternative
 
@@ -81,8 +101,9 @@ required Bakery dependencies, and then you can enter the environment by running:
 vagrant ssh
 ```
 
-Then you can proceed running the `make` commands as described later in this
-document.
+The provisioning also installs the `bakery` CLI, so you can proceed running the
+`bakery` commands as described later in this document from the `/vagrant`
+folder.
 
 ### Nexus authentication
 
@@ -115,16 +136,17 @@ Alfresco images updated (e.g. with the latest OS security patches), you can
 simply run the command below from the root of this project:
 
 ```sh
-make enterprise
+bakery build enterprise
 ```
 
 or for Community edition:
 
 ```sh
-make community
+bakery build community
 ```
 
-This command will build locally all the docker images this project offers.
+This command fetches the required artifacts and builds locally all the docker
+images this project offers.
 
 For more information on the available images, browse the top level folders,
 excluding `artifacts_cache`, `scripts` and `test`.
@@ -132,35 +154,41 @@ excluding `artifacts_cache`, `scripts` and `test`.
 For more information on the available targets, run:
 
 ```sh
-make help
+bakery build --help
 ```
 
-Below are some environment variables which can be used to customize the build
-process:
+The build can be customized with these options. Each one can also be set with
+the environment variable in brackets:
 
-- `REGISTRY`: The registry where the images will be pushed (authentication is
-  ensured by the `make` wrapper)
-- `REGISTRY_NAMESPACE`: The namespace where the images will be pushed (e.g.
-  REGISTRY/REGISTRY_NAMESPACE/IMAGE_NAME:TAG)
-- `TAG`: The tag to use for the images (default is `latest`)
+- `--acs-version` (`ACS_VERSION`): The ACS major version to build, see
+  [Building specific ACS versions](#building-specific-acs-versions)
+- `--aps-version` (`APS_VERSION`): The APS major version to build
+- `--registry` (`REGISTRY`): The registry where the images will be pushed. The
+  CLI runs `docker login` and asks for confirmation before pushing. Unset or
+  `localhost` loads the images locally.
+- `--namespace` (`REGISTRY_NAMESPACE`): The namespace where the images will be
+  pushed (e.g. REGISTRY/REGISTRY_NAMESPACE/IMAGE_NAME:TAG)
+- `--tag` (`TAG`): The tag to use for the images (default is the version of the
+  artifact each image packages)
+- `--yes`: Push without asking for confirmation, e.g. in CI
+- `--no-cache` (`BAKE_NO_CACHE`): Disable the cache during the build process
+- `--no-sbom` (`BAKE_NO_SBOM`): Do not attach an SBOM attestation to the images
+  when pushing them to a registry. See [Software Bill of
+  Materials](#software-bill-of-materials) for more information.
+- `--provenance` (`BAKE_PROVENANCE`): Provenance attestation to attach to the
+  images when pushing them to a registry, disabled (`false`) by default. Set to
+  `mode=min` or `mode=max` to describe your own build. See [Build
+  provenance](#build-provenance) for more information.
 - `TARGETARCH`: The architecture to build the images for (default is the
   architecture of the system where the build is run). See [Supported
   Architectures](#supported-architectures) for more information.
-- `BAKE_NO_CACHE`: Set to `1` to disable the cache during the build process
-- `BAKE_NO_SBOM`: Set to `1` to not attach an SBOM attestation to the images when
-  pushing them to a registry. See [Software Bill of Materials](#software-bill-of-materials)
-  for more information.
-- `BAKE_PROVENANCE`: Provenance attestation to attach to the images when pushing
-  them to a registry, disabled (`false`) by default. Set to `mode=min` or
-  `mode=max` to describe your own build. See [Build
-  provenance](#build-provenance) for more information.
 
 For example, to build multi-arch images for ARM64 and X86_64 and push them to a
 custom registry, you can run the following command:
 
 ```sh
-export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=linux/amd64,linux/arm64
-make all
+export TARGETARCH=linux/amd64,linux/arm64
+bakery build all --registry myecr.domain.tld --namespace myalfrescobuilds
 ```
 
 ## Customizing the images
@@ -207,7 +235,7 @@ the files, there are two behaviours:
 
 - **Merge with the fetched defaults** — add your files to the in-tree default
   folders (`repository/amps`, `repository/amps_<edition>`, `repository/libs`,
-  `repository/simple_modules`). `fetch_artifacts.py` (run by `make`) fills those
+  `repository/simple_modules`). `bakery build` (or `bakery fetch`) fills those
   same folders with the Nexus defaults such as `share-services` and `aos`, so
   your files land **alongside** them and both end up in the image.
 - **Replace a context wholesale** — point a context at a *different* source with
@@ -322,7 +350,7 @@ ACS_VERSION=26 docker buildx bake search_batch_indexing
 To build all Community Edition images for a selected ACS version, use:
 
 ```sh
-make community ACS_VERSION=26
+bakery build community --acs-version 26
 ```
 
 For ACS 23 and ACS 25, the `community` group builds the Solr-based Search
@@ -353,11 +381,12 @@ command:
 
 ```sh
 export TARGETARCH=linux/arm64
-make all
+bakery build all
 ```
 
-To build just a specific image use you'll need to use `docker buildx bake`
-directly, but the `TARGETARCH` environment variable also works:
+To build just a specific image you'll need to use `docker buildx bake`
+directly (after `bakery fetch` for its artifacts), but the `TARGETARCH`
+environment variable also works:
 
 ```sh
 export TARGETARCH=linux/arm64
@@ -376,7 +405,7 @@ architecture.
 
 ```sh
 export TARGETARCH=linux/amd64,linux/arm64
-make all
+bakery build all --registry myecr.domain.tld
 ```
 
 It's important to note that building multi-arch images requires the use of
@@ -387,14 +416,14 @@ also requires images to be pushed to a registry that supports multi-arch.
 This is due to a limitation of the `docker` exporter in BuildKit.
 In order to produce multi-arch images one needs to:
 
-- Set the REGISTRY environment variable to the target registry
-- Set the REGISTRY_NAMESPACE environment variable to the target namespace
+- Set the target registry with `--registry` (or `REGISTRY`)
+- Set the target namespace with `--namespace` (or `REGISTRY_NAMESPACE`)
 
-The `make` wrapper would handle the authentication part for you:
+The `bakery` CLI handles the authentication part for you:
 
 ```sh
-export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds TARGETARCH=linux/amd64,linux/arm64
-make repository
+export TARGETARCH=linux/amd64,linux/arm64
+bakery build repository --registry myecr.domain.tld --namespace myalfrescobuilds
 ```
 
 You can also run bake directly but you need to be sure to have done the
@@ -411,15 +440,15 @@ docker buildx bake repository --set *.output=type=registry,push=true
 Versions of artifacts being downloaded specific to the ACS version are defined
 in `artifacts-XX.yaml` files for each component.
 
-To build a specific ACS version, pass the `ACS_VERSION` env to either `make`
-or `docker buildx bake`.
+To build a specific ACS version, pass `--acs-version` to `bakery` or the
+`ACS_VERSION` env to either `bakery` or `docker buildx bake`.
 
 - ACS 26 (current default) - `ACS_VERSION=26` - Will use `artifacts-26.yaml` files
 - ACS 25  - `ACS_VERSION=25` - Will use `artifacts-25.yaml` files
 - ACS 23  - `ACS_VERSION=23` - Will use `artifacts-23.yaml` files
 
 ```sh
-make enterprise ACS_VERSION=23
+bakery build enterprise --acs-version 23
 ```
 
 ```sh
@@ -431,22 +460,26 @@ Tomcat values are selected automatically from `docker-bake.hcl` based on
 
 If needed, you can still override Tomcat values explicitly using `--set`.
 
-Before switching build to other version clean the artifacts using `make clean`
-then fetch correct version with e.g.:
+Before switching build to other version you can clean the artifacts using
+`bakery clean` then fetch correct version with e.g.:
 
 ```sh
-make clean prepare ACS_VERSION=23
+bakery clean -f
+bakery fetch --acs-version 23
 ```
 
 Superseded versions of an artifact are also pruned automatically from its
 target folder as soon as the new version is fetched, so re-running with a
 different `ACS_VERSION` (or after bumping a version in an `artifacts-XX.yaml`
-file) without `make clean` first will not leave stale files behind.
+file) without `bakery clean` first will not leave stale files behind.
+
+`bakery clean --caches` also prunes the Docker build cache and empties the
+`artifacts_cache` download cache.
 
 Artifacts set in the artifacts file are fetched from the Nexus repository and
 their checksum is verified, provided the artifact has a checksum value which is
 a concatenation of the algorithm and optionally the checksum in the format
-`<algorithm>:<checksum>`. If the checksum is not provided, the script will
+`<algorithm>:<checksum>`. If the checksum is not provided, the CLI will
 try to fetch it from the Nexus repository reusing the computed artifact url and
 appending the `.algorithm` extension to it.
 
@@ -569,30 +602,33 @@ in [docs/security-scanning.md](docs/security-scanning.md).
 If you want to run the security scan manually, you can use the following command:
 
 ```sh
-make grype GRYPE_TARGET=repository GRYPE_OPTS="-f high --only-fixed --ignore-states wont-fix"
+bakery grype repository
 ```
 
-`GRYPE_TARGET` accepts any `docker-bake.hcl` target or group name (e.g. `repository`,
-`share`, `community`, `enterprise`).
+The target accepts any `docker-bake.hcl` target or group name (e.g. `repository`,
+`share`, `community`, `enterprise`). Without a target, the default group is
+scanned.
 
-You can pass `GRYPE_OPTS` to override the default options passed to Grype, which
-by default exit with a non-zero status if any vulnerability greater than high is
-found and is filtering out known issues for which a fix is not available (yet or
-ever).
+You can pass `--grype-opts` (or `GRYPE_OPTS`) to override the default options
+passed to Grype (`-f high --only-fixed --ignore-states wont-fix`), which exit
+with a non-zero status if any vulnerability greater than high is found and
+filter out known issues for which a fix is not available (yet or ever).
 
-Set `GRYPE_OUTPUT_DIR` to write each image's scan output to a file in that directory
-instead of printing it to stdout, and `GRYPE_OUTPUT_FORMAT` to pick the format (see
-Grype's `-o`/`--output` flag), e.g. to collect SARIF reports for upload elsewhere:
+Set `--grype-output-dir` (or `GRYPE_OUTPUT_DIR`) to write each image's scan
+output to a file in that directory instead of printing it to stdout, and
+`--grype-output-format` (or `GRYPE_OUTPUT_FORMAT`) to pick the format (see
+Grype's `-o`/`--output` flag), e.g. to collect SARIF reports for upload
+elsewhere:
 
 ```sh
-make grype GRYPE_TARGET=repository GRYPE_OPTS="--only-fixed --ignore-states wont-fix" GRYPE_OUTPUT_DIR=sarif GRYPE_OUTPUT_FORMAT=sarif
+bakery grype repository --grype-opts "--only-fixed --ignore-states wont-fix" --grype-output-dir sarif --grype-output-format sarif
 ```
 
-You can also run grype automatically at the end of the build process by setting
-`GRYPE_ONBUILD`:
+You can also run grype automatically at the end of the build process with
+`--grype` (or `GRYPE_ONBUILD`):
 
 ```sh
-make all GRYPE_ONBUILD=1
+bakery build all --grype
 ```
 
 ## Software Bill of Materials
@@ -602,22 +638,21 @@ as a [BuildKit SBOM
 attestation](https://docs.docker.com/build/metadata/attestations/sbom/), with
 one attestation per image and per platform.
 
-Getting an SBOM requires `REGISTRY` to be set, since the `docker` exporter used
+Getting an SBOM requires a registry to push to, since the `docker` exporter used
 when loading images locally cannot carry attestations:
 
 ```sh
-export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds
-make repository
+bakery build repository --registry myecr.domain.tld --namespace myalfrescobuilds
 ```
 
-When calling bake directly instead of going through the `make` wrapper, pass
+When calling bake directly instead of going through the `bakery` CLI, pass
 `--sbom=true` yourself:
 
 ```sh
 docker buildx bake repository --set *.output=type=registry,push=true --sbom=true
 ```
 
-Set `BAKE_NO_SBOM=1` to turn SBOM generation off, for instance when targeting a
+Pass `--no-sbom` (or set `BAKE_NO_SBOM=1`) to turn SBOM generation off, for instance when targeting a
 registry which does not support OCI attestation manifests.
 
 To retrieve the SBOM of an image (the registry below is a placeholder, use your
@@ -654,16 +689,15 @@ it in `mode=max`.
 Provenance is disabled by default, since a record only describes the build which
 produced it, and says nothing to whoever consumes the image unless they know the
 build environment it points at. If you build your own images and want
-provenance, describe your own build by setting `BAKE_PROVENANCE`:
+provenance, describe your own build with `--provenance` (or `BAKE_PROVENANCE`):
 
 ```sh
-export REGISTRY=myecr.domain.tld REGISTRY_NAMESPACE=myalfrescobuilds BAKE_PROVENANCE=mode=max
-make repository
+bakery build repository --registry myecr.domain.tld --namespace myalfrescobuilds --provenance mode=max
 ```
 
-As with the SBOM, this requires `REGISTRY` to be set, since the `docker`
+As with the SBOM, this requires a registry to push to, since the `docker`
 exporter used when loading images locally cannot carry attestations. When
-calling bake directly instead of going through the `make` wrapper, pass
+calling bake directly instead of going through the `bakery` CLI, pass
 `--provenance` yourself:
 
 ```sh
@@ -696,47 +730,53 @@ docker buildx imagetools inspect myecr.domain.tld/myalfrescobuilds/alfresco-cont
          revision: .buildDefinition.externalParameters.request.root.request.args["vcs:revision"]}'
 ```
 
-## Fetch artifacts script
+## Fetching artifacts
 
-A Python script to download artifacts from the Alfresco Nexus repository based
-on YAML configuration files.
-
-> We recommend using `make` for local operations on this repository but if you
-> want to only leverage the fetching script here is the explanation
+`bakery build` downloads the artifacts each target needs before building. To
+only download artifacts from the Alfresco Nexus repository, based on the
+`artifacts-XX.yaml` files, use `bakery fetch`.
 
 ### Usage
 
 ```bash
-python3 scripts/fetch_artifacts.py [targets...] [options]
+bakery fetch [targets...] [options]
 ```
 
 ### Arguments
 
 #### Targets (optional)
 
-You can specify one or more targets:
+You can specify one or more targets, relative to the repository root:
 
 - **No arguments**: Processes the entire repository (only files matching
-  `artifacts-*.yaml`)
-- **Directory path**: Searches for artifact files in the specified directory
-  (only files matching `artifacts-*.yaml` in that directory)
+  `artifacts-<ACS_VERSION>.yaml`)
+- **Directory path**: Searches for `artifacts-<ACS_VERSION>.yaml` files in the
+  specified directory and its subfolders
 - **File path**: Processes a specific artifact YAML file
-- **Glob pattern**: Uses wildcards to match multiple files/directories
+- **Glob pattern**: Uses wildcards to match multiple files, `**` included
 
 #### Options
 
+- `--acs-version` - ACS version of the manifests to fetch (default: `26`)
 - `--log-level {DEBUG,INFO,WARNING,ERROR}` - Set logging verbosity (default: INFO)
 - `--log-file FILE` - Write logs to a file (in addition to console output)
 
 ### Examples
 
 ```bash
-python3 scripts/fetch_artifacts.py
-python3 scripts/fetch_artifacts.py repository
-python3 scripts/fetch_artifacts.py repository share aps
-python3 scripts/fetch_artifacts.py "**/artifacts-26.yaml"
-python3 scripts/fetch_artifacts.py repository --log-level DEBUG
-python3 scripts/fetch_artifacts.py repository --log-file download.log
+bakery fetch
+bakery fetch repository
+bakery fetch repository share aps
+bakery fetch "**/artifacts-26.yaml"
+bakery fetch repository --log-level DEBUG
+bakery fetch repository --log-file download.log
+```
+
+`bakery versions` prints the map of artifact versions which `docker-bake.hcl`
+uses to tag the images, for use with `docker buildx bake` directly:
+
+```bash
+ARTIFACT_VERSIONS="$(bakery versions)" docker buildx bake repository
 ```
 
 ### Sources
@@ -756,13 +796,14 @@ see [Bring your own repository](docs/bring-your-own-repository.md).
 
 - `ACS_VERSION` - Alfresco Content Services version (default: "26")
 - `SOURCES_FILE` - Path to the sources definition file (default: `sources.yaml`)
+- `NETRC` - Path to the credentials file (default: `~/.netrc`)
 
 For authentication check out [nexus authentication](#nexus-authentication)
 
 ## Known issues
 
-- When building `all` target with `make`, which is meant to build only `acs`, the
-  fetching script will also try to download the artifacts related to `aps`.
+- When building the `all` target, which is meant to build only `acs`, the
+  CLI will also try to download the artifacts related to `aps`.
   Build will proceed as it will use the `default` bake target which points to
   `enterprise` and `community` targets.
 
@@ -796,3 +837,7 @@ gh release create v0.2.0 -t "🍞 Fougasse v0.2.0" --generate-notes -d
 Finally review the autogenerated release notes, remove not so interesting
 changes (e.g. GHA tuning and dependabot), highlight most interesting ones for
 the end users and publish the release.
+
+Publishing the release triggers the [release
+workflow](.github/workflows/on-release.yml), which attaches the `bakery` CLI
+binaries for Linux, macOS and Windows (amd64 and arm64) to it.

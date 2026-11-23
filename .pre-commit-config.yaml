@@ -20,7 +20,3 @@ repos:
     rev: 0.29.1
     hooks:
       - id: check-github-workflows
-  - repo: https://github.com/mrtazz/checkmake.git
-    rev: 0.2.2
-    hooks:
-      - id: checkmake

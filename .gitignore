@@ -28,6 +28,8 @@ test/helm/community_values.yaml
 
 # CI/CD
 /alfresco-updatecli
+# GoReleaser output
+/dist/
 .idea
 .vscode
 .vagrant

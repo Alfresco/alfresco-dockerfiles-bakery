@@ -10,25 +10,14 @@ indexing / reindexing components.
 
 ## Building the image
 
-Make sure all required artifacts are present in the build context
-`search/community/`. Use the script `./scripts/fetch_artifacts.py` to download
-them from Alfresco's Nexus:
+Build the image from the root of this repository. The CLI downloads the
+required artifacts from Alfresco's Nexus into `search/community/` first:
 
 ```bash
-python3 ./scripts/fetch_artifacts.py search/community
+bakery build search_batch_indexing
 ```
 
-or via the Makefile convenience target:
-
-```bash
-make prepare_search_community
-```
-
-Then build the image from the root of this repository:
-
-```bash
-ACS_VERSION=26 docker buildx bake search_batch_indexing
-```
+To only download the artifacts, run `bakery fetch search/community`.
 
 ## Runtime variables
 

@@ -1,0 +1,32 @@
+version: 2
+
+builds:
+  - main: ./cmd/bakery
+    binary: bakery
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+
+archives:
+  - name_template: "bakery_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - LICENSE
+
+checksum:
+  name_template: "bakery_{{ .Version }}_checksums.txt"
+
+changelog:
+  disable: true
+
+release:
+  # The release and its notes are written by hand; only attach the binaries.
+  mode: keep-existing

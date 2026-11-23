@@ -32,7 +32,7 @@ echo \
 
 apt-get update -qq
 apt-get install -qy \
-    make \
+    golang-go \
     docker-ce \
     docker-ce-cli \
     containerd.io \
@@ -41,3 +41,7 @@ apt-get install -qy \
 
 echo "Adding vagrant user to docker group"
 adduser vagrant docker
+
+echo "Installing the bakery CLI..."
+# The distro Go downloads the toolchain version go.mod asks for.
+(cd /vagrant && GOTOOLCHAIN=auto GOBIN=/usr/local/bin go install ./cmd/bakery)
