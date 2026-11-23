@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: cli
