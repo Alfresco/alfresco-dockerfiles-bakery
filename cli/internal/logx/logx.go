@@ -43,7 +43,7 @@ type Logger struct {
 func New(out io.Writer, level Level, logFile string) (*Logger, error) {
 	l := &Logger{out: out, level: level}
 	if logFile != "" {
-		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
 		if err != nil {
 			return nil, err
 		}
