@@ -119,10 +119,10 @@ download cache used by `bakery fetch`; don't hand-edit its contents.
 **CI.** `.github/workflows/build_and_test.yml` is the main pipeline: pre-commit, then matrixed ACS builds (26,
 25, 23) via `acs_reusable_build_and_test.yml` and APS builds via `aps_reusable_build_and_test.yml`, both
 wrapping `reusable_bake_build.yml`. `build_forks.yml` is a reduced, no-secrets path for PRs from forks: it
-builds only the Community ACS 26 target, then runs compose and Helm smoke tests against it — it does not cover
+builds only the Community ACS 26 target with `bakery build community`, then runs compose and Helm smoke tests against it — it does not cover
 the full ACS/APS version matrix. `bumpVersions.yml` runs updatecli to bump artifact/base-image versions. The `thirdparty` job (`.github/updatecli_thirdparty.tpl`, values in `.github/updatecli_thirdparty_values.yaml`) is a matrix with one pipeline per component (`COMPONENT`), so ImageMagick and LibreOffice each get their own PR. It bumps the repackaged distribution in every `tengine/{imagemagick,libreoffice}/artifacts-*.yaml` to the newest Nexus version by `sort -V`, once all its classifiers are published.
 `grype-scan.yml` and `kics.yml` run security scanning. Workflows get the CLI through the
 `.github/actions/setup-bakery` composite action, which builds it from the checkout. `cli.yml` tests the CLI
-and smoke-builds every target with it. Release process is documented at the bottom of `README.md`;
+and smoke-builds every target with it (skipped on fork PRs). Release process is documented at the bottom of `README.md`;
 publishing a release runs `on-release.yml`, which attaches the GoReleaser binaries (`cli/.goreleaser.yaml`) to
 that release.

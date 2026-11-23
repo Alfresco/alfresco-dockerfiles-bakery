@@ -47,14 +47,12 @@ jobs:
 
   build:
     needs: test
+    # Fork PRs get no Nexus secrets; build_forks.yml builds community with the CLI for them.
+    if: ${{ ! github.event.pull_request.head.repo.fork }}
     strategy:
       fail-fast: false
       matrix:
-        target: ${{ fromJSON(
-            github.event.pull_request.head.repo.fork
-              && '["community"]'
-              || '["community", "adf_apps","ats","audit_storage","connectors","cic_connector","repository","search_enterprise","search_service","share","sync","tengines","aps"]'
-          ) }}
+        target: ["community", "adf_apps", "ats", "audit_storage", "connectors", "cic_connector", "repository", "search_enterprise", "search_service", "share", "sync", "tengines", "aps"]
     runs-on: ubuntu-latest
     steps:
       - uses: Alfresco/alfresco-build-tools/.github/actions/free-hosted-runner-disk-space@v19.12.1
