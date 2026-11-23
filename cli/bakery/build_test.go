@@ -281,6 +281,16 @@ func TestGrypeOptsKeepQuotedValues(t *testing.T) {
 	assertContains(t, f.calls(), "argv: [--config] [my configs/grype.yaml] [--only-fixed] [localhost/alfresco/alfresco-share:26.1.0]")
 }
 
+func TestGrypeOptsKeepBackslashesInDoubleQuotes(t *testing.T) {
+	f := bakeFixture(t)
+	must(t, os.WriteFile(f.print, []byte(printJSON), 0o644))
+	res := f.run("", "grype", "share", "--grype-opts", `--config "C:\configs\grype.yaml" --name "say \"hi\""`)
+	if res.code != 0 {
+		t.Fatal("grype failed")
+	}
+	assertContains(t, f.calls(), `argv: [--config] [C:\configs\grype.yaml] [--name] [say "hi"] [localhost/alfresco/alfresco-share:26.1.0]`)
+}
+
 func TestGrypeTargetFromEnv(t *testing.T) {
 	f := bakeFixture(t)
 	must(t, os.WriteFile(f.print, []byte(printJSON), 0o644))

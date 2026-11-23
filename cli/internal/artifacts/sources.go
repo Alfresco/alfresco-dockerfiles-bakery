@@ -111,22 +111,20 @@ func readNetrc(path string) (map[string][2]string, error) {
 	var tokens []string
 	inMacro := false
 	sc := bufio.NewScanner(file)
+	lineNo := 0
 lines:
 	for sc.Scan() {
 		line := sc.Text()
+		lineNo++
 		if inMacro {
 			if strings.TrimSpace(line) == "" {
 				inMacro = false
 			}
 			continue
 		}
-		if strings.HasPrefix(strings.TrimSpace(line), "#") {
-			continue
-		}
-		// netrc quotes with double quotes only; a single quote is part of the value.
-		fields, err := shellwords.Split(line, false)
+		fields, err := shellwords.Split(line, shellwords.Netrc)
 		if err != nil {
-			return creds, err
+			return creds, fmt.Errorf("line %d: %w", lineNo, err)
 		}
 		for i, tok := range fields {
 			if tok == "macdef" {

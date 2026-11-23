@@ -180,6 +180,7 @@ func TestFetchQuotedNetrcCredentials(t *testing.T) {
 	cases := map[string]string{
 		"quoted":  "machine 127.0.0.1\n  login \"alice\"\n  password \"secret value\"\n",
 		"escaped": "machine 127.0.0.1 login alice password secret\\ value\n",
+		"comment": "machine 127.0.0.1 login alice password \"secret value\" # password for Nexus\n",
 	}
 	for name, netrc := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -212,6 +213,19 @@ func TestFetchNeverLogsCredentials(t *testing.T) {
 	}
 	assertNotContains(t, res.out, "s3cr3t-value")
 	assertNotContains(t, res.out, "secretuser")
+}
+
+func TestFetchNeverLogsMalformedNetrc(t *testing.T) {
+	f := newFixture(t)
+	r := newMavenRepo(t, "", "")
+	r.seed(t, "com.test", "nolog-artifact", "1.0.0", ".jar", "")
+	f.netrc("machine 127.0.0.1 login alice password \"S3CR3T-value\n")
+	f.write("sources.yaml", sourcesFor("mocksrc", r.URL))
+	f.write("t/artifacts-26.yaml", manifest(artifact("nolog-artifact", "1.0.0", "com.test", "mocksrc", "t/libs")))
+
+	res := f.run("", "fetch", "t", "--log-level", "DEBUG")
+	assertContains(t, res.out, "Error parsing .netrc file")
+	assertNotContains(t, res.out, "S3CR3T-value")
 }
 
 func TestFetchVerifiesChecksums(t *testing.T) {
@@ -257,6 +271,18 @@ func TestFetchRemoteChecksumFetchedOnce(t *testing.T) {
 	}
 	if n := strings.Count(r.log(), ".jar.sha1 "); n != 1 {
 		t.Errorf("remote checksum fetched %d times, want 1", n)
+	}
+}
+
+func TestFetchFailsWhenRemoteChecksumUnreachable(t *testing.T) {
+	f := newFixture(t)
+	r := newMavenRepo(t, "", "")
+	r.seed(t, "com.test", "dropped", "1.0.0", ".jar", "")
+	f.write("sources.yaml", sourcesFor("mocksrc", r.URL))
+	f.write("t/artifacts-26.yaml", manifest(artifact("dropped", "1.0.0", "com.test", "mocksrc", "t/libs", `checksum: "sha1:"`)))
+
+	if res := f.run("", "fetch", "t"); res.code == 0 || f.exists("t/libs/dropped-1.0.0.jar") {
+		t.Fatal("a transport error on the checksum must fail without writing the artifact")
 	}
 }
 

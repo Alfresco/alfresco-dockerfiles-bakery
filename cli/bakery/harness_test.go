@@ -185,6 +185,13 @@ func newMavenRepo(t *testing.T, user, pass string) *mavenRepo {
 		r.mu.Lock()
 		r.requests = append(r.requests, req.URL.Path+" auth="+req.Header.Get("Authorization"))
 		r.mu.Unlock()
+		if strings.Contains(req.URL.Path, "dropped") && strings.HasSuffix(req.URL.Path, ".sha1") {
+			conn, _, err := w.(http.Hijacker).Hijack()
+			if err == nil {
+				conn.Close()
+			}
+			return
+		}
 		if strings.Contains(req.URL.Path, "forbidden") {
 			http.Error(w, "forbidden", http.StatusForbidden)
 			return

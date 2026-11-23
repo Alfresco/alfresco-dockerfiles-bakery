@@ -194,9 +194,12 @@ func (f *Fetcher) expectedChecksum(a artifact) (checksum, error) {
 	if value == "" {
 		remote := a.url() + "." + algo
 		body, err := f.get(remote, a.source)
-		if err != nil {
+		var httpErr *httpError
+		if errors.As(err, &httpErr) {
 			f.Log.Warnf("Failed to fetch checksum from %s: %v", remote, err)
 			return checksum{}, nil
+		} else if err != nil {
+			return checksum{}, fmt.Errorf("fetching checksum from %s: %w", remote, err)
 		}
 		data, err := io.ReadAll(body)
 		body.Close()

@@ -99,7 +99,7 @@ func (g *globalOpts) fetcher(logLevel, logFile string) (*artifacts.Fetcher, func
 
 // bakeOptions completes o with the global options, the grype arguments and stdio.
 func (g *globalOpts) bakeOptions(o *bake.Options, grypeArgs string) error {
-	args, err := shellwords.Split(grypeArgs, true)
+	args, err := shellwords.Split(grypeArgs, shellwords.Shell)
 	if err != nil {
 		return fmt.Errorf("--grype-opts: %w", err)
 	}
