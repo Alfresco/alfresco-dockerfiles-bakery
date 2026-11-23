@@ -1,4 +1,4 @@
-name: CI from forks
+name: CI Community
 
 on:
   pull_request:
