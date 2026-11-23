@@ -3,7 +3,10 @@ package artifacts
 import (
 	"encoding/json"
 	"path/filepath"
+	"slices"
 	"strings"
+
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/repo"
 )
 
 // VersionsJSON returns the {artifact name: version} map of every ACS manifest
@@ -12,18 +15,17 @@ import (
 func VersionsJSON(root, acsVersion, apsVersion string) (string, error) {
 	acsName, apsName := manifestName(acsVersion), manifestName(apsVersion)
 	inAPS := func(rel string) bool { return strings.HasPrefix(rel, "aps/") }
-	acs, err := walkManifests(root, root, func(rel string) bool {
-		return !inAPS(rel) && filepath.Base(rel) == acsName
+	all, err := repo.Walk(root, root, func(rel string) bool {
+		if inAPS(rel) {
+			return filepath.Base(rel) == apsName
+		}
+		return filepath.Base(rel) == acsName
 	})
 	if err != nil {
 		return "", err
 	}
-	aps, err := walkManifests(root, root, func(rel string) bool {
-		return inAPS(rel) && filepath.Base(rel) == apsName
-	})
-	if err != nil {
-		return "", err
-	}
+	acs := slices.DeleteFunc(slices.Clone(all), inAPS)
+	aps := slices.DeleteFunc(all, func(rel string) bool { return !inAPS(rel) })
 
 	versions := map[string]any{}
 	for _, rel := range append(acs, aps...) {

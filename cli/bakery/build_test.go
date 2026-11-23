@@ -179,6 +179,19 @@ func TestBuildPushFlags(t *testing.T) {
 	}
 }
 
+func TestBuildFlagsFromEnv(t *testing.T) {
+	f := bakeFixture(t)
+	f.env = []string{"REGISTRY=quay.io", "BAKE_NO_CACHE=1", "BAKE_NO_SBOM=1", "BAKE_PROVENANCE=mode=max"}
+	if res := f.run("", "build", "share", "--yes"); res.code != 0 {
+		t.Fatal("build failed")
+	}
+	calls := bakeCalls(f.calls())
+	want := "docker buildx bake --progress=plain --no-cache --set *.output=type=registry,push=true --provenance=mode=max share"
+	if len(calls) != 1 || calls[0] != want {
+		t.Fatalf("bake calls %q, want %q", calls, want)
+	}
+}
+
 func TestBuildPushDeclined(t *testing.T) {
 	for _, stdin := range []string{"n\n", ""} {
 		f := bakeFixture(t)

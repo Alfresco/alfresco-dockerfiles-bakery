@@ -241,6 +241,25 @@ func TestFetchVerifiesChecksums(t *testing.T) {
 	assertContains(t, res.out, "checksum mismatch for tampered-1.0.0.jar")
 }
 
+func TestFetchRemoteChecksumFetchedOnce(t *testing.T) {
+	f := newFixture(t)
+	r := newMavenRepo(t, "", "")
+	content := r.seed(t, "com.test", "summed", "1.0.0", ".jar", "")
+	sum := sha1.Sum([]byte(content))
+	must(t, os.WriteFile(filepath.Join(r.dir, "com/test/summed/1.0.0/summed-1.0.0.jar.sha1"), []byte(hex.EncodeToString(sum[:])), 0o644))
+	f.write("sources.yaml", sourcesFor("mocksrc", r.URL))
+	f.write("t/artifacts-26.yaml", manifest(artifact("summed", "1.0.0", "com.test", "mocksrc", "t/libs", `checksum: "sha1:"`)))
+	// A corrupt local copy forces a check, a re-download and a second check.
+	f.write("t/libs/summed-1.0.0.jar", "corrupt")
+
+	if res := f.run("", "fetch", "t"); res.code != 0 {
+		t.Fatal("fetch failed")
+	}
+	if n := strings.Count(r.log(), ".jar.sha1 "); n != 1 {
+		t.Errorf("remote checksum fetched %d times, want 1", n)
+	}
+}
+
 func TestFetchPrunesStaleVersions(t *testing.T) {
 	f := newFixture(t)
 	f.write("t/libs/test-artifact-1.0.0.jar", "")

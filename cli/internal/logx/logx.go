@@ -60,16 +60,17 @@ func (l *Logger) Close() error {
 }
 
 func (l *Logger) log(level Level, name, format string, args ...any) {
+	if level < l.level {
+		return
+	}
 	msg := fmt.Sprintf(format, args...)
 	stamped := fmt.Sprintf("%s - %s: %s\n", time.Now().Format("2006-01-02 15:04:05"), name, msg)
-	if level >= l.level {
-		if l.level == Debug {
-			fmt.Fprint(l.out, stamped)
-		} else {
-			fmt.Fprintln(l.out, msg)
-		}
+	if l.level == Debug {
+		fmt.Fprint(l.out, stamped)
+	} else {
+		fmt.Fprintln(l.out, msg)
 	}
-	if l.file != nil && level >= l.level {
+	if l.file != nil {
 		fmt.Fprint(l.file, stamped)
 	}
 }

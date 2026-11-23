@@ -12,11 +12,12 @@ import (
 	"fmt"
 	"hash"
 	"io"
+	"maps"
 	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
+	"slices"
 	"strings"
 	"time"
 
@@ -60,11 +61,14 @@ func (f *Fetcher) Run(targets []string) error {
 	if f.Client == nil {
 		f.Client = &http.Client{Timeout: 30 * time.Minute}
 	}
-	sources, err := f.loadSources()
-	if err != nil {
-		return err
+	if f.sources == nil {
+		sources, err := f.loadSources()
+		if err != nil {
+			return err
+		}
+		f.sources = sources
 	}
-	f.sources, f.fetched, f.skipped = sources, map[string]bool{}, nil
+	f.fetched, f.skipped = map[string]bool{}, nil
 
 	if len(targets) == 0 {
 		targets = []string{"."}
@@ -136,11 +140,7 @@ func (f *Fetcher) resolve(m map[string]any) (artifact, error) {
 	}
 	s, ok := f.sources[name]
 	if !ok {
-		known := make([]string, 0, len(f.sources))
-		for k := range f.sources {
-			known = append(known, k)
-		}
-		sort.Strings(known)
+		known := slices.Sorted(maps.Keys(f.sources))
 		return a, fmt.Errorf("artifact '%s' references unknown source '%s'; define it in %s (known sources: %s)", a.name, name, f.sourcesPath, strings.Join(known, ", "))
 	}
 	a.source = s
@@ -178,42 +178,55 @@ func (f *Fetcher) get(url string, s *source) (io.ReadCloser, error) {
 
 var hashes = map[string]func() hash.Hash{"md5": md5.New, "sha1": sha1.New, "sha256": sha256.New, "sha512": sha512.New}
 
-// checksums returns the expected and actual checksum of file. verify is false
-// when the manifest declares no usable checksum, or the remote one is missing.
-func (f *Fetcher) checksums(a artifact, file string) (expected, actual string, verify bool, err error) {
+// checksum is the expected digest of an artifact; value is empty when there
+// is nothing to verify against.
+type checksum struct {
+	algo, value string
+}
+
+// expectedChecksum resolves the manifest checksum, fetching the remote
+// <artifact>.<algo> file when the manifest only names the algorithm.
+func (f *Fetcher) expectedChecksum(a artifact) (checksum, error) {
 	algo, value, _ := strings.Cut(a.checksum, ":")
-	newHash, ok := hashes[algo]
-	if !ok {
-		return "", "", false, nil
+	if _, ok := hashes[algo]; !ok {
+		return checksum{}, nil
 	}
-	expected = value
-	if expected == "" {
+	if value == "" {
 		remote := a.url() + "." + algo
 		body, err := f.get(remote, a.source)
 		if err != nil {
 			f.Log.Warnf("Failed to fetch checksum from %s: %v", remote, err)
-			return "", "", false, nil
+			return checksum{}, nil
 		}
 		data, err := io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return "", "", false, err
+			return checksum{}, err
 		}
 		// Some repositories append the file name after the hash.
 		if fields := strings.Fields(string(data)); len(fields) > 0 {
-			expected = fields[0]
+			value = fields[0]
 		}
+	}
+	return checksum{algo, strings.ToLower(value)}, nil
+}
+
+// verify reports whether file matches c, and an error describing a mismatch.
+func (c checksum) verify(file string) (bool, string, error) {
+	if c.value == "" {
+		return true, "", nil
 	}
 	in, err := os.Open(file)
 	if err != nil {
-		return "", "", false, err
+		return false, "", err
 	}
 	defer in.Close()
-	h := newHash()
+	h := hashes[c.algo]()
 	if _, err := io.Copy(h, in); err != nil {
-		return "", "", false, err
+		return false, "", err
 	}
-	return strings.ToLower(expected), hex.EncodeToString(h.Sum(nil)), true, nil
+	actual := hex.EncodeToString(h.Sum(nil))
+	return actual == c.value, actual, nil
 }
 
 // fetch puts the wanted version of a at its final path. It returns false when
@@ -227,17 +240,34 @@ func (f *Fetcher) fetch(a artifact) (bool, error) {
 		return false, err
 	}
 
+	// Resolved on first use, so a fetch needs the remote checksum at most once.
+	var sum *checksum
+	expected := func() (checksum, error) {
+		if sum == nil {
+			c, err := f.expectedChecksum(a)
+			if err != nil {
+				return c, err
+			}
+			sum = &c
+		}
+		return *sum, nil
+	}
+
 	if fileExists(final) {
 		f.Log.Infof("Artifact %s-%s already present.", a.name, a.version)
-		expected, actual, verify, err := f.checksums(a, final)
+		c, err := expected()
 		if err != nil {
 			return false, err
 		}
-		if !verify {
+		if c.value == "" {
 			f.Log.Infof("No valid checksum found, skipping verification...")
 			return true, nil
 		}
-		if expected == actual {
+		ok, _, err := c.verify(final)
+		if err != nil {
+			return false, err
+		}
+		if ok {
 			f.Log.Infof("Checksum matched for %s", base)
 			return true, nil
 		}
@@ -251,11 +281,15 @@ func (f *Fetcher) fetch(a artifact) (bool, error) {
 		return false, err
 	}
 	if fileExists(cached) {
-		expected, actual, _, err := f.checksums(a, cached)
+		c, err := expected()
 		if err != nil {
 			return false, err
 		}
-		if expected == actual {
+		ok, _, err := c.verify(cached)
+		if err != nil {
+			return false, err
+		}
+		if ok {
 			f.Log.Infof("Artifact %s-%s already present in cache, copying...", a.name, a.version)
 			return true, copyFile(cached, final)
 		}
@@ -281,12 +315,16 @@ func (f *Fetcher) fetch(a artifact) (bool, error) {
 	}
 	defer os.Remove(tmp)
 
-	expected, actual, _, err := f.checksums(a, tmp)
+	c, err := expected()
 	if err != nil {
 		return false, err
 	}
-	if expected != actual {
-		return false, fmt.Errorf("checksum mismatch for %s. Expected: %s, Computed: %s", base, expected, actual)
+	ok, actual, err := c.verify(tmp)
+	if err != nil {
+		return false, err
+	}
+	if !ok {
+		return false, fmt.Errorf("checksum mismatch for %s. Expected: %s, Computed: %s", base, c.value, actual)
 	}
 	if err := os.Rename(tmp, cached); err != nil {
 		return false, err

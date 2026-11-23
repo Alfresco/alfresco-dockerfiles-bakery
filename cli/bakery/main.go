@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/artifacts"
 	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/bake"
@@ -27,53 +28,85 @@ func main() {
 	}
 }
 
-func envOr(key, def string) string {
-	if v := os.Getenv(key); v != "" {
-		return v
-	}
-	return def
+const envAnnotation = "bakery_env"
+
+// bindEnv makes a flag fall back to an environment variable.
+func bindEnv(f *pflag.FlagSet, flag, env string) {
+	f.Lookup(flag).Usage += " (env " + env + ")"
+	_ = f.SetAnnotation(flag, envAnnotation, []string{env})
 }
 
-func envSet(key string) bool { return os.Getenv(key) != "" }
+// applyEnv sets every flag not given on the command line from its environment
+// variable, when that is not empty. Any non-empty value turns a bool flag on.
+func applyEnv(cmd *cobra.Command) error {
+	var err error
+	cmd.Flags().VisitAll(func(fl *pflag.Flag) {
+		env, ok := fl.Annotations[envAnnotation]
+		if !ok || fl.Changed || err != nil {
+			return
+		}
+		v := os.Getenv(env[0])
+		if v == "" {
+			return
+		}
+		if fl.Value.Type() == "bool" {
+			v = "true"
+		}
+		if e := fl.Value.Set(v); e != nil {
+			err = fmt.Errorf("%s: %w", env[0], e)
+		}
+	})
+	return err
+}
 
 type globalOpts struct {
 	dir        string
 	acsVersion string
 	apsVersion string
+	root       string
 }
 
-func (g *globalOpts) root() (string, error) {
+func (g *globalOpts) resolveRoot() error {
 	start := g.dir
 	if start == "" {
 		wd, err := os.Getwd()
 		if err != nil {
-			return "", err
+			return err
 		}
 		start = wd
 	}
-	return repo.FindRoot(start)
+	root, err := repo.FindRoot(start)
+	g.root = root
+	return err
 }
 
-type fetchOpts struct {
-	logLevel string
-	logFile  string
-}
-
-func (g *globalOpts) fetcher(root string, f fetchOpts) (*artifacts.Fetcher, func(), error) {
-	level, err := logx.ParseLevel(f.logLevel)
+func (g *globalOpts) fetcher(logLevel, logFile string) (*artifacts.Fetcher, func(), error) {
+	level, err := logx.ParseLevel(logLevel)
 	if err != nil {
 		return nil, nil, err
 	}
-	log, err := logx.New(os.Stdout, level, f.logFile)
+	log, err := logx.New(os.Stdout, level, logFile)
 	if err != nil {
 		return nil, nil, err
 	}
 	return &artifacts.Fetcher{
-		Root:        root,
+		Root:        g.root,
 		SourcesFile: os.Getenv("SOURCES_FILE"),
 		ACSVersion:  g.acsVersion,
 		Log:         log,
 	}, func() { _ = log.Close() }, nil
+}
+
+// bakeOptions completes o with the global options, the grype arguments and stdio.
+func (g *globalOpts) bakeOptions(o *bake.Options, grypeArgs string) error {
+	args, err := shellwords.Split(grypeArgs, true)
+	if err != nil {
+		return fmt.Errorf("--grype-opts: %w", err)
+	}
+	o.Root, o.ACSVersion, o.APSVersion = g.root, g.acsVersion, g.apsVersion
+	o.GrypeOpts.Args = args
+	o.Stdin, o.Stdout, o.Stderr = os.Stdin, os.Stdout, os.Stderr
+	return nil
 }
 
 func newRootCmd() *cobra.Command {
@@ -84,11 +117,19 @@ func newRootCmd() *cobra.Command {
 		Version:       version,
 		SilenceUsage:  true,
 		SilenceErrors: true,
+		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
+			if err := applyEnv(cmd); err != nil {
+				return err
+			}
+			return g.resolveRoot()
+		},
 	}
 	pf := root.PersistentFlags()
 	pf.StringVar(&g.dir, "dir", "", "Bakery checkout to work in (default: nearest parent holding docker-bake.hcl)")
-	pf.StringVar(&g.acsVersion, "acs-version", envOr("ACS_VERSION", "26"), "ACS major version (env ACS_VERSION)")
-	pf.StringVar(&g.apsVersion, "aps-version", envOr("APS_VERSION", "26"), "APS major version (env APS_VERSION)")
+	pf.StringVar(&g.acsVersion, "acs-version", "26", "ACS major version")
+	pf.StringVar(&g.apsVersion, "aps-version", "26", "APS major version")
+	bindEnv(pf, "acs-version", "ACS_VERSION")
+	bindEnv(pf, "aps-version", "APS_VERSION")
 
 	root.AddCommand(newBuildCmd(g), newFetchCmd(g), newGrypeCmd(g), newCleanCmd(g), newVersionsCmd(g))
 	return root
@@ -96,20 +137,22 @@ func newRootCmd() *cobra.Command {
 
 func bakeFlags(cmd *cobra.Command, o *bake.Options) {
 	f := cmd.Flags()
-	f.StringVar(&o.Registry, "registry", os.Getenv("REGISTRY"), "registry to push to; unset or localhost loads images locally (env REGISTRY)")
-	f.StringVar(&o.Namespace, "namespace", os.Getenv("REGISTRY_NAMESPACE"), "registry namespace, default alfresco (env REGISTRY_NAMESPACE)")
-	f.StringVar(&o.Tag, "tag", os.Getenv("TAG"), "image tag; default is the version of the packaged artifact (env TAG)")
+	f.StringVar(&o.Registry, "registry", "", "registry to push to; unset or localhost loads images locally")
+	f.StringVar(&o.Namespace, "namespace", "", "registry namespace, default alfresco")
+	f.StringVar(&o.Tag, "tag", "", "image tag; default is the version of the packaged artifact")
+	bindEnv(f, "registry", "REGISTRY")
+	bindEnv(f, "namespace", "REGISTRY_NAMESPACE")
+	bindEnv(f, "tag", "TAG")
 }
 
 func grypeFlags(cmd *cobra.Command, o *bake.GrypeOptions, args *string) {
 	f := cmd.Flags()
-	f.StringVar(args, "grype-opts", envOr("GRYPE_OPTS", "-f high --only-fixed --ignore-states wont-fix"), "grype arguments (env GRYPE_OPTS)")
-	f.StringVar(&o.OutputDir, "grype-output-dir", os.Getenv("GRYPE_OUTPUT_DIR"), "write one report per image to this directory (env GRYPE_OUTPUT_DIR)")
-	f.StringVar(&o.OutputFormat, "grype-output-format", os.Getenv("GRYPE_OUTPUT_FORMAT"), "grype output format, e.g. sarif (env GRYPE_OUTPUT_FORMAT)")
-}
-
-func stdio(o *bake.Options) {
-	o.Stdin, o.Stdout, o.Stderr = os.Stdin, os.Stdout, os.Stderr
+	f.StringVar(args, "grype-opts", "-f high --only-fixed --ignore-states wont-fix", "grype arguments")
+	f.StringVar(&o.OutputDir, "grype-output-dir", "", "write one report per image to this directory")
+	f.StringVar(&o.OutputFormat, "grype-output-format", "", "grype output format, e.g. sarif")
+	bindEnv(f, "grype-opts", "GRYPE_OPTS")
+	bindEnv(f, "grype-output-dir", "GRYPE_OUTPUT_DIR")
+	bindEnv(f, "grype-output-format", "GRYPE_OUTPUT_FORMAT")
 }
 
 func targetsHelp() string {
@@ -123,45 +166,42 @@ func targetsHelp() string {
 
 func newBuildCmd(g *globalOpts) *cobra.Command {
 	o := bake.Options{}
-	var grypeArgs string
-	var fo fetchOpts
+	var grypeArgs, logLevel string
 	cmd := &cobra.Command{
 		Use:   "build <target>...",
 		Short: "Fetch artifacts and build images for one or more targets",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			root, err := g.root()
-			if err != nil {
+			if err := g.bakeOptions(&o, grypeArgs); err != nil {
 				return err
 			}
-			f, closeLog, err := g.fetcher(root, fo)
+			f, closeLog, err := g.fetcher(logLevel, "")
 			if err != nil {
 				return err
 			}
 			defer closeLog()
-			o.Root, o.ACSVersion, o.APSVersion = root, g.acsVersion, g.apsVersion
-			if o.GrypeOpts.Args, err = shellwords.Split(grypeArgs, true); err != nil {
-				return fmt.Errorf("--grype-opts: %w", err)
-			}
-			stdio(&o)
 			return bake.Build(cmd.Context(), o, args, f.Run)
 		},
 	}
 	cmd.Long = "Fetch the artifacts each target needs, then run docker buildx bake.\n\n" + targetsHelp()
 	bakeFlags(cmd, &o)
 	f := cmd.Flags()
-	f.BoolVar(&o.NoCache, "no-cache", envSet("BAKE_NO_CACHE"), "build without the Docker cache (env BAKE_NO_CACHE)")
-	f.BoolVar(&o.NoSBOM, "no-sbom", envSet("BAKE_NO_SBOM"), "skip SBOM attestations when pushing (env BAKE_NO_SBOM)")
-	f.StringVar(&o.Provenance, "provenance", envOr("BAKE_PROVENANCE", "false"), "provenance attestation mode when pushing (env BAKE_PROVENANCE)")
+	f.BoolVar(&o.NoCache, "no-cache", false, "build without the Docker cache")
+	f.BoolVar(&o.NoSBOM, "no-sbom", false, "skip SBOM attestations when pushing")
+	f.StringVar(&o.Provenance, "provenance", "false", "provenance attestation mode when pushing")
 	f.BoolVarP(&o.Yes, "yes", "y", false, "push without asking for confirmation")
-	f.BoolVar(&o.Grype, "grype", envSet("GRYPE_ONBUILD"), "scan the built images with grype (env GRYPE_ONBUILD)")
-	f.StringVar(&fo.logLevel, "log-level", "INFO", "artifact fetch log level: DEBUG, INFO, WARNING, ERROR")
+	f.BoolVar(&o.Grype, "grype", false, "scan the built images with grype")
+	f.StringVar(&logLevel, "log-level", "INFO", "artifact fetch log level: DEBUG, INFO, WARNING, ERROR")
+	bindEnv(f, "no-cache", "BAKE_NO_CACHE")
+	bindEnv(f, "no-sbom", "BAKE_NO_SBOM")
+	bindEnv(f, "provenance", "BAKE_PROVENANCE")
+	bindEnv(f, "grype", "GRYPE_ONBUILD")
 	grypeFlags(cmd, &o.GrypeOpts, &grypeArgs)
 	return cmd
 }
 
 func newFetchCmd(g *globalOpts) *cobra.Command {
-	var fo fetchOpts
+	var logLevel, logFile string
 	cmd := &cobra.Command{
 		Use:   "fetch [target|path|glob]...",
 		Short: "Download the artifacts declared in artifacts-*.yaml manifests",
@@ -173,11 +213,7 @@ pattern such as "aps/**/artifacts-26.yaml". No argument fetches everything
 for the ACS version. Sources come from sources.yaml (env SOURCES_FILE
 overrides it) and credentials from ~/.netrc.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			root, err := g.root()
-			if err != nil {
-				return err
-			}
-			f, closeLog, err := g.fetcher(root, fo)
+			f, closeLog, err := g.fetcher(logLevel, logFile)
 			if err != nil {
 				return err
 			}
@@ -185,8 +221,8 @@ overrides it) and credentials from ~/.netrc.`,
 			return f.Run(args)
 		},
 	}
-	cmd.Flags().StringVar(&fo.logLevel, "log-level", "INFO", "DEBUG, INFO, WARNING or ERROR")
-	cmd.Flags().StringVar(&fo.logFile, "log-file", "", "also write logs to this file")
+	cmd.Flags().StringVar(&logLevel, "log-level", "INFO", "DEBUG, INFO, WARNING or ERROR")
+	cmd.Flags().StringVar(&logFile, "log-file", "", "also write logs to this file")
 	return cmd
 }
 
@@ -199,15 +235,9 @@ func newGrypeCmd(g *globalOpts) *cobra.Command {
 		Long:  "Scan the images of a bake target or group with grype. The target defaults to GRYPE_TARGET, then to the default group.",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			root, err := g.root()
-			if err != nil {
+			if err := g.bakeOptions(&o, grypeArgs); err != nil {
 				return err
 			}
-			o.Root, o.ACSVersion, o.APSVersion = root, g.acsVersion, g.apsVersion
-			if o.GrypeOpts.Args, err = shellwords.Split(grypeArgs, true); err != nil {
-				return fmt.Errorf("--grype-opts: %w", err)
-			}
-			stdio(&o)
 			target := os.Getenv("GRYPE_TARGET")
 			if len(args) == 1 {
 				target = args[0]
@@ -227,14 +257,10 @@ func newCleanCmd(g *globalOpts) *cobra.Command {
 		Short: "Delete fetched artifacts, or with --caches the Docker and artifact caches",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			root, err := g.root()
-			if err != nil {
-				return err
-			}
 			if caches {
-				return clean.Caches(cmd.Context(), root, os.Stdout, os.Stderr)
+				return clean.Caches(cmd.Context(), g.root, os.Stdout, os.Stderr)
 			}
-			return clean.Artifacts(root, force, os.Stdin, os.Stdout)
+			return clean.Artifacts(g.root, force, os.Stdin, os.Stdout)
 		},
 	}
 	cmd.Flags().BoolVarP(&force, "force", "f", false, "delete without asking for confirmation")
@@ -248,11 +274,7 @@ func newVersionsCmd(g *globalOpts) *cobra.Command {
 		Short: "Print the artifact version map used to tag images, as JSON",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			root, err := g.root()
-			if err != nil {
-				return err
-			}
-			out, err := artifacts.VersionsJSON(root, g.acsVersion, g.apsVersion)
+			out, err := artifacts.VersionsJSON(g.root, g.acsVersion, g.apsVersion)
 			if err != nil {
 				return err
 			}

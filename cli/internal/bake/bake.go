@@ -8,15 +8,16 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/artifacts"
-	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/clean"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/prompt"
 )
 
 type Options struct {
@@ -59,7 +60,7 @@ type Target struct {
 func dirs(d ...string) func(Options) []string { return func(Options) []string { return d } }
 
 var targets = []Target{
-	{Name: "all", Description: "Build all images", bake: ""},
+	{Name: "all", Description: "Build all images"},
 	{Name: "enterprise", Description: "Build enterprise images", bake: "enterprise"},
 	{Name: "community", Description: "Build community images", bake: "community"},
 	{Name: "adf_apps", Description: "Build ADF Apps images", fetch: dirs("adf-apps"), bake: "adf_apps"},
@@ -183,7 +184,7 @@ If you are not sure, please stop the build and check
 		return nil
 	}
 	fmt.Fprint(o.Stdout, "Do you want to continue? [y/N] ")
-	if !clean.Confirm(o.Stdin) {
+	if !prompt.Confirm(o.Stdin) {
 		fmt.Fprintln(o.Stdout, "\nStopping build")
 		return errors.New("push not confirmed")
 	}
@@ -319,13 +320,8 @@ func scan(ctx context.Context, opts Options, env []string, target string) error 
 			if err != nil {
 				return err
 			}
+			defer out.Close()
 			cmd.Stdout = out
-			err = cmd.Run()
-			out.Close()
-			if err != nil {
-				failed = append(failed, tag)
-			}
-			continue
 		}
 		if err := cmd.Run(); err != nil {
 			failed = append(failed, tag)
@@ -359,13 +355,8 @@ func localTags(ctx context.Context, opts Options, env []string, target string) (
 	if err := json.Unmarshal(out.Bytes(), &printed); err != nil {
 		return nil, fmt.Errorf("parsing docker buildx bake --print output: %w", err)
 	}
-	names := make([]string, 0, len(printed.Target))
-	for n := range printed.Target {
-		names = append(names, n)
-	}
-	sort.Strings(names)
 	var tags []string
-	for _, n := range names {
+	for _, n := range slices.Sorted(maps.Keys(printed.Target)) {
 		t := printed.Target[n]
 		for _, o := range t.Output {
 			if outputType(o) == "docker" {

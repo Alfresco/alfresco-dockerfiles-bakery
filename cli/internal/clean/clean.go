@@ -2,16 +2,16 @@
 package clean
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"io"
-	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"strings"
+
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/prompt"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/repo"
 )
 
 var artifactFile = regexp.MustCompile(`^.*-.*\.(jar|zip|amp|tgz|gz|rpm|deb|war)$`)
@@ -19,23 +19,7 @@ var artifactFile = regexp.MustCompile(`^.*-.*\.(jar|zip|amp|tgz|gz|rpm|deb|war)$
 // Artifacts deletes fetched artifacts from the image build contexts, asking
 // for confirmation on in unless force is set.
 func Artifacts(root string, force bool, in io.Reader, out io.Writer) error {
-	var files []string
-	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		rel, _ := filepath.Rel(root, path)
-		if d.IsDir() {
-			if path != root && (strings.HasPrefix(d.Name(), ".") || rel == "artifacts_cache") {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-		if d.Type().IsRegular() && artifactFile.MatchString(filepath.ToSlash(rel)) {
-			files = append(files, path)
-		}
-		return nil
-	})
+	files, err := repo.Walk(root, root, artifactFile.MatchString)
 	if err != nil {
 		return err
 	}
@@ -45,31 +29,22 @@ func Artifacts(root string, force bool, in io.Reader, out io.Writer) error {
 	}
 	fmt.Fprintln(out, "The following files will be deleted:")
 	for _, f := range files {
-		rel, _ := filepath.Rel(root, f)
-		fmt.Fprintln(out, filepath.ToSlash(rel))
+		fmt.Fprintln(out, f)
 	}
 	if !force {
 		fmt.Fprint(out, "Do you want to delete these files? (y/n) ")
-		if !Confirm(in) {
+		if !prompt.Confirm(in) {
 			fmt.Fprintln(out, "\nOperation cancelled.")
 			return nil
 		}
 	}
 	for _, f := range files {
-		if err := os.Remove(f); err != nil {
+		if err := os.Remove(filepath.Join(root, filepath.FromSlash(f))); err != nil {
 			return err
 		}
 	}
 	fmt.Fprintln(out, "All artifacts deleted.")
 	return nil
-}
-
-// Confirm reads one answer line and reports whether it starts with y or Y.
-// End of input counts as no.
-func Confirm(in io.Reader) bool {
-	line, _ := bufio.NewReader(in).ReadString('\n')
-	line = strings.TrimSpace(line)
-	return line != "" && (line[0] == 'y' || line[0] == 'Y')
 }
 
 // Caches prunes the Docker build cache and empties artifacts_cache/.
@@ -81,7 +56,7 @@ func Caches(ctx context.Context, root string, out, errOut io.Writer) error {
 		return fmt.Errorf("docker builder prune: %w", err)
 	}
 	fmt.Fprintln(out, "Cleaning up Artifacts cache")
-	dir := filepath.Join(root, "artifacts_cache")
+	dir := filepath.Join(root, repo.CacheDir)
 	entries, err := os.ReadDir(dir)
 	if os.IsNotExist(err) {
 		return nil

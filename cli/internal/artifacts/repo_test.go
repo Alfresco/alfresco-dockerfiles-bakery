@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/logx"
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/repo"
 )
 
 // The source model must build the same URLs as the legacy layout
@@ -26,7 +27,7 @@ func TestURLParityWithLegacyNexusLayout(t *testing.T) {
 	}
 	f.sources = sources
 
-	manifests, err := walkManifests(root, root, func(rel string) bool {
+	manifests, err := repo.Walk(root, root, func(rel string) bool {
 		ok, _ := filepath.Match("artifacts-*.yaml", filepath.Base(rel))
 		return ok
 	})

@@ -2,44 +2,15 @@ package artifacts
 
 import (
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/bmatcuk/doublestar/v4"
 	"gopkg.in/yaml.v3"
-)
 
-// walkManifests returns the slash-separated paths, relative to root, of the
-// files under dir accepted by match. Hidden directories are skipped so git
-// worktrees under .claude/ are never picked up.
-func walkManifests(root, dir string, match func(rel string) bool) ([]string, error) {
-	var out []string
-	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() {
-			if path != dir && strings.HasPrefix(d.Name(), ".") {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-		rel, err := filepath.Rel(root, path)
-		if err != nil {
-			return err
-		}
-		rel = filepath.ToSlash(rel)
-		if match(rel) {
-			out = append(out, rel)
-		}
-		return nil
-	})
-	sort.Strings(out)
-	return out, err
-}
+	"github.com/Alfresco/alfresco-dockerfiles-bakery/cli/internal/repo"
+)
 
 func manifestName(version string) string { return "artifacts-" + version + ".yaml" }
 
@@ -63,7 +34,7 @@ func (f *Fetcher) findManifests(target string) ([]string, error) {
 			return []string{filepath.ToSlash(rel)}, nil
 		}
 		want := manifestName(f.ACSVersion)
-		return walkManifests(f.Root, path, func(rel string) bool { return filepath.Base(rel) == want })
+		return repo.Walk(f.Root, path, func(rel string) bool { return filepath.Base(rel) == want })
 	}
 	if isGlob(target) {
 		f.Log.Debugf("Argument '%s' is a glob pattern.", target)
@@ -71,7 +42,7 @@ func (f *Fetcher) findManifests(target string) ([]string, error) {
 		if !doublestar.ValidatePattern(pattern) {
 			return nil, fmt.Errorf("invalid glob pattern %q", target)
 		}
-		return walkManifests(f.Root, f.Root, func(rel string) bool {
+		return repo.Walk(f.Root, f.Root, func(rel string) bool {
 			ok, _ := doublestar.Match(pattern, rel)
 			return ok
 		})
