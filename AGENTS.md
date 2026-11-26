@@ -53,7 +53,8 @@ the resolved image ref as `$1` and exits non-zero on failure. The CLI has Go tes
 `.github/workflows/cli.yml`: most live in `cli/bakery` and run the real binary against a scratch checkout
 with a mock Maven repository (`httptest`) and fake `docker`/`grype` scripts on `PATH` that log their argv
 and env; add a case there for any CLI behaviour change. `cli/internal/artifacts/repo_test.go` checks every
-manifest in this repo against the legacy Nexus URL layout.
+manifest in this repo against the legacy Nexus URL layout, and `cli/internal/bake/targets_test.go` checks the
+CLI `targets` table against `docker buildx bake --print` (skipped when buildx is missing).
 
 Pre-commit hooks (`.pre-commit-config.yaml`) check YAML/JSON/XML validity and GitHub workflow schemas
 (`check-github-workflows`), and for changes under `cli/` run `gofmt`, `go mod tidy -diff` and `go vet` (local
