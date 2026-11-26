@@ -59,7 +59,7 @@ func (f *Fetcher) loadSources() (map[string]*source, error) {
 			return nil, fmt.Errorf("source '%s' has an invalid url: %w", name, err)
 		}
 		s := &source{name: name, url: u.String()}
-		if c, ok := creds[u.Hostname()]; ok {
+		if c, ok := creds[strings.ToLower(u.Hostname())]; ok {
 			s.username, s.password = c[0], c[1]
 		}
 		mode := "anonymous"
@@ -142,7 +142,7 @@ lines:
 	machine, login, password := "", "", ""
 	flush := func() {
 		if machine != "" {
-			creds[machine] = [2]string{login, password}
+			creds[strings.ToLower(machine)] = [2]string{login, password}
 		}
 		machine, login, password = "", "", ""
 	}

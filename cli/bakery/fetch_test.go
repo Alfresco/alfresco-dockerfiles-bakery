@@ -91,6 +91,20 @@ func TestFetchCredentialsIsolatedPerHost(t *testing.T) {
 	assertNotContains(t, b.log(), basicAuth("userA", "passA"))
 }
 
+func TestFetchMatchesNetrcHostCaseInsensitively(t *testing.T) {
+	f := newFixture(t)
+	r := newMavenRepo(t, "alice", "secret")
+	r.seed(t, "com.test", "upper-artifact", "1.0.0", ".jar", "")
+	f.netrc("machine LocalHost\n  login alice\n  password secret\n")
+	f.write("sources.yaml", sourcesFor("mocksrc", strings.Replace(r.URL, "127.0.0.1", "LOCALHOST", 1)))
+	f.write("t/artifacts-26.yaml", manifest(artifact("upper-artifact", "1.0.0", "com.test", "mocksrc", "t/libs")))
+
+	res := f.run("", "fetch", "t")
+	if res.code != 0 || !f.exists("t/libs/upper-artifact-1.0.0.jar") {
+		t.Fatal("artifact not fetched with an uppercase source host")
+	}
+}
+
 func TestFetchIgnoresNetrcDefault(t *testing.T) {
 	f := newFixture(t)
 	r := newMavenRepo(t, "", "")
@@ -161,6 +175,7 @@ func TestFetchFailsFastOnBadSource(t *testing.T) {
 		"unknown source": {artifact("mystery", "1.0.0", "com.test", "nope", "t/libs"), "unknown source 'nope'"},
 		"no source":      {artifact("mystery", "1.0.0", "com.test", "", "t/libs"), "has no 'source'"},
 		"repository key": {artifact("legacy", "1.0.0", "com.test", "", "t/libs", "repository: known"), "removed 'repository' field"},
+		"no path":        {artifact("nowhere", "1.0.0", "com.test", "known", ""), "has no 'path'"},
 	}
 	for name, c := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -284,6 +299,21 @@ func TestFetchFailsWhenRemoteChecksumUnreachable(t *testing.T) {
 	if res := f.run("", "fetch", "t"); res.code == 0 || f.exists("t/libs/dropped-1.0.0.jar") {
 		t.Fatal("a transport error on the checksum must fail without writing the artifact")
 	}
+}
+
+func TestFetchFailsOnEmptyRemoteChecksum(t *testing.T) {
+	f := newFixture(t)
+	r := newMavenRepo(t, "", "")
+	r.seed(t, "com.test", "blank", "1.0.0", ".jar", "")
+	must(t, os.WriteFile(filepath.Join(r.dir, "com/test/blank/1.0.0/blank-1.0.0.jar.sha1"), []byte(" \n"), 0o644))
+	f.write("sources.yaml", sourcesFor("mocksrc", r.URL))
+	f.write("t/artifacts-26.yaml", manifest(artifact("blank", "1.0.0", "com.test", "mocksrc", "t/libs", `checksum: "sha1:"`)))
+
+	res := f.run("", "fetch", "t")
+	if res.code == 0 || f.exists("t/libs/blank-1.0.0.jar") {
+		t.Fatal("an empty remote checksum must fail without writing the artifact")
+	}
+	assertContains(t, res.out, "empty checksum")
 }
 
 func TestFetchPrunesStaleVersions(t *testing.T) {

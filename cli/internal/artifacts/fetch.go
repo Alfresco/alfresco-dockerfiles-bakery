@@ -144,6 +144,9 @@ func (f *Fetcher) resolve(m map[string]any) (artifact, error) {
 		return a, fmt.Errorf("artifact '%s' references unknown source '%s'; define it in %s (known sources: %s)", a.name, name, f.sourcesPath, strings.Join(known, ", "))
 	}
 	a.source = s
+	if a.path == "" {
+		return a, fmt.Errorf("artifact '%s' has no 'path'; declare the folder to place it in", a.name)
+	}
 	if !filepath.IsAbs(a.path) {
 		a.path = filepath.Join(f.Root, filepath.FromSlash(a.path))
 	}
@@ -207,9 +210,11 @@ func (f *Fetcher) expectedChecksum(a artifact) (checksum, error) {
 			return checksum{}, err
 		}
 		// Some repositories append the file name after the hash.
-		if fields := strings.Fields(string(data)); len(fields) > 0 {
-			value = fields[0]
+		fields := strings.Fields(string(data))
+		if len(fields) == 0 {
+			return checksum{}, fmt.Errorf("empty checksum returned by %s", remote)
 		}
+		value = fields[0]
 	}
 	return checksum{algo, strings.ToLower(value)}, nil
 }
