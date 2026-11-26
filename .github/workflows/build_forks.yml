@@ -1,4 +1,4 @@
-name: CI from forks
+name: CI Community
 
 on:
   pull_request:
@@ -42,9 +42,16 @@ jobs:
           key: ${{ runner.os }}-packages-community-v2-${{ hashFiles('**/artifacts-26.yaml') }}
           path: artifacts_cache/**
 
-      - name: Fetch artifacts from nexus
-        run: |
-          python3 ./scripts/fetch_artifacts.py
+      - uses: ./.github/actions/setup-bakery
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Build Community images
+        env:
+          ACS_VERSION: 26
+          TARGETARCH: linux/amd64
+        run: bakery build community
 
       - name: Save packages artifacts
         if: steps.artifacts-cache.outputs.cache-hit != 'true'
@@ -52,18 +59,6 @@ jobs:
         with:
           key: ${{ steps.artifacts-cache.outputs.cache-primary-key }}
           path: artifacts_cache/**
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-
-      - name: Bake Docker images
-        env:
-          ACS_VERSION: 26
-          TARGETARCH: linux/amd64
-        uses: docker/bake-action@59cb1203cd42bcefd40a1b6d73b589e48c86040e  # v7.5.0
-        with:
-          source: .
-          targets: community
 
       - name: Export all baked images whose name include `alfresco`
         run: |

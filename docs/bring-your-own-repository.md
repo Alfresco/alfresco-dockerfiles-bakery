@@ -36,7 +36,7 @@ An artifact declaring `source: releases` with group `org.alfresco`, name
 that is, the source URL followed by the standard Maven
 `group/artifact/version/file` path.
 
-No credentials are stored in `sources.yaml`. `fetch_artifacts.py` resolves them
+No credentials are stored in `sources.yaml`. The `bakery` CLI resolves them
 from your `~/.netrc` file by the host of each source URL. Sources whose host has no
 matching entry are accessed anonymously.
 
@@ -64,7 +64,7 @@ matching entry are accessed anonymously.
    ```
 
    To keep the committed `sources.yaml` untouched, write your own file and point
-   the fetch script at it with the `SOURCES_FILE` environment variable:
+   the `bakery` CLI at it with the `SOURCES_FILE` environment variable:
 
    ```sh
    export SOURCES_FILE=/path/to/my-sources.yaml
@@ -84,11 +84,11 @@ matching entry are accessed anonymously.
 
    Omit the entry for hosts that serve the artifacts anonymously.
 
-4. Build as usual (for example `make enterprise`) or run the fetch script
-   directly:
+4. Build as usual (for example `bakery build enterprise`) or only fetch the
+   artifacts:
 
    ```sh
-   python3 scripts/fetch_artifacts.py repository --log-level DEBUG
+   bakery fetch repository --log-level DEBUG
    ```
 
 ## Behaviour and troubleshooting
@@ -103,7 +103,7 @@ matching entry are accessed anonymously.
 - **Validation is strict.** Every artifact must declare a `source` that exists in
   the active sources file. A missing source, an unknown source, or a leftover
   `repository` key fails fast with a clear error.
-- **Credentials never cross hosts.** `fetch_artifacts.py` sends each request only
+- **Credentials never cross hosts.** The `bakery` CLI sends each request only
   the `~/.netrc` credentials for that request's host, so a source never receives
   another source's credentials.
 - **Version bumps only authenticate to Nexus.** The updatecli bump workflow

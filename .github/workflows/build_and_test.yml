@@ -5,16 +5,14 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'Makefile'
-      - '.github/workflows/test-make.yml'
+      - '.github/workflows/cli.yml'
       - '.github/workflows/kics.yml'
       - '**/*.md'
   pull_request:
     branches:
       - main
     paths-ignore:
-      - 'Makefile'
-      - '.github/workflows/test-make.yml'
+      - '.github/workflows/cli.yml'
       - '.github/workflows/kics.yml'
       - '**/*.md'
 
@@ -94,6 +92,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ./.github/actions/setup-bakery
 
       - name: Run image verification tests
         env:

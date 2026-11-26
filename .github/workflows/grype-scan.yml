@@ -35,7 +35,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
-      - run: make ${{ matrix.target }}
+      - uses: ./.github/actions/setup-bakery
+
+      - run: bakery build ${{ matrix.target }}
 
       - name: Install Grype
         uses: anchore/scan-action/download-grype@27805bf3b4e84b4a5c980df22ed233c00390a439 # v7.4.2
@@ -46,7 +48,7 @@ jobs:
 
       - name: Scan built images
         run: |
-          make grype GRYPE_TARGET=${{ matrix.target }} GRYPE_OUTPUT_DIR=sarif GRYPE_OUTPUT_FORMAT=sarif GRYPE_OPTS="--only-fixed --ignore-states wont-fix"
+          bakery grype ${{ matrix.target }} --grype-output-dir sarif --grype-output-format sarif --grype-opts "--only-fixed --ignore-states wont-fix"
 
       # Runs even if the scan step above failed partway, so whatever SARIF was
       # produced before the failure still gets uploaded instead of discarded.

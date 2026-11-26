@@ -67,10 +67,19 @@ if ! docker buildx version &>/dev/null; then
   exit 1
 fi
 
+if command -v bakery &>/dev/null; then
+  ARTIFACT_VERSIONS="$(bakery --dir "$REPO_ROOT" versions)"
+elif command -v go &>/dev/null; then
+  ARTIFACT_VERSIONS="$(cd "$REPO_ROOT/cli" && go run ./bakery versions)"
+else
+  echo "Error: the bakery CLI (or Go, to run it from source) is required." >&2
+  exit 1
+fi
+
 # Resolve the bake graph once: expands matrices, image_tag() and the
 # registry/namespace variables the way a build would
 # shellcheck disable=SC2086
-ARTIFACT_VERSIONS="$(python3 "$REPO_ROOT/scripts/print_artifact_versions.py")" \
+ARTIFACT_VERSIONS="$ARTIFACT_VERSIONS" \
   docker buildx bake --file "$REPO_ROOT/docker-bake.hcl" --print $BAKE_GROUPS \
   >"$BAKE_JSON" 2>/dev/null || {
   echo "Error: failed to resolve bake targets for groups: $BAKE_GROUPS" >&2

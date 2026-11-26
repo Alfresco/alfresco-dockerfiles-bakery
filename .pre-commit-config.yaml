@@ -20,7 +20,23 @@ repos:
     rev: 0.29.1
     hooks:
       - id: check-github-workflows
-  - repo: https://github.com/mrtazz/checkmake.git
-    rev: 0.2.2
+  # Go hooks for the bakery CLI, they need Go installed
+  - repo: local
     hooks:
-      - id: checkmake
+      - id: gofmt
+        name: gofmt
+        language: system
+        entry: gofmt -l -w
+        files: ^cli/.*\.go$
+      - id: go-mod-tidy
+        name: go mod tidy
+        language: system
+        entry: bash -c 'cd cli && go mod tidy -diff'
+        files: ^cli/(.*\.go|go\.mod|go\.sum)$
+        pass_filenames: false
+      - id: go-vet
+        name: go vet
+        language: system
+        entry: bash -c 'cd cli && go vet ./...'
+        files: ^cli/(.*\.go|go\.mod|go\.sum)$
+        pass_filenames: false
