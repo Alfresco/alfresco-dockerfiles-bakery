@@ -91,12 +91,12 @@ func (f *Fetcher) Run(targets []string) error {
 
 func (f *Fetcher) fetchManifest(rel string) error {
 	f.Log.Debugf("Processing manifest %s", rel)
-	order, entries, err := readManifest(filepath.Join(f.Root, filepath.FromSlash(rel)))
+	entries, err := readManifest(filepath.Join(f.Root, filepath.FromSlash(rel)))
 	if err != nil {
 		return err
 	}
-	for _, key := range order {
-		a, err := f.resolve(entries[key])
+	for _, e := range entries {
+		a, err := f.resolve(e.fields)
 		if err != nil {
 			return err
 		}
@@ -219,22 +219,21 @@ func (f *Fetcher) expectedChecksum(a artifact) (checksum, error) {
 	return checksum{algo, strings.ToLower(value)}, nil
 }
 
-// verify reports whether file matches c, and an error describing a mismatch.
-func (c checksum) verify(file string) (bool, string, error) {
+// verify reports whether file matches c.
+func (c checksum) verify(file string) (bool, error) {
 	if c.value == "" {
-		return true, "", nil
+		return true, nil
 	}
 	in, err := os.Open(file)
 	if err != nil {
-		return false, "", err
+		return false, err
 	}
 	defer in.Close()
 	h := hashes[c.algo]()
 	if _, err := io.Copy(h, in); err != nil {
-		return false, "", err
+		return false, err
 	}
-	actual := hex.EncodeToString(h.Sum(nil))
-	return actual == c.value, actual, nil
+	return hex.EncodeToString(h.Sum(nil)) == c.value, nil
 }
 
 // fetch puts the wanted version of a at its final path. It returns false when
@@ -271,7 +270,7 @@ func (f *Fetcher) fetch(a artifact) (bool, error) {
 			f.Log.Infof("No valid checksum found, skipping verification...")
 			return true, nil
 		}
-		ok, _, err := c.verify(final)
+		ok, err := c.verify(final)
 		if err != nil {
 			return false, err
 		}
@@ -293,7 +292,7 @@ func (f *Fetcher) fetch(a artifact) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		ok, _, err := c.verify(cached)
+		ok, err := c.verify(cached)
 		if err != nil {
 			return false, err
 		}
@@ -308,7 +307,7 @@ func (f *Fetcher) fetch(a artifact) (bool, error) {
 	}
 
 	f.Log.Infof("Downloading %s:%s %s from %s", a.group, a.name, a.version, a.source.url)
-	tmp, err := f.download(a, cacheDir)
+	tmp, actual, err := f.download(a, cacheDir)
 	var he *httpError
 	if errors.As(err, &he) && (he.code == http.StatusUnauthorized || he.code == http.StatusForbidden) {
 		reason := "Invalid or missing credentials"
@@ -327,11 +326,7 @@ func (f *Fetcher) fetch(a artifact) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	ok, actual, err := c.verify(tmp)
-	if err != nil {
-		return false, err
-	}
-	if !ok {
+	if c.value != "" && actual != c.value {
 		return false, fmt.Errorf("checksum mismatch for %s. Expected: %s, Computed: %s", base, c.value, actual)
 	}
 	if err := os.Rename(tmp, cached); err != nil {
@@ -340,25 +335,38 @@ func (f *Fetcher) fetch(a artifact) (bool, error) {
 	return true, copyFile(cached, final)
 }
 
-func (f *Fetcher) download(a artifact, dir string) (string, error) {
+// download saves a to a temporary file in dir and returns its path with the
+// hex digest for the manifest's checksum algorithm, empty if it names none.
+func (f *Fetcher) download(a artifact, dir string) (string, string, error) {
 	body, err := f.get(a.url(), a.source)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	defer body.Close()
 	out, err := os.CreateTemp(dir, ".download-*")
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	_, err = io.Copy(out, body)
+	var w io.Writer = out
+	algo, _, _ := strings.Cut(a.checksum, ":")
+	newHash, hashed := hashes[algo]
+	var h hash.Hash
+	if hashed {
+		h = newHash()
+		w = io.MultiWriter(out, h)
+	}
+	_, err = io.Copy(w, body)
 	if cerr := out.Close(); err == nil {
 		err = cerr
 	}
 	if err != nil {
 		os.Remove(out.Name())
-		return "", err
+		return "", "", err
 	}
-	return out.Name(), nil
+	if !hashed {
+		return out.Name(), "", nil
+	}
+	return out.Name(), hex.EncodeToString(h.Sum(nil)), nil
 }
 
 // cacheDir is keyed by source name and by a hash of its URL, so repointing a

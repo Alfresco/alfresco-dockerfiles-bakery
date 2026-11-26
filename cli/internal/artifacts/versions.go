@@ -29,13 +29,13 @@ func VersionsJSON(root, acsVersion, apsVersion string) (string, error) {
 
 	versions := map[string]any{}
 	for _, rel := range append(acs, aps...) {
-		_, entries, err := readManifest(filepath.Join(root, filepath.FromSlash(rel)))
+		entries, err := readManifest(filepath.Join(root, filepath.FromSlash(rel)))
 		if err != nil {
 			return "", err
 		}
-		for name, details := range entries {
-			if v, ok := details["version"]; ok && v != nil {
-				versions[name] = v
+		for _, e := range entries {
+			if v, ok := e.fields["version"]; ok && v != nil {
+				versions[e.key] = v
 			}
 		}
 	}

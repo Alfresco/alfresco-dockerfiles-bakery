@@ -36,19 +36,19 @@ func TestURLParityWithLegacyNexusLayout(t *testing.T) {
 	}
 	checked := 0
 	for _, rel := range manifests {
-		order, entries, err := readManifest(filepath.Join(root, rel))
+		entries, err := readManifest(filepath.Join(root, rel))
 		if err != nil {
 			t.Fatal(err)
 		}
-		for _, key := range order {
-			a, err := f.resolve(entries[key])
+		for _, e := range entries {
+			a, err := f.resolve(e.fields)
 			if err != nil {
 				t.Errorf("%s: %v", rel, err)
 				continue
 			}
-			want := strings.Join([]string{legacyBase, str(entries[key], "source"), strings.ReplaceAll(a.group, ".", "/"), a.name, a.version, a.filename()}, "/")
+			want := strings.Join([]string{legacyBase, str(e.fields, "source"), strings.ReplaceAll(a.group, ".", "/"), a.name, a.version, a.filename()}, "/")
 			if got := a.url(); got != want {
-				t.Errorf("%s: %s\n  got  %s\n  want %s", rel, key, got, want)
+				t.Errorf("%s: %s\n  got  %s\n  want %s", rel, e.key, got, want)
 			}
 			checked++
 		}

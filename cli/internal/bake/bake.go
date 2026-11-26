@@ -3,6 +3,7 @@ package bake
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -143,22 +144,15 @@ func requireGrype() error {
 	return nil
 }
 
-func valueOr(v, def string) string {
-	if v == "" {
-		return def
-	}
-	return v
-}
-
 // confirmPush logs in to the registry and asks before pushing anywhere but
 // the local image store.
 func confirmPush(ctx context.Context, o Options) error {
-	switch {
-	case o.Registry == "localhost":
-		fmt.Fprintln(o.Stdout, "REGISTRY environment variable is set to localhost. Images will be build & loaded locally")
-		return nil
-	case o.Registry == "":
-		fmt.Fprintln(o.Stdout, "REGISTRY environment variable is not set. Images will be build & loaded locally")
+	if !o.pushing() {
+		state := "not set"
+		if o.Registry != "" {
+			state = "set to " + o.Registry
+		}
+		fmt.Fprintf(o.Stdout, "REGISTRY environment variable is %s. Images will be build & loaded locally\n", state)
 		return nil
 	}
 	fmt.Fprintln(o.Stdout, "Checking for REGISTRY authentication")
@@ -179,7 +173,7 @@ In particular, make sure you are not pushing to a public registry
 without paying attention to the security & legal implications.
 If you are not sure, please stop the build and check
 %s
-`, banner, o.Registry, valueOr(o.Namespace, "alfresco"), banner)
+`, banner, o.Registry, cmp.Or(o.Namespace, "alfresco"), banner)
 	if o.Yes {
 		return nil
 	}
@@ -202,7 +196,7 @@ func bakeArgs(o Options, target string) []string {
 		if !o.NoSBOM {
 			args = append(args, "--sbom=true")
 		}
-		args = append(args, "--provenance="+valueOr(o.Provenance, "false"))
+		args = append(args, "--provenance="+cmp.Or(o.Provenance, "false"))
 	}
 	if target != "" {
 		args = append(args, target)
@@ -253,7 +247,7 @@ func Build(ctx context.Context, opts Options, names []string, fetch func(targets
 		return err
 	}
 	fmt.Fprintf(opts.Stdout, "REGISTRY=%s REGISTRY_NAMESPACE=%s TAG=%s\n",
-		valueOr(opts.Registry, "localhost"), valueOr(opts.Namespace, "alfresco"), valueOr(opts.Tag, "<none, tags come from artifact versions>"))
+		cmp.Or(opts.Registry, "localhost"), cmp.Or(opts.Namespace, "alfresco"), cmp.Or(opts.Tag, "<none, tags come from artifact versions>"))
 
 	env := opts.env(versions)
 	for _, t := range plan {

@@ -50,35 +50,46 @@ func (f *Fetcher) findManifests(target string) ([]string, error) {
 	return nil, fmt.Errorf("fetch target %q is neither an existing path nor a glob pattern", target)
 }
 
-// readManifest returns the artifacts map of a manifest, keyed by entry name,
-// in file order.
-func readManifest(path string) ([]string, map[string]map[string]any, error) {
+type entry struct {
+	key    string
+	fields map[string]any
+}
+
+// readManifest returns the entries of a manifest's artifacts map in file order.
+func readManifest(path string) ([]entry, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	var doc yaml.Node
 	if err := yaml.Unmarshal(data, &doc); err != nil {
-		return nil, nil, fmt.Errorf("parsing %s: %w", path, err)
+		return nil, fmt.Errorf("parsing %s: %w", path, err)
+	}
+	if len(doc.Content) == 0 {
+		return nil, nil
 	}
 	var parsed struct {
 		Artifacts yaml.Node `yaml:"artifacts"`
 	}
-	if len(doc.Content) == 0 {
-		return nil, nil, nil
-	}
 	if err := doc.Content[0].Decode(&parsed); err != nil {
-		return nil, nil, fmt.Errorf("parsing %s: %w", path, err)
+		return nil, fmt.Errorf("parsing %s: %w", path, err)
 	}
-	var entries map[string]map[string]any
-	if err := parsed.Artifacts.Decode(&entries); err != nil && parsed.Artifacts.Kind != 0 {
-		return nil, nil, fmt.Errorf("parsing %s: %w", path, err)
-	}
-	var order []string
-	if parsed.Artifacts.Kind == yaml.MappingNode {
-		for i := 0; i < len(parsed.Artifacts.Content); i += 2 {
-			order = append(order, parsed.Artifacts.Content[i].Value)
+	n := parsed.Artifacts
+	if n.Kind != yaml.MappingNode {
+		// Missing or null artifacts mean an empty manifest; anything else is malformed.
+		var m map[string]any
+		if err := n.Decode(&m); err != nil && n.Kind != 0 {
+			return nil, fmt.Errorf("parsing %s: %w", path, err)
 		}
+		return nil, nil
 	}
-	return order, entries, nil
+	entries := make([]entry, 0, len(n.Content)/2)
+	for i := 0; i < len(n.Content); i += 2 {
+		e := entry{key: n.Content[i].Value}
+		if err := n.Content[i+1].Decode(&e.fields); err != nil {
+			return nil, fmt.Errorf("parsing %s: %w", path, err)
+		}
+		entries = append(entries, e)
+	}
+	return entries, nil
 }
