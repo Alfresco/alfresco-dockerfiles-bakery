@@ -14,6 +14,14 @@ Bakery, a tool designed to simplify the deployment of the Alfresco platform and
 assist you in building tailored container images, with the help of [Docker
 Bake](https://docs.docker.com/build/bake/).
 
+> [!NOTE]
+> We are working towards Bakery 1.0, and the first step is the `bakery` Go CLI.
+> The current version replaces the Makefile and scripts used to work with this
+> repository, so use it for every task you ran with them before.
+> In its final form, you won't need to clone this repository to build the
+> images: the CLI alone will build them, driven by a configuration file with a
+> stable interface.
+
 - [Alfresco Dockerfiles Bakery 🍞](#alfresco-dockerfiles-bakery-)
   - [Prerequisites](#prerequisites)
     - [Installing the bakery CLI](#installing-the-bakery-cli)
@@ -21,6 +29,7 @@ Bake](https://docs.docker.com/build/bake/).
     - [Vagrant alternative](#vagrant-alternative)
     - [Nexus authentication](#nexus-authentication)
   - [Getting started quickly](#getting-started-quickly)
+  - [Migrating from the Makefile](#migrating-from-the-makefile)
   - [Customizing the images](#customizing-the-images)
     - [Customizing the Alfresco Content Repository image](#customizing-the-alfresco-content-repository-image)
     - [Customizing the Share image](#customizing-the-share-image)
@@ -217,6 +226,22 @@ custom registry, you can run the following command:
 export TARGETARCH=linux/amd64,linux/arm64
 bakery build all --registry myecr.domain.tld --namespace myalfrescobuilds
 ```
+
+## Migrating from the Makefile
+
+The `bakery` CLI replaces the Makefile and the Python scripts. The environment
+variables they read (`ACS_VERSION`, `REGISTRY`, `TAG`, `GRYPE_OPTS`, ...) still
+work.
+
+| Before                                         | Now                             |
+| ---------------------------------------------- | ------------------------------- |
+| `make <target>` (e.g. `make enterprise`)       | `bakery build <target>`         |
+| `GRYPE_ONBUILD=true make <target>`             | `bakery build <target> --grype` |
+| `make grype GRYPE_TARGET=<target>`             | `bakery grype <target>`         |
+| `make clean`                                   | `bakery clean -f`               |
+| `make clean_caches`                            | `bakery clean --caches`         |
+| `python3 scripts/fetch_artifacts.py [targets]` | `bakery fetch [targets]`        |
+| `python3 scripts/print_artifact_versions.py`   | `bakery versions`               |
 
 ## Customizing the images
 
