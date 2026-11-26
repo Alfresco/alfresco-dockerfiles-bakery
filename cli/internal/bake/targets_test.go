@@ -1,18 +1,29 @@
 package bake
 
 import (
+	"cmp"
 	"encoding/json"
 	"io/fs"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
 
-// TestTargetsMatchBakeFile catches the targets table drifting from
-// docker-bake.hcl: every row must name a bake group or target, and fetch
-// every build context of it that holds an artifacts manifest.
-func TestTargetsMatchBakeFile(t *testing.T) {
+type bakeTarget struct {
+	Context  string            `json:"context"`
+	Contexts map[string]string `json:"contexts"`
+	Output   []bakeOutput      `json:"output"`
+}
+
+type bakeOutput struct {
+	Type string `json:"type"`
+}
+
+// bakeRoot skips the test without docker buildx and returns the repo root.
+func bakeRoot(t *testing.T) string {
+	t.Helper()
 	if err := exec.Command("docker", "buildx", "version").Run(); err != nil {
 		t.Skip("docker buildx is not available")
 	}
@@ -20,28 +31,43 @@ func TestTargetsMatchBakeFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	return root
+}
+
+func bakeJSON(t *testing.T, root string, v any, args ...string) {
+	t.Helper()
+	cmd := exec.Command("docker", append([]string{"buildx", "bake"}, args...)...)
+	cmd.Dir = root
+	out, err := cmd.Output()
+	if err != nil {
+		t.Fatalf("docker buildx bake %s: %v", strings.Join(args, " "), err)
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func bakePrint(t *testing.T, root string, names ...string) map[string]bakeTarget {
+	t.Helper()
+	var printed struct {
+		Target map[string]bakeTarget `json:"target"`
+	}
+	bakeJSON(t, root, &printed, append([]string{"--print"}, names...)...)
+	return printed.Target
+}
+
+// TestTargetsMatchBakeFile catches the targets table drifting from
+// docker-bake.hcl: every row must name a bake group or target, and fetch
+// every build context of it that holds an artifacts manifest.
+func TestTargetsMatchBakeFile(t *testing.T) {
+	root := bakeRoot(t)
 	for _, tg := range targets {
 		if tg.fetch == nil {
 			continue
 		}
 		t.Run(tg.Name, func(t *testing.T) {
-			cmd := exec.Command("docker", "buildx", "bake", "--print", tg.bake)
-			cmd.Dir = root
-			out, err := cmd.Output()
-			if err != nil {
-				t.Fatalf("docker buildx bake --print %s: %v", tg.bake, err)
-			}
-			var printed struct {
-				Target map[string]struct {
-					Context  string            `json:"context"`
-					Contexts map[string]string `json:"contexts"`
-				} `json:"target"`
-			}
-			if err := json.Unmarshal(out, &printed); err != nil {
-				t.Fatal(err)
-			}
 			scope := tg.fetch(Options{ACSVersion: "26", APSVersion: "26"})
-			for name, bt := range printed.Target {
+			for name, bt := range bakePrint(t, root, tg.bake) {
 				dirs := []string{bt.Context}
 				for _, c := range bt.Contexts {
 					if !strings.HasPrefix(c, "target:") {
@@ -56,6 +82,36 @@ func TestTargetsMatchBakeFile(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+// TestEveryBakeImageHasTarget fails when docker-bake.hcl gains an image that
+// no row of the targets table builds.
+func TestEveryBakeImageHasTarget(t *testing.T) {
+	root := bakeRoot(t)
+	var listed []struct {
+		Name  string `json:"name"`
+		Group bool   `json:"group"`
+	}
+	bakeJSON(t, root, &listed, "--list", "type=targets,format=json")
+	var images []string
+	for _, l := range listed {
+		if !l.Group {
+			images = append(images, l.Name)
+		}
+	}
+
+	built := map[string]bool{}
+	for _, tg := range targets {
+		for name := range bakePrint(t, root, cmp.Or(tg.bake, "default")) {
+			built[name] = true
+		}
+	}
+	for name, bt := range bakePrint(t, root, images...) {
+		cacheOnly := slices.ContainsFunc(bt.Output, func(o bakeOutput) bool { return o.Type == "cacheonly" })
+		if !cacheOnly && !built[name] {
+			t.Errorf("bake target %s is not built by any bakery build target; add a row to the targets table in bake.go", name)
+		}
 	}
 }
 
